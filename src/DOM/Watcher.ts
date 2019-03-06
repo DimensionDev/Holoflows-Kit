@@ -1,4 +1,4 @@
-import { DomProxy } from './DOMProxy'
+import { DomProxy } from './Proxy'
 import { EventEmitter } from 'events'
 import { LiveSelector } from './LiveSelector'
 
@@ -6,7 +6,7 @@ import { differenceWith, intersectionWith, uniqWith } from 'lodash-es'
 
 type RequireNode<T, V> = T extends Element ? V : never
 interface SingleNodeWatcher<T> {
-    virtualNode: RequireNode<T, DomProxy>
+    firstVirtualNode: RequireNode<T, DomProxy>
 }
 type EffectReturnFn<T> =
     | void
@@ -55,37 +55,25 @@ type EventFn<T> = (fn: CustomEvent<T> & { data: T }) => void
  *
  * **You must call `stopWatch` if you won't use it anymore**
  */
-export class Watcher<T> extends EventEmitter implements SingleNodeWatcher<T>, MultipleNodeWatcher<T> {
-    constructor(
-        private liveSelector: LiveSelector<T>,
-        /** The element that won't change during the whole watching lifetime. This may improve performance. */
-        private consistentWatchRoot: Element | Document = document.body,
-    ) {
+export abstract class Watcher<T> extends EventEmitter implements SingleNodeWatcher<T>, MultipleNodeWatcher<T> {
+    constructor(protected liveSelector: LiveSelector<T>) {
         super()
     }
+    abstract startWatch(...args: any[]): this
+    abstract stopWatch(...args: any[]): void
     //#region Watcher
-    /** Observe whole document change */
-    private observer: MutationObserver = new MutationObserver(this.onMutation.bind(this))
-    /** Limit onMutation computation by rAF */
-    private rAFLock = false
-    private onMutation(mutations: MutationRecord[], observer: MutationObserver) {
-        if (this.rAFLock) return
-        this.rAFLock = true
-        requestAnimationFrame(this.watcherCallback)
-    }
-    private watching = false
-    private lastKeyList: unknown[] = []
-    private lastNodeList: T[] = []
-    private lastUndoEffectMap = new Map<unknown, EffectReturnFn<T>>()
-    private lastVirtualNodesMap = new Map<unknown, DomProxy>()
-    private findNodeFromListByKey = (list: T[], keys: unknown[]) => (key: unknown) => {
+    protected watching = false
+    protected lastKeyList: unknown[] = []
+    protected lastNodeList: T[] = []
+    protected lastUndoEffectMap = new Map<unknown, EffectReturnFn<T>>()
+    protected lastVirtualNodesMap = new Map<unknown, DomProxy>()
+    protected findNodeFromListByKey = (list: T[], keys: unknown[]) => (key: unknown) => {
         const i = keys.findIndex(x => this.keyComparer(x, key))
         if (i === -1) return null
         return list[i]
     }
-    private watcherCallback = () => {
+    protected watcherCallback = () => {
         if (!this.watching) return
-        this.rAFLock = false
 
         const thisNodes = this.liveSelector.evaluateOnce()
         const thisKeyList = thisNodes.map(this.mapNodeToKey)
@@ -182,26 +170,8 @@ export class Watcher<T> extends EventEmitter implements SingleNodeWatcher<T>, Mu
         // For single node mode
         const first = thisNodes[0]
         if (first instanceof HTMLElement || first === undefined || first === null) {
-            this.virtualNode.realCurrent = first as any
+            this.firstVirtualNode.realCurrent = first as any
         }
-    }
-    startWatch(options?: MutationObserverInit) {
-        this.stopWatch()
-        this.watching = true
-        const option = {
-            attributes: true,
-            characterData: true,
-            childList: true,
-            subtree: true,
-            ...options,
-        }
-        this.observer.observe(this.consistentWatchRoot, option)
-        this.watcherCallback()
-        return this
-    }
-    stopWatch() {
-        this.watching = false
-        this.observer.disconnect()
     }
     //#endregion
 
@@ -222,11 +192,13 @@ export class Watcher<T> extends EventEmitter implements SingleNodeWatcher<T>, Mu
         return super.emit(event, { data })
     }
     //#endregion
-    virtualNode: RequireNode<T, DomProxy> = DomProxy() as any
-
+    /**
+     * This virtualNode always point to the first node in the LiveSelector
+     */
+    firstVirtualNode: RequireNode<T, DomProxy> = DomProxy() as any
     //#region For multiple nodes injection
-    private mapNodeToKey: Parameters<MultipleNodeWatcher<T>['assignKeys']>[0] = node => node
-    private keyComparer(a: unknown, b: unknown) {
+    protected mapNodeToKey: Parameters<MultipleNodeWatcher<T>['assignKeys']>[0] = node => node
+    protected keyComparer(a: unknown, b: unknown) {
         return a === b
     }
     assignKeys: MultipleNodeWatcher<T>['assignKeys'] = ((...args: Parameters<MultipleNodeWatcher<T>['assignKeys']>) => {
@@ -234,7 +206,7 @@ export class Watcher<T> extends EventEmitter implements SingleNodeWatcher<T>, Mu
         if (args[1]) this.keyComparer = args[1]
         return this
     }) as any
-    private useNodeForeachFn: Parameters<MultipleNodeWatcher<T>['useNodeForeach']>[0] | null = null
+    protected useNodeForeachFn: Parameters<MultipleNodeWatcher<T>['useNodeForeach']>[0] | null = null
     useNodeForeach: MultipleNodeWatcher<T>['useNodeForeach'] = ((
         ...args: Parameters<MultipleNodeWatcher<T>['useNodeForeach']>
     ) => {

@@ -1,8 +1,26 @@
 /**
  * DomProxy provide an interface that be stable even dom is changed.
+ *
+ * DomProxy provide 3 nodes. `before`, `current` and `after`.
+ * `current` is a fake dom node powered by Proxy,
+ * it will forward all your operations to the `realCurrent`.
+ *
+ * `before` and `after` is a true `span` that always point to before and after of `realCurrent`
+ *
+ * Special Handlers:
+ *
+ * *forward*: forward to current `realCurrent`
+ *
+ * *undo*: undo effect when `realCurrent` changes
+ *
+ * *move*: move effect to new `realCurrent`
+ *
+ * - style (forward, no-undo, move)
+ * - addEventListener (forward, undo, move)
+ * - appendChild (forward, undo, move)
  */
 export const DomProxy = function() {
-    let destroyed = false
+    let isDestroyed = false
 
     let virtualBefore: HTMLSpanElement | null = null
     let current: Element = document.createElement('div')
@@ -137,7 +155,7 @@ export const DomProxy = function() {
          * A `span` element that always located at the before of `realCurrent`
          */
         get before() {
-            if (destroyed) return null
+            if (isDestroyed) return null
             if (!virtualBefore) virtualBefore = document.createElement('span')
             current.before(virtualBefore)
             return virtualBefore
@@ -147,24 +165,24 @@ export const DomProxy = function() {
          * and if `realCurrent` changes, all action will be forwarded to new `realCurrent`
          */
         get current() {
-            if (destroyed) return null
+            if (isDestroyed) return null
             return proxy.proxy as HTMLSuperSet
         },
         /**
          * A `span` element that always located at the after of `current`
          */
         get after() {
-            if (destroyed) return null
+            if (isDestroyed) return null
             if (!virtualAfter) virtualAfter = document.createElement('span')
             current.after(virtualAfter)
             return virtualAfter
         },
         get realCurrent() {
-            if (destroyed) return null
+            if (isDestroyed) return null
             return current as any
         },
         set realCurrent(node: Element | null | undefined) {
-            if (destroyed) throw new TypeError('You can not set current for a destroyed proxy')
+            if (isDestroyed) throw new TypeError('You can not set current for a destroyed proxy')
             if (node === current) return
             undoEffects()
             if (node === null || node === undefined) {
@@ -179,7 +197,7 @@ export const DomProxy = function() {
             }
         },
         destroy() {
-            destroyed = true
+            isDestroyed = true
             proxy.revoke()
             if (virtualBefore) virtualBefore.remove()
             if (virtualAfter) virtualAfter.remove()
