@@ -15,11 +15,14 @@ export class MutationObserverWatcher<T> extends Watcher<T> {
 
     /** Limit onMutation computation by rAF */
     private rAFLock = false
-    private callback = () => this.rAFLock || this.watcherCallback()
-    private onMutation(mutations: MutationRecord[], observer: MutationObserver) {
+    private callback = () => {
         if (this.rAFLock) return
         this.rAFLock = true
+        this.watcherCallback()
+    }
+    private onMutation(mutations: MutationRecord[], observer: MutationObserver) {
         requestAnimationFrame(this.callback)
+        this.rAFLock = false
     }
     startWatch(options?: MutationObserverInit) {
         this.stopWatch()
