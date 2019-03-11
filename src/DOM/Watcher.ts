@@ -66,8 +66,18 @@ type EventFn<T> = (fn: CustomEvent<T> & { data: T }) => void
  * @abstract You need to implement `startWatch` and `stopWatch`
  */
 export abstract class Watcher<T> extends EventEmitter implements SingleNodeWatcher<T>, MultipleNodeWatcher<T> {
+    protected readonly nodeWatcher = new MutationWatcherHelper(this)
     constructor(protected liveSelector: LiveSelector<T>) {
         super()
+        this.nodeWatcher.callback = (key, node) => {
+            for (const [invariantKey, callbacks] of this.lastCallbackMap.entries()) {
+                if (this.keyComparer(key, invariantKey)) {
+                    if (typeof callbacks === 'object' && callbacks.onNodeMutation) {
+                        callbacks.onNodeMutation(node as any)
+                    }
+                }
+            }
+        }
     }
     abstract startWatch(...args: any[]): this
     abstract stopWatch(...args: any[]): void
@@ -116,10 +126,12 @@ export abstract class Watcher<T> extends EventEmitter implements SingleNodeWatch
             for (const oldKey of goneKeys) {
                 const virtualNode = this.lastVirtualNodesMap.get(oldKey)
                 const callbacks = this.lastCallbackMap.get(oldKey)
+                const node = findFromLast(oldKey)!
+                if (node instanceof Node) this.nodeWatcher.removeNode(oldKey)
                 if (callbacks) {
                     if (typeof callbacks === 'function') virtualNode && callbacks(virtualNode.realCurrent as any)
                     else if (callbacks.onRemove) {
-                        callbacks.onRemove(findFromLast(oldKey)!)
+                        callbacks.onRemove(node)
                     }
                 }
                 if (virtualNode) virtualNode.destroy()
@@ -136,8 +148,11 @@ export abstract class Watcher<T> extends EventEmitter implements SingleNodeWatch
                 if (!this.useNodeForeachFn) break
                 const node = findFromNew(newKey)
                 if (node instanceof Element) {
+                    this.nodeWatcher.addNode(newKey, node)
+
                     const virtualNode = DomProxy()
                     virtualNode.realCurrent = node
+
                     const callbacks = this.useNodeForeachFn(virtualNode, newKey, node)
                     nextCallbackMap.set(newKey, callbacks)
                     nextVirtualNodesMap.set(newKey, virtualNode)
@@ -154,10 +169,14 @@ export abstract class Watcher<T> extends EventEmitter implements SingleNodeWatch
         const changedNodes = oldSameKeys
             .map(x => [findFromLast(x), findFromNew(x), x, newSameKeys.find(newK => this.keyComparer(newK, x))] as U)
             .filter(([a, b]) => a !== b)
-        for (const [oldNode, newNode, oldKey] of changedNodes) {
+        for (const [oldNode, newNode, oldKey, newKey] of changedNodes) {
             if (newNode instanceof Element) {
+                this.nodeWatcher.removeNode(oldKey)
+                this.nodeWatcher.addNode(newKey, newNode)
+
                 const virtualNode = this.lastVirtualNodesMap.get(oldKey)!
                 virtualNode.realCurrent = newNode
+
                 const fn = this.lastCallbackMap.get(oldKey)
                 if (fn && typeof fn !== 'function' && fn.onTargetChanged) {
                     fn.onTargetChanged(oldNode, newNode)
@@ -174,9 +193,9 @@ export abstract class Watcher<T> extends EventEmitter implements SingleNodeWatch
             const oldKey = oldSameKeys.find(oldKey => this.keyComparer(newKey, oldKey))
             nextCallbackMap.set(newKey, this.lastCallbackMap.get(oldKey))
             nextVirtualNodesMap.set(newKey, this.lastVirtualNodesMap.get(oldKey)!)
-            this.lastCallbackMap = nextCallbackMap
-            this.lastVirtualNodesMap = nextVirtualNodesMap
         }
+        this.lastCallbackMap = nextCallbackMap
+        this.lastVirtualNodesMap = nextVirtualNodesMap
         this.lastKeyList = thisKeyList
         this.lastNodeList = thisNodes
 
@@ -251,7 +270,7 @@ export abstract class Watcher<T> extends EventEmitter implements SingleNodeWatch
     public useNodeForeach: MultipleNodeWatcher<T>['useNodeForeach'] = ((
         ...args: Parameters<MultipleNodeWatcher<T>['useNodeForeach']>
     ) => {
-        if (this.useNodeForeach) {
+        if (this.useNodeForeachFn) {
             console.warn("You can't chain useNodeForeach currently. The old one will be replaced.")
         }
         this.useNodeForeachFn = args[0]
@@ -263,4 +282,56 @@ export abstract class Watcher<T> extends EventEmitter implements SingleNodeWatch
         ) as ReturnType<MultipleNodeWatcher<T>['getVirtualNodeByKey']>
     }) as any
     //#endregion
+}
+
+class MutationWatcherHelper<T> {
+    constructor(private ref: Watcher<any>) {}
+    /** Observer */
+    private observer = new MutationObserver(this.onMutation.bind(this))
+    /** Watching nodes */
+    private nodesMap = new Map<unknown, Node>()
+    /** Limit onMutation computation by rAF */
+    private rAFLock = false
+    private onMutation(mutations: MutationRecord[], observer: MutationObserver) {
+        requestAnimationFrame(() => {
+            if (this.rAFLock) return
+            this.rAFLock = true
+            for (const mutation of mutations) {
+                for (const [key, node] of this.nodesMap.entries()) {
+                    let cNode: Node | null = mutation.target
+                    compare: while (cNode) {
+                        if (cNode === node) {
+                            this.callback(key, node)
+                            break compare
+                        }
+                        cNode = cNode.parentNode
+                    }
+                }
+            }
+            this.rAFLock = false
+        })
+    }
+    private readonly options = {
+        attributes: true,
+        characterData: true,
+        childList: true,
+        subtree: true,
+    }
+    callback = (key: unknown, node: Node) => {}
+    addNode(key: unknown, node: Node) {
+        this.observer.observe(node, this.options)
+        this.nodesMap.set(key, node)
+    }
+    removeNode(key: unknown) {
+        // No need to call this.observer.disconnect()
+        // See: https://developer.mozilla.org/en-US/docs/Web/API/MutationObserver/observe
+        // If you call observe() on a node that's already being observed by the same MutationObserver,
+        // all existing observers are automatically removed from all targets being observed before the new observer is activated.
+        // Access the protected `keyComparer` here
+        const foundKey = Array.from(this.nodesMap.keys()).find(k => (this.ref as any).keyComparer(k, key))
+        this.nodesMap.delete(foundKey)
+        for (const node of this.nodesMap.values()) {
+            this.observer.observe(node, this.options)
+        }
+    }
 }

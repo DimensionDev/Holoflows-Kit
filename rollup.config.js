@@ -7,7 +7,7 @@ const config = {
     input: './src/index.ts',
     output: {
         file: './dist/out.js',
-        format: 'iife',
+        format: 'umd',
         name: 'HoloflowsKit',
     },
     plugins: [
