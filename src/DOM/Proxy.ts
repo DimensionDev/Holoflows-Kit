@@ -156,8 +156,8 @@ export const DomProxy = function() {
         /**
          * A `span` element that always located at the before of `realCurrent`
          */
-        get before() {
-            if (isDestroyed) return null
+        get before(): HTMLSpanElement {
+            if (isDestroyed) throw new TypeError('Try to access `before` node after VirtualNode is destroyed')
             if (!virtualBefore) {
                 virtualBefore = document.createElement('span')
                 current && current.before(virtualBefore)
@@ -168,15 +168,15 @@ export const DomProxy = function() {
          * A proxy that always point to `realCurrent`,
          * and if `realCurrent` changes, all action will be forwarded to new `realCurrent`
          */
-        get current() {
-            if (isDestroyed) return null
+        get current(): HTMLSuperSet {
+            if (isDestroyed) throw new TypeError('Try to access `current` node after VirtualNode is destroyed')
             return proxy.proxy as HTMLSuperSet
         },
         /**
          * A `span` element that always located at the after of `current`
          */
-        get after() {
-            if (isDestroyed) return null
+        get after(): HTMLSpanElement {
+            if (isDestroyed) throw new TypeError('Try to access `after` node after VirtualNode is destroyed')
             if (!virtualAfter) {
                 virtualAfter = document.createElement('span')
                 current && current.after(virtualAfter)
