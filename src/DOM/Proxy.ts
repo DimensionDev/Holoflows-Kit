@@ -23,7 +23,7 @@ export const DomProxy = function() {
     let isDestroyed = false
 
     let virtualBefore: HTMLSpanElement | null = null
-    let current: Element = document.createElement('div')
+    let current: Element | null = document.createElement('div')
     let virtualAfter: HTMLSpanElement | null = null
     /** All changes applied on the `proxy` */
     let changes: (ActionTypes[keyof ActionTypes])[] = []
@@ -127,18 +127,20 @@ export const DomProxy = function() {
         for (const change of changes) {
             if (change.type !== 'callMethods') continue
             if (change.op.name !== 'addEventListener') continue
-            current.removeEventListener(...(change.op.param as [any, any, any]))
+            current && current.removeEventListener(...(change.op.param as [any, any, any]))
         }
     }
     /** Call after realCurrent change */
     function redoEffects() {
+        if (!current) return
         const t = {}
         for (const change of changes) {
-            if (change.type === 'setPrototypeOf') modifyTrapsNotWrite.setPrototypeOf(t, change.op)
-            else if (change.type === 'preventExtensions') modifyTrapsNotWrite.preventExtensions(t)
-            else if (change.type === 'defineProperty') modifyTrapsNotWrite.defineProperty(t, change.op[0], change.op[1])
-            else if (change.type === 'set') modifyTrapsNotWrite.set(t, change.op[0], change.op[1], t)
-            else if (change.type === 'delete') modifyTrapsNotWrite.deleteProperty(t, change.op)
+            if (change.type === 'setPrototypeOf') modifyTrapsNotWrite.setPrototypeOf!(t, change.op)
+            else if (change.type === 'preventExtensions') modifyTrapsNotWrite.preventExtensions!(t)
+            else if (change.type === 'defineProperty')
+                modifyTrapsNotWrite.defineProperty!(t, change.op[0], change.op[1])
+            else if (change.type === 'set') modifyTrapsNotWrite.set!(t, change.op[0], change.op[1], t)
+            else if (change.type === 'delete') modifyTrapsNotWrite.deleteProperty!(t, change.op)
             else if (change.type === 'callMethods') {
                 const replayable: (keyof Element)[] = ['appendChild', 'addEventListener', 'before', 'after']
                 const key: keyof Element = change.op.name as any
@@ -156,8 +158,10 @@ export const DomProxy = function() {
          */
         get before() {
             if (isDestroyed) return null
-            if (!virtualBefore) virtualBefore = document.createElement('span')
-            current.before(virtualBefore)
+            if (!virtualBefore) {
+                virtualBefore = document.createElement('span')
+                current && current.before(virtualBefore)
+            }
             return virtualBefore
         },
         /**
@@ -173,8 +177,10 @@ export const DomProxy = function() {
          */
         get after() {
             if (isDestroyed) return null
-            if (!virtualAfter) virtualAfter = document.createElement('span')
-            current.after(virtualAfter)
+            if (!virtualAfter) {
+                virtualAfter = document.createElement('span')
+                current && current.after(virtualAfter)
+            }
             return virtualAfter
         },
         get realCurrent() {

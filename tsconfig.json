@@ -13,6 +13,8 @@
     "noImplicitAny": true,
     "noImplicitThis": true,
     "noImplicitReturns": true,
+    "strictNullChecks": true,
+    "strictPropertyInitialization": true,
     "sourceMap": true,
     "pretty": true,
     "target": "es2018",

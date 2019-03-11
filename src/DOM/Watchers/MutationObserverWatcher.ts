@@ -1,5 +1,5 @@
-import { Watcher } from './Watcher'
-import { LiveSelector } from './LiveSelector'
+import { Watcher } from '../Watcher'
+import { LiveSelector } from '../LiveSelector'
 
 export class MutationObserverWatcher<T> extends Watcher<T> {
     constructor(
@@ -19,10 +19,10 @@ export class MutationObserverWatcher<T> extends Watcher<T> {
         if (this.rAFLock) return
         this.rAFLock = true
         this.watcherCallback()
+        this.rAFLock = false
     }
     private onMutation(mutations: MutationRecord[], observer: MutationObserver) {
         requestAnimationFrame(this.callback)
-        this.rAFLock = false
     }
     startWatch(options?: MutationObserverInit) {
         this.stopWatch()
