@@ -6,7 +6,7 @@
  * Built-in watcher:
  *
  * - Mutation Observer watcher (based on MutationObserver api, watch DOM changes)
- * - Interval watcher (Not implemented yet.) (based on time interval)
+ * - Interval watcher (based on time interval)
  * - Event watcher (Not implemented yet.) (based on addEventListener)
  */
 import { DomProxy } from './Proxy'
