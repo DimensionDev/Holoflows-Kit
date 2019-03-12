@@ -5,6 +5,7 @@
   "main": "./dist/out.js",
   "typings": "./es/",
   "dependencies": {
+    "@types/chrome": "^0.0.81",
     "@types/lodash-es": "^4.1.4",
     "@types/node": "10.12.23",
     "events": "^3.0.0",
