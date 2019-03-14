@@ -1,6 +1,7 @@
 type InternalMessageType = {
     key: Key
     data: any
+    instanceKey: string
 }
 type Key = string | number | symbol
 const MessageCenterEvent = 'Holoflows-Kit MessageCenter'
@@ -8,12 +9,14 @@ const newMessage = (key: InternalMessageType['key'], data: InternalMessageType['
     new CustomEvent(MessageCenterEvent, { detail: { data, key } })
 /** Send and receive messages in different contexts. */
 export class MessageCenter<ITypedMessages> {
-    private listeners: Array<{ key: Key; handler: (data: any) => boolean | void }> = []
+    private listeners: Array<{ key: Key; handler: (data: any) => void }> = []
     // private id: any
     private listener = (request: InternalMessageType | Event) => {
-        let key: Key, data: any
-        if (request instanceof Event) ({ key, data } = (request as CustomEvent).detail)
-        else ({ key, data } = request)
+        let key: Key, data: any, instanceKey: string
+        if (request instanceof Event) ({ key, data, instanceKey } = (request as CustomEvent).detail)
+        else ({ key, data, instanceKey } = request)
+        // Message is not for us
+        if (this.instanceKey !== instanceKey) return
         if (this.writeToConsole) {
             console.log(
                 `%cReceive%c %c${key.toString()}`,
@@ -23,7 +26,7 @@ export class MessageCenter<ITypedMessages> {
                 data,
             )
         }
-        const handled = this.listeners.filter(it => it.key === key).some(it => !!it.handler(data))
+        const handled = this.listeners.filter(it => it.key === key).forEach(it => it.handler(data))
         // TODO: Why?
         // if (!handled) {
         //     if (document && document.dispatchEvent) {
@@ -31,7 +34,7 @@ export class MessageCenter<ITypedMessages> {
         //     }
         // }
     }
-    constructor() {
+    constructor(private instanceKey?: string) {
         if (chrome && chrome.runtime) {
             // Fired when a message is sent from either an extension process (by runtime.sendMessage)
             // or a content script (by tabs.sendMessage).
@@ -61,7 +64,7 @@ export class MessageCenter<ITypedMessages> {
         //     this.send('require_extension_id', undefined)
         // }
     }
-    public on<Key extends keyof ITypedMessages>(key: Key, handler: (data: ITypedMessages[Key]) => boolean | void): any {
+    public on<Key extends keyof ITypedMessages>(key: Key, handler: (data: ITypedMessages[Key]) => void): any {
         this.listeners.push({
             handler: data => handler(data),
             key,
@@ -79,7 +82,7 @@ export class MessageCenter<ITypedMessages> {
                 data,
             )
         }
-        const msg: InternalMessageType = { data, key }
+        const msg: InternalMessageType = { data, key, instanceKey: this.instanceKey || '' }
         if (chrome && chrome.runtime) {
             if (chrome.runtime.sendMessage) {
                 try {
