@@ -1,19 +1,12 @@
 /** transform Parameters and return values between value and string */
-export interface AsyncCallTransform<Param extends any[], Return> {
+export interface AsyncCallTransform<Param extends unknown[], Return> {
     stringifyParam?(...args: Param): Promise<string>
     parseParam?(result: string): Promise<Param>
     stringifyReturn?(data: Return): Promise<string>
     parseReturn?(result: string): Promise<Return>
 }
-type Fn<T> = T extends (...args: any[]) => any ? T : never
+type Fn<T> = T extends (...args: unknown[]) => unknown ? T : never
 type PromiseOf<T> = T extends PromiseLike<infer U> ? U : never
-
-function defaultParse(x: string): any {
-    return x
-}
-function defaultStringify(x: any) {
-    return x
-}
 /**
  * Async call between different context.
  *
@@ -76,11 +69,14 @@ export const AsyncCall = <AllCalls, OtherSide extends Partial<AllCalls>>(
             send(event: string, data: any): void
         }
     },
-    dontThrowOnNotImplemented = false,
+    dontThrowOnNotImplemented = true,
+    defaultParse = (x: any) => x,
+    defaultStringify = (x: any) => x,
 ): OtherSide => {
     const mc = new messageCenter(`${key}-async-call`)
     Object.assign(mc, { writeToConsole: true })
-    const map = new Map<number, [any, any]>()
+    type PromiseParam = Parameters<(ConstructorParameters<typeof Promise>)[0]>
+    const map = new Map<number, PromiseParam>()
     function transform(type: 'stringify', subject: 'param' | 'return', method: string, data: any[]): Promise<string>
     function transform(type: 'parse', subject: 'param' | 'return', method: string, data: string): Promise<any[]>
     async function transform(
@@ -106,9 +102,7 @@ export const AsyncCall = <AllCalls, OtherSide extends Partial<AllCalls>>(
     }
     mc.on('call', (data: Request) => {
         if (data.method in implementation) {
-            const p = (implementation[data.method as keyof typeof implementation] as any) as ((
-                ...args: any[]
-            ) => Promise<any>)
+            const p = (implementation[data.method as keyof typeof implementation] as any) as ((...args: any[]) => any)
             const e = (err: Error) => {
                 console.error(err)
                 mc.send('response', {
@@ -126,7 +120,7 @@ export const AsyncCall = <AllCalls, OtherSide extends Partial<AllCalls>>(
                 }
                 return
             }
-            async function run() {
+            const run = async () => {
                 const args = await transform('parse', 'param', data.method, data.args)
                 const result = await p(...args)
                 return await transform('stringify', 'return', data.method, result)
@@ -135,7 +129,7 @@ export const AsyncCall = <AllCalls, OtherSide extends Partial<AllCalls>>(
         }
     })
     mc.on('response', (data: Response) => {
-        const [resolve, reject] = map.get(data.callId) || [false, false]
+        const [resolve, reject] = map.get(data.callId) || (([null, null] as any) as PromiseParam)
         if (!resolve) return // drop this response
         map.delete(data.callId)
         if (data.error) return reject(data.error)
