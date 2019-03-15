@@ -1,6 +1,8 @@
 import { Watcher } from '../Watcher'
 import { LiveSelector } from '../LiveSelector'
-
+/**
+ * A watcher based on MutationObserver
+ */
 export class MutationObserverWatcher<T> extends Watcher<T> {
     constructor(
         protected liveSelector: LiveSelector<T>,
