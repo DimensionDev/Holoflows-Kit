@@ -101,7 +101,7 @@ export class MessageCenter<ITypedMessages> {
         if (chrome && chrome.tabs) {
             chrome.tabs.query({ active: true, currentWindow: true, discarded: false }, tab => {
                 const currentTab = tab[0]
-                if (currentTab.id) {
+                if (currentTab && currentTab.id) {
                     chrome.tabs.sendMessage(currentTab.id, msg)
                 }
             })
