@@ -72,11 +72,11 @@ export const AsyncCall = <AllCalls, OtherSide extends Partial<AllCalls>>(
     dontThrowOnNotImplemented = true,
     defaultParse = (x: any) => x,
     defaultStringify = (x: any) => x,
+    writeToConsole = true,
 ): OtherSide => {
     const mc = new messageCenter(`${key}-async-call`)
-    Object.assign(mc, { writeToConsole: true })
     type PromiseParam = Parameters<(ConstructorParameters<typeof Promise>)[0]>
-    const map = new Map<number, PromiseParam>()
+    const map = new Map<string, PromiseParam>()
     function transform(type: 'stringify', subject: 'param' | 'return', method: string, data: any[]): Promise<string>
     function transform(type: 'parse', subject: 'param' | 'return', method: string, data: string): Promise<any[]>
     async function transform(
@@ -104,12 +104,11 @@ export const AsyncCall = <AllCalls, OtherSide extends Partial<AllCalls>>(
         if (data.method in implementation) {
             const p = (implementation[data.method as keyof typeof implementation] as any) as ((...args: any[]) => any)
             const e = (err: Error) => {
-                console.error(err)
                 mc.send('response', {
-                    callId: data.callId,
-                    return: undefined,
-                    error: err && err.message,
                     method: data.method,
+                    error: err && err.message ? err.message : err,
+                    return: undefined,
+                    callId: data.callId,
                 })
             }
             if (!p) {
@@ -122,29 +121,44 @@ export const AsyncCall = <AllCalls, OtherSide extends Partial<AllCalls>>(
             }
             const run = async () => {
                 const args = await transform('parse', 'param', data.method, data.args)
-                const result = await p(...args)
+                const promise = p(...args)
+                if (writeToConsole)
+                    console.log(
+                        `${key}.%c${data.method}%c(${args.map(() => '%o').join(', ')}%c)\n%o %c${data.callId}`,
+                        'color: #d2c057',
+                        '',
+                        ...args,
+                        '',
+                        promise,
+                        'color: gray; font-style: italic;',
+                    )
+                const result = await promise
                 return await transform('stringify', 'return', data.method, result)
             }
-            run().then(str => mc.send('response', { callId: data.callId, return: str, method: data.method }), e)
+            run().then(str => mc.send('response', { method: data.method, return: str, callId: data.callId }), e)
         }
     })
     mc.on('response', (data: Response) => {
         const [resolve, reject] = map.get(data.callId) || (([null, null] as any) as PromiseParam)
         if (!resolve) return // drop this response
         map.delete(data.callId)
-        if (data.error) return reject(data.error)
+        if (data.error) {
+            reject(new Error(data.error))
+            if (writeToConsole) console.error(data.error)
+            return
+        }
         transform('parse', 'return', data.method, data.return).then(resolve, reject)
     })
     interface Request {
         method: string
         args: string
-        callId: number
+        callId: string
     }
     interface Response {
         return: any
-        callId: number
+        callId: string
         method: string
-        error?: Error
+        error?: string
     }
     return new Proxy(
         {},
@@ -154,9 +168,11 @@ export const AsyncCall = <AllCalls, OtherSide extends Partial<AllCalls>>(
                     new Promise((resolve, reject) => {
                         if (typeof method !== 'string') return reject('Only string can be keys')
                         const id = Math.random()
+                            .toString(36)
+                            .slice(2)
 
                         transform('stringify', 'param', method, args).then(data => {
-                            mc.send('call', { method: method, callId: id, args: data })
+                            mc.send('call', { method: method, args: data, callId: id })
                             map.set(id, [resolve, reject])
                         }, reject)
                     })
