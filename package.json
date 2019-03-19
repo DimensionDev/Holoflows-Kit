@@ -13,15 +13,18 @@
     "lodash-es": "^4.1.2"
   },
   "scripts": {
-    "start": "npm-run-all --parallel start-tsc start-rollup",
+    "start": "npm-run-all --parallel clean start-tsc start-rollup",
     "start-tsc": "tsc --watch",
     "start-rollup": "rollup -c -w",
-    "build": "npm-run-all --parallel build-tsc build-rollup",
+    "build": "npm-run-all --parallel clean build-tsc build-rollup",
     "build-tsc": "tsc",
-    "build-rollup": "rollup -c"
+    "build-rollup": "rollup -c",
+    "clean": "rimraf ./es ./dist",
+    "prepublishOnly": "npm run build"
   },
   "devDependencies": {
     "npm-run-all": "^4.1.5",
+    "rimraf": "^2.6.3",
     "rollup": "^1.1.2",
     "rollup-plugin-commonjs": "^9.2.0",
     "rollup-plugin-node-resolve": "^4.0.0",

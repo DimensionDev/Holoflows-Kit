@@ -14,6 +14,7 @@ const config = {
         nodeResolve({
             browser: true,
             preferBuiltins: false,
+            module: true,
         }),
         replace({
             'process.env.NODE_ENV': JSON.stringify('production'),
@@ -21,6 +22,7 @@ const config = {
         typescript({ tsconfigOverride: { compilerOptions: { target: 'es5' } } }),
         commonjs({
             extensions: ['.js', '.ts', '.tsx'],
+            exclude: ['node_modules/lodash-es/'],
             namedExports: {
                 events: ['EventEmitter'],
             },

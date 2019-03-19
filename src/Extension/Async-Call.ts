@@ -104,9 +104,10 @@ export const AsyncCall = <AllCalls, OtherSide extends Partial<AllCalls>>(
         if (data.method in implementation) {
             const p = (implementation[data.method as keyof typeof implementation] as any) as ((...args: any[]) => any)
             const e = (err: Error) => {
+                if (writeToConsole) console.error(`${err.message} %c@${data.callId}\n%c${err.stack}`, 'color: gray', '')
                 mc.send('response', {
                     method: data.method,
-                    error: err && err.message ? err.message : err,
+                    error: err instanceof Error ? { message: err.message, stack: err.stack } : err,
                     return: undefined,
                     callId: data.callId,
                 })
@@ -124,7 +125,7 @@ export const AsyncCall = <AllCalls, OtherSide extends Partial<AllCalls>>(
                 const promise = p(...args)
                 if (writeToConsole)
                     console.log(
-                        `${key}.%c${data.method}%c(${args.map(() => '%o').join(', ')}%c)\n%o %c${data.callId}`,
+                        `${key}.%c${data.method}%c(${args.map(() => '%o').join(', ')}%c)\n%o %c@${data.callId}`,
                         'color: #d2c057',
                         '',
                         ...args,
@@ -143,8 +144,10 @@ export const AsyncCall = <AllCalls, OtherSide extends Partial<AllCalls>>(
         if (!resolve) return // drop this response
         map.delete(data.callId)
         if (data.error) {
-            reject(new Error(data.error))
-            if (writeToConsole) console.error(data.error)
+            const err = new Error(data.error.message)
+            reject(err)
+            if (writeToConsole)
+                console.error(`${data.error.message} %c@${data.callId}\n%c${data.error.stack}`, 'color: gray', '')
             return
         }
         transform('parse', 'return', data.method, data.return).then(resolve, reject)
@@ -158,7 +161,7 @@ export const AsyncCall = <AllCalls, OtherSide extends Partial<AllCalls>>(
         return: any
         callId: string
         method: string
-        error?: string
+        error?: { message: string; stack: string }
     }
     return new Proxy(
         {},

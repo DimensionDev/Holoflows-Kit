@@ -13,7 +13,10 @@ import { DomProxy } from './Proxy'
 import { EventEmitter } from 'events'
 import { LiveSelector } from './LiveSelector'
 
-import { differenceWith, intersectionWith, uniqWith } from 'lodash-es'
+// import { differenceWith, intersectionWith, uniqWith } from 'lodash-es'
+import differenceWith from 'lodash-es/differenceWith'
+import intersectionWith from 'lodash-es/intersectionWith'
+import uniqWith from 'lodash-es/uniqWith'
 
 //#region Interface for Watcher
 type RequireNode<T, V> = T extends Element ? V : never
