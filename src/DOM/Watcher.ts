@@ -44,13 +44,10 @@ interface MultipleNodeWatcher<T> {
      *
      * *Param comparer*: compare between two keys, defaults to `===`
      */
-    assignKeys: RequireNode<
-        T,
-        <Q = unknown>(
-            assigner: (node: T, index: number, arr: T[]) => Q,
-            comparer?: (a: Q, b: Q) => boolean,
-        ) => Watcher<T>
-    >
+    assignKeys: <Q = unknown>(
+        assigner: (node: T, index: number, arr: T[]) => Q,
+        comparer?: (a: Q, b: Q) => boolean,
+    ) => Watcher<T>
     useNodeForeach: RequireNode<
         T,
         (fn: (virtualNode: DomProxy, key: unknown, realNode: T) => useWatchCallback<T>) => Watcher<T>

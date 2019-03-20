@@ -31,5 +31,6 @@
     "rollup-plugin-replace": "^2.1.0",
     "rollup-plugin-typescript2": "^0.19.2",
     "typescript": "3.3.3"
-  }
+  },
+  "license": "AGPL-3.0-or-later"
 }

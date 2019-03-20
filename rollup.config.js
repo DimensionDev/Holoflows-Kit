@@ -19,7 +19,7 @@ const config = {
         replace({
             'process.env.NODE_ENV': JSON.stringify('production'),
         }),
-        typescript({ tsconfigOverride: { compilerOptions: { target: 'es5' } } }),
+        typescript({ tsconfigOverride: { compilerOptions: { target: 'es6' } } }),
         commonjs({
             extensions: ['.js', '.ts', '.tsx'],
             exclude: ['node_modules/lodash-es/'],

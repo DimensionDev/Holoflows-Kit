@@ -64,15 +64,15 @@ export class MessageCenter<ITypedMessages> {
         //     this.send('require_extension_id', undefined)
         // }
     }
-    public on<Key extends keyof ITypedMessages>(key: Key, handler: (data: ITypedMessages[Key]) => void): any {
+    public on<Key extends keyof ITypedMessages>(event: Key, handler: (data: ITypedMessages[Key]) => void): void {
         this.listeners.push({
             handler: data => handler(data),
-            key,
+            key: event,
         })
     }
 
     /** Send message to local or other instance of extension */
-    public send<Key extends keyof ITypedMessages>(key: Key, data: ITypedMessages[Key]): any {
+    public send<Key extends keyof ITypedMessages>(key: Key, data: ITypedMessages[Key]): void {
         if (this.writeToConsole) {
             console.log(
                 `%cSend%c %c${key.toString()}`,

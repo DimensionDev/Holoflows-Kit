@@ -11,6 +11,7 @@ export class ValueRef<T> extends Watcher<T> {
     }
     constructor(private _value: T) {
         super(new LiveSelector().replace(() => [this._value]))
+        this.startWatch()
     }
     startWatch() {
         this.watching = true
