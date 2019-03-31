@@ -21,6 +21,9 @@ jobs:
             - checkout
             - restore_cache:
                   keys:
+                      - build-cache
+            - restore_cache:
+                  keys:
                       - v1-dependencies-{{ checksum "package.json" }}
                       # fallback to using the latest cache if no exact match is found
                       - v1-dependencies-
@@ -30,6 +33,10 @@ jobs:
                       - node_modules
                   key: v1-dependencies-{{ checksum "package.json" }}
             - run: yarn build
+            - save_cache:
+                  paths:
+                      - .rpt2_cache
+                  key: build-cache
             - run: sudo apt-get install zip
             - run: zip -r commonjs.zip dist/
             - run: zip -r esmodule.zip es/

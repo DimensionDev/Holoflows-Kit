@@ -66,7 +66,7 @@ type EventFn<T> = (fn: CustomEvent<T> & { data: T }) => void
  * @abstract You need to implement `startWatch` and `stopWatch`
  */
 export abstract class Watcher<T> extends EventEmitter implements SingleNodeWatcher<T>, MultipleNodeWatcher<T> {
-    protected readonly nodeWatcher = new MutationWatcherHelper(this)
+    protected readonly nodeWatcher: MutationWatcherHelper = new MutationWatcherHelper(this)
     constructor(protected liveSelector: LiveSelector<T>) {
         super()
         this.nodeWatcher.callback = (key, node) => {
@@ -284,7 +284,7 @@ export abstract class Watcher<T> extends EventEmitter implements SingleNodeWatch
     //#endregion
 }
 
-class MutationWatcherHelper<T> {
+class MutationWatcherHelper {
     constructor(private ref: Watcher<any>) {}
     /** Observer */
     private observer = new MutationObserver(this.onMutation.bind(this))

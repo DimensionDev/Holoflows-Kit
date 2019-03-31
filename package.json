@@ -13,7 +13,7 @@
     "lodash-es": "^4.1.2"
   },
   "scripts": {
-    "start": "npm-run-all --parallel clean start-tsc start-rollup",
+    "start": "npm-run-all --parallel start-tsc start-rollup",
     "start-tsc": "tsc --watch",
     "start-rollup": "rollup -c -w",
     "build": "npm-run-all --parallel clean build-tsc build-rollup",
@@ -30,7 +30,7 @@
     "rollup-plugin-node-resolve": "^4.0.0",
     "rollup-plugin-replace": "^2.1.0",
     "rollup-plugin-typescript2": "^0.19.2",
-    "typescript": "3.3.3"
+    "typescript": "^3.4.1"
   },
   "license": "AGPL-3.0-or-later"
 }

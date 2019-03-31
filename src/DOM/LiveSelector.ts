@@ -23,7 +23,7 @@ type Params = { [key in keyof SelectorChainType]: SelectorChainType[key]['param'
  * call `#evaluateOnce` to evaluate the element. Falsy will be ignored.
  */
 export class LiveSelector<T> {
-    private generateMethod = <Key extends Keys>(type: Key) => (param: Params[Key]) => {
+    private generateMethod = <Key extends Keys>(type: Key) => (param: Params[Key]): LiveSelector<any> => {
         this.selectorChain.push({ type: type as any, param: param as any })
         return this as LiveSelector<any>
     }
