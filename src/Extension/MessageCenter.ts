@@ -26,13 +26,7 @@ export class MessageCenter<ITypedMessages> {
                 data,
             )
         }
-        const handled = this.listeners.filter(it => it.key === key).forEach(it => it.handler(data))
-        // TODO: Why?
-        // if (!handled) {
-        //     if (document && document.dispatchEvent) {
-        //         document.dispatchEvent(newMessage(key, data))
-        //     }
-        // }
+        this.listeners.filter(it => it.key === key).forEach(it => it.handler(data))
     }
     constructor(private instanceKey?: string) {
         if (chrome && chrome.runtime) {
@@ -50,19 +44,6 @@ export class MessageCenter<ITypedMessages> {
         if (document && document.addEventListener) {
             document.addEventListener(MessageCenterEvent, this.listener)
         }
-        // if (chrome && chrome.runtime && chrome.runtime.id) {
-        //     this.on('require_extension_id', () => {
-        //         this.send('provice_extension_id', chrome.runtime.id)
-        //         return true
-        //     })
-        // }
-        // if (!chrome || !chrome.runtime || !chrome.runtime.id) {
-        //     this.on('provice_extension_id', data => {
-        //         this.id = data
-        //         return true
-        //     })
-        //     this.send('require_extension_id', undefined)
-        // }
     }
     public on<Key extends keyof ITypedMessages>(event: Key, handler: (data: ITypedMessages[Key]) => void): void {
         this.listeners.push({
@@ -99,10 +80,9 @@ export class MessageCenter<ITypedMessages> {
         }
         // Send message to Content Script
         if (chrome && chrome.tabs) {
-            chrome.tabs.query({ active: true, currentWindow: true, discarded: false }, tab => {
-                const currentTab = tab[0]
-                if (currentTab && currentTab.id) {
-                    chrome.tabs.sendMessage(currentTab.id, msg)
+            chrome.tabs.query({ discarded: false }, tabs => {
+                for (const tab of tabs) {
+                    if (tab.id) chrome.tabs.sendMessage(tab.id, msg)
                 }
             })
         }
