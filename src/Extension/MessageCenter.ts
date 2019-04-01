@@ -28,7 +28,7 @@ export class MessageCenter<ITypedMessages> {
         }
         this.listeners.filter(it => it.key === key).forEach(it => it.handler(data))
     }
-    constructor(private instanceKey?: string) {
+    constructor(private instanceKey = '') {
         if (chrome && chrome.runtime) {
             // Fired when a message is sent from either an extension process (by runtime.sendMessage)
             // or a content script (by tabs.sendMessage).
