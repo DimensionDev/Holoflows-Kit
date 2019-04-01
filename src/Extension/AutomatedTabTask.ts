@@ -8,7 +8,7 @@ import { GetContext } from './Context'
  *
  * Usage:
  * In content script:
- * export const task = AutomatedTabTask({ async taskA() { return 'Done!' } }, new MessageCenter('tasks'))
+ * export const task = AutomatedTabTask({ async taskA() { return 'Done!' } })
  *
  * In background script:
  * import { task } from '...'
@@ -34,7 +34,7 @@ export function AutomatedTabTask<T extends Record<string, (...args: any[]) => Pr
                 tasksWithId[getTaskNameByTabId(taskName, tabId)] = value
             }
             // Register AsyncCall
-            AsyncCall(AsyncCallKey, tasksWithId, undefined, MessageCenter)
+            AsyncCall(tasksWithId, { key: AsyncCallKey })
         })
         return null
     } else if (GetContext() === 'background') {
@@ -50,7 +50,7 @@ export function AutomatedTabTask<T extends Record<string, (...args: any[]) => Pr
             }
         })
         // Register a empty AsyncCall for runtime-generated call
-        const asyncCall = AsyncCall<any, any>(AsyncCallKey, {}, undefined, MessageCenter)
+        const asyncCall = AsyncCall<any, any>({}, { key: AsyncCallKey })
         return (
             /** URL you want to execute the task ok */ url: string,
             /** When will the task timed out */ timeoutTime = 30 * 1000,

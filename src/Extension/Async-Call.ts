@@ -1,12 +1,40 @@
-/** transform Parameters and return values between value and string */
-export interface AsyncCallTransform<Param extends unknown[], Return> {
-    stringifyParam?(...args: Param): Promise<string>
-    parseParam?(result: string): Promise<Param>
-    stringifyReturn?(data: Return): Promise<string>
-    parseReturn?(result: string): Promise<Return>
+import { MessageCenter as HoloflowsMessageCenter } from './MessageCenter'
+import 'reflect-metadata' // Load types from reflect-metadata
+try {
+    // This is Optional!
+    require('reflect-metadata')
+} catch (e) {}
+
+//#region Serialization
+/**
+ * Define how to do serialization and deserialization of remote procedure call
+ */
+export interface Serialization {
+    serialization(from: any): Promise<unknown>
+    deserialization(serialized: unknown): Promise<any>
 }
-type Fn<T> = T extends (...args: unknown[]) => unknown ? T : never
-type PromiseOf<T> = T extends PromiseLike<infer U> ? U : never
+/**
+ * Do not do any serialization
+ */
+export const NoSerialization: Serialization = {
+    async serialization(from) {
+        return from
+    },
+    async deserialization(serialized) {
+        return serialized
+    },
+}
+export const JSONSerialization: Serialization = {
+    async serialization(from) {
+        return JSON.stringify(from)
+    },
+    async deserialization(serialized) {
+        return JSON.parse(serialized as string)
+    },
+}
+//#endregion
+type Default = Record<string, (...args: any[]) => Promise<any>>
+type GeneratorDefault = Record<string, (...args: any[]) => AsyncIterableIterator<any>>
 /**
  * Async call between different context.
  *
@@ -54,114 +82,181 @@ type PromiseOf<T> = T extends PromiseLike<infer U> ? U : never
  calls.dialog('hello')
  * ```
  */
-export const AsyncCall = <AllCalls, OtherSide extends Partial<AllCalls>>(
-    key: string,
-    implementation: Partial<AllCalls>,
-    protocol: {
-        [key in keyof AllCalls]?: AsyncCallTransform<
-            Parameters<Fn<AllCalls[key]>>,
-            PromiseOf<ReturnType<Fn<AllCalls[key]>>>
-        >
-    } = {},
-    messageCenter: {
-        new (key: string): {
+export interface AsyncCallOptions {
+    /**
+     * @param key
+     * The key of the async call, can be anything,
+     * but need to be same on the both side
+     */
+    key: string
+    /**
+     * @param Serializator
+     * How to serialization and deserialization parameters and return values
+     */
+    serializer: Serialization
+    /**
+     * @param MessageCenter
+     * A class that can let you transfer messages between two sides
+     */
+    MessageCenter: {
+        new (): {
             on(event: string, cb: (data: any) => void): void
             send(event: string, data: any): void
         }
-    },
-    dontThrowOnNotImplemented = true,
-    defaultParse = (x: any) => x,
-    defaultStringify = (x: any) => x,
-    writeToConsole = true,
-): OtherSide => {
-    const mc = new messageCenter(`${key}-async-call`)
+    }
+    /**
+     * @param dontThrowOnNotImplemented
+     * If this side receive messages that we didn't implemented, throw an error
+     */
+    dontThrowOnNotImplemented: boolean
+    /**
+     * @param writeToConsole
+     * Write all calls to console.
+     */
+    writeToConsole: boolean
+}
+export const AsyncCall = <
+    AllFunctions extends Default = Default,
+    OtherSideImplementedFunctions extends Partial<AllFunctions> = Partial<AllFunctions>
+>(
+    /**
+     * @param implementation
+     * Implementation of this side.
+     */
+    implementation: Partial<AllFunctions>,
+    /**
+     * @param options
+     * You can define your own serializer, MessageCenter and other options.
+     */
+    options: Partial<AsyncCallOptions> = {},
+): OtherSideImplementedFunctions => {
+    const { writeToConsole, serializer, dontThrowOnNotImplemented, MessageCenter, key } = {
+        MessageCenter: HoloflowsMessageCenter,
+        dontThrowOnNotImplemented: true,
+        serializer: NoSerialization,
+        writeToConsole: true,
+        key: 'default',
+        ...options,
+    } as Required<typeof options>
+    const message = new MessageCenter()
+    const CALL = `${key}-call`
+    const RESPONSE = `${key}-return`
     type PromiseParam = Parameters<(ConstructorParameters<typeof Promise>)[0]>
     const map = new Map<string, PromiseParam>()
-    function transform(type: 'stringify', subject: 'param' | 'return', method: string, data: any[]): Promise<string>
-    function transform(type: 'parse', subject: 'param' | 'return', method: string, data: string): Promise<any[]>
-    async function transform(
-        type: 'stringify' | 'parse',
-        subject: 'param' | 'return',
-        method: string,
-        data: any,
-    ): Promise<any> {
-        const prot = (protocol[method as keyof typeof protocol] || {}) as AsyncCallTransform<any, any>
-        const f = {
-            parse: {
-                param: () => (prot.parseParam ? prot.parseParam(data) : Promise.resolve(defaultParse(data))),
-                return: () => (prot.parseReturn ? prot.parseReturn(data) : Promise.resolve(defaultParse(data))),
-            },
-            stringify: {
-                param: () =>
-                    prot.stringifyParam ? prot.stringifyParam(data) : Promise.resolve(defaultStringify(data)),
-                return: () =>
-                    prot.stringifyReturn ? prot.stringifyReturn(data) : Promise.resolve(defaultStringify(data)),
-            },
-        }
-        return f[type][subject]()
-    }
-    mc.on('call', (data: Request) => {
-        if (data.method in implementation) {
-            const p = (implementation[data.method as keyof typeof implementation] as any) as ((...args: any[]) => any)
-            const e = (err: Error) => {
-                if (writeToConsole) console.error(`${err.message} %c@${data.callId}\n%c${err.stack}`, 'color: gray', '')
-                mc.send('response', {
-                    method: data.method,
-                    error: err instanceof Error ? { message: err.message, stack: err.stack } : err,
-                    return: undefined,
-                    callId: data.callId,
-                })
-            }
-            if (!p) {
+    message.on(CALL, async (_data: unknown) => {
+        let metadataOnRequest = getMetadata(_data)
+        const data: Request = await serializer.deserialization(_data)
+        try {
+            const executor = implementation[data.method as keyof typeof implementation]
+            if (!executor) {
                 if (dontThrowOnNotImplemented) {
-                    console.debug('Receive remote call, but not implemented.', key, data)
+                    return console.debug('Receive remote call, but not implemented.', key, data)
                 } else {
-                    e(new Error(`Remote-call: ${data.method}() not implemented!`))
+                    throw new Error(`Remote-call: ${data.method}() not implemented!`)
                 }
-                return
             }
-            const run = async () => {
-                const args = await transform('parse', 'param', data.method, data.args)
-                const promise = p(...args)
-                if (writeToConsole)
-                    console.log(
-                        `${key}.%c${data.method}%c(${args.map(() => '%o').join(', ')}%c)\n%o %c@${data.callId}`,
-                        'color: #d2c057',
-                        '',
-                        ...args,
-                        '',
-                        promise,
-                        'color: gray; font-style: italic;',
-                    )
-                const result = await promise
-                return await transform('stringify', 'return', data.method, result)
+            const args: any[] = data.args
+            if (data.metadata) {
+                // Read metadata on args
+                data.metadata.forEach((meta, index) => applyMetadata(args[index], meta))
             }
-            run().then(str => mc.send('response', { method: data.method, return: str, callId: data.callId }), e)
+            let promise: Promise<any>
+            if (metadataOnRequest) promise = executor.apply(applyMetadata({}, metadataOnRequest), args)
+            else promise = executor(...args)
+            if (writeToConsole)
+                console.log(
+                    `${key}.%c${data.method}%c(${args.map(() => '%o').join(', ')}%c)\n%o %c@${data.callId}`,
+                    'color: #d2c057',
+                    '',
+                    ...args,
+                    '',
+                    promise,
+                    'color: gray; font-style: italic;',
+                )
+            const result = await promise
+            const response: Response = {
+                method: data.method,
+                return: result,
+                callId: data.callId,
+                // Store metadata on result
+                metadata: getMetadata(result),
+            }
+            if (response.metadata === null) delete response.metadata
+            message.send(RESPONSE, await serializer.serialization(response))
+        } catch (err) {
+            if (writeToConsole) console.error(`${err.message} %c@${data.callId}\n%c${err.stack}`, 'color: gray', '')
+            const response = await serializer.serialization({
+                method: data.method,
+                error: err instanceof Error ? { message: err.message, stack: err.stack } : err,
+                return: undefined,
+                callId: data.callId,
+            })
+            message.send(RESPONSE, response)
         }
     })
-    mc.on('response', (data: Response) => {
+    message.on(RESPONSE, async (_data: unknown) => {
+        const metadataOnResponse = getMetadata(_data)
+        const data: Response = await serializer.deserialization(_data)
         const [resolve, reject] = map.get(data.callId) || (([null, null] as any) as PromiseParam)
         if (!resolve) return // drop this response
         map.delete(data.callId)
+        const apply = (obj: any) =>
+            applyMetadata(
+                obj,
+                defineMetadata(
+                    // Restore metadata on return value
+                    applyMetadata({}, data.metadata || null),
+                    'async-call-response',
+                    applyMetadata({}, metadataOnResponse),
+                ),
+            )
         if (data.error) {
             const err = new Error(data.error.message)
+            err.stack = data.error.stack
+            apply(err)
             reject(err)
             if (writeToConsole)
                 console.error(`${data.error.message} %c@${data.callId}\n%c${data.error.stack}`, 'color: gray', '')
-            return
+        } else {
+            apply(data.return)
+            resolve(data.return)
         }
-        transform('parse', 'return', data.method, data.return).then(resolve, reject)
     })
     interface Request {
         method: string
-        args: string
+        args: any[]
         callId: string
+        metadata?: (Record<string, any> | null)[]
     }
     interface Response {
         return: any
         callId: string
         method: string
         error?: { message: string; stack: string }
+        metadata?: Record<string, any> | null
+    }
+    function isObject(it: any): it is object {
+        return typeof it === 'object' ? it !== null : typeof it === 'function'
+    }
+    function getMetadata(obj: any): Record<string, any> | null {
+        if (!isObject(obj)) return null
+        if ('getOwnMetadataKeys' in Reflect === false) return null
+        return Reflect.getOwnMetadataKeys(obj)
+            .map(key => [key, Reflect.getOwnMetadata(key, obj)])
+            .reduce((prev, curr) => ({ ...prev, [curr[0]]: curr[1] }), {})
+    }
+    function applyMetadata<T>(obj: T, metadata: Record<string, any> | null): T {
+        if (!isObject(obj)) return obj
+        if (metadata === null) return obj
+        if ('defineMetadata' in Reflect === false) return obj
+        Object.entries(metadata).forEach(([key, value]) => Reflect.defineMetadata(key, value, obj))
+        return obj
+    }
+    function defineMetadata<T>(obj: T, key: string, data: any): T {
+        if (!isObject(obj)) return obj
+        if ('defineMetadata' in Reflect === false) return obj
+        Reflect.defineMetadata(key, data, obj)
+        return obj
     }
     return new Proxy(
         {},
@@ -173,13 +268,35 @@ export const AsyncCall = <AllCalls, OtherSide extends Partial<AllCalls>>(
                         const id = Math.random()
                             .toString(36)
                             .slice(2)
-
-                        transform('stringify', 'param', method, args).then(data => {
-                            mc.send('call', { method: method, args: data, callId: id })
+                        // Store metadata on args
+                        const metadata: Request['metadata'] = args.map(getMetadata)
+                        const req: Request = { method: method, args: args, callId: id, metadata }
+                        const metadataUsed = args.some(x => x !== null)
+                        if (!metadataUsed) delete req.metadata
+                        serializer.serialization(req).then(data => {
+                            message.send(CALL, data)
                             map.set(id, [resolve, reject])
                         }, reject)
                     })
             },
         },
-    ) as any
+    ) as OtherSideImplementedFunctions
 }
+
+// export const AsyncGeneratorCall = <
+//     AllFunctions extends GeneratorDefault = GeneratorDefault,
+//     OtherSideImplementedFunctions extends Partial<AllFunctions> = Partial<AllFunctions>
+// >(
+//     /**
+//      * @param implementation
+//      * Implementation of this side.
+//      */
+//     implementation: Partial<AllFunctions>,
+//     /**
+//      * @param options
+//      * You can define your own serializer, MessageCenter and other options.
+//      */
+//     options: Partial<AsyncCallOptions> = {},
+// ) => {
+//     return {} as OtherSideImplementedFunctions
+// }

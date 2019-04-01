@@ -19,7 +19,9 @@
     "pretty": true,
     "target": "es2018",
     "outDir": "./es/",
-    "incremental": true
+    "incremental": true,
+    "emitDecoratorMetadata": true,
+    "experimentalDecorators": true
   },
   "include": ["./src/**/*"]
 }
