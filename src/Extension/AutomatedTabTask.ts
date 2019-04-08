@@ -1,5 +1,4 @@
 import { sleep, timeout } from '../util/sleep'
-import { MessageCenter } from './MessageCenter'
 import { AsyncCall } from './Async-Call'
 import { GetContext } from './Context'
 
@@ -7,14 +6,26 @@ import { GetContext } from './Context'
  * Based on AsyncCall. Open a new page in the background, execute some task, then close it automatically.
  *
  * Usage:
- * In content script:
- * export const task = AutomatedTabTask({ async taskA() { return 'Done!' } })
  *
- * In background script:
+ * > In content script: (You must run this in the page you wanted to run task in!)
+ *
+ * ```ts
+ * export const task = AutomatedTabTask({
+ *   async taskA() {
+ *       return 'Done!'
+ *   },
+ * })
+ * ```
+ *
+ * > In background script:
+ *
+ * ```ts
  * import { task } from '...'
- * task('https://example.com/').taskA() // Open https://example.com/ then run taskA() on that page
- * @param taskImplements All tasks
- * @param key A unique key
+ * task('https://example.com/').taskA()
+ * // Open https://example.com/ then run taskA() on that page, which will return 'Done!'
+ * ```
+ * @param taskImplements All tasks that background page can call.
+ * @param AsyncCallKey A unique key, defaults to a extension specific url.
  */
 export function AutomatedTabTask<T extends Record<string, (...args: any[]) => Promise<any>>>(
     taskImplements: T,
@@ -50,7 +61,7 @@ export function AutomatedTabTask<T extends Record<string, (...args: any[]) => Pr
             }
         })
         // Register a empty AsyncCall for runtime-generated call
-        const asyncCall = AsyncCall<any, any>({}, { key: AsyncCallKey })
+        const asyncCall = AsyncCall<any>({}, { key: AsyncCallKey })
         return (
             /** URL you want to execute the task ok */ url: string,
             /** When will the task timed out */ timeoutTime = 30 * 1000,

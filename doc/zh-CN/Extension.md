@@ -104,6 +104,40 @@ calls.dialog('hello')
 
 返回一个类型为 `OtherSideImplementedFunctions` 的对象。
 
+# <a id="doc-automatedtabtask">AutomatedTabTask</a>
+
+基于 AsyncCall。打开一个新标签页，执行一些任务，然后自动关闭标签页。
+
+例子：
+
+> 在 content script 中（一定要在你需要执行任务的页面里注入！）：
+
+```ts
+export const task = AutomatedTabTask({
+    async taskA() {
+        return 'Done!'
+    },
+})
+```
+
+> 在背景页中：
+
+```ts
+import { task } from '...'
+task('https://example.com/').taskA()
+// 打开 https://example.com/，在上面运行 taskA()，等待返回结果（'Done!'）然后自动关闭页面
+```
+
+## 参数
+
+-   taskImplements: Content script 能执行的任务。
+-   AsyncCallKey: 一个 Key，默认对每个插件不同。
+
+## 返回值
+
+-   在 content script 上为 `null`
+-   在背景页上为 `typeof taskImplements`
+
 # <a id="doc-contexts">Contexts</a>
 
 辨别当前运行的上下文

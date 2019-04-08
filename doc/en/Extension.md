@@ -104,6 +104,40 @@ You can also build your own serializer by implement interface `Serialization`
 
 `typeof` the type parameter. (`<OtherSideImplementedFunctions>`)
 
+# <a id="doc-automatedtabtask">AutomatedTabTask</a>
+
+Based on AsyncCall. Open a new page in the background, execute some task, then close it automatically.
+
+Usage:
+
+> In content script: (You must run this in the page you wanted to run task in!)
+
+```ts
+export const task = AutomatedTabTask({
+    async taskA() {
+        return 'Done!'
+    },
+})
+```
+
+> In background script:
+
+```ts
+import { task } from '...'
+task('https://example.com/').taskA()
+// Open https://example.com/ then run taskA() on that page, which will return 'Done!'
+```
+
+## Parameters:
+
+-   taskImplements: All tasks that background page can call.
+-   AsyncCallKey: A unique key, defaults to a extension specific url.
+
+## Return:
+
+-   `null` on content script
+-   `typeof taskImplements` on background page
+
 # <a id="doc-contexts">Contexts</a>
 
 Identify the current running context
