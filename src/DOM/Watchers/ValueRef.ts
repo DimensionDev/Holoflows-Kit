@@ -1,23 +1,42 @@
-import { Watcher } from '../Watcher'
-import { LiveSelector } from '../LiveSelector'
-
-export class ValueRef<T> extends Watcher<T> {
+type Fn<T> = (newVal: T, oldVal: T) => void
+export class ValueRef<T> {
+    /** Get current value of a ValueRef */
     get value() {
         return this._value
     }
-    set value(v: T) {
-        this._value = v
-        this.watcherCallback()
+    /** Set current value of a ValueRef */
+    set value(newVal: T) {
+        const oldVal = this._value
+        this._value = newVal
+        for (const fn of this.watcher.keys()) {
+            try {
+                fn(newVal, oldVal)
+            } catch (e) {
+                console.error(e)
+            }
+        }
     }
-    constructor(private _value: T) {
-        super(new LiveSelector().replace(() => [this._value]))
-        this.startWatch()
+    /** All watchers */
+    private watcher = new Map<Fn<T>, boolean>()
+    constructor(private _value: T) {}
+    /**
+     * Add a listener. This will return a remover.
+     * Use it like: useEffect(() => ref.addListener(() => {...}))
+     */
+    addListener(fn: Fn<T>) {
+        this.watcher.set(fn, true)
+        return () => this.removeListener(fn)
     }
-    startWatch() {
-        this.watching = true
-        return this
+    /**
+     * Remove a listener
+     */
+    removeListener(fn: Fn<T>) {
+        this.watcher.delete(fn)
     }
-    stopWatch() {
-        this.watching = false
+    /**
+     * Remove all listeners
+     */
+    removeAllListener() {
+        this.watcher = new Map()
     }
 }
