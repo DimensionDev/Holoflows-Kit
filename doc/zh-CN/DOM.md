@@ -399,14 +399,14 @@ ele.addEventListener('click', watcher.eventListener)
 
 ### <a id="doc-valueref">ValueRef</a>
 
-ValueRef 与 `LiveSelector` 无关，它监听 `.value =`。例如：
+ValueRef 与 `Watcher` 无关，它监听 `.value =`。例如：
 
 ```ts
 const ref = new ValueRef(0)
 ref.value // 0
-ref.addEventListener('onChangeFull', () => console.log('onChange'))
+ref.addListener((newVal, old) => console.log(newVal, old))
 ref.value = 1
-// Log: onChange
+// Log: 1, 0
 ref.value // 1
 ```
 
@@ -417,6 +417,28 @@ ref.value // 1
 #### <a id="doc-valueref-value">`.value`</a>
 
 当前值。写入的话会触发事件。
+
+#### <a id="doc-valueref-addlistener>`.addListener(fn: (newValue: T, oldValue: T) => void): () => void`</a>
+
+添加监听器。当值改变的时候会被触发。
+
+-   newValue: 新的值
+-   oldValue: 旧的值
+
+返回一个函数，调用该函数会取消该监听器。可以用在 React 的 hooks 中。
+
+```ts
+const [val, setVal] = React.useState(0)
+React.useEffect(() => ref.addListener(setVal))
+```
+
+#### <a id="doc-valueref-removelistener>`.removeListener(fn: (newValue: T, oldValue: T) => void): void`</a>
+
+取消监听器。
+
+#### <a id="doc-valueref-removealllistener>`.removeAllListener(): void`</a>
+
+取消所有监听器。
 
 ### <a id="doc-watcher-protected">abstract class Watcher (protected)</a>
 

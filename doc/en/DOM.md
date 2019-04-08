@@ -401,14 +401,14 @@ ele.addEventListener('click', watcher.eventListener)
 
 ### <a id="doc-valueref">ValueRef</a>
 
-ValueRef is not using `LiveSelector`. It listen to `.value =`. e.g.:
+ValueRef is not related to `Watcher`. It listen to `.value =`. e.g.:
 
 ```ts
 const ref = new ValueRef(0)
 ref.value // 0
-ref.addEventListener('onChangeFull', () => console.log('onChange'))
+ref.addListener((newVal, old) => console.log(newVal, old))
 ref.value = 1
-// Log: onChange
+// Log: 1, 0
 ref.value // 1
 ```
 
@@ -419,6 +419,28 @@ ref.value // 1
 #### <a id="doc-valueref-value">`.value`</a>
 
 Current value. If you assign it, then it will emit event.
+
+#### <a id="doc-valueref-addlistener>`.addListener(fn: (newValue: T, oldValue: T) => void): () => void`</a>
+
+Add a listener. If value get changed, it will be called with these parameters.
+
+-   newValue: The new value
+-   oldValue: The old value
+
+`addListener` will return a function. Call that function will remove this listener. Be useful in React hooks.
+
+```ts
+const [val, setVal] = React.useState(0)
+React.useEffect(() => ref.addListener(setVal))
+```
+
+#### <a id="doc-valueref-removelistener>`.removeListener(fn: (newValue: T, oldValue: T) => void): void`</a>
+
+Remove listener.
+
+#### <a id="doc-valueref-removealllistener>`.removeAllListener(): void`</a>
+
+Remove all listeners.
 
 ### <a id="doc-watcher-protected">abstract class Watcher (protected)</a>
 
