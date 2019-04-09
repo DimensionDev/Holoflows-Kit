@@ -4,6 +4,11 @@
   "module": "./es/index.js",
   "main": "./dist/out.js",
   "typings": "./es/",
+  "homepage": "https://github.com/project-holoflows/holoflows-kit",
+  "bugs": {
+    "url": "https://github.com/project-holoflows/holoflows-kit/issues"
+  },
+  "readme": "https://github.com/project-holoflows/holoflows-kit/blob/master/README.md",
   "dependencies": {
     "@types/chrome": "^0.0.81",
     "@types/lodash-es": "^4.1.4",
