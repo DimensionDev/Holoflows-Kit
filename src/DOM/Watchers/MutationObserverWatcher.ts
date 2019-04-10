@@ -7,7 +7,7 @@ export class MutationObserverWatcher<T> extends Watcher<T> {
     constructor(
         protected liveSelector: LiveSelector<T>,
         /** The element that won't change during the whole watching lifetime. This may improve performance. */
-        private consistentWatchRoot: Element | Document = document.body,
+        private consistentWatchRoot: Node = document.body,
     ) {
         super(liveSelector)
     }
@@ -36,8 +36,13 @@ export class MutationObserverWatcher<T> extends Watcher<T> {
             subtree: true,
             ...options,
         }
-        this.observer.observe(this.consistentWatchRoot, option)
-        this.watcherCallback()
+        const watch = (root?: Node) => {
+            this.observer.observe(root || document.body, option)
+            this.watcherCallback()
+        }
+        if (document.readyState !== 'complete' && this.consistentWatchRoot === null) {
+            document.addEventListener('load', () => watch())
+        } else watch(this.consistentWatchRoot)
         return this
     }
     stopWatch() {
