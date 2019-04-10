@@ -146,6 +146,7 @@ Identify the current running context
 
 -   background: background page
 -   content: content script
+-   webpage: a normal webpage
 -   unknown: unknown
 
 ## <a id="doc-contexts-getcontext">`GetContext():`<a href="#doc-contexts-contexts">Contexts</a></a>

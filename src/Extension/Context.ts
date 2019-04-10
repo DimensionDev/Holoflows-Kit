@@ -1,14 +1,16 @@
-export type Contexts = 'background' | 'content' | 'unknown'
+export type Contexts = 'background' | 'content' | 'webpage' | 'unknown'
 /**
  * Get current running context.
  * - background: background script
  * - content: content script
+ * - webpage: a normal webpage
  * - unknown: unknown context
  */
 export function GetContext(): Contexts {
     if (typeof location === 'undefined') return 'unknown'
     if (location.protocol === 'chrome-extension:') return 'background'
-    return 'content'
+    if (typeof chrome !== 'undefined' && chrome.runtime && chrome.runtime.getManifest) return 'content'
+    return 'webpage'
 }
 /**
  * Make sure this file only run in (for Typescript user: but you can still export types) wanted context
