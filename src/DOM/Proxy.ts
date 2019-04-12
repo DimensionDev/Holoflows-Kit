@@ -42,7 +42,7 @@ export const DomProxy = function() {
                     return new Proxy(current_[key], {
                         apply: (target, thisArg, args) => {
                             changes.push({ type: 'callMethods', op: { name: key, param: args, thisArg } })
-                            current_[key](...args)
+                            return current_[key](...args)
                         },
                     })
                 else if (key === 'style')
