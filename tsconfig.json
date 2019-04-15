@@ -21,7 +21,8 @@
     "outDir": "./es/",
     "incremental": true,
     "emitDecoratorMetadata": true,
-    "experimentalDecorators": true
+    "experimentalDecorators": true,
+    "typeRoots": ["node_modules/@types", "node_modules/web-ext-types"]
   },
   "include": ["./src/**/*"]
 }
