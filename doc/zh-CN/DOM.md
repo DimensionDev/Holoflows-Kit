@@ -516,6 +516,10 @@ DomProxy 提供抽象的 Dom，其引用不随 Dom 变化而变化。
 
 一个 span 元素，始终位于 [realCurrent](#doc-domproxy-realCurrent) 前面
 
+### <a id="doc-domproxy-beforeshadow">`.beforeShadow`</a>
+
+等同于 .before.shadowRoot (闭合的)
+
 ### <a id="doc-domproxy-current">`.current`</a>
 
 一个伪装的 HTML 元素，对其的操作会转发到 [realCurrent](#doc-domproxy-realCurrent)，realCurrent 改变后，曾经的部分操作会被转发。
@@ -523,6 +527,10 @@ DomProxy 提供抽象的 Dom，其引用不随 Dom 变化而变化。
 ### <a id="doc-domproxy-after">`.after`</a>
 
 一个 span 元素，始终位于 [realCurrent](#doc-domproxy-realCurrent) 后面
+
+### <a id="doc-domproxy-aftershadow">`.afterShadow`</a>
+
+等同于 .after.shadowRoot (闭合的)
 
 ### <a id="dom-domproxy-realCurrent">`.realCurrent`</a>
 

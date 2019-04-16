@@ -23,8 +23,10 @@ export const DomProxy = function() {
     let isDestroyed = false
 
     let virtualBefore: HTMLSpanElement | null = null
+    let virtualBeforeShadow: ShadowRoot | null = null
     let current: Element | null = document.createElement('div')
     let virtualAfter: HTMLSpanElement | null = null
+    let virtualAfterShadow: ShadowRoot | null = null
     /** All changes applied on the `proxy` */
     let changes: (ActionTypes[keyof ActionTypes])[] = []
     /** Read Traps */
@@ -184,6 +186,13 @@ export const DomProxy = function() {
             return virtualBefore
         },
         /**
+         * A `shadowRoot` of the `this.before`.
+         */
+        get beforeShadow(): ShadowRoot {
+            if (!virtualBeforeShadow) virtualBeforeShadow = this.before.attachShadow({ mode: 'closed' })
+            return virtualBeforeShadow
+        },
+        /**
          * A proxy that always point to `realCurrent`,
          * and if `realCurrent` changes, all action will be forwarded to new `realCurrent`
          */
@@ -201,6 +210,10 @@ export const DomProxy = function() {
                 current && current.after(virtualAfter)
             }
             return virtualAfter
+        },
+        get afterShadow(): ShadowRoot {
+            if (!virtualAfterShadow) virtualAfterShadow = this.after.attachShadow({ mode: 'closed' })
+            return virtualAfterShadow
         },
         get realCurrent() {
             if (isDestroyed) return null
@@ -224,6 +237,8 @@ export const DomProxy = function() {
         destroy() {
             isDestroyed = true
             proxy.revoke()
+            virtualBeforeShadow = null
+            virtualAfterShadow = null
             if (virtualBefore) virtualBefore.remove()
             if (virtualAfter) virtualAfter.remove()
             virtualBefore = null

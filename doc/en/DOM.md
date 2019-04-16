@@ -520,6 +520,10 @@ Return this object
 
 A span element, always at before of [realCurrent](#doc-domproxy-realCurrent)
 
+### <a id="doc-domproxy-beforeshadow">`.beforeShadow`</a>
+
+Equal to .before.shadowRoot (but closed)
+
 ### <a id="doc-domproxy-current">`.current`</a>
 
 A fake HTML, all operations on it will be forwarded to [realCurrent](#doc-domproxy-realCurrent). After `realCurrent` changes, some of effects will be move to the new target.
@@ -527,6 +531,10 @@ A fake HTML, all operations on it will be forwarded to [realCurrent](#doc-dompro
 ### <a id="doc-domproxy-after">`.after`</a>
 
 A span element, alwyas at after of [realCurrent](#doc-domproxy-realCurrent)
+
+### <a id="doc-domproxy-aftershadow">`.afterShadow`</a>
+
+Equal to .after.shadowRoot (but closed)
 
 ### <a id="dom-domproxy-realCurrent">`.realCurrent`</a>
 
