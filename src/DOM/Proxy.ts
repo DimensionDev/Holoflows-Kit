@@ -15,7 +15,7 @@
  *
  * *move*: move effect to new `realCurrent`
  *
- * - style (forward, no-undo, move)
+ * - style (forward, undo, move)
  * - addEventListener (forward, undo, move)
  * - appendChild (forward, undo, move)
  */
@@ -48,7 +48,10 @@ export const DomProxy = function() {
                 else if (key === 'style')
                     return new Proxy((current as HTMLElement).style, {
                         set: (t, styleKey, styleValue, r) => {
-                            changes.push({ type: 'modifyStyle', op: { name: styleKey, value: styleValue } })
+                            changes.push({
+                                type: 'modifyStyle',
+                                op: { name: styleKey, value: styleValue, originalValue: current_.style[styleKey] },
+                            })
                             current_.style[styleKey] = styleValue
                             return true
                         },
@@ -122,12 +125,28 @@ export const DomProxy = function() {
     const modifyTrapsWrite = modifyTraps(true)
     const modifyTrapsNotWrite = modifyTraps(false)
     const proxy = Proxy.revocable({}, { ...readonlyTraps, ...modifyTrapsWrite })
+    function hasStyle(e: Element): e is HTMLElement {
+        return !!(e as any).style
+    }
     /** Call before realCurrent change */
-    function undoEffects() {
+    function undoEffects(nextCurrent?: Element | null) {
         for (const change of changes) {
-            if (change.type !== 'callMethods') continue
-            if (change.op.name !== 'addEventListener') continue
-            current && current.removeEventListener(...(change.op.param as [any, any, any]))
+            if (change.type === 'callMethods') {
+                const attr: keyof HTMLElement = change.op.name as any
+                if (attr === 'addEventListener') {
+                    current && current.removeEventListener(...(change.op.param as [any, any, any]))
+                } else if (attr === 'appendChild') {
+                    if (!nextCurrent) {
+                        const node = (change.op.thisArg as Parameters<HTMLElement['appendChild']>)[0]
+                        current && node && current.removeChild(node)
+                    }
+                }
+            } else if (change.type === 'modifyStyle') {
+                const { name, value, originalValue } = change.op
+                if (current && hasStyle(current)) {
+                    current.style[name as any] = originalValue
+                }
+            }
         }
     }
     /** Call after realCurrent change */
@@ -190,7 +209,7 @@ export const DomProxy = function() {
         set realCurrent(node: Element | null | undefined) {
             if (isDestroyed) throw new TypeError('You can not set current for a destroyed proxy')
             if (node === current) return
-            undoEffects()
+            undoEffects(node)
             if (node === null || node === undefined) {
                 current = document.createElement('div')
                 if (virtualBefore) virtualBefore.remove()
@@ -314,5 +333,5 @@ interface ActionTypes {
     isExtensible: ActionRecord<'isExtensible', undefined>
     getPrototypeOf: ActionRecord<'getPrototypeOf', undefined>
     callMethods: ActionRecord<'callMethods', { name: Keys; param: any[]; thisArg: any }>
-    modifyStyle: ActionRecord<'modifyStyle', { name: Keys; value: string }>
+    modifyStyle: ActionRecord<'modifyStyle', { name: Keys; value: string; originalValue: string }>
 }

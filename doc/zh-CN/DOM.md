@@ -542,7 +542,7 @@ DomProxy 提供抽象的 Dom，其引用不随 Dom 变化而变化。
 
 | 属性             | forward | undo | move |
 | ---------------- | ------- | ---- | ---- |
-| style            | Yes     | No   | Yes  |
+| style            | Yes     | Yes  | Yes  |
 | addEventListener | Yes     | Yes  | Yes  |
 | appendChild      | Yes     | Yes  | Yes  |
 | ...默认          | Yes     | No   | No   |

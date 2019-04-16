@@ -546,7 +546,7 @@ Destroy the DomProxy.
 
 | Attributes       | forward | undo | move |
 | ---------------- | ------- | ---- | ---- |
-| style            | Yes     | No   | Yes  |
+| style            | Yes     | Yes  | Yes  |
 | addEventListener | Yes     | Yes  | Yes  |
 | appendChild      | Yes     | Yes  | Yes  |
 | ...default       | Yes     | No   | No   |
