@@ -4,6 +4,7 @@ type RecordType<T extends string, F> = { type: T; param: F }
  */
 interface SelectorChainType {
     querySelector: RecordType<'querySelector', string>
+    closest: RecordType<'closest', string | number>
     querySelectorAll: RecordType<'querySelectorAll', string>
     filter: RecordType<'filter', (element: any, index: number, array: any[]) => boolean>
     map: RecordType<'map', (element: any) => any>
@@ -52,6 +53,22 @@ export class LiveSelector<T> {
     querySelectorAll<E extends Element = Element>(selectors: string): LiveSelector<E>
     querySelectorAll<T>(selectors: string): LiveSelector<T> {
         return this.generateMethod('querySelectorAll')(selectors)
+    }
+    /**
+     * Reversely select element in the parent
+     *
+     * ! Experimental API
+     *
+     * @example ```ts
+     * ls.closest('div')
+     * ls.closest(2) // parentElement.parentElement
+     * ```
+     */
+    unstable_closest<K extends keyof HTMLElementTagNameMap>(selectors: K): LiveSelector<HTMLElementTagNameMap[K]>
+    unstable_closest<K extends keyof SVGElementTagNameMap>(selectors: K): LiveSelector<SVGElementTagNameMap[K]>
+    unstable_closest<E extends Element = Element>(selectors: string): LiveSelector<E>
+    unstable_closest<T>(selectors: string | number): LiveSelector<T> {
+        return this.generateMethod('closest')(selectors)
     }
     //#endregion
 
@@ -142,7 +159,7 @@ export class LiveSelector<T> {
     /**
      * Evaluate selector expression
      */
-    evaluateOnce() {
+    evaluateOnce(): T[] {
         let arr: T[] = []
         for (const op of this.selectorChain) {
             switch (op.type) {
@@ -152,6 +169,24 @@ export class LiveSelector<T> {
                     break
                 case 'querySelectorAll':
                     arr.push(...document.querySelectorAll<any>(op.param))
+                    break
+                case 'closest':
+                    console.warn('LiveSelector#closet is a experimental API. Be careful with it')
+                    for (const x of arr)
+                        if (!(x instanceof Element)) throw new TypeError('Cannot use `.closet on non-Element`')
+                    const earr: Element[] = arr as any
+                    const selector = op.param
+                    function findParent(node: Element, y: number): Element | null {
+                        if (y < 0) throw new TypeError('Cannot use `.closet` with a negative number')
+                        if (y === 0) return node
+                        if (!node.parentElement) return null
+                        return findParent(node.parentElement, y - 1)
+                    }
+                    if (typeof selector === 'number') {
+                        arr = earr.map(e => findParent(e, op.param as number)).filter(x => x !== null) as any[]
+                    } else {
+                        arr = earr.map(x => ((x as any) as Element).closest(selector)).filter(x => x !== null) as any[]
+                    }
                     break
                 case 'filter':
                     arr = arr.filter(op.param).filter(x => x !== null)
