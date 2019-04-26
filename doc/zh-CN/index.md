@@ -17,6 +17,8 @@
 
 使用模块加载器时，使用 `@holoflows/kit` 导入；使用 umd 时，使用 `window.HoloflowsKit`。
 
+如果在 Chrome 中使用，需要加载 WebExtension 的 Polyfill (`webextension-polyfill`)。
+
 ### ECMAScript 版本
 
 因为本库重度依赖 [Proxy](https://mdn.io/Proxy)，所以支持 ES5 没有意义。

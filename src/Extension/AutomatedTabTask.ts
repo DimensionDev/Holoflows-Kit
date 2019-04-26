@@ -29,37 +29,41 @@ import { GetContext } from './Context'
  */
 export function AutomatedTabTask<T extends Record<string, (...args: any[]) => Promise<any>>>(
     taskImplements: T,
-    AsyncCallKey = chrome.runtime.getURL('@holoflows/kit:AutomatedTabTask'),
+    AsyncCallKey = browser.runtime.getURL('@holoflows/kit:AutomatedTabTask'),
 ) {
     const REGISTER = AsyncCallKey + ':ping'
     const getTaskNameByTabId = (task: string, tabId: number) => `${task}:${tabId}`
     if (GetContext() === 'content') {
         // If run in content script
         // Register this tab
-        chrome.runtime.sendMessage(REGISTER, (sender: chrome.runtime.MessageSender) => {
-            const tabId = sender.tab!.id!
-            if (!tabId) return
-            // Transform `methodA` to `methodA - 233` (if tabId = 233)
-            const tasksWithId: any = {}
-            for (const [taskName, value] of Object.entries(taskImplements)) {
-                tasksWithId[getTaskNameByTabId(taskName, tabId)] = value
-            }
-            // Register AsyncCall
-            AsyncCall(tasksWithId, { key: AsyncCallKey })
-        })
+        browser.runtime.sendMessage({ type: REGISTER }).then(
+            (sender: browser.runtime.MessageSender) => {
+                const tabId = sender.tab!.id!
+                if (!tabId) return
+                // Transform `methodA` to `methodA:233` (if tabId = 233)
+                const tasksWithId: any = {}
+                for (const [taskName, value] of Object.entries(taskImplements)) {
+                    tasksWithId[getTaskNameByTabId(taskName, tabId)] = value
+                }
+                // Register AsyncCall
+                AsyncCall(tasksWithId, { key: AsyncCallKey })
+            },
+            () => {},
+        )
         return null
     } else if (GetContext() === 'background') {
         type tabId = number
         /** If `tab` is ready */
         const readyMap: Record<tabId, boolean> = {}
         // Listen to tab REGISTER event
-        chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
-            if (message === REGISTER) {
-                // response its tab id
-                sendResponse(sender)
+        browser.runtime.onMessage.addListener(((message, sender) => {
+            if ((message as any).type === REGISTER) {
                 readyMap[sender.tab!.id!] = true
+                // response its tab id
+                return Promise.resolve(sender)
             }
-        })
+            return undefined
+        }) as browser.runtime.onMessageVoid)
         // Register a empty AsyncCall for runtime-generated call
         const asyncCall = AsyncCall<any>({}, { key: AsyncCallKey })
         return (
@@ -71,31 +75,27 @@ export function AutomatedTabTask<T extends Record<string, (...args: any[]) => Pr
                 {
                     get(_, taskName) {
                         return (...args: any[]) =>
-                            new Promise((resolve, reject) => {
+                            new Promise(async (resolve, reject) => {
                                 if (typeof taskName !== 'string') return reject('Key must be a string')
                                 // Create a new tab
-                                chrome.tabs.create(
-                                    {
-                                        active: false,
-                                        pinned: true,
-                                        url: url,
-                                    },
-                                    async tab => {
-                                        const tabId = tab.id!
-                                        // Wait for the tab register
-                                        while (readyMap[tabId] !== true) await sleep(50)
-                                        // Run the async call
-                                        const task: Promise<any> = asyncCall[getTaskNameByTabId(taskName, tabId)](
-                                            ...args,
-                                        )
-                                        timeout(task, timeoutTime)
-                                            .then(resolve, reject)
-                                            .finally(() => {
-                                                chrome.tabs.remove(tabId)
-                                                delete readyMap[tabId]
-                                            })
-                                    },
-                                )
+                                const tab = await browser.tabs.create({
+                                    active: false,
+                                    pinned: true,
+                                    url: url,
+                                })
+                                const tabId = tab.id!
+                                // Wait for the tab register
+                                while (readyMap[tabId] !== true) await sleep(50)
+                                // Run the async call
+                                const task: Promise<any> = asyncCall[getTaskNameByTabId(taskName, tabId)](...args)
+                                try {
+                                    resolve(await timeout(task, timeoutTime))
+                                } catch (e) {
+                                    reject(e)
+                                } finally {
+                                    browser.tabs.remove(tabId)
+                                    delete readyMap[tabId]
+                                }
                             })
                     },
                 },

@@ -1,9 +1,5 @@
 import { MessageCenter as HoloflowsMessageCenter } from './MessageCenter'
-import 'reflect-metadata' // Load types from reflect-metadata
-try {
-    // This is Optional!
-    require('reflect-metadata')
-} catch (e) {}
+import * as _unused from 'reflect-metadata' // Load types
 
 //#region Serialization
 /**
