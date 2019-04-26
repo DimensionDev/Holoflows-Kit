@@ -147,6 +147,7 @@ task('https://example.com/').taskA()
 -   background: 背景页
 -   content: 内容脚本
 -   webpage: 普通的网页
+-   options: 扩展的设置页
 -   unknown: 未知
 
 ## <a id="doc-contexts-getcontext">`GetContext():`<a href="#doc-contexts-contexts">Contexts</a></a>

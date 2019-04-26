@@ -1,4 +1,4 @@
-export type Contexts = 'background' | 'content' | 'webpage' | 'unknown'
+export type Contexts = 'background' | 'content' | 'webpage' | 'unknown' | 'options'
 function getRuntime(): typeof browser | null {
     if (typeof chrome !== 'undefined') return chrome as any
     if (typeof browser !== 'undefined') return browser
@@ -13,9 +13,18 @@ function getRuntime(): typeof browser | null {
  */
 export function GetContext(): Contexts {
     if (typeof location === 'undefined') return 'unknown'
-    if (location.protocol === 'chrome-extension:' || location.protocol === 'moz-extension:') return 'background'
     const runtime = getRuntime()
-    if (runtime && runtime.runtime && runtime.runtime.getManifest) return 'content'
+    if (runtime === null) return 'webpage'
+    if (location.protocol.match('-extension')) {
+        if (
+            runtime.extension &&
+            runtime.extension.getBackgroundPage &&
+            runtime.extension.getBackgroundPage().location.href === location.href
+        )
+            return 'background'
+        return 'options'
+    }
+    if (runtime.runtime && runtime.runtime.getManifest) return 'content'
     return 'webpage'
 }
 /**
