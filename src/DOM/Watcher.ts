@@ -13,7 +13,6 @@ import { DomProxy } from './Proxy'
 import { EventEmitter } from 'events'
 import { LiveSelector } from './LiveSelector'
 
-// import { differenceWith, intersectionWith, uniqWith } from 'lodash-es'
 import differenceWith from 'lodash-es/differenceWith'
 import intersectionWith from 'lodash-es/intersectionWith'
 import uniqWith from 'lodash-es/uniqWith'
@@ -23,7 +22,6 @@ type RequireNode<T, V> = T extends Element ? V : never
 interface SingleNodeWatcher<T> {
     /** The virtual node always point to the first result of the LiveSelector */
     firstVirtualNode: RequireNode<T, DomProxy>
-    /** Use it once */
 }
 type useWatchCallback<T> =
     | void
@@ -65,10 +63,10 @@ type EventFn<T> = (fn: CustomEvent<T> & { data: T }) => void
  *
  * @abstract You need to implement `startWatch` and `stopWatch`
  */
-export abstract class Watcher<T> extends EventEmitter implements SingleNodeWatcher<T>, MultipleNodeWatcher<T> {
+export abstract class Watcher<T> implements SingleNodeWatcher<T>, MultipleNodeWatcher<T> {
+    protected readonly eventEmitter = new EventEmitter()
     protected readonly nodeWatcher: MutationWatcherHelper = new MutationWatcherHelper(this)
     constructor(protected liveSelector: LiveSelector<T>) {
-        super()
         this.nodeWatcher.callback = (key, node) => {
             for (const [invariantKey, callbacks] of this.lastCallbackMap.entries()) {
                 if (this.keyComparer(key, invariantKey)) {
@@ -80,6 +78,22 @@ export abstract class Watcher<T> extends EventEmitter implements SingleNodeWatch
         }
     }
     public abstract startWatch(...args: any[]): this
+    //#region Watch once
+    public once<Q>(
+        fn: RequireNode<T, (realNode: T) => Promise<Q>>,
+        starter: (this: this) => void = () => this.startWatch(),
+    ): Promise<Q[]> {
+        return new Promise((resolve, reject) => {
+            const f: EventFn<T[]> = e => {
+                this.eventEmitter.removeListener('onChangeFull', f)
+                this.stopWatch()
+                Promise.all(e.data.map(fn)).then(resolve)
+            }
+            this.addListener('onChangeFull', f)
+            starter.call(this)
+        })
+    }
+    //#region
     public stopWatch(...args: any[]): void {
         this.watching = false
         this.nodeWatcher.destroy()
@@ -223,14 +237,14 @@ export abstract class Watcher<T> extends EventEmitter implements SingleNodeWatch
     addListener(event: 'onChangeFull', fn: EventFn<T[]>): this
     addListener(event: 'onRemove' | 'onAdd', fn: EventFn<{ node: T; key: unknown }[]>): this
     addListener(event: string | symbol, fn: (...args: any[]) => void) {
-        super.addListener(event, fn)
+        this.eventEmitter.addListener(event, fn)
         return this
     }
     emit(event: 'onChange', data: { oldNode: T; newNode: T; oldKey: unknown; newKey: unknown }[]): boolean
     emit(event: 'onChangeFull', data: T[]): boolean
     emit(event: 'onRemove' | 'onAdd', data: { node: T; key: unknown }[]): boolean
     emit(event: string | symbol, data: any) {
-        return super.emit(event, { data })
+        return this.eventEmitter.emit(event, { data })
     }
     //#endregion
     /**
