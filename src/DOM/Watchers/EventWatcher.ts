@@ -24,7 +24,4 @@ export class EventWatcher<T> extends Watcher<T> {
         this.watching = true
         return this
     }
-    stopWatch() {
-        this.watching = false
-    }
 }

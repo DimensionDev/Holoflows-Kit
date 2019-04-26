@@ -46,7 +46,7 @@ export class MutationObserverWatcher<T> extends Watcher<T> {
         return this
     }
     stopWatch() {
-        this.watching = false
+        super.stopWatch()
         this.observer.disconnect()
     }
 }

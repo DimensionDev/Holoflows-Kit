@@ -13,7 +13,7 @@ export class IntervalWatcher<T> extends Watcher<T> {
         return this
     }
     stopWatch() {
-        this.watching = false
+        super.stopWatch()
         if (this.timer) clearInterval(this.timer)
     }
 }

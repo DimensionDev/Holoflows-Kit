@@ -23,6 +23,7 @@ type RequireNode<T, V> = T extends Element ? V : never
 interface SingleNodeWatcher<T> {
     /** The virtual node always point to the first result of the LiveSelector */
     firstVirtualNode: RequireNode<T, DomProxy>
+    /** Use it once */
 }
 type useWatchCallback<T> =
     | void
@@ -40,7 +41,7 @@ interface MultipleNodeWatcher<T> {
      *
      * If the key is changed, the same node will call through `forEachRemove` then `forEach`
      *
-     * *Param map*: `node` => `key`, defaults to `node => node`
+     * *Param assigner*: `node` => `key`, defaults to `node => node`
      *
      * *Param comparer*: compare between two keys, defaults to `===`
      */
@@ -48,15 +49,14 @@ interface MultipleNodeWatcher<T> {
         assigner: (node: T, index: number, arr: T[]) => Q,
         comparer?: (a: Q, b: Q) => boolean,
     ) => Watcher<T>
-    useNodeForeach: RequireNode<
-        T,
-        (fn: (virtualNode: DomProxy, key: unknown, realNode: T) => useWatchCallback<T>) => Watcher<T>
-    >
+    useNodeForeach: (
+        fn: RequireNode<T, (virtualNode: DomProxy, key: unknown, realNode: T) => useWatchCallback<T>>,
+    ) => Watcher<T>
     /**
      * Get virtual node by key.
      * Virtual node will be unavailable if it is deleted
      */
-    getVirtualNodeByKey: RequireNode<T, (key: unknown) => DomProxy>
+    getVirtualNodeByKey: (key: RequireNode<T, unknown>) => DomProxy | null
 }
 //#endregion
 type EventFn<T> = (fn: CustomEvent<T> & { data: T }) => void
@@ -79,8 +79,11 @@ export abstract class Watcher<T> extends EventEmitter implements SingleNodeWatch
             }
         }
     }
-    abstract startWatch(...args: any[]): this
-    abstract stopWatch(...args: any[]): void
+    public abstract startWatch(...args: any[]): this
+    public stopWatch(...args: any[]): void {
+        this.watching = false
+        this.nodeWatcher.destroy()
+    }
     //#region Watcher
     /** Is the watcher running */
     protected watching = false
@@ -247,13 +250,14 @@ export abstract class Watcher<T> extends EventEmitter implements SingleNodeWatch
     protected keyComparer(a: unknown, b: unknown) {
         return a === b
     }
-    public assignKeys: MultipleNodeWatcher<T>['assignKeys'] = ((
-        ...args: Parameters<MultipleNodeWatcher<T>['assignKeys']>
-    ) => {
-        this.mapNodeToKey = args[0]
-        if (args[1]) this.keyComparer = args[1]
+    public assignKeys<Q = unknown>(
+        assigner: (node: T, index: number, arr: T[]) => Q,
+        comparer?: (a: Q, b: Q) => boolean,
+    ): Watcher<T> {
+        this.mapNodeToKey = assigner
+        if (comparer) this.keyComparer = comparer
         return this
-    }) as any
+    }
     /** Saved useNodeForeach */
     protected useNodeForeachFn: Parameters<MultipleNodeWatcher<T>['useNodeForeach']>[0] | null = null
     /**
@@ -267,7 +271,7 @@ export abstract class Watcher<T> extends EventEmitter implements SingleNodeWatch
      * `onTargetChanged` will be called when the node is still existing but target has changed.
      * `onNodeMutation` will be called when the node is the same, but it inner content or attributes are modified.
      */
-    public useNodeForeach: MultipleNodeWatcher<T>['useNodeForeach'] = ((
+    public useNodeForeach: MultipleNodeWatcher<T>['useNodeForeach'] = (
         ...args: Parameters<MultipleNodeWatcher<T>['useNodeForeach']>
     ) => {
         if (this.useNodeForeachFn) {
@@ -275,12 +279,13 @@ export abstract class Watcher<T> extends EventEmitter implements SingleNodeWatch
         }
         this.useNodeForeachFn = args[0]
         return this
-    }) as any
-    public getVirtualNodeByKey: MultipleNodeWatcher<T>['getVirtualNodeByKey'] = ((key: unknown) => {
-        return this.lastVirtualNodesMap.get(
-            [...this.lastVirtualNodesMap.keys()].find(_ => this.keyComparer(_, key)),
-        ) as ReturnType<MultipleNodeWatcher<T>['getVirtualNodeByKey']>
-    }) as any
+    }
+    public getVirtualNodeByKey(key: unknown) {
+        return (
+            this.lastVirtualNodesMap.get([...this.lastVirtualNodesMap.keys()].find(_ => this.keyComparer(_, key))) ||
+            null
+        )
+    }
     //#endregion
 }
 
@@ -333,5 +338,8 @@ class MutationWatcherHelper {
         for (const node of this.nodesMap.values()) {
             this.observer.observe(node, this.options)
         }
+    }
+    destroy() {
+        this.observer.disconnect()
     }
 }
