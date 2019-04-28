@@ -8,7 +8,7 @@ export type Contexts = 'background' | 'content' | 'webpage' | 'unknown' | 'optio
  */
 export function GetContext(): Contexts {
     if (typeof location === 'undefined') return 'unknown'
-    if (browser === null) return 'webpage'
+    if (typeof browser === 'undefined') return 'webpage'
     if (location.protocol.match('-extension')) {
         if (
             browser.extension &&
