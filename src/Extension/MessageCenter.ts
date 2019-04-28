@@ -16,7 +16,7 @@ export class MessageCenter<ITypedMessages> {
     private listener = (request: InternalMessageType | Event) => {
         let { key, data, instanceKey } = (request as CustomEvent).detail || request
         // Message is not for us
-        if (this.instanceKey !== instanceKey) return
+        if (this.instanceKey !== (instanceKey || '')) return
         if (this.writeToConsole) {
             console.log(
                 `%cReceive%c %c${key.toString()}`,
@@ -58,12 +58,12 @@ export class MessageCenter<ITypedMessages> {
      * Send message to local or other instance of extension
      * @param key Key of the message
      * @param data Data of the message
-     * @param alsoSendToDocument ! Send message to document. This may leaks secret!
+     * @param alsoSendToDocument ! Send message to document. This may leaks secret! Only open in localhost!
      */
     public send<Key extends keyof ITypedMessages>(
         key: Key,
         data: ITypedMessages[Key],
-        alsoSendToDocument = false,
+        alsoSendToDocument = location.hostname === 'localhost',
     ): void {
         if (this.writeToConsole) {
             console.log(

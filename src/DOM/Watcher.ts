@@ -79,15 +79,23 @@ export abstract class Watcher<T> implements SingleNodeWatcher<T>, MultipleNodeWa
     }
     public abstract startWatch(...args: any[]): this
     //#region Watch once
+    // TODO: Rewrite overload
+    /**
+     * @unstable
+     */
     public once<Q>(
-        fn: RequireNode<T, (realNode: T) => Promise<Q>>,
+        fn: RequireNode<T, (realNode: T) => Promise<Q> | Q>,
+        singleNode?: boolean,
         starter: (this: this) => void = () => this.startWatch(),
-    ): Promise<Q[]> {
+    ): Promise<Q[] | Q> {
         return new Promise((resolve, reject) => {
             const f: EventFn<T[]> = e => {
                 this.eventEmitter.removeListener('onChangeFull', f)
                 this.stopWatch()
-                Promise.all(e.data.map(fn)).then(resolve)
+                Promise.all(e.data.map(t => Promise.resolve(fn(t)))).then(data => {
+                    if (singleNode) resolve(data[0])
+                    else resolve(data)
+                })
             }
             this.addListener('onChangeFull', f)
             starter.call(this)
@@ -115,6 +123,10 @@ export abstract class Watcher<T> implements SingleNodeWatcher<T>, MultipleNodeWa
         if (i === -1) return null
         return list[i]
     }
+    /**
+     * If you're expecting repeating keys, set this option to true, this will omit the warning.
+     */
+    public omitWarningForRepeatedKeys = false
     /** Should be called every watch */
     protected watcherCallback = () => {
         if (!this.watching) return
@@ -124,9 +136,16 @@ export abstract class Watcher<T> implements SingleNodeWatcher<T>, MultipleNodeWa
 
         //#region Warn about repeated keys
         {
-            const uniq = uniqWith(thisKeyList, this.keyComparer)
-            if (uniq.length < thisKeyList.length) {
-                console.warn('There are repeated keys in your watcher. [uniqKeys, allKeys] = ', uniq, thisKeyList)
+            if (!this.omitWarningForRepeatedKeys) {
+                const uniq = uniqWith(thisKeyList, this.keyComparer)
+                if (uniq.length < thisKeyList.length) {
+                    console.warn(
+                        'There are repeated keys in your watcher. [uniqKeys, allKeys] = ',
+                        uniq,
+                        thisKeyList,
+                        ', to omit this warning, set watcher.omitWarningForRepeatedKeys to true',
+                    )
+                }
             }
         }
         //#endregion
