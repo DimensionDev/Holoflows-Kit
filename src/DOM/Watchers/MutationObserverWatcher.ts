@@ -3,7 +3,11 @@ import { LiveSelector } from '../LiveSelector'
 /**
  * A watcher based on MutationObserver
  */
-export class MutationObserverWatcher<T> extends Watcher<T> {
+export class MutationObserverWatcher<
+    T,
+    Before extends Element = HTMLSpanElement,
+    After extends Element = HTMLSpanElement
+> extends Watcher<T, Before, After> {
     constructor(
         protected liveSelector: LiveSelector<T>,
         /** The element that won't change during the whole watching lifetime. This may improve performance. */
@@ -24,7 +28,7 @@ export class MutationObserverWatcher<T> extends Watcher<T> {
         this.rAFLock = false
     }
     private onMutation(mutations: MutationRecord[], observer: MutationObserver) {
-        requestAnimationFrame(this.callback)
+        this.requestIdleCallback(this.callback)
     }
     startWatch(options?: MutationObserverInit) {
         this.stopWatch()

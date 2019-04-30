@@ -9,7 +9,7 @@
  * - Interval watcher (based on time interval)
  * - Event watcher (based on addEventListener)
  */
-import { DomProxy } from './Proxy'
+import { DomProxy, DomProxyOptions } from './Proxy'
 import { EventEmitter } from 'events'
 import { LiveSelector } from './LiveSelector'
 
@@ -17,13 +17,16 @@ import differenceWith from 'lodash-es/differenceWith'
 import intersectionWith from 'lodash-es/intersectionWith'
 import uniqWith from 'lodash-es/uniqWith'
 
-//#region Interface for Watcher
-type RequireNode<T, V> = T extends Element ? V : never
-interface SingleNodeWatcher<T> {
-    /** The virtual node always point to the first result of the LiveSelector */
-    firstVirtualNode: RequireNode<T, DomProxy>
+type RequireElement<T, V = T> = T extends Element ? V : never
+type ElementLikeT<T> = T extends Element ? T : never
+interface Deadline {
+    didTimeout: boolean
+    timeRemaining(): number
 }
-type useWatchCallback<T> =
+/**
+ * Return value of useNodeForeach
+ */
+type useNodeForeachReturns<T> =
     | void
     | ((oldNode: T) => void)
     | {
@@ -31,104 +34,114 @@ type useWatchCallback<T> =
           onTargetChanged?: (oldNode: T, newNode: T) => void
           onNodeMutation?: (node: T) => void
       }
-/** Watcher for multiple node */
-interface MultipleNodeWatcher<T> {
-    /**
-     * To help identify same nodes in different iteration,
-     * you need to implement a map function that map `node` => `key`
-     *
-     * If the key is changed, the same node will call through `forEachRemove` then `forEach`
-     *
-     * *Param assigner*: `node` => `key`, defaults to `node => node`
-     *
-     * *Param comparer*: compare between two keys, defaults to `===`
-     */
-    assignKeys: <Q = unknown>(
-        assigner: (node: T, index: number, arr: T[]) => Q,
-        comparer?: (a: Q, b: Q) => boolean,
-    ) => Watcher<T>
-    useNodeForeach: (
-        fn: RequireNode<T, (virtualNode: DomProxy, key: unknown, realNode: T) => useWatchCallback<T>>,
-    ) => Watcher<T>
-    /**
-     * Get virtual node by key.
-     * Virtual node will be unavailable if it is deleted
-     */
-    getVirtualNodeByKey: (key: RequireNode<T, unknown>) => DomProxy | null
-}
-//#endregion
-type EventFn<T> = (fn: CustomEvent<T> & { data: T }) => void
+type EventCallback<T> = (fn: CustomEvent<T> & { data: T }) => void
 /**
  * Use LiveSelector to watch dom change
  *
- * @abstract You need to implement `startWatch` and `stopWatch`
+ * @abstract You need to implement `startWatch`
  */
-export abstract class Watcher<T> implements SingleNodeWatcher<T>, MultipleNodeWatcher<T> {
+export abstract class Watcher<
+    T,
+    DomProxyBefore extends Element = HTMLSpanElement,
+    DomProxyAfter extends Element = HTMLSpanElement
+> {
+    /** Event emitter */
     protected readonly eventEmitter = new EventEmitter()
+    /** Node watcher, use for watch every node's change */
     protected readonly nodeWatcher: MutationWatcherHelper = new MutationWatcherHelper(this)
     constructor(protected liveSelector: LiveSelector<T>) {
         this.nodeWatcher.callback = (key, node) => {
             for (const [invariantKey, callbacks] of this.lastCallbackMap.entries()) {
                 if (this.keyComparer(key, invariantKey)) {
                     if (typeof callbacks === 'object' && callbacks.onNodeMutation) {
-                        callbacks.onNodeMutation(node as any)
+                        this.requestIdleCallback(() => callbacks.onNodeMutation!(node as any), { timeout: 200 })
                     }
                 }
             }
         }
+        if ('requestIdleCallback' in window) {
+            this.requestIdleCallback = window['requestIdleCallback']
+        }
     }
-    public abstract startWatch(...args: any[]): this
-    //#region Watch once
-    // TODO: Rewrite overload
+    //#region DomProxy options
+    protected domProxyOption: Partial<DomProxyOptions<DomProxyBefore, DomProxyAfter>> = {}
     /**
-     * @unstable
+     * Set option for DomProxy
+     * @param option DomProxy options
      */
-    public once<Q>(
-        fn: RequireNode<T, (realNode: T) => Promise<Q> | Q>,
-        singleNode?: boolean,
-        starter: (this: this) => void = () => this.startWatch(),
-    ): Promise<Q[] | Q> {
+    setDomProxyOption(option: Partial<DomProxyOptions<DomProxyBefore, DomProxyAfter>>): this {
+        this.domProxyOption = option
+        return this
+    }
+    //#endregion
+    //#region Watch once
+    /**
+     * Run the Watcher once. Once it emit data, stop watching.
+     * @param fn Map function transform T to Result
+     * @param starter function used to start the watcher, defaults to `() => this.startWatch()`
+     */
+    once<Result>(
+        fn: (data: T) => PromiseLike<Result> | Result,
+        starter: (this: this, watcher: this) => void = () => this.startWatch(),
+    ): Promise<Result[]> {
         return new Promise((resolve, reject) => {
-            const f: EventFn<T[]> = e => {
-                this.eventEmitter.removeListener('onChangeFull', f)
+            const f: EventCallback<T[]> = e => {
                 this.stopWatch()
-                Promise.all(e.data.map(t => Promise.resolve(fn(t)))).then(data => {
-                    if (singleNode) resolve(data[0])
-                    else resolve(data)
-                })
+                Promise.all(e.data.map(fn)).then(resolve, reject)
             }
-            this.addListener('onChangeFull', f)
+            this.eventEmitter.once('onChangeFull', f)
             starter.call(this)
         })
     }
-    //#region
-    public stopWatch(...args: any[]): void {
+    //#endregion
+    abstract startWatch(...args: any[]): this
+    stopWatch(...args: any[]): void {
         this.watching = false
-        this.nodeWatcher.destroy()
+        this.nodeWatcher.disconnect()
+        this.eventEmitter.removeAllListeners()
+        this.lastCallbackMap = new Map()
+        this.lastKeyList = []
+        this.lastNodeList = []
+        this.lastVirtualNodesMap = new Map()
     }
     //#region Watcher
     /** Is the watcher running */
+    protected requestIdleCallback(fn: (t: Deadline) => void, timeout?: { timeout: number }) {
+        const start = Date.now()
+        return setTimeout(() => {
+            fn({
+                didTimeout: false,
+                timeRemaining: function() {
+                    return Math.max(0, 50 - (Date.now() - start))
+                },
+            })
+        }, 1)
+    }
     protected watching = false
     /** Found key list of last watch */
     protected lastKeyList: unknown[] = []
     /** Found Node list of last watch */
     protected lastNodeList: T[] = []
     /** Saved callback map of last watch */
-    protected lastCallbackMap = new Map<unknown, useWatchCallback<T>>()
+    protected lastCallbackMap = new Map<unknown, useNodeForeachReturns<T>>()
     /** Saved virtual node of last watch */
-    protected lastVirtualNodesMap = new Map<unknown, DomProxy>()
+    protected lastVirtualNodesMap = new Map<unknown, DomProxy<ElementLikeT<T>, DomProxyBefore, DomProxyAfter>>()
     /** Find node from the given list by key */
     protected findNodeFromListByKey = (list: T[], keys: unknown[]) => (key: unknown) => {
         const i = keys.findIndex(x => this.keyComparer(x, key))
         if (i === -1) return null
         return list[i]
     }
+    protected _omitWarningForRepeatedKeys = false
     /**
-     * If you're expecting repeating keys, set this option to true, this will omit the warning.
+     * If you're expecting repeating keys, call this function, this will omit the warning.
      */
-    public omitWarningForRepeatedKeys = false
+    omitWarningForRepeatedKeys() {
+        this._omitWarningForRepeatedKeys = false
+        return this
+    }
     /** Should be called every watch */
-    protected watcherCallback = () => {
+    protected watcherCallback = (deadline?: Deadline) => {
         if (!this.watching) return
 
         const thisNodes = this.liveSelector.evaluateOnce()
@@ -136,7 +149,7 @@ export abstract class Watcher<T> implements SingleNodeWatcher<T>, MultipleNodeWa
 
         //#region Warn about repeated keys
         {
-            if (!this.omitWarningForRepeatedKeys) {
+            if (!this._omitWarningForRepeatedKeys) {
                 const uniq = uniqWith(thisKeyList, this.keyComparer)
                 if (uniq.length < thisKeyList.length) {
                     console.warn(
@@ -151,8 +164,8 @@ export abstract class Watcher<T> implements SingleNodeWatcher<T>, MultipleNodeWa
         //#endregion
 
         // New maps for the next generation
-        const nextCallbackMap = new Map<unknown, useWatchCallback<T>>()
-        const nextVirtualNodesMap = new Map<unknown, DomProxy>()
+        const nextCallbackMap = new Map<unknown, useNodeForeachReturns<T>>()
+        const nextVirtualNodesMap = new Map<unknown, DomProxy<ElementLikeT<T>, DomProxyBefore, DomProxyAfter>>()
 
         //#region Key is gone
         // Do: Delete node
@@ -164,13 +177,19 @@ export abstract class Watcher<T> implements SingleNodeWatcher<T>, MultipleNodeWa
                 const callbacks = this.lastCallbackMap.get(oldKey)
                 const node = findFromLast(oldKey)!
                 if (node instanceof Node) this.nodeWatcher.removeNode(oldKey)
-                if (callbacks) {
-                    if (typeof callbacks === 'function') virtualNode && callbacks(virtualNode.realCurrent as any)
-                    else if (callbacks.onRemove) {
-                        callbacks.onRemove(node)
-                    }
-                }
-                if (virtualNode) virtualNode.destroy()
+                // Delete node don't need a short timeout.
+                this.requestIdleCallback(
+                    () => {
+                        if (callbacks) {
+                            if (typeof callbacks === 'function') virtualNode && callbacks(virtualNode.realCurrent!)
+                            else if (callbacks.onRemove) {
+                                callbacks.onRemove(node)
+                            }
+                        }
+                        if (virtualNode) virtualNode.destroy()
+                    },
+                    { timeout: 2000 },
+                )
             }
         }
         //#endregion
@@ -186,9 +205,9 @@ export abstract class Watcher<T> implements SingleNodeWatcher<T>, MultipleNodeWa
                 if (node instanceof Element) {
                     this.nodeWatcher.addNode(newKey, node)
 
-                    const virtualNode = DomProxy()
-                    virtualNode.realCurrent = node
-
+                    const virtualNode = DomProxy<ElementLikeT<T>, DomProxyBefore, DomProxyAfter>(this.domProxyOption)
+                    virtualNode.realCurrent = node as ElementLikeT<T>
+                    // This step must be sync.
                     const callbacks = this.useNodeForeachFn(virtualNode, newKey, node)
                     nextCallbackMap.set(newKey, callbacks)
                     nextVirtualNodesMap.set(newKey, virtualNode)
@@ -211,10 +230,11 @@ export abstract class Watcher<T> implements SingleNodeWatcher<T>, MultipleNodeWa
                 this.nodeWatcher.addNode(newKey, newNode)
 
                 const virtualNode = this.lastVirtualNodesMap.get(oldKey)!
-                virtualNode.realCurrent = newNode
+                virtualNode.realCurrent = newNode as ElementLikeT<T>
 
                 const fn = this.lastCallbackMap.get(oldKey)
                 if (fn && typeof fn !== 'function' && fn.onTargetChanged) {
+                    // This should be ordered. So keep it sync now.
                     fn.onTargetChanged(oldNode, newNode)
                 }
             }
@@ -224,7 +244,7 @@ export abstract class Watcher<T> implements SingleNodeWatcher<T>, MultipleNodeWa
         // Key is the same, node is the same
         // Do: nothing
 
-        // Final: Copy the same keys
+        // #region Final: Copy the same keys
         for (const newKey of newSameKeys) {
             const oldKey = oldSameKeys.find(oldKey => this.keyComparer(newKey, oldKey))
             nextCallbackMap.set(newKey, this.lastCallbackMap.get(oldKey))
@@ -245,16 +265,22 @@ export abstract class Watcher<T> implements SingleNodeWatcher<T>, MultipleNodeWa
 
         // For single node mode
         const first = thisNodes[0]
-        if (first instanceof HTMLElement || first === undefined || first === null) {
-            this.firstVirtualNode.realCurrent = first as any
+        if (first instanceof Element) {
+            this.firstVirtualNode.realCurrent = first as ElementLikeT<T>
+        } else if (first === undefined || first === null) {
+            this.firstVirtualNode.realCurrent = null
         }
+        //#endregion
     }
     //#endregion
 
     //#region events
-    addListener(event: 'onChange', fn: EventFn<{ oldNode: T; newNode: T; oldKey: unknown; newKey: unknown }[]>): this
-    addListener(event: 'onChangeFull', fn: EventFn<T[]>): this
-    addListener(event: 'onRemove' | 'onAdd', fn: EventFn<{ node: T; key: unknown }[]>): this
+    addListener(
+        event: 'onChange',
+        fn: EventCallback<{ oldNode: T; newNode: T; oldKey: unknown; newKey: unknown }[]>,
+    ): this
+    addListener(event: 'onChangeFull', fn: EventCallback<T[]>): this
+    addListener(event: 'onRemove' | 'onAdd', fn: EventCallback<{ node: T; key: unknown }[]>): this
     addListener(event: string | symbol, fn: (...args: any[]) => void) {
         this.eventEmitter.addListener(event, fn)
         return this
@@ -269,7 +295,9 @@ export abstract class Watcher<T> implements SingleNodeWatcher<T>, MultipleNodeWa
     /**
      * This virtualNode always point to the first node in the LiveSelector
      */
-    public readonly firstVirtualNode: RequireNode<T, DomProxy> = DomProxy() as any
+    readonly firstVirtualNode: RequireElement<T, DomProxy<ElementLikeT<T>, DomProxyBefore, DomProxyAfter>> = DomProxy(
+        this.domProxyOption,
+    ) as any
     //#region For multiple nodes injection
     /**
      * Map `Node -> Key`, in case of you don't want the default behavior
@@ -283,16 +311,22 @@ export abstract class Watcher<T> implements SingleNodeWatcher<T>, MultipleNodeWa
     protected keyComparer(a: unknown, b: unknown) {
         return a === b
     }
-    public assignKeys<Q = unknown>(
-        assigner: (node: T, index: number, arr: T[]) => Q,
-        comparer?: (a: Q, b: Q) => boolean,
-    ): Watcher<T> {
+    /**
+     * To help identify same nodes in different iteration,
+     * you need to implement a map function that map `node` => `key`
+     *
+     * If the key is changed, the same node will call through `forEachRemove` then `forEach`
+     *
+     * @param assigner `node` => `key`, defaults to `node => node`
+     * @param comparer compare between two keys, defaults to `===`
+     */
+    assignKeys<Q = unknown>(assigner: (node: T, index: number, arr: T[]) => Q, comparer?: (a: Q, b: Q) => boolean) {
         this.mapNodeToKey = assigner
         if (comparer) this.keyComparer = comparer
         return this
     }
     /** Saved useNodeForeach */
-    protected useNodeForeachFn: Parameters<MultipleNodeWatcher<T>['useNodeForeach']>[0] | null = null
+    protected useNodeForeachFn: Parameters<Watcher<T, DomProxyBefore, DomProxyAfter>['useNodeForeach']>[0] | null = null
     /**
      * Just like React hooks.
      *
@@ -304,16 +338,29 @@ export abstract class Watcher<T> implements SingleNodeWatcher<T>, MultipleNodeWa
      * `onTargetChanged` will be called when the node is still existing but target has changed.
      * `onNodeMutation` will be called when the node is the same, but it inner content or attributes are modified.
      */
-    public useNodeForeach: MultipleNodeWatcher<T>['useNodeForeach'] = (
-        ...args: Parameters<MultipleNodeWatcher<T>['useNodeForeach']>
-    ) => {
+    useNodeForeach(
+        fn: RequireElement<
+            T,
+            (
+                virtualNode: DomProxy<ElementLikeT<T>, DomProxyBefore, DomProxyAfter>,
+                key: unknown,
+                realNode: T,
+            ) => useNodeForeachReturns<T>
+        >,
+    ) {
         if (this.useNodeForeachFn) {
             console.warn("You can't chain useNodeForeach currently. The old one will be replaced.")
         }
-        this.useNodeForeachFn = args[0]
+        this.useNodeForeachFn = fn
         return this
     }
-    public getVirtualNodeByKey(key: unknown) {
+
+    /**
+     * Get virtual node by key.
+     * Virtual node will be unavailable if it is deleted
+     * @param key Key used to find DomProxy
+     */
+    getVirtualNodeByKey(key: unknown) {
         return (
             this.lastVirtualNodesMap.get([...this.lastVirtualNodesMap.keys()].find(_ => this.keyComparer(_, key))) ||
             null
@@ -323,7 +370,7 @@ export abstract class Watcher<T> implements SingleNodeWatcher<T>, MultipleNodeWa
 }
 
 class MutationWatcherHelper {
-    constructor(private ref: Watcher<any>) {}
+    constructor(private ref: Watcher<any, any, any>) {}
     /** Observer */
     private observer = new MutationObserver(this.onMutation.bind(this))
     /** Watching nodes */
@@ -372,7 +419,7 @@ class MutationWatcherHelper {
             this.observer.observe(node, this.options)
         }
     }
-    destroy() {
+    disconnect() {
         this.observer.disconnect()
     }
 }

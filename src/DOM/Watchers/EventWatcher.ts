@@ -7,17 +7,29 @@ import { Watcher } from '../Watcher'
  * document.addEventListener('event', e.eventListener)
  * ```
  */
-export class EventWatcher<T> extends Watcher<T> {
+export class EventWatcher<
+    T,
+    Before extends Element = HTMLSpanElement,
+    After extends Element = HTMLSpanElement
+> extends Watcher<T, Before, After> {
     /** Limit computation by rAF */
-    private rAFLock = false
-    private _callback = () => {
-        if (this.rAFLock) return
-        this.rAFLock = true
-        this.watcherCallback()
-        this.rAFLock = false
-    }
+    private rICLock = false
+    // private _callback = () => {
+    //     if (this.rAFLock) return
+    //     this.rAFLock = true
+    //     this.watcherCallback()
+    //     this.rAFLock = false
+    // }
     public eventListener() {
-        requestAnimationFrame(this._callback)
+        this.requestIdleCallback(
+            deadline => {
+                if (this.rICLock) return
+                this.rICLock = true
+                this.watcherCallback(deadline)
+                this.rICLock = false
+            },
+            { timeout: 500 },
+        )
     }
     protected watching = true
     startWatch() {

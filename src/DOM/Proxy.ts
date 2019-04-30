@@ -1,3 +1,10 @@
+export interface DomProxyOptions<Before extends Element = HTMLSpanElement, After extends Element = HTMLSpanElement> {
+    /** Create the `before` node of the DomProxy */ createBefore(): Before
+    /** Create the `after` node of the DomProxy */ createAfter(): After
+    /** ShadowRootInit for creating the shadow of `before` */ beforeShadowRootInit: ShadowRootInit
+    /** ShadowRootInit for creating the shadow of `after` */ afterShadowRootInit: ShadowRootInit
+}
+
 /**
  * DomProxy provide an interface that be stable even dom is changed.
  *
@@ -19,13 +26,28 @@
  * - addEventListener (forward, undo, move)
  * - appendChild (forward, undo, move)
  */
-export const DomProxy = function() {
+export const DomProxy = function<
+    ProxiedElement extends Element = HTMLSuperSet,
+    Before extends Element = HTMLSpanElement,
+    After extends Element = HTMLSpanElement
+>(options: Partial<DomProxyOptions<Before, After>> = {}): DomProxy<ProxiedElement, Before, After> {
+    // Options
+    const { createAfter, createBefore, afterShadowRootInit, beforeShadowRootInit } = {
+        ...({
+            createAfter: () => document.createElement('span'),
+            createBefore: () => document.createElement('before'),
+            afterShadowRootInit: { mode: 'open' },
+            beforeShadowRootInit: { mode: 'open' },
+        } as DomProxyOptions),
+        ...options,
+    } as DomProxyOptions<Before, After>
+    //
     let isDestroyed = false
-
-    let virtualBefore: HTMLSpanElement | null = null
+    // Nodes
+    let virtualBefore: Before | null = null
     let virtualBeforeShadow: ShadowRoot | null = null
     let current: Element | null = document.createElement('div')
-    let virtualAfter: HTMLSpanElement | null = null
+    let virtualAfter: After | null = null
     let virtualAfterShadow: ShadowRoot | null = null
     /** All changes applied on the `proxy` */
     let changes: (ActionTypes[keyof ActionTypes])[] = []
@@ -174,52 +196,47 @@ export const DomProxy = function() {
         }
     }
     return {
-        /**
-         * A `span` element that always located at the before of `realCurrent`
-         */
-        get before(): HTMLSpanElement {
+        get weakBefore() {
+            if (isDestroyed) return null
+            return virtualBefore
+        },
+        get before() {
             if (isDestroyed) throw new TypeError('Try to access `before` node after VirtualNode is destroyed')
             if (!virtualBefore) {
-                virtualBefore = document.createElement('span')
+                virtualBefore = createBefore()
                 current && current.before(virtualBefore)
             }
             return virtualBefore
         },
-        /**
-         * A `shadowRoot` of the `this.before`.
-         */
         get beforeShadow(): ShadowRoot {
-            if (!virtualBeforeShadow) virtualBeforeShadow = this.before.attachShadow({ mode: 'closed' })
+            if (!virtualBeforeShadow) virtualBeforeShadow = this.before.attachShadow(beforeShadowRootInit)
             return virtualBeforeShadow
         },
-        /**
-         * A proxy that always point to `realCurrent`,
-         * and if `realCurrent` changes, all action will be forwarded to new `realCurrent`
-         */
-        get current(): HTMLSuperSet {
+        get current(): ProxiedElement {
             if (isDestroyed) throw new TypeError('Try to access `current` node after VirtualNode is destroyed')
-            return proxy.proxy as HTMLSuperSet
+            return proxy.proxy
         },
-        /**
-         * A `span` element that always located at the after of `current`
-         */
-        get after(): HTMLSpanElement {
+        get weakAfter() {
+            if (isDestroyed) return null
+            return virtualAfter
+        },
+        get after(): After {
             if (isDestroyed) throw new TypeError('Try to access `after` node after VirtualNode is destroyed')
             if (!virtualAfter) {
-                virtualAfter = document.createElement('span')
+                virtualAfter = createAfter()
                 current && current.after(virtualAfter)
             }
             return virtualAfter
         },
         get afterShadow(): ShadowRoot {
-            if (!virtualAfterShadow) virtualAfterShadow = this.after.attachShadow({ mode: 'closed' })
+            if (!virtualAfterShadow) virtualAfterShadow = this.after.attachShadow(afterShadowRootInit)
             return virtualAfterShadow
         },
-        get realCurrent() {
+        get realCurrent(): ProxiedElement | null {
             if (isDestroyed) return null
             return current as any
         },
-        set realCurrent(node: Element | null | undefined) {
+        set realCurrent(node: ProxiedElement | null) {
             if (isDestroyed) throw new TypeError('You can not set current for a destroyed proxy')
             if (node === current) return
             undoEffects(node)
@@ -247,7 +264,36 @@ export const DomProxy = function() {
         },
     }
 }
-export type DomProxy = ReturnType<typeof DomProxy>
+
+export interface DomProxy<
+    ProxiedElement extends Element = HTMLSuperSet,
+    Before extends Element = HTMLSpanElement,
+    After extends Element = HTMLSpanElement
+> {
+    /** Destroy the DomProxy */
+    destroy(): void
+    /** Returns the `before` element without implicitly create it. */
+    readonly weakBefore: Before | null
+    /** Returns the `before` element, if it doesn't exist, create it implicitly. */
+    readonly before: Before
+    /** Returns the `ShadowRoot` of the `before` element. */
+    readonly beforeShadow: ShadowRoot
+    /**
+     * A proxy that always point to `realCurrent`,
+     * and if `realCurrent` changes, all action will be forwarded to new `realCurrent`
+     */
+    readonly current: ProxiedElement
+    /** Returns the `after` element without implicitly create it. */
+    readonly weakAfter: After | null
+    /** Returns the `after` element, if it doesn't exist, create it implicitly. */
+    readonly after: After
+    /** Returns the `ShadowRoot` of the `after` element. */
+    readonly afterShadow: ShadowRoot
+    /**
+     * The real current of the `current`
+     */
+    realCurrent: ProxiedElement | null
+}
 //#region HTMLSuperSet
 type HTMLSuperSet = HTMLElement &
     HTMLAnchorElement &
