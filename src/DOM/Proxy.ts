@@ -195,7 +195,38 @@ export const DomProxy = function<
             }
         }
     }
+    // MutationObserver
+    const noop: MutationCallback = () => {}
+    let observerCallback = noop
+    let mutationObserverInit: MutationObserverInit | undefined = undefined
+    let observer: MutationObserver | null = null
+    function reObserve(reinit: boolean) {
+        observer && observer.disconnect()
+        if (observerCallback === noop || !current) return
+        if (reinit || !observer) observer = new MutationObserver(observerCallback)
+        observer.observe(current, mutationObserverInit)
+    }
     return {
+        observer: {
+            set callback(v) {
+                if (v === undefined) v = noop
+                observerCallback = v
+                reObserve(true)
+            },
+            get callback() {
+                return observerCallback
+            },
+            get init() {
+                return mutationObserverInit
+            },
+            set init(v) {
+                mutationObserverInit = v
+                reObserve(false)
+            },
+            get observer() {
+                return observer
+            },
+        },
         get weakBefore() {
             if (isDestroyed) return null
             return virtualBefore
@@ -240,6 +271,7 @@ export const DomProxy = function<
             if (isDestroyed) throw new TypeError('You can not set current for a destroyed proxy')
             if (node === current) return
             undoEffects(node)
+            reObserve(false)
             if (node === null || node === undefined) {
                 current = document.createElement('div')
                 if (virtualBefore) virtualBefore.remove()
@@ -252,6 +284,7 @@ export const DomProxy = function<
             }
         },
         destroy() {
+            observer && observer.disconnect()
             isDestroyed = true
             proxy.revoke()
             virtualBeforeShadow = null
@@ -293,6 +326,15 @@ export interface DomProxy<
      * The real current of the `current`
      */
     realCurrent: ProxiedElement | null
+    /**
+     * Observer for the current node.
+     * You need to set callback and init to activate it.
+     */
+    readonly observer: {
+        readonly observer: MutationObserver | null
+        callback: MutationCallback | undefined
+        init: MutationObserverInit | undefined
+    }
 }
 //#region HTMLSuperSet
 type HTMLSuperSet = HTMLElement &

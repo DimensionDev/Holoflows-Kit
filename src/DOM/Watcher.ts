@@ -32,7 +32,7 @@ type useNodeForeachReturns<T> =
     | {
           onRemove?: (old: T) => void
           onTargetChanged?: (oldNode: T, newNode: T) => void
-          onNodeMutation?: (node: T) => void
+          onNodeMutation?: (node: T, mutations: MutationRecord[]) => void
       }
 type EventCallback<T> = (fn: CustomEvent<T> & { data: T }) => void
 /**
@@ -47,18 +47,7 @@ export abstract class Watcher<
 > {
     /** Event emitter */
     protected readonly eventEmitter = new EventEmitter()
-    /** Node watcher, use for watch every node's change */
-    protected readonly nodeWatcher: MutationWatcherHelper = new MutationWatcherHelper(this)
     constructor(protected liveSelector: LiveSelector<T>) {
-        this.nodeWatcher.callback = (key, node) => {
-            for (const [invariantKey, callbacks] of this.lastCallbackMap.entries()) {
-                if (this.keyComparer(key, invariantKey)) {
-                    if (typeof callbacks === 'object' && callbacks.onNodeMutation) {
-                        this.requestIdleCallback(() => callbacks.onNodeMutation!(node as any), { timeout: 200 })
-                    }
-                }
-            }
-        }
         if ('requestIdleCallback' in window) {
             this.requestIdleCallback = window['requestIdleCallback']
         }
@@ -97,7 +86,6 @@ export abstract class Watcher<
     abstract startWatch(...args: any[]): this
     stopWatch(...args: any[]): void {
         this.watching = false
-        this.nodeWatcher.disconnect()
         this.eventEmitter.removeAllListeners()
         this.lastCallbackMap = new Map()
         this.lastKeyList = []
@@ -176,7 +164,6 @@ export abstract class Watcher<
                 const virtualNode = this.lastVirtualNodesMap.get(oldKey)
                 const callbacks = this.lastCallbackMap.get(oldKey)
                 const node = findFromLast(oldKey)!
-                if (node instanceof Node) this.nodeWatcher.removeNode(oldKey)
                 // Delete node don't need a short timeout.
                 this.requestIdleCallback(
                     () => {
@@ -203,12 +190,19 @@ export abstract class Watcher<
                 if (!this.useNodeForeachFn) break
                 const node = findFromNew(newKey)
                 if (node instanceof Element) {
-                    this.nodeWatcher.addNode(newKey, node)
-
                     const virtualNode = DomProxy<ElementLikeT<T>, DomProxyBefore, DomProxyAfter>(this.domProxyOption)
                     virtualNode.realCurrent = node as ElementLikeT<T>
                     // This step must be sync.
                     const callbacks = this.useNodeForeachFn(virtualNode, newKey, node)
+                    if (callbacks && typeof callbacks !== 'function' && callbacks.onNodeMutation) {
+                        virtualNode.observer.init = {
+                            subtree: true,
+                            childList: true,
+                            characterData: true,
+                            attributes: true,
+                        }
+                        virtualNode.observer.callback = m => callbacks.onNodeMutation!(node, m)
+                    }
                     nextCallbackMap.set(newKey, callbacks)
                     nextVirtualNodesMap.set(newKey, virtualNode)
                 }
@@ -226,9 +220,6 @@ export abstract class Watcher<
             .filter(([a, b]) => a !== b)
         for (const [oldNode, newNode, oldKey, newKey] of changedNodes) {
             if (newNode instanceof Element) {
-                this.nodeWatcher.removeNode(oldKey)
-                this.nodeWatcher.addNode(newKey, newNode)
-
                 const virtualNode = this.lastVirtualNodesMap.get(oldKey)!
                 virtualNode.realCurrent = newNode as ElementLikeT<T>
 
@@ -367,59 +358,4 @@ export abstract class Watcher<
         )
     }
     //#endregion
-}
-
-class MutationWatcherHelper {
-    constructor(private ref: Watcher<any, any, any>) {}
-    /** Observer */
-    private observer = new MutationObserver(this.onMutation.bind(this))
-    /** Watching nodes */
-    private nodesMap = new Map<unknown, Node>()
-    /** Limit onMutation computation by rAF */
-    private rAFLock = false
-    private onMutation(mutations: MutationRecord[], observer: MutationObserver) {
-        requestAnimationFrame(() => {
-            if (this.rAFLock) return
-            this.rAFLock = true
-            for (const mutation of mutations) {
-                for (const [key, node] of this.nodesMap.entries()) {
-                    let cNode: Node | null = mutation.target
-                    compare: while (cNode) {
-                        if (cNode === node) {
-                            this.callback(key, node)
-                            break compare
-                        }
-                        cNode = cNode.parentNode
-                    }
-                }
-            }
-            this.rAFLock = false
-        })
-    }
-    private readonly options = {
-        attributes: true,
-        characterData: true,
-        childList: true,
-        subtree: true,
-    }
-    callback = (key: unknown, node: Node) => {}
-    addNode(key: unknown, node: Node) {
-        this.observer.observe(node, this.options)
-        this.nodesMap.set(key, node)
-    }
-    removeNode(key: unknown) {
-        // No need to call this.observer.disconnect()
-        // See: https://developer.mozilla.org/en-US/docs/Web/API/MutationObserver/observe
-        // If you call observe() on a node that's already being observed by the same MutationObserver,
-        // all existing observers are automatically removed from all targets being observed before the new observer is activated.
-        // Access the protected `keyComparer` here
-        const foundKey = Array.from(this.nodesMap.keys()).find(k => (this.ref as any).keyComparer(k, key))
-        this.nodesMap.delete(foundKey)
-        for (const node of this.nodesMap.values()) {
-            this.observer.observe(node, this.options)
-        }
-    }
-    disconnect() {
-        this.observer.disconnect()
-    }
 }
