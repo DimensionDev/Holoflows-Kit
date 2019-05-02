@@ -27,7 +27,7 @@ export interface DomProxyOptions<Before extends Element = HTMLSpanElement, After
  * - appendChild (forward, undo, move)
  */
 export const DomProxy = function<
-    ProxiedElement extends Element = HTMLSuperSet,
+    ProxiedElement extends Element = HTMLElement,
     Before extends Element = HTMLSpanElement,
     After extends Element = HTMLSpanElement
 >(options: Partial<DomProxyOptions<Before, After>> = {}): DomProxy<ProxiedElement, Before, After> {
@@ -35,7 +35,7 @@ export const DomProxy = function<
     const { createAfter, createBefore, afterShadowRootInit, beforeShadowRootInit } = {
         ...({
             createAfter: () => document.createElement('span'),
-            createBefore: () => document.createElement('before'),
+            createBefore: () => document.createElement('span'),
             afterShadowRootInit: { mode: 'open' },
             beforeShadowRootInit: { mode: 'open' },
         } as DomProxyOptions),
@@ -299,7 +299,7 @@ export const DomProxy = function<
 }
 
 export interface DomProxy<
-    ProxiedElement extends Element = HTMLSuperSet,
+    ProxiedElement extends Element = HTMLElement,
     Before extends Element = HTMLSpanElement,
     After extends Element = HTMLSpanElement
 > {
@@ -336,91 +336,7 @@ export interface DomProxy<
         init: MutationObserverInit | undefined
     }
 }
-//#region HTMLSuperSet
-type HTMLSuperSet = HTMLElement &
-    HTMLAnchorElement &
-    HTMLAppletElement &
-    HTMLAreaElement &
-    HTMLAudioElement &
-    HTMLBaseElement &
-    HTMLBaseFontElement &
-    HTMLQuoteElement &
-    HTMLBodyElement &
-    HTMLBRElement &
-    HTMLButtonElement &
-    HTMLCanvasElement &
-    HTMLTableCaptionElement &
-    HTMLTableColElement &
-    HTMLTableColElement &
-    HTMLDataElement &
-    HTMLDataListElement &
-    HTMLModElement &
-    HTMLDetailsElement &
-    HTMLDialogElement &
-    HTMLDirectoryElement &
-    HTMLDivElement &
-    HTMLDListElement &
-    HTMLEmbedElement &
-    HTMLFieldSetElement &
-    HTMLFontElement &
-    HTMLFormElement &
-    HTMLFrameElement &
-    HTMLFrameSetElement &
-    HTMLHeadingElement &
-    HTMLHeadingElement &
-    HTMLHeadingElement &
-    HTMLHeadingElement &
-    HTMLHeadingElement &
-    HTMLHeadingElement &
-    HTMLHeadElement &
-    HTMLHRElement &
-    HTMLHtmlElement &
-    HTMLIFrameElement &
-    HTMLImageElement &
-    HTMLInputElement &
-    HTMLModElement &
-    HTMLLabelElement &
-    HTMLLegendElement &
-    HTMLLIElement &
-    HTMLLinkElement &
-    HTMLMapElement &
-    HTMLMarqueeElement &
-    HTMLMenuElement &
-    HTMLMetaElement &
-    HTMLMeterElement &
-    HTMLObjectElement &
-    HTMLOListElement &
-    HTMLOptGroupElement &
-    HTMLOptionElement &
-    HTMLOutputElement &
-    HTMLParagraphElement &
-    HTMLParamElement &
-    HTMLPictureElement &
-    HTMLPreElement &
-    HTMLProgressElement &
-    HTMLQuoteElement &
-    HTMLScriptElement &
-    HTMLSelectElement &
-    HTMLSlotElement &
-    HTMLSourceElement &
-    HTMLSpanElement &
-    HTMLStyleElement &
-    HTMLTableElement &
-    HTMLTableSectionElement &
-    HTMLTableDataCellElement &
-    HTMLTemplateElement &
-    HTMLTextAreaElement &
-    HTMLTableSectionElement &
-    HTMLTableHeaderCellElement &
-    HTMLTableSectionElement &
-    HTMLTimeElement &
-    HTMLTitleElement &
-    HTMLTableRowElement &
-    HTMLTrackElement &
-    HTMLUListElement &
-    HTMLVideoElement &
-    HTMLElement
-//#endregion
+
 type Keys = string | number | symbol
 type ActionRecord<T extends string, F> = { type: T; op: F }
 interface ActionTypes {

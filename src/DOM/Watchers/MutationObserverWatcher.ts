@@ -17,19 +17,17 @@ export class MutationObserverWatcher<
     }
 
     /** Observe whole document change */
-    private observer: MutationObserver = new MutationObserver(this.onMutation.bind(this))
+    private observer: MutationObserver = new MutationObserver((mutations, observer) => {
+        this.requestIdleCallback(() => {
+            if (this.rAFLock) return
+            this.rAFLock = true
+            this.watcherCallback()
+            this.rAFLock = false
+        })
+    })
 
     /** Limit onMutation computation by rAF */
     private rAFLock = false
-    private callback = () => {
-        if (this.rAFLock) return
-        this.rAFLock = true
-        this.watcherCallback()
-        this.rAFLock = false
-    }
-    private onMutation(mutations: MutationRecord[], observer: MutationObserver) {
-        this.requestIdleCallback(this.callback)
-    }
     startWatch(options?: MutationObserverInit) {
         this.stopWatch()
         this.watching = true

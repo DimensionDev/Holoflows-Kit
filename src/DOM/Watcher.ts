@@ -49,7 +49,7 @@ export abstract class Watcher<
     protected readonly eventEmitter = new EventEmitter()
     constructor(protected liveSelector: LiveSelector<T>) {
         if ('requestIdleCallback' in window) {
-            this.requestIdleCallback = window['requestIdleCallback']
+            this.requestIdleCallback = (...args: any) => (window as any)['requestIdleCallback'](...args)
         }
     }
     //#region DomProxy options
@@ -125,7 +125,7 @@ export abstract class Watcher<
      * If you're expecting repeating keys, call this function, this will omit the warning.
      */
     omitWarningForRepeatedKeys() {
-        this._omitWarningForRepeatedKeys = false
+        this._omitWarningForRepeatedKeys = true
         return this
     }
     /** Should be called every watch */
@@ -144,7 +144,7 @@ export abstract class Watcher<
                         'There are repeated keys in your watcher. [uniqKeys, allKeys] = ',
                         uniq,
                         thisKeyList,
-                        ', to omit this warning, set watcher.omitWarningForRepeatedKeys to true',
+                        ', to omit this warning, call watcher.omitWarningForRepeatedKeys',
                     )
                 }
             }
