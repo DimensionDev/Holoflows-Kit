@@ -51,7 +51,7 @@ export function AutomatedTabTask<T extends Record<string, (...args: any[]) => Pr
             () => {},
         )
         return null
-    } else if (GetContext() === 'background') {
+    } else if (GetContext() === 'background' || GetContext() === 'options') {
         type tabId = number
         /** If `tab` is ready */
         const readyMap: Record<tabId, boolean> = {}
