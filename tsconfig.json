@@ -22,7 +22,7 @@
     "incremental": true,
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
-    "typeRoots": ["node_modules/@types", "node_modules/web-ext-types"]
+    "typeRoots": ["node_modules/@types", "node_modules/web-ext-types", "src/types"]
   },
   "include": ["./src/**/*"]
 }
