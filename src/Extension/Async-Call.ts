@@ -1,5 +1,4 @@
 import { MessageCenter as HoloflowsMessageCenter } from './MessageCenter'
-import * as _unused from 'reflect-metadata' // Load types
 
 //#region Serialization
 /**
@@ -133,7 +132,6 @@ export const AsyncCall = <OtherSideImplementedFunctions = {}>(
     type PromiseParam = Parameters<(ConstructorParameters<typeof Promise>)[0]>
     const map = new Map<string, PromiseParam>()
     message.on(CALL, async (_data: unknown) => {
-        let metadataOnRequest = getMetadata(_data)
         const data: Request = await serializer.deserialization(_data)
         try {
             const executor = implementation[data.method as keyof typeof implementation]
@@ -145,13 +143,7 @@ export const AsyncCall = <OtherSideImplementedFunctions = {}>(
                 }
             }
             const args: any[] = data.args
-            if (data.metadata) {
-                // Read metadata on args
-                data.metadata.forEach((meta, index) => applyMetadata(args[index], meta))
-            }
-            let promise: Promise<any>
-            if (metadataOnRequest) promise = executor.apply(applyMetadata({}, metadataOnRequest), args)
-            else promise = executor(...args)
+            const promise = executor(...args)
             if (writeToConsole)
                 console.log(
                     `${key}.%c${data.method}%c(${args.map(() => '%o').join(', ')}%c)\n%o %c@${data.callId}`,
@@ -167,10 +159,7 @@ export const AsyncCall = <OtherSideImplementedFunctions = {}>(
                 method: data.method,
                 return: result,
                 callId: data.callId,
-                // Store metadata on result
-                metadata: getMetadata(result),
             }
-            if (response.metadata === null) delete response.metadata
             message.send(RESPONSE, await serializer.serialization(response))
         } catch (err) {
             if (writeToConsole) console.error(`${err.message} %c@${data.callId}\n%c${err.stack}`, 'color: gray', '')
@@ -184,30 +173,17 @@ export const AsyncCall = <OtherSideImplementedFunctions = {}>(
         }
     })
     message.on(RESPONSE, async (_data: unknown) => {
-        const metadataOnResponse = getMetadata(_data)
         const data: Response = await serializer.deserialization(_data)
         const [resolve, reject] = map.get(data.callId) || (([null, null] as any) as PromiseParam)
         if (!resolve) return // drop this response
         map.delete(data.callId)
-        const apply = (obj: any) =>
-            applyMetadata(
-                obj,
-                defineMetadata(
-                    // Restore metadata on return value
-                    applyMetadata({}, data.metadata || null),
-                    'async-call-response',
-                    applyMetadata({}, metadataOnResponse),
-                ),
-            )
         if (data.error) {
             const err = new Error(data.error.message)
             err.stack = data.error.stack
-            apply(err)
             reject(err)
             if (writeToConsole)
                 console.error(`${data.error.message} %c@${data.callId}\n%c${data.error.stack}`, 'color: gray', '')
         } else {
-            apply(data.return)
             resolve(data.return)
         }
     })
@@ -215,37 +191,12 @@ export const AsyncCall = <OtherSideImplementedFunctions = {}>(
         method: string
         args: any[]
         callId: string
-        metadata?: (Record<string, any> | null)[]
     }
     interface Response {
         return: any
         callId: string
         method: string
         error?: { message: string; stack: string }
-        metadata?: Record<string, any> | null
-    }
-    function isObject(it: any): it is object {
-        return typeof it === 'object' ? it !== null : typeof it === 'function'
-    }
-    function getMetadata(obj: any): Record<string, any> | null {
-        if (!isObject(obj)) return null
-        if ('getOwnMetadataKeys' in Reflect === false) return null
-        return Reflect.getOwnMetadataKeys(obj)
-            .map(key => [key, Reflect.getOwnMetadata(key, obj)])
-            .reduce((prev, curr) => ({ ...prev, [curr[0]]: curr[1] }), {})
-    }
-    function applyMetadata<T>(obj: T, metadata: Record<string, any> | null): T {
-        if (!isObject(obj)) return obj
-        if (metadata === null) return obj
-        if ('defineMetadata' in Reflect === false) return obj
-        Object.entries(metadata).forEach(([key, value]) => Reflect.defineMetadata(key, value, obj))
-        return obj
-    }
-    function defineMetadata<T>(obj: T, key: string, data: any): T {
-        if (!isObject(obj)) return obj
-        if ('defineMetadata' in Reflect === false) return obj
-        Reflect.defineMetadata(key, data, obj)
-        return obj
     }
     return new Proxy(
         {},
@@ -257,11 +208,7 @@ export const AsyncCall = <OtherSideImplementedFunctions = {}>(
                         const id = Math.random()
                             .toString(36)
                             .slice(2)
-                        // Store metadata on args
-                        const metadata: Request['metadata'] = args.map(getMetadata)
-                        const req: Request = { method: method, args: args, callId: id, metadata }
-                        const metadataUsed = args.some(x => x !== null)
-                        if (!metadataUsed) delete req.metadata
+                        const req: Request = { method: method, args: args, callId: id }
                         serializer.serialization(req).then(data => {
                             message.send(CALL, data)
                             map.set(id, [resolve, reject])
