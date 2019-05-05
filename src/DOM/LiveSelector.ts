@@ -1,10 +1,11 @@
-import { clone } from 'lodash-es'
-
 type RecordType<T extends string, F> = { type: T; param: F }
 /**
  * Define all possible recordable operations.
  */
 interface SelectorChainType {
+    getElementsByClassName: RecordType<'getElementsByClassName', string>
+    getElementsByTagName: RecordType<'getElementsByTagName', string>
+    getElementById: RecordType<'getElementById', string>
     querySelector: RecordType<'querySelector', string>
     closest: RecordType<'closest', string | number>
     querySelectorAll: RecordType<'querySelectorAll', string>
@@ -48,21 +49,52 @@ export class LiveSelector<T> {
      */
     querySelector<K extends keyof HTMLElementTagNameMap>(selectors: K): LiveSelector<HTMLElementTagNameMap[K]>
     querySelector<K extends keyof SVGElementTagNameMap>(selectors: K): LiveSelector<SVGElementTagNameMap[K]>
-    querySelector<E extends Element = Element>(selectors: string): LiveSelector<E>
-    querySelector<T>(selectors: string): LiveSelector<T> {
+    querySelector<E extends Element = Element>(selectors: string): LiveSelector<E> {
         return this.generateMethod('querySelector')(selectors)
     }
     /**
      * Select all element descendants of node that match selectors.
      *
+     * @param selectors Selector
      * @example ```ts
      * ls.querySelector('div > div')```
      */
     querySelectorAll<K extends keyof HTMLElementTagNameMap>(selectors: K): LiveSelector<HTMLElementTagNameMap[K]>
     querySelectorAll<K extends keyof SVGElementTagNameMap>(selectors: K): LiveSelector<SVGElementTagNameMap[K]>
-    querySelectorAll<E extends Element = Element>(selectors: string): LiveSelector<E>
-    querySelectorAll<T>(selectors: string): LiveSelector<T> {
+    querySelectorAll<E extends Element = Element>(selectors: string): LiveSelector<E> {
         return this.generateMethod('querySelectorAll')(selectors)
+    }
+    /**
+     * Select all element base on the current result.
+     * @param className Class name
+     * @example ```ts
+     * ls.getElementsByClassName('a').getElementsByClassName('b')
+     * // Equal to ls.querySelectorAll('.a .b')```
+     */
+    getElementsByClassName<T extends Element = Element>(className: string): LiveSelector<T> {
+        return this.generateMethod('getElementsByClassName')(className)
+    }
+    /**
+     * Select all element base on the current result.
+     * @param tag Tag name
+     * @example ```ts
+     * ls.getElementsByTagName('a').getElementsByTagName('b')
+     * // Equal to ls.querySelectorAll('a b')```
+     */
+    getElementsByTagName<K extends keyof HTMLElementTagNameMap>(tag: K): LiveSelector<HTMLElementTagNameMap[K]>
+    getElementsByTagName<K extends keyof SVGElementTagNameMap>(tag: K): LiveSelector<SVGElementTagNameMap[K]>
+    getElementsByTagName<E extends Element = Element>(tag: string): LiveSelector<E> {
+        return this.generateMethod('getElementsByTagName')(tag)
+    }
+    /**
+     * Select element by ID.
+     * @param id id
+     * @example ```ts
+     * ls.getElementById('a')
+     * // Equal to ls.querySelector('#a')```
+     */
+    getElementById<E extends Element = Element>(id: string): LiveSelector<E> {
+        return this.generateMethod('getElementById')(id)
     }
     /**
      * Reversely select element in the parent
@@ -180,6 +212,10 @@ export class LiveSelector<T> {
         }
         for (const op of this.selectorChain) {
             switch (op.type) {
+                case 'getElementById':
+                    const e = document.getElementById(op.param)
+                    e && arr.push(e)
+                    break
                 case 'querySelector':
                     if (arr.length === 0) {
                         const e = document.querySelector(op.param)
@@ -187,17 +223,20 @@ export class LiveSelector<T> {
                     } else if (isElementArray(arr)) arr = arr.map(e => e.querySelector(op.param)).filter(nonNull)
                     else throw new TypeError('Call querySelector on non-Element item!')
                     break
+                case 'getElementsByTagName':
+                case 'getElementsByClassName':
                 case 'querySelectorAll':
+                    type F = (x: string) => NodeListOf<Element> | HTMLCollectionOf<Element>
                     if (arr.length === 0) {
-                        const e = document.querySelectorAll(op.param)
+                        const e = (document[op.type] as F)(op.param)
                         arr.push(...e)
                     } else if (isElementArray(arr)) {
                         const newArr: Element[] = []
                         for (const e of arr) {
-                            newArr.concat(Array.from(e.querySelectorAll(op.param)))
+                            newArr.concat(Array.from((e[op.type] as F)(op.param)))
                         }
                         arr = newArr.filter(nonNull)
-                    } else throw new TypeError('Call querySelectorAll on non-Element item!')
+                    } else throw new TypeError(`Call ${op.type} on non-Element item!`)
                     break
                 case 'closest':
                     console.warn('LiveSelector#closet is a experimental API. Be careful with it')
