@@ -17,6 +17,18 @@ interface AutomatedTabTaskSharedOptions {
      * @default 30000
      */
     timeout: number
+    /**
+     * Should the new tab pinned?
+     * @default true
+     *
+     * !TODO: make it false on Vavaldi.
+     */
+    pinned: boolean
+    /**
+     * Should the new tab to be closed automatically?
+     * @default true
+     */
+    autoClose: boolean
 }
 export interface AutomatedTabTaskDefineTimeOptions extends AutomatedTabTaskSharedOptions {
     /**
@@ -71,13 +83,23 @@ export function AutomatedTabTask<T extends Record<string, (...args: any[]) => Pr
     taskImplements: T,
     options: Partial<AutomatedTabTaskDefineTimeOptions> = {},
 ) {
-    const { timeout: defaultTimeout, key: AsyncCallKey, concurrent, memorable: defaultMemorable, memorizeTTL } = {
+    const {
+        timeout: defaultTimeout,
+        key: AsyncCallKey,
+        concurrent,
+        memorable: defaultMemorable,
+        memorizeTTL,
+        autoClose: defaultAutoClose,
+        pinned: defaultPinned,
+    } = {
         ...({
             timeout: 30 * 1000,
             key: browser.runtime.getURL('@holoflows/kit:AutomatedTabTask'),
             concurrent: 3,
             memorizeTTL: 30 * 60 * 1000,
             memorable: false,
+            autoClose: true,
+            pinned: true,
         } as AutomatedTabTaskDefineTimeOptions),
         ...options,
     }
@@ -117,12 +139,20 @@ export function AutomatedTabTask<T extends Record<string, (...args: any[]) => Pr
         // Register a empty AsyncCall for runtime-generated call
         const asyncCall = AsyncCall<any>({}, { key: AsyncCallKey })
         const lock = new Lock(concurrent)
-        async function runTask(url: string, taskName: string, timeout: number, withoutLock: boolean, args: any[]) {
+        async function runTask(
+            url: string,
+            taskName: string,
+            timeout: number,
+            withoutLock: boolean,
+            pinned: boolean,
+            autoClose: boolean,
+            args: any[],
+        ) {
             if (!withoutLock) await lock.lock(timeout)
             // Create a new tab
             const tab = await browser.tabs.create({
                 active: false,
-                pinned: true,
+                pinned: pinned,
                 url: url,
             })
             const tabId = tab.id!
@@ -135,7 +165,7 @@ export function AutomatedTabTask<T extends Record<string, (...args: any[]) => Pr
                 return await timeoutFn(task, timeout)
             } finally {
                 if (!withoutLock) lock.unlock()
-                browser.tabs.remove(tabId)
+                autoClose && browser.tabs.remove(tabId)
                 delete readyMap[tabId]
             }
         }
@@ -144,18 +174,28 @@ export function AutomatedTabTask<T extends Record<string, (...args: any[]) => Pr
             /** URL you want to execute the task ok */ url: string,
             options: Partial<AutomatedTabTaskRuntimeOptions> = {},
         ) => {
-            const { memorable, timeout, important } = {
+            const { memorable, timeout, important, autoClose, pinned } = {
                 ...({
                     memorable: defaultMemorable,
                     important: false,
                     timeout: defaultTimeout,
+                    autoClose: defaultAutoClose,
+                    pinned: defaultPinned,
                 } as AutomatedTabTaskRuntimeOptions),
                 ...options,
             }
             function runner(_: unknown, taskName: string | number | symbol) {
                 return (...args: any[]) => {
                     if (typeof taskName !== 'string') throw new TypeError('Key must be a string')
-                    return (memorable ? memoRunTask : runTask)(url, taskName, timeout, important, args)
+                    return (memorable ? memoRunTask : runTask)(
+                        url,
+                        taskName,
+                        timeout,
+                        important,
+                        pinned,
+                        autoClose,
+                        args,
+                    )
                 }
             }
             return new Proxy({}, { get: runner }) as T
