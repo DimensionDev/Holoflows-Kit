@@ -1,3 +1,5 @@
+import { clone } from 'lodash-es'
+
 type RecordType<T extends string, F> = { type: T; param: F }
 /**
  * Define all possible recordable operations.
@@ -29,6 +31,14 @@ export class LiveSelector<T> {
         return this as LiveSelector<any>
     }
     private readonly selectorChain: (SelectorChainType[keyof SelectorChainType])[] = []
+    /**
+     * @return a new LiveSelector with same action
+     */
+    clone() {
+        const ls = new LiveSelector<T>()
+        ls.selectorChain.push(...this.selectorChain)
+        return ls
+    }
     //#region Add elements
     /**
      * Select the first element that is a descendant of node that matches selectors.
