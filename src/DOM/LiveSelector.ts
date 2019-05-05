@@ -47,22 +47,24 @@ export class LiveSelector<T> {
      * @example ```ts
      * ls.querySelector('div#root')```
      */
-    querySelector<K extends keyof HTMLElementTagNameMap>(selectors: K): LiveSelector<HTMLElementTagNameMap[K]>
-    querySelector<K extends keyof SVGElementTagNameMap>(selectors: K): LiveSelector<SVGElementTagNameMap[K]>
-    querySelector<E extends Element = Element>(selectors: string): LiveSelector<E> {
-        return this.generateMethod('querySelector')(selectors)
+    querySelector<K extends keyof HTMLElementTagNameMap>(selector: K): LiveSelector<HTMLElementTagNameMap[K]>
+    querySelector<K extends keyof SVGElementTagNameMap>(selector: K): LiveSelector<SVGElementTagNameMap[K]>
+    querySelector<E extends Element = Element>(selector: string): LiveSelector<E>
+    querySelector<T>(selector: string): LiveSelector<T> {
+        return this.generateMethod('querySelector')(selector)
     }
     /**
      * Select all element descendants of node that match selectors.
      *
-     * @param selectors Selector
+     * @param selector Selector
      * @example ```ts
      * ls.querySelector('div > div')```
      */
-    querySelectorAll<K extends keyof HTMLElementTagNameMap>(selectors: K): LiveSelector<HTMLElementTagNameMap[K]>
-    querySelectorAll<K extends keyof SVGElementTagNameMap>(selectors: K): LiveSelector<SVGElementTagNameMap[K]>
-    querySelectorAll<E extends Element = Element>(selectors: string): LiveSelector<E> {
-        return this.generateMethod('querySelectorAll')(selectors)
+    querySelectorAll<K extends keyof HTMLElementTagNameMap>(selector: K): LiveSelector<HTMLElementTagNameMap[K]>
+    querySelectorAll<K extends keyof SVGElementTagNameMap>(selector: K): LiveSelector<SVGElementTagNameMap[K]>
+    querySelectorAll<E extends Element = Element>(selector: string): LiveSelector<E>
+    querySelectorAll<T>(selector: string): LiveSelector<T> {
+        return this.generateMethod('querySelectorAll')(selector)
     }
     /**
      * Select all element base on the current result.
@@ -71,7 +73,8 @@ export class LiveSelector<T> {
      * ls.getElementsByClassName('a').getElementsByClassName('b')
      * // Equal to ls.querySelectorAll('.a .b')```
      */
-    getElementsByClassName<T extends Element = Element>(className: string): LiveSelector<T> {
+    getElementsByClassName<T extends Element = Element>(className: string): LiveSelector<T>
+    getElementsByClassName<T>(className: string): LiveSelector<T> {
         return this.generateMethod('getElementsByClassName')(className)
     }
     /**
@@ -83,7 +86,8 @@ export class LiveSelector<T> {
      */
     getElementsByTagName<K extends keyof HTMLElementTagNameMap>(tag: K): LiveSelector<HTMLElementTagNameMap[K]>
     getElementsByTagName<K extends keyof SVGElementTagNameMap>(tag: K): LiveSelector<SVGElementTagNameMap[K]>
-    getElementsByTagName<E extends Element = Element>(tag: string): LiveSelector<E> {
+    getElementsByTagName<E extends Element = Element>(tag: string): LiveSelector<E>
+    getElementsByTagName<T>(tag: string): LiveSelector<T> {
         return this.generateMethod('getElementsByTagName')(tag)
     }
     /**
@@ -93,7 +97,8 @@ export class LiveSelector<T> {
      * ls.getElementById('a')
      * // Equal to ls.querySelector('#a')```
      */
-    getElementById<E extends Element = Element>(id: string): LiveSelector<E> {
+    getElementById<E extends Element = Element>(id: string): LiveSelector<E>
+    getElementById<T>(id: string): LiveSelector<T> {
         return this.generateMethod('getElementById')(id)
     }
     /**
