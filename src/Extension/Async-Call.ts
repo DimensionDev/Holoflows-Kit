@@ -1,4 +1,5 @@
 import { MessageCenter as HoloflowsMessageCenter } from './MessageCenter'
+import { memorize } from 'memorize-decorator'
 
 //#region Serialization
 /**
@@ -29,8 +30,15 @@ export const JSONSerialization = (replacer: Parameters<JSON['parse']>[1] = undef
         },
     } as Serialization)
 //#endregion
-type Default = Record<string, (...args: any[]) => Promise<any>>
-type GeneratorDefault = Record<string, (...args: any[]) => AsyncIterableIterator<any>>
+export interface AsyncCallExecutorOptions
+    extends Partial<{
+        /**
+         * Allow this function to be memorized for `memorable` ms.
+         */
+        memorable: number
+    }> {}
+type Default = Record<string, ((...args: any[]) => Promise<any>) & AsyncCallExecutorOptions>
+type GeneratorDefault = Record<string, ((...args: any[]) => AsyncIterableIterator<any>) & AsyncCallExecutorOptions>
 
 export interface AsyncCallOptions {
     /**
