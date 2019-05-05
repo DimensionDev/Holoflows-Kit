@@ -159,7 +159,7 @@ const ls = new LiveSelector()
 ls.querySelector('div#root').querySelector('.nav')
 ```
 
-**注意：以上的例子等于 `div#root` 和 `.nav` 的并集，并不是 `div#root .nav` 的意思！**
+**注意：以上的例子等于 `div#root .nav`！**
 
 > Typescript: 这个函数的泛型与 `document.querySelector` 相同
 
@@ -173,7 +173,7 @@ ls.querySelector('div#root').querySelector('.nav')
 ls.querySelectorAll('div').querySelectorAll('h1')
 ```
 
-**注意：以上的例子等于 `div` 和 `h1` 的并集，并不是 `div h1` 的意思！**
+**注意：以上的例子等于 `div h1`**
 
 > Typescript: 这个函数的泛型与 `document.querySelectorAll` 相同
 

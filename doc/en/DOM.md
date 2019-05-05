@@ -160,7 +160,7 @@ Same as [document.querySelector](https://mdn.io/document.querySelector), add ele
 ls.querySelector('div#root').querySelector('.nav')
 ```
 
-**Warn: Example above is union of `div#root` and `.nav`, is NOT `div#root .nav`**
+**Notice: Example above is `div#root .nav`**
 
 > Typescript: Generic is the same as `document.querySelector`
 
@@ -174,7 +174,7 @@ Same as [document.querySelectorAll](https://mdn.io/document.querySelectorAll), a
 ls.querySelectorAll('div').querySelectorAll('h1')
 ```
 
-**Warn: Example above is union of `div` and `h1`, is NOT `div h1`**
+**Notice: Example above is `div h1`**
 
 > Typescript: Generic is the same as `document.querySelectorAll`
 

@@ -170,39 +170,62 @@ export class LiveSelector<T> {
      * Evaluate selector expression
      */
     evaluateOnce(): T[] {
-        let arr: T[] = []
+        let arr: (T | Element)[] = []
+        function isElementArray(x: any[]): x is Element[] {
+            // Do a simple check
+            return x[0] instanceof Element
+        }
+        function nonNull<T>(x: T | null | undefined): x is T {
+            return x !== null && x !== undefined
+        }
         for (const op of this.selectorChain) {
             switch (op.type) {
                 case 'querySelector':
-                    const e = document.querySelector<any>(op.param)
-                    e && arr.push(e)
+                    if (arr.length === 0) {
+                        const e = document.querySelector(op.param)
+                        e && arr.push(e)
+                    } else if (isElementArray(arr)) arr = arr.map(e => e.querySelector(op.param)).filter(nonNull)
+                    else throw new TypeError('Call querySelector on non-Element item!')
                     break
                 case 'querySelectorAll':
-                    arr.push(...document.querySelectorAll<any>(op.param))
+                    if (arr.length === 0) {
+                        const e = document.querySelectorAll(op.param)
+                        arr.push(...e)
+                    } else if (isElementArray(arr)) {
+                        const newArr: Element[] = []
+                        for (const e of arr) {
+                            newArr.concat(Array.from(e.querySelectorAll(op.param)))
+                        }
+                        arr = newArr.filter(nonNull)
+                    } else throw new TypeError('Call querySelectorAll on non-Element item!')
                     break
                 case 'closest':
                     console.warn('LiveSelector#closet is a experimental API. Be careful with it')
-                    for (const x of arr)
-                        if (!(x instanceof Element)) throw new TypeError('Cannot use `.closet on non-Element`')
-                    const earr: Element[] = arr as any
-                    const selector = op.param
-                    function findParent(node: Element, y: number): Element | null {
-                        if (y < 0) throw new TypeError('Cannot use `.closet` with a negative number')
-                        if (y === 0) return node
-                        if (!node.parentElement) return null
-                        return findParent(node.parentElement, y - 1)
-                    }
-                    if (typeof selector === 'number') {
-                        arr = earr.map(e => findParent(e, op.param as number)).filter(x => x !== null) as any[]
+                    if (arr.length === 0) {
+                        break
+                    } else if (isElementArray(arr)) {
+                        const newArr: Element[] = arr
+                        const selector = op.param
+                        function findParent(node: Element, y: number): Element | null {
+                            if (y < 0) throw new TypeError('Cannot use `.closet` with a negative number')
+                            if (y === 0) return node
+                            if (!node.parentElement) return null
+                            return findParent(node.parentElement, y - 1)
+                        }
+                        if (typeof selector === 'number') {
+                            arr = newArr.map(e => findParent(e, selector)).filter(nonNull)
+                        } else {
+                            arr = newArr.map(x => x.closest(selector)).filter(nonNull)
+                        }
                     } else {
-                        arr = earr.map(x => ((x as any) as Element).closest(selector)).filter(x => x !== null) as any[]
+                        throw new TypeError('Cannot use `.closet on non-Element`')
                     }
                     break
                 case 'filter':
-                    arr = arr.filter(op.param).filter(x => x !== null)
+                    arr = arr.filter(op.param).filter(nonNull)
                     break
                 case 'map':
-                    arr = arr.map(op.param).filter(x => x !== null)
+                    arr = arr.map(op.param).filter(nonNull)
                     break
                 case 'concat':
                     arr = arr.concat(op.param.evaluateOnce())
@@ -211,7 +234,8 @@ export class LiveSelector<T> {
                     arr = arr.reverse()
                     break
                 case 'slice':
-                    arr = arr.slice(op.param[0], op.param[1])
+                    const [start, end] = op.param
+                    arr = arr.slice(start, end)
                     break
                 case 'sort':
                     arr = arr.sort(op.param)
@@ -221,11 +245,7 @@ export class LiveSelector<T> {
                     arr = [arr[x]]
                     break
                 case 'flat':
-                    if (Array.isArray(arr[0])) {
-                        const newArr: any[] = []
-                        arr.forEach(x => newArr.push(...(x as any)))
-                        arr = newArr
-                    }
+                    arr = ([] as typeof arr).concat(...arr)
                     break
                 case 'replace':
                     arr = op.param(arr)
