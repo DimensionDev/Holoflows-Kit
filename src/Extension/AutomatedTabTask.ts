@@ -29,6 +29,11 @@ interface AutomatedTabTaskSharedOptions {
      * @default true
      */
     autoClose: boolean
+    /**
+     * Should the new tab to be active?
+     * @default false
+     */
+    active: boolean
 }
 export interface AutomatedTabTaskDefineTimeOptions extends AutomatedTabTaskSharedOptions {
     /**
@@ -91,6 +96,7 @@ export function AutomatedTabTask<T extends Record<string, (...args: any[]) => Pr
         memorizeTTL,
         autoClose: defaultAutoClose,
         pinned: defaultPinned,
+        active: defaultActive,
     } = {
         ...({
             timeout: 30 * 1000,
@@ -100,6 +106,7 @@ export function AutomatedTabTask<T extends Record<string, (...args: any[]) => Pr
             memorable: false,
             autoClose: true,
             pinned: true,
+            active: false,
         } as AutomatedTabTaskDefineTimeOptions),
         ...options,
     }
@@ -146,15 +153,12 @@ export function AutomatedTabTask<T extends Record<string, (...args: any[]) => Pr
             withoutLock: boolean,
             pinned: boolean,
             autoClose: boolean,
+            active: boolean,
             args: any[],
         ) {
             if (!withoutLock) await lock.lock(timeout)
             // Create a new tab
-            const tab = await browser.tabs.create({
-                active: false,
-                pinned: pinned,
-                url: url,
-            })
+            const tab = await browser.tabs.create({ active, pinned, url })
             const tabId = tab.id!
             // Wait for the tab register
             while (readyMap[tabId] !== true) await sleep(50)
@@ -174,13 +178,14 @@ export function AutomatedTabTask<T extends Record<string, (...args: any[]) => Pr
             /** URL you want to execute the task ok */ url: string,
             options: Partial<AutomatedTabTaskRuntimeOptions> = {},
         ) => {
-            const { memorable, timeout, important, autoClose, pinned } = {
+            const { memorable, timeout, important, autoClose, pinned, active } = {
                 ...({
                     memorable: defaultMemorable,
                     important: false,
                     timeout: defaultTimeout,
                     autoClose: defaultAutoClose,
                     pinned: defaultPinned,
+                    active: defaultActive,
                 } as AutomatedTabTaskRuntimeOptions),
                 ...options,
             }
@@ -194,6 +199,7 @@ export function AutomatedTabTask<T extends Record<string, (...args: any[]) => Pr
                         important,
                         pinned,
                         autoClose,
+                        active,
                         args,
                     )
                 }
