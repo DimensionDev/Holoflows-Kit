@@ -34,7 +34,7 @@ type useNodeForeachReturns<T> =
           onTargetChanged?: (oldNode: T, newNode: T) => void
           onNodeMutation?: (node: T, mutations: MutationRecord[]) => void
       }
-type EventCallback<T> = (fn: CustomEvent<T> & { data: T }) => void
+type EventCallback<T> = (fn: Event & { data: T }) => void
 /**
  * Use LiveSelector to watch dom change
  *
@@ -69,16 +69,23 @@ export abstract class Watcher<
      * @param fn Map function transform T to Result
      * @param starter function used to start the watcher, defaults to `() => this.startWatch()`
      */
-    once<Result>(
-        fn: (data: T) => PromiseLike<Result> | Result,
-        starter: (this: this, watcher: this) => void = () => this.startWatch(),
+    once<Result = T>(
+        fn: (data: T) => PromiseLike<Result> | Result = t => t as any,
+        minimalResultsRequired = 1,
+        starter: (this: this) => void = function() {
+            this.startWatch()
+        },
     ): Promise<Result[]> {
+        const r = this.liveSelector.evaluateOnce()
+        if (r.length >= minimalResultsRequired) return Promise.resolve(Promise.all(r.map(fn)))
         return new Promise((resolve, reject) => {
             const f: EventCallback<T[]> = e => {
+                if (e.data.length < minimalResultsRequired) return
                 this.stopWatch()
                 Promise.all(e.data.map(fn)).then(resolve, reject)
+                this.removeListener('onChangeFull', f)
             }
-            this.eventEmitter.once('onChangeFull', f)
+            this.addListener('onChangeFull', f)
             starter.call(this)
         })
     }
@@ -86,11 +93,6 @@ export abstract class Watcher<
     abstract startWatch(...args: any[]): this
     stopWatch(...args: any[]): void {
         this.watching = false
-        this.eventEmitter.removeAllListeners()
-        this.lastCallbackMap = new Map()
-        this.lastKeyList = []
-        this.lastNodeList = []
-        this.lastVirtualNodesMap = new Map()
     }
     //#region Watcher
     /** Is the watcher running */
@@ -246,6 +248,7 @@ export abstract class Watcher<
         this.lastKeyList = thisKeyList
         this.lastNodeList = thisNodes
 
+        this.eventEmitter
         this.emit('onChangeFull', thisNodes)
         this.emit(
             'onChange',
@@ -276,19 +279,30 @@ export abstract class Watcher<
         this.eventEmitter.addListener(event, fn)
         return this
     }
-    emit(event: 'onChange', data: { oldNode: T; newNode: T; oldKey: unknown; newKey: unknown }[]): boolean
-    emit(event: 'onChangeFull', data: T[]): boolean
-    emit(event: 'onRemove' | 'onAdd', data: { node: T; key: unknown }[]): boolean
-    emit(event: string | symbol, data: any) {
+    removeListener(
+        event: 'onChange',
+        fn: EventCallback<{ oldNode: T; newNode: T; oldKey: unknown; newKey: unknown }[]>,
+    ): this
+    removeListener(event: 'onChangeFull', fn: EventCallback<T[]>): this
+    removeListener(event: 'onRemove' | 'onAdd', fn: EventCallback<{ node: T; key: unknown }[]>): this
+    removeListener(event: string | symbol, fn: (...args: any[]) => void) {
+        this.eventEmitter.removeListener(event, fn)
+        return this
+    }
+    protected emit(event: 'onChange', data: { oldNode: T; newNode: T; oldKey: unknown; newKey: unknown }[]): boolean
+    protected emit(event: 'onChangeFull', data: T[]): boolean
+    protected emit(event: 'onRemove' | 'onAdd', data: { node: T; key: unknown }[]): boolean
+    protected emit(event: string | symbol, data: any) {
         return this.eventEmitter.emit(event, { data })
     }
     //#endregion
     /**
      * This virtualNode always point to the first node in the LiveSelector
      */
-    readonly firstVirtualNode: RequireElement<T, DomProxy<ElementLikeT<T>, DomProxyBefore, DomProxyAfter>> = DomProxy(
-        this.domProxyOption,
-    ) as any
+    readonly firstVirtualNode = (DomProxy(this.domProxyOption) as any) as RequireElement<
+        T,
+        DomProxy<ElementLikeT<T>, DomProxyBefore, DomProxyAfter>
+    >
     //#region For multiple nodes injection
     /**
      * Map `Node -> Key`, in case of you don't want the default behavior

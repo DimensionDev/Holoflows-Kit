@@ -236,9 +236,9 @@ export class LiveSelector<T> {
                         const e = (document[op.type] as F)(op.param)
                         arr.push(...e)
                     } else if (isElementArray(arr)) {
-                        const newArr: Element[] = []
+                        let newArr: Element[] = []
                         for (const e of arr) {
-                            newArr.concat(Array.from((e[op.type] as F)(op.param)))
+                            newArr = newArr.concat(Array.from((e[op.type] as F)(op.param)))
                         }
                         arr = newArr.filter(nonNull)
                     } else throw new TypeError(`Call ${op.type} on non-Element item!`)
