@@ -100,7 +100,19 @@ export function AutomatedTabTask<T extends Record<string, (...args: any[]) => Pr
     } = {
         ...({
             timeout: 30 * 1000,
-            key: browser.runtime.getURL('@holoflows/kit:AutomatedTabTask'),
+            key: (context => {
+                switch (context) {
+                    case 'background':
+                    case 'content':
+                    case 'options':
+                        return browser.runtime.getURL('@holoflows/kit:AutomatedTabTask')
+                    case 'debugging':
+                        return 'debug'
+                    case 'unknown':
+                    default:
+                        throw new TypeError('Unknown running context')
+                }
+            })(GetContext()),
             concurrent: 3,
             memorizeTTL: 30 * 60 * 1000,
             memorable: false,
@@ -207,6 +219,23 @@ export function AutomatedTabTask<T extends Record<string, (...args: any[]) => Pr
             }
             return new Proxy({}, { get: runner }) as T
         }
+    } else if (GetContext() === 'debugging') {
+        return (...args1: any[]) =>
+            new Proxy(
+                {},
+                {
+                    get(_, key) {
+                        return async (...args2: any) => {
+                            console.log(
+                                `AutomatedTabTask.${AsyncCallKey}.${String(key)} called with `,
+                                ...args1,
+                                ...args2,
+                            )
+                            await sleep(2000)
+                        }
+                    },
+                },
+            ) as T
     } else {
         return null
     }
