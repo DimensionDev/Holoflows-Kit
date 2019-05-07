@@ -5,7 +5,6 @@ type RecordType<T extends string, F> = { type: T; param: F }
 interface SelectorChainType {
     getElementsByClassName: RecordType<'getElementsByClassName', string>
     getElementsByTagName: RecordType<'getElementsByTagName', string>
-    getElementById: RecordType<'getElementById', string>
     querySelector: RecordType<'querySelector', string>
     closest: RecordType<'closest', string | number>
     querySelectorAll: RecordType<'querySelectorAll', string>
@@ -89,17 +88,6 @@ export class LiveSelector<T> {
     getElementsByTagName<E extends Element = Element>(tag: string): LiveSelector<E>
     getElementsByTagName<T>(tag: string): LiveSelector<T> {
         return this.generateMethod('getElementsByTagName')(tag)
-    }
-    /**
-     * Select element by ID.
-     * @param id id
-     * @example ```ts
-     * ls.getElementById('a')
-     * // Equal to ls.querySelector('#a')```
-     */
-    getElementById<E extends Element = Element>(id: string): LiveSelector<E>
-    getElementById<T>(id: string): LiveSelector<T> {
-        return this.generateMethod('getElementById')(id)
     }
     /**
      * Reversely select element in the parent
@@ -215,34 +203,42 @@ export class LiveSelector<T> {
         function nonNull<T>(x: T | null | undefined): x is T {
             return x !== null && x !== undefined
         }
+        let previouslyNulled = false
         for (const op of this.selectorChain) {
             switch (op.type) {
-                case 'getElementById':
-                    const e = document.getElementById(op.param)
-                    e && arr.push(e)
+                case 'querySelector': {
+                    if (!previouslyNulled) {
+                        if (arr.length === 0) {
+                            const e = document.querySelector(op.param)
+                            if (e) arr.push(e)
+                            else previouslyNulled = true
+                        } else if (isElementArray(arr)) {
+                            arr = arr.map(e => e.querySelector(op.param)).filter(nonNull)
+                            if (arr.length === 0) previouslyNulled = true
+                        } else throw new TypeError('Call querySelector on non-Element item!')
+                    }
                     break
-                case 'querySelector':
-                    if (arr.length === 0) {
-                        const e = document.querySelector(op.param)
-                        e && arr.push(e)
-                    } else if (isElementArray(arr)) arr = arr.map(e => e.querySelector(op.param)).filter(nonNull)
-                    else throw new TypeError('Call querySelector on non-Element item!')
-                    break
+                }
                 case 'getElementsByTagName':
                 case 'getElementsByClassName':
-                case 'querySelectorAll':
-                    type F = (x: string) => NodeListOf<Element> | HTMLCollectionOf<Element>
-                    if (arr.length === 0) {
-                        const e = (document[op.type] as F)(op.param)
-                        arr.push(...e)
-                    } else if (isElementArray(arr)) {
-                        let newArr: Element[] = []
-                        for (const e of arr) {
-                            newArr = newArr.concat(Array.from((e[op.type] as F)(op.param)))
-                        }
-                        arr = newArr.filter(nonNull)
-                    } else throw new TypeError(`Call ${op.type} on non-Element item!`)
+                case 'querySelectorAll': {
+                    if (!previouslyNulled) {
+                        type F = (x: string) => NodeListOf<Element> | HTMLCollectionOf<Element>
+                        if (arr.length === 0) {
+                            const e = (document[op.type] as F)(op.param)
+                            arr.push(...e)
+                            if (e.length === 0) previouslyNulled = true
+                        } else if (isElementArray(arr)) {
+                            let newArr: Element[] = []
+                            for (const e of arr) {
+                                newArr = newArr.concat(Array.from((e[op.type] as F)(op.param)))
+                            }
+                            arr = newArr.filter(nonNull)
+                            if (arr.length === 0) previouslyNulled = true
+                        } else throw new TypeError(`Call ${op.type} on non-Element item!`)
+                    }
                     break
+                }
                 case 'closest':
                     console.warn('LiveSelector#closet is a experimental API. Be careful with it')
                     if (arr.length === 0) {
@@ -277,17 +273,19 @@ export class LiveSelector<T> {
                 case 'reverse':
                     arr = arr.reverse()
                     break
-                case 'slice':
+                case 'slice': {
                     const [start, end] = op.param
                     arr = arr.slice(start, end)
                     break
+                }
                 case 'sort':
                     arr = arr.sort(op.param)
                     break
-                case 'nth':
+                case 'nth': {
                     const x = op.param >= 0 ? op.param : arr.length - op.param
                     arr = [arr[x]]
                     break
+                }
                 case 'flat':
                     arr = ([] as typeof arr).concat(...arr)
                     break

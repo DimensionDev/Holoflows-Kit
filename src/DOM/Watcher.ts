@@ -69,8 +69,10 @@ export abstract class Watcher<
      * @param fn Map function transform T to Result
      * @param starter function used to start the watcher, defaults to `() => this.startWatch()`
      */
-    once<Result = T>(
-        fn: (data: T) => PromiseLike<Result> | Result = t => t as any,
+    once(): Promise<T[]>
+    once<Result>(fn: (data: T) => PromiseLike<Result> | Result): Promise<Result[]>
+    once<Result>(
+        fn: (data: T) => PromiseLike<Result> | Result = data => (data as any) as Result,
         minimalResultsRequired = 1,
         starter: (this: this) => void = function() {
             this.startWatch()
@@ -78,7 +80,7 @@ export abstract class Watcher<
     ): Promise<Result[]> {
         const r = this.liveSelector.evaluateOnce()
         if (r.length >= minimalResultsRequired) return Promise.resolve(Promise.all(r.map(fn)))
-        return new Promise((resolve, reject) => {
+        return new Promise<Result[]>((resolve, reject) => {
             const f: EventCallback<T[]> = e => {
                 if (e.data.length < minimalResultsRequired) return
                 this.stopWatch()
