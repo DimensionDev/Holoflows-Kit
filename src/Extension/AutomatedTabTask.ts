@@ -169,19 +169,20 @@ export function AutomatedTabTask<T extends Record<string, (...args: any[]) => Pr
             args: any[],
         ) {
             const withoutLock = important || !autoClose || active
-            if (!important) await lock.lock(timeout)
+            if (!withoutLock) await lock.lock(timeout)
             // Create a new tab
             const tab = await browser.tabs.create({ active, pinned, url })
             const tabId = tab.id!
             // Wait for the tab register
             while (readyMap[tabId] !== true) await sleep(50)
+
             // Run the async call
             const task: Promise<any> = asyncCall[getTaskNameByTabId(taskName, tabId)](...args)
             try {
                 // ! DO NOT Remove `await`, or finally block will run before the promise resolved
                 return await timeoutFn(task, timeout)
             } finally {
-                if (!important) lock.unlock()
+                if (!withoutLock) lock.unlock()
                 autoClose && browser.tabs.remove(tabId)
                 delete readyMap[tabId]
             }

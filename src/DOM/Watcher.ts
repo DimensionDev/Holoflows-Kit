@@ -73,11 +73,17 @@ export abstract class Watcher<
     once<Result>(fn: (data: T) => PromiseLike<Result> | Result): Promise<Result[]>
     once<Result>(
         fn: (data: T) => PromiseLike<Result> | Result = data => (data as any) as Result,
-        minimalResultsRequired = 1,
-        starter: (this: this) => void = function() {
-            this.startWatch()
-        },
+        options: Partial<{
+            minimalResultsRequired: number
+        }> = {},
     ): Promise<Result[]> {
+        const { minimalResultsRequired } = {
+            ...({
+                minimalResultsRequired: 1,
+                timeout: Infinity,
+            } as Required<typeof options>),
+            ...options,
+        }
         const r = this.liveSelector.evaluateOnce()
         if (r.length >= minimalResultsRequired) return Promise.resolve(Promise.all(r.map(fn)))
         return new Promise<Result[]>((resolve, reject) => {
@@ -88,7 +94,6 @@ export abstract class Watcher<
                 this.removeListener('onChangeFull', f)
             }
             this.addListener('onChangeFull', f)
-            starter.call(this)
         })
     }
     //#endregion
