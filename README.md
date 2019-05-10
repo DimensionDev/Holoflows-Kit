@@ -4,9 +4,9 @@ Toolkit for modern web browser extension developing.
 
 ## Documentation
 
-[English documentation](./doc/en/index.md)
+[Get Started](./doc/en/index.md)
 
-[简体中文文档](./doc/zh-CN/index.md)
+[初次使用](./doc/zh-CN/index.md)
 
 [API Documentation](./api-documents/kit.md)
 

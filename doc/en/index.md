@@ -4,10 +4,9 @@ A toolkit for browser extension developing.
 
 ## Components
 
-@holoflows/kit made up by following parts
+See [API documents](../../api-documents/kit.md)
 
--   [DOM](./DOM.md) - Help developer to track changes in the content script
--   [Extension](./Extension.md) - Some tools that useful in extension developing
+See tutorial of [DOM watcher](./DOM.md)
 
 ## Installation
 
