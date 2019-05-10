@@ -1,4 +1,7 @@
 type Fn<T> = (newVal: T, oldVal: T) => void
+/**
+ * A `ref` object with `addListener`
+ */
 export class ValueRef<T> {
     /** Get current value of a ValueRef */
     get value() {

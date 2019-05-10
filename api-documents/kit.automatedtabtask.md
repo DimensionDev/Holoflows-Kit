@@ -4,7 +4,7 @@
 
 ## AutomatedTabTask() function
 
-Based on AsyncCall. Open a new page in the background, execute some task, then close it automatically.
+Open a new page in the background, execute some task, then close it automatically.
 
 <b>Signature:</b>
 

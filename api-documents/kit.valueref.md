@@ -4,6 +4,8 @@
 
 ## ValueRef class
 
+A `ref` object with `addListener`
+
 <b>Signature:</b>
 
 ```typescript

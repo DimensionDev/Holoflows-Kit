@@ -4,6 +4,8 @@
 
 ## Contexts type
 
+All context that possible in when developing a WebExtension
+
 <b>Signature:</b>
 
 ```typescript

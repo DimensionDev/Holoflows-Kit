@@ -35,6 +35,9 @@ interface AutomatedTabTaskSharedOptions {
      */
     active: boolean
 }
+/**
+ * Define-time options for {@link AutomatedTabTask}
+ */
 export interface AutomatedTabTaskDefineTimeOptions extends AutomatedTabTaskSharedOptions {
     /**
      * At most run `concurrent` tasks.
@@ -53,6 +56,9 @@ export interface AutomatedTabTaskDefineTimeOptions extends AutomatedTabTaskShare
      */
     memorizeTTL: number
 }
+/**
+ * Runtime options for {@link AutomatedTabTask}
+ */
 export interface AutomatedTabTaskRuntimeOptions extends AutomatedTabTaskSharedOptions {
     /**
      * This task is important, need to start now without queue.
@@ -60,7 +66,7 @@ export interface AutomatedTabTaskRuntimeOptions extends AutomatedTabTaskSharedOp
     important: boolean
 }
 /**
- * Based on AsyncCall. Open a new page in the background, execute some task, then close it automatically.
+ * Open a new page in the background, execute some task, then close it automatically.
  *
  * @example
  *

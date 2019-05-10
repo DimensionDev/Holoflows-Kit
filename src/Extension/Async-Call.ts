@@ -9,7 +9,7 @@ export interface Serialization {
     deserialization(serialized: unknown): Promise<any>
 }
 /**
- * Do not do any serialization
+ * Serialization implementation that do nothing
  */
 export const NoSerialization: Serialization = {
     async serialization(from) {
@@ -20,6 +20,8 @@ export const NoSerialization: Serialization = {
     },
 }
 /**
+ * Serialization implementation by JSON.parse/stringify
+ *
  * @param replacer - Replacer of JSON.parse/stringify
  */
 export const JSONSerialization = (replacer: Parameters<JSON['parse']>[1] = undefined) =>
@@ -32,6 +34,10 @@ export const JSONSerialization = (replacer: Parameters<JSON['parse']>[1] = undef
         },
     } as Serialization)
 //#endregion
+/**
+ * Options of {@link AsyncCall}
+ * @alpha
+ */
 export interface AsyncCallExecutorOptions
     extends Partial<{
         /**
@@ -41,7 +47,9 @@ export interface AsyncCallExecutorOptions
     }> {}
 type Default = Record<string, ((...args: any[]) => Promise<any>) & AsyncCallExecutorOptions>
 type GeneratorDefault = Record<string, ((...args: any[]) => AsyncIterableIterator<any>) & AsyncCallExecutorOptions>
-
+/**
+ * Options for {@link AsyncCall}
+ */
 export interface AsyncCallOptions {
     /**
      * @param key -
@@ -79,27 +87,37 @@ export interface AsyncCallOptions {
 /**
  * Async call between different context.
  *
- * High level abstraction of MessageCenter.
+ * @remarks
+ * Async call is a high level abstraction of MessageCenter.
  *
  * # Shared code
+ *
  * - How to stringify/parse parameters/returns should be shared, defaults to NoSerialization.
+ *
  * - `key` should be shared.
  *
  * # One side
+ *
  * - Should provide some functions then export its type (for example, `BackgroundCalls`)
+ *
  * - `const call = AsyncCall<ForegroundCalls>(backgroundCalls)`
+ *
  * - Then you can `call` any method on `ForegroundCalls`
  *
  * # Other side
+ *
  * - Should provide some functions then export its type (for example, `ForegroundCalls`)
+ *
  * - `const call = AsyncCall<BackgroundCalls>(foregroundCalls)`
+ *
  * - Then you can `call` any method on `BackgroundCalls`
  *
  * Note: Two sides can implement the same function
  *
  * @example
- * - Mono repo
- * - - UI part
+ * For example, here is a mono repo.
+ *
+ * Code for UI part:
  * ```ts
  * const UI = {
  *      async dialog(text: string) {
@@ -111,7 +129,7 @@ export interface AsyncCallOptions {
  * callsClient.sendMail('hello world', 'what')
  * ```
  *
- * - - On server
+ * Code for server part
  * ```ts
  * const Server = {
  *      async sendMail(text: string, to: string) {
@@ -127,10 +145,10 @@ export interface AsyncCallOptions {
  * @param options - Define your own serializer, MessageCenter or other options.
  *
  */
-export const AsyncCall = <OtherSideImplementedFunctions = {}>(
+export function AsyncCall<OtherSideImplementedFunctions = {}>(
     implementation: Default,
     options: Partial<AsyncCallOptions> = {},
-): OtherSideImplementedFunctions => {
+): OtherSideImplementedFunctions {
     const { writeToConsole, serializer, dontThrowOnNotImplemented, MessageCenter, key } = {
         MessageCenter: HoloflowsMessageCenter,
         dontThrowOnNotImplemented: true,

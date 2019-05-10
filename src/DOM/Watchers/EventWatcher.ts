@@ -1,9 +1,11 @@
 import { Watcher } from '../Watcher'
 
 /**
- * To use EventWatcher, do this
+ * A Watcher based on event handlers.
+ *
+ * @example
  * ```ts
- * const e = new EventWatcher(...)
+ * const e = new EventWatcher(ls)
  * document.addEventListener('event', e.eventListener)
  * ```
  */
@@ -14,13 +16,10 @@ export class EventWatcher<
 > extends Watcher<T, Before, After> {
     /** Limit computation by rAF */
     private rICLock = false
-    // private _callback = () => {
-    //     if (this.rAFLock) return
-    //     this.rAFLock = true
-    //     this.watcherCallback()
-    //     this.rAFLock = false
-    // }
-    public eventListener() {
+    /**
+     * Use this function as event listener to invoke watcher.
+     */
+    public eventListener = () => {
         this.requestIdleCallback(
             deadline => {
                 if (this.rICLock) return

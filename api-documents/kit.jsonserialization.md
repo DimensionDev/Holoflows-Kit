@@ -4,6 +4,8 @@
 
 ## JSONSerialization variable
 
+Serialization implementation by JSON.parse/stringify
+
 <b>Signature:</b>
 
 ```typescript

@@ -16,7 +16,7 @@ nth(n: number): LiveSelector<T>;
 
 |  Parameter | Type | Description |
 |  --- | --- | --- |
-|  n | <code>number</code> |  |
+|  n | <code>number</code> | Select only nth element, allow negative number. |
 
 <b>Returns:</b>
 

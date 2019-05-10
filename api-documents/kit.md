@@ -4,57 +4,52 @@
 
 ## kit package
 
+A toolkit for browser extension developing.
+
 ## Classes
 
 |  Class | Description |
 |  --- | --- |
-|  [EventWatcher](./kit.eventwatcher.md) | To use EventWatcher, do this
-```ts
-const e = new EventWatcher(...)
-document.addEventListener('event', e.eventListener)
-
-```
- |
+|  [EventWatcher](./kit.eventwatcher.md) | A Watcher based on event handlers. |
 |  [IntervalWatcher](./kit.intervalwatcher.md) | A watcher based on time interval. |
-|  [LiveSelector](./kit.liveselector.md) | Create a live selector that can continuously select the element you want<!-- -->call <code>#evaluateOnce</code> to evaluate the element. Falsy will be ignored. |
+|  [LiveSelector](./kit.liveselector.md) | Create a live selector that can continuously select the element you want. |
 |  [MessageCenter](./kit.messagecenter.md) | Send and receive messages in different contexts. |
 |  [MutationObserverWatcher](./kit.mutationobserverwatcher.md) | A watcher based on MutationObserver |
-|  [ValueRef](./kit.valueref.md) |  |
+|  [ValueRef](./kit.valueref.md) | A <code>ref</code> object with <code>addListener</code> |
 |  [Watcher](./kit.watcher.md) | Use LiveSelector to watch dom change<!-- -->You need to implement <code>startWatch</code> |
 
 ## Functions
 
 |  Function | Description |
 |  --- | --- |
-|  [AutomatedTabTask(taskImplements, options)](./kit.automatedtabtask.md) | Based on AsyncCall. Open a new page in the background, execute some task, then close it automatically. |
-|  [GetContext()](./kit.getcontext.md) | Get current running context. - background: background script - content: content script - webpage: a normal webpage - unknown: unknown context |
-|  [OnlyRunInContext(context, name)](./kit.onlyrunincontext.md) | Make sure this file only run in (for Typescript user: but you can still export types) wanted context |
+|  [AsyncCall(implementation, options)](./kit.asynccall.md) | Async call between different context. |
+|  [AutomatedTabTask(taskImplements, options)](./kit.automatedtabtask.md) | Open a new page in the background, execute some task, then close it automatically. |
+|  [DomProxy(options)](./kit.domproxy.md) | DomProxy provide an interface that be stable even dom is changed. |
+|  [GetContext()](./kit.getcontext.md) | Get current running context. |
+|  [OnlyRunInContext(context, name)](./kit.onlyrunincontext.md) | Make sure this file only run in wanted context |
 |  [OnlyRunInContext(context, throws)](./kit.onlyrunincontext_1.md) |  |
 
 ## Interfaces
 
 |  Interface | Description |
 |  --- | --- |
-|  [AsyncCallExecutorOptions](./kit.asynccallexecutoroptions.md) |  |
-|  [AsyncCallOptions](./kit.asynccalloptions.md) |  |
-|  [AutomatedTabTaskDefineTimeOptions](./kit.automatedtabtaskdefinetimeoptions.md) |  |
-|  [AutomatedTabTaskRuntimeOptions](./kit.automatedtabtaskruntimeoptions.md) |  |
-|  [DomProxy](./kit.domproxy.md) |  |
-|  [DomProxyOptions](./kit.domproxyoptions.md) |  |
+|  [AsyncCallOptions](./kit.asynccalloptions.md) | Options for [AsyncCall()](./kit.asynccall.md) |
+|  [AutomatedTabTaskDefineTimeOptions](./kit.automatedtabtaskdefinetimeoptions.md) | Define-time options for [AutomatedTabTask()](./kit.automatedtabtask.md) |
+|  [AutomatedTabTaskRuntimeOptions](./kit.automatedtabtaskruntimeoptions.md) | Runtime options for [AutomatedTabTask()](./kit.automatedtabtask.md) |
+|  [DomProxy](./kit.domproxy.md) | A DomProxy object |
+|  [DomProxyOptions](./kit.domproxyoptions.md) | Options for DomProxy |
 |  [Serialization](./kit.serialization.md) | Define how to do serialization and deserialization of remote procedure call |
 
 ## Variables
 
 |  Variable | Description |
 |  --- | --- |
-|  [AsyncCall](./kit.asynccall.md) | Async call between different context.<!-- -->High level abstraction of MessageCenter.<!-- -->\# Shared code - How to stringify/parse parameters/returns should be shared, defaults to NoSerialization. - <code>key</code> should be shared.<!-- -->\# One side - Should provide some functions then export its type (for example, <code>BackgroundCalls</code>) - <code>const call = AsyncCall&lt;ForegroundCalls&gt;(backgroundCalls)</code> - Then you can <code>call</code> any method on <code>ForegroundCalls</code>\# Other side - Should provide some functions then export its type (for example, <code>ForegroundCalls</code>) - <code>const call = AsyncCall&lt;BackgroundCalls&gt;(foregroundCalls)</code> - Then you can <code>call</code> any method on <code>BackgroundCalls</code>Note: Two sides can implement the same function |
-|  [DomProxy](./kit.domproxy.md) | DomProxy provide an interface that be stable even dom is changed.<!-- -->DomProxy provide 3 nodes. <code>before</code>, <code>current</code> and <code>after</code>. <code>current</code> is a fake dom node powered by Proxy, it will forward all your operations to the <code>realCurrent</code>.<code>before</code> and <code>after</code> is a true <code>span</code> that always point to before and after of <code>realCurrent</code>Special Handlers:<!-- -->\*forward\*: forward to current <code>realCurrent</code>\*undo\*: undo effect when <code>realCurrent</code> changes<!-- -->\*move\*: move effect to new <code>realCurrent</code>- style (forward, undo, move) - addEventListener (forward, undo, move) - appendChild (forward, undo, move) |
-|  [JSONSerialization](./kit.jsonserialization.md) |  |
-|  [NoSerialization](./kit.noserialization.md) | Do not do any serialization |
+|  [JSONSerialization](./kit.jsonserialization.md) | Serialization implementation by JSON.parse/stringify |
+|  [NoSerialization](./kit.noserialization.md) | Serialization implementation that do nothing |
 
 ## Type Aliases
 
 |  Type Alias | Description |
 |  --- | --- |
-|  [Contexts](./kit.contexts.md) |  |
+|  [Contexts](./kit.contexts.md) | All context that possible in when developing a WebExtension |
 

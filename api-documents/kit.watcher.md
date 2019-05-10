@@ -56,5 +56,5 @@ export declare abstract class Watcher<T, DomProxyBefore extends Element = HTMLSp
 |  [setDomProxyOption(option)](./kit.watcher.setdomproxyoption.md) |  | Set option for DomProxy |
 |  [startWatch(args)](./kit.watcher.startwatch.md) |  |  |
 |  [stopWatch(args)](./kit.watcher.stopwatch.md) |  |  |
-|  [useNodeForeach(fn)](./kit.watcher.usenodeforeach.md) |  | Just like React hooks. |
+|  [useNodeForeach(fn)](./kit.watcher.usenodeforeach.md) |  | Just like React hooks. Provide callbacks for each node changes. |
 

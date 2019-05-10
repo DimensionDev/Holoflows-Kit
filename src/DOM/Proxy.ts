@@ -1,3 +1,6 @@
+/**
+ * Options for DomProxy
+ */
 export interface DomProxyOptions<Before extends Element = HTMLSpanElement, After extends Element = HTMLSpanElement> {
     /** Create the `before` node of the DomProxy */ createBefore(): Before
     /** Create the `after` node of the DomProxy */ createAfter(): After
@@ -7,6 +10,8 @@ export interface DomProxyOptions<Before extends Element = HTMLSpanElement, After
 
 /**
  * DomProxy provide an interface that be stable even dom is changed.
+ *
+ * @remarks
  *
  * DomProxy provide 3 nodes. `before`, `current` and `after`.
  * `current` is a fake dom node powered by Proxy,
@@ -26,7 +31,7 @@ export interface DomProxyOptions<Before extends Element = HTMLSpanElement, After
  * - addEventListener (forward, undo, move)
  * - appendChild (forward, undo, move)
  */
-export const DomProxy = function<
+export function DomProxy<
     ProxiedElement extends Element = HTMLElement,
     Before extends Element = HTMLSpanElement,
     After extends Element = HTMLSpanElement
@@ -297,7 +302,9 @@ export const DomProxy = function<
         },
     }
 }
-
+/**
+ * A DomProxy object
+ */
 export interface DomProxy<
     ProxiedElement extends Element = HTMLElement,
     Before extends Element = HTMLSpanElement,

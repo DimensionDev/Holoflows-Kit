@@ -4,6 +4,8 @@
 
 ## AutomatedTabTaskRuntimeOptions interface
 
+Runtime options for [AutomatedTabTask()](./kit.automatedtabtask.md)
+
 <b>Signature:</b>
 
 ```typescript

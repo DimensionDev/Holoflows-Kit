@@ -2,14 +2,12 @@
 
 [Home](./index.md) &gt; [@holoflows/kit](./kit.md) &gt; [EventWatcher](./kit.eventwatcher.md) &gt; [eventListener](./kit.eventwatcher.eventlistener.md)
 
-## EventWatcher.eventListener() method
+## EventWatcher.eventListener property
+
+Use this function as event listener to invoke watcher.
 
 <b>Signature:</b>
 
 ```typescript
-eventListener(): void;
+eventListener: () => void;
 ```
-<b>Returns:</b>
-
-`void`
-

@@ -30,9 +30,10 @@ type MapOf<
 type SelectorChainTypeItem = MapOf<SelectorChainType>
 
 /**
- * Create a live selector that can continuously select the element you want
+ * Create a live selector that can continuously select the element you want.
  *
- * call `#evaluateOnce` to evaluate the element. Falsy will be ignored.
+ * @remarks
+ * Call {@link LiveSelector.evaluateOnce | #evaluateOnce} to evaluate the element. Falsy value will be ignored.
  *
  * @param T - Type of Element that LiveSelector contains
  */
@@ -51,10 +52,10 @@ export class LiveSelector<T> {
      */
     private readonly selectorChain: SelectorChainTypeItem[] = []
     /**
+     * Clone this LiveSelector and return a new LiveSelector.
      * @returns a new LiveSelector with same action
      * @example
      * ```ts
-     * ls.clone()
      * ls.clone()
      * ```
      */
@@ -66,6 +67,8 @@ export class LiveSelector<T> {
     //#region Add elements
     /**
      * Select the first element that is a descendant of node that matches selectors.
+     *
+     * @param selector - Selector
      *
      * @example
      * ```ts
@@ -131,10 +134,10 @@ export class LiveSelector<T> {
      *
      * @beta
      */
-    unstable_closest<K extends keyof HTMLElementTagNameMap>(selectors: K): LiveSelector<HTMLElementTagNameMap[K]>
-    unstable_closest<K extends keyof SVGElementTagNameMap>(selectors: K): LiveSelector<SVGElementTagNameMap[K]>
-    unstable_closest<E extends Element = Element>(selectors: string): LiveSelector<E>
-    unstable_closest<T>(selectors: string | number): LiveSelector<T> {
+    closest<K extends keyof HTMLElementTagNameMap>(selectors: K): LiveSelector<HTMLElementTagNameMap[K]>
+    closest<K extends keyof SVGElementTagNameMap>(selectors: K): LiveSelector<SVGElementTagNameMap[K]>
+    closest<E extends Element = Element>(selectors: string): LiveSelector<E>
+    closest<T>(selectors: string | number): LiveSelector<T> {
         return this.appendSelectorChain('closest')(selectors)
     }
     //#endregion
@@ -142,6 +145,8 @@ export class LiveSelector<T> {
     //#region Modify
     /**
      * Select the elements of a LiveSelector that meet the condition specified in a callback function.
+     *
+     * @param f - The filter method
      *
      * @example
      * ```ts
@@ -155,6 +160,7 @@ export class LiveSelector<T> {
     /**
      * Calls a defined callback function on each element of a LiveSelector, and continues with the results.
      *
+     * @param callbackfn - Map function
      * @example
      * ```ts
      * ls.map(x => x.parentElement)
@@ -165,7 +171,8 @@ export class LiveSelector<T> {
     }
     /**
      * Combines two LiveSelector.
-     * @param item - Additional LiveSelector to combine.
+     * @param newEle - Additional LiveSelector to combine.
+     * @param NextType - Next type generic for LiveSelector
      *
      * @example
      * ```ts
@@ -196,7 +203,9 @@ export class LiveSelector<T> {
      * ls.slice(2, 4)
      * ```
      */
-    slice: (start?: number, end?: number) => LiveSelector<T> = (a, b) => this.appendSelectorChain('slice')([a, b])
+    slice(start?: number, end?: number): LiveSelector<T> {
+        return this.appendSelectorChain('slice')([start, end])
+    }
     /**
      * Sorts an array.
      * @param compareFn - The name of the function used to determine the order of the elements. If omitted, the elements are sorted in ascending, ASCII character order.
@@ -223,6 +232,7 @@ export class LiveSelector<T> {
     /**
      * Select only nth element
      *
+     * @param n - Select only nth element, allow negative number.
      * @example
      * ```ts
      * ls.nth(-1)

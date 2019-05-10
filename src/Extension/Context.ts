@@ -1,6 +1,11 @@
+/**
+ * All context that possible in when developing a WebExtension
+ */
 export type Contexts = 'background' | 'content' | 'webpage' | 'unknown' | 'options' | 'debugging'
 /**
  * Get current running context.
+ *
+ * @remarks
  * - background: background script
  * - content: content script
  * - webpage: a normal webpage
@@ -25,7 +30,7 @@ export function GetContext(): Contexts {
     return 'webpage'
 }
 /**
- * Make sure this file only run in (for Typescript user: but you can still export types) wanted context
+ * Make sure this file only run in wanted context
  * @param context - Wanted context or contexts
  * @param name - name to throw
  */

@@ -4,6 +4,8 @@
 
 ## AsyncCallOptions interface
 
+Options for [AsyncCall()](./kit.asynccall.md)
+
 <b>Signature:</b>
 
 ```typescript

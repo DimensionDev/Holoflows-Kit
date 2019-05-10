@@ -4,7 +4,7 @@
 
 ## Watcher.useNodeForeach() method
 
-Just like React hooks.
+Just like React hooks. Provide callbacks for each node changes.
 
 <b>Signature:</b>
 
@@ -16,9 +16,25 @@ useNodeForeach(fn: RequireElement<T, (virtualNode: DomProxy<ElementLikeT<T>, Dom
 
 |  Parameter | Type | Description |
 |  --- | --- | --- |
-|  fn | <code>RequireElement&lt;T, (virtualNode: DomProxy&lt;ElementLikeT&lt;T&gt;, DomProxyBefore, DomProxyAfter&gt;, key: unknown, realNode: T) =&gt; useNodeForeachReturns&lt;T&gt;&gt;</code> | you can return a set of functions that will be called on changes. - <code>void</code>: No-op - <code>((oldNode: T) =&gt; void)</code>: it will be called when the node is removed. - <code>{ onRemove?: (old: T) =&gt; void; onTargetChanged?: (oldNode: T, newNode: T) =&gt; void; onNodeMutation?: (node: T) =&gt; void }</code>, <code>onRemove</code> will be called when node is removed. <code>onTargetChanged</code> will be called when the node is still existing but target has changed. <code>onNodeMutation</code> will be called when the node is the same, but it inner content or attributes are modified. |
+|  fn | <code>RequireElement&lt;T, (virtualNode: DomProxy&lt;ElementLikeT&lt;T&gt;, DomProxyBefore, DomProxyAfter&gt;, key: unknown, realNode: T) =&gt; useNodeForeachReturns&lt;T&gt;&gt;</code> | You can return a set of functions that will be called on changes. |
 
 <b>Returns:</b>
 
 `this`
+
+## Remarks
+
+Return value of `fn`
+
+- `void`<!-- -->: No-op
+
+- `((oldNode: T) => void)`<!-- -->: it will be called when the node is removed.
+
+- `{ onRemove?: (old: T) => void; onTargetChanged?: (oldNode: T, newNode: T) => void; onNodeMutation?: (node: T) => void }`<!-- -->,
+
+- - `onRemove` will be called when node is removed.
+
+- - `onTargetChanged` will be called when the node is still existing but target has changed.
+
+- - `onNodeMutation` will be called when the node is the same, but it inner content or attributes are modified.
 

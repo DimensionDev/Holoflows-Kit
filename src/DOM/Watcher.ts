@@ -340,15 +340,25 @@ export abstract class Watcher<
     /** Saved useNodeForeach */
     protected useNodeForeachFn: Parameters<Watcher<T, DomProxyBefore, DomProxyAfter>['useNodeForeach']>[0] | null = null
     /**
-     * Just like React hooks.
+     * Just like React hooks. Provide callbacks for each node changes.
      *
-     * @param fn - you can return a set of functions that will be called on changes.
+     * @param fn - You can return a set of functions that will be called on changes.
+     *
+     * @remarks
+     *
+     * Return value of `fn`
+     *
      * - `void`: No-op
+     *
      * - `((oldNode: T) => void)`: it will be called when the node is removed.
+     *
      * - `{ onRemove?: (old: T) => void; onTargetChanged?: (oldNode: T, newNode: T) => void; onNodeMutation?: (node: T) => void }`,
-     * `onRemove` will be called when node is removed.
-     * `onTargetChanged` will be called when the node is still existing but target has changed.
-     * `onNodeMutation` will be called when the node is the same, but it inner content or attributes are modified.
+     *
+     * - - `onRemove` will be called when node is removed.
+     *
+     * - - `onTargetChanged` will be called when the node is still existing but target has changed.
+     *
+     * - - `onNodeMutation` will be called when the node is the same, but it inner content or attributes are modified.
      */
     useNodeForeach(
         fn: RequireElement<

@@ -16,7 +16,7 @@ map<NextType>(callbackfn: (element: T) => NextType): LiveSelector<NonNullable<Ne
 
 |  Parameter | Type | Description |
 |  --- | --- | --- |
-|  callbackfn | <code>(element: T) =&gt; NextType</code> |  |
+|  callbackfn | <code>(element: T) =&gt; NextType</code> | Map function |
 
 <b>Returns:</b>
 

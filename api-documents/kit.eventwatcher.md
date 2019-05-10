@@ -4,13 +4,7 @@
 
 ## EventWatcher class
 
-To use EventWatcher, do this
-
-```ts
-const e = new EventWatcher(...)
-document.addEventListener('event', e.eventListener)
-
-```
+A Watcher based on event handlers.
 
 <b>Signature:</b>
 
@@ -22,12 +16,21 @@ export declare class EventWatcher<T, Before extends Element = HTMLSpanElement, A
 
 |  Property | Modifiers | Type | Description |
 |  --- | --- | --- | --- |
+|  [eventListener](./kit.eventwatcher.eventlistener.md) |  | <code>() =&gt; void</code> | Use this function as event listener to invoke watcher. |
 |  [watching](./kit.eventwatcher.watching.md) |  | <code>boolean</code> |  |
 
 ## Methods
 
 |  Method | Modifiers | Description |
 |  --- | --- | --- |
-|  [eventListener()](./kit.eventwatcher.eventlistener.md) |  |  |
 |  [startWatch()](./kit.eventwatcher.startwatch.md) |  |  |
+
+## Example
+
+
+```ts
+const e = new EventWatcher(ls)
+document.addEventListener('event', e.eventListener)
+
+```
 

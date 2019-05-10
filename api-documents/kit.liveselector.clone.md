@@ -4,6 +4,8 @@
 
 ## LiveSelector.clone() method
 
+Clone this LiveSelector and return a new LiveSelector.
+
 <b>Signature:</b>
 
 ```typescript
@@ -19,7 +21,6 @@ a new LiveSelector with same action
 
 
 ```ts
-ls.clone()
 ls.clone()
 
 ```

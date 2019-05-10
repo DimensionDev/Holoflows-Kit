@@ -4,6 +4,8 @@
 
 ## DomProxyOptions interface
 
+Options for DomProxy
+
 <b>Signature:</b>
 
 ```typescript

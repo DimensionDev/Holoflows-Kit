@@ -4,6 +4,8 @@
 
 ## AutomatedTabTaskDefineTimeOptions interface
 
+Define-time options for [AutomatedTabTask()](./kit.automatedtabtask.md)
+
 <b>Signature:</b>
 
 ```typescript

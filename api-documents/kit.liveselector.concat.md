@@ -16,7 +16,7 @@ concat<NextType>(newEle: LiveSelector<NextType>): LiveSelector<T | NextType>;
 
 |  Parameter | Type | Description |
 |  --- | --- | --- |
-|  newEle | <code>LiveSelector&lt;NextType&gt;</code> |  |
+|  newEle | <code>LiveSelector&lt;NextType&gt;</code> | Additional LiveSelector to combine. |
 
 <b>Returns:</b>
 

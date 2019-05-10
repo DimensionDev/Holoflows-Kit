@@ -4,7 +4,7 @@
 
 ## OnlyRunInContext() function
 
-Make sure this file only run in (for Typescript user: but you can still export types) wanted context
+Make sure this file only run in wanted context
 
 <b>Signature:</b>
 

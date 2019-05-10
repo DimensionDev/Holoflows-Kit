@@ -16,7 +16,7 @@ querySelector<K extends keyof HTMLElementTagNameMap>(selector: K): LiveSelector<
 
 |  Parameter | Type | Description |
 |  --- | --- | --- |
-|  selector | <code>K</code> |  |
+|  selector | <code>K</code> | Selector |
 
 <b>Returns:</b>
 

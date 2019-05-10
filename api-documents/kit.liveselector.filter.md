@@ -16,7 +16,7 @@ filter<S extends T = T>(f: (value: T, index: number, array: T[]) => value is S):
 
 |  Parameter | Type | Description |
 |  --- | --- | --- |
-|  f | <code>(value: T, index: number, array: T[]) =&gt; value is S</code> |  |
+|  f | <code>(value: T, index: number, array: T[]) =&gt; value is S</code> | The filter method |
 
 <b>Returns:</b>
 

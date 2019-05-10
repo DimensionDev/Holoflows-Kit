@@ -4,7 +4,7 @@
 
 ## GetContext() function
 
-Get current running context. - background: background script - content: content script - webpage: a normal webpage - unknown: unknown context
+Get current running context.
 
 <b>Signature:</b>
 
@@ -14,4 +14,8 @@ export declare function GetContext(): Contexts;
 <b>Returns:</b>
 
 `Contexts`
+
+## Remarks
+
+- background: background script - content: content script - webpage: a normal webpage - unknown: unknown context
 

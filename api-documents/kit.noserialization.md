@@ -4,7 +4,7 @@
 
 ## NoSerialization variable
 
-Do not do any serialization
+Serialization implementation that do nothing
 
 <b>Signature:</b>
 

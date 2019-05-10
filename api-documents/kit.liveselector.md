@@ -4,9 +4,7 @@
 
 ## LiveSelector class
 
-Create a live selector that can continuously select the element you want
-
-call `#evaluateOnce` to evaluate the element. Falsy will be ignored.
+Create a live selector that can continuously select the element you want.
 
 <b>Signature:</b>
 
@@ -14,17 +12,14 @@ call `#evaluateOnce` to evaluate the element. Falsy will be ignored.
 export declare class LiveSelector<T> 
 ```
 
-## Properties
-
-|  Property | Modifiers | Type | Description |
-|  --- | --- | --- | --- |
-|  [slice](./kit.liveselector.slice.md) |  | <code>(start?: number, end?: number) =&gt; LiveSelector&lt;T&gt;</code> | Returns a section of an array. |
-
 ## Methods
 
 |  Method | Modifiers | Description |
 |  --- | --- | --- |
-|  [clone()](./kit.liveselector.clone.md) |  |  |
+|  [clone()](./kit.liveselector.clone.md) |  | Clone this LiveSelector and return a new LiveSelector. |
+|  [closest(selectors)](./kit.liveselector.closest.md) |  | <b><i>(BETA)</i></b> Reversely select element in the parent |
+|  [closest(selectors)](./kit.liveselector.closest_1.md) |  | <b><i>(BETA)</i></b> |
+|  [closest(selectors)](./kit.liveselector.closest_2.md) |  | <b><i>(BETA)</i></b> |
 |  [concat(newEle)](./kit.liveselector.concat.md) |  | Combines two LiveSelector. |
 |  [evaluateOnce()](./kit.liveselector.evaluateonce.md) |  | Evaluate selector expression |
 |  [filter(f)](./kit.liveselector.filter.md) |  | Select the elements of a LiveSelector that meet the condition specified in a callback function. |
@@ -43,8 +38,10 @@ export declare class LiveSelector<T>
 |  [querySelectorAll(selector)](./kit.liveselector.queryselectorall_2.md) |  |  |
 |  [replace(f)](./kit.liveselector.replace.md) |  | Replace the whole array. |
 |  [reverse()](./kit.liveselector.reverse.md) |  | Reverses the elements in an Array. |
+|  [slice(start, end)](./kit.liveselector.slice.md) |  | Returns a section of an array. |
 |  [sort(compareFn)](./kit.liveselector.sort.md) |  | Sorts an array. |
-|  [unstable\_closest(selectors)](./kit.liveselector.unstable_closest.md) |  | <b><i>(BETA)</i></b> Reversely select element in the parent |
-|  [unstable\_closest(selectors)](./kit.liveselector.unstable_closest_1.md) |  | <b><i>(BETA)</i></b> |
-|  [unstable\_closest(selectors)](./kit.liveselector.unstable_closest_2.md) |  | <b><i>(BETA)</i></b> |
+
+## Remarks
+
+Call [\#evaluateOnce](./kit.liveselector.evaluateonce.md) to evaluate the element. Falsy value will be ignored.
 
