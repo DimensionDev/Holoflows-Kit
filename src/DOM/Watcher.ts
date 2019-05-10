@@ -38,7 +38,7 @@ type EventCallback<T> = (fn: Event & { data: T }) => void
 /**
  * Use LiveSelector to watch dom change
  *
- * @abstract You need to implement `startWatch`
+ * You need to implement `startWatch`
  */
 export abstract class Watcher<
     T,
@@ -56,7 +56,7 @@ export abstract class Watcher<
     protected domProxyOption: Partial<DomProxyOptions<DomProxyBefore, DomProxyAfter>> = {}
     /**
      * Set option for DomProxy
-     * @param option DomProxy options
+     * @param option - DomProxy options
      */
     setDomProxyOption(option: Partial<DomProxyOptions<DomProxyBefore, DomProxyAfter>>): this {
         this.domProxyOption = option
@@ -66,8 +66,8 @@ export abstract class Watcher<
     //#region Watch once
     /**
      * Run the Watcher once. Once it emit data, stop watching.
-     * @param fn Map function transform T to Result
-     * @param starter function used to start the watcher, defaults to `() => this.startWatch()`
+     * @param fn - Map function transform T to Result
+     * @param starter - function used to start the watcher, defaults to `() => this.startWatch()`
      */
     once(): Promise<T[]>
     once<Result>(fn: (data: T) => PromiseLike<Result> | Result): Promise<Result[]>
@@ -325,12 +325,12 @@ export abstract class Watcher<
     }
     /**
      * To help identify same nodes in different iteration,
-     * you need to implement a map function that map `node` => `key`
+     * you need to implement a map function that map `node` to `key`
      *
      * If the key is changed, the same node will call through `forEachRemove` then `forEach`
      *
-     * @param assigner `node` => `key`, defaults to `node => node`
-     * @param comparer compare between two keys, defaults to `===`
+     * @param assigner - map `node` to `key`, defaults to `node => node`
+     * @param comparer - compare between two keys, defaults to `===`
      */
     assignKeys<Q = unknown>(assigner: (node: T, index: number, arr: T[]) => Q, comparer?: (a: Q, b: Q) => boolean) {
         this.mapNodeToKey = assigner
@@ -342,7 +342,7 @@ export abstract class Watcher<
     /**
      * Just like React hooks.
      *
-     * @param fn you can return a set of functions that will be called on changes.
+     * @param fn - you can return a set of functions that will be called on changes.
      * - `void`: No-op
      * - `((oldNode: T) => void)`: it will be called when the node is removed.
      * - `{ onRemove?: (old: T) => void; onTargetChanged?: (oldNode: T, newNode: T) => void; onNodeMutation?: (node: T) => void }`,
@@ -370,7 +370,7 @@ export abstract class Watcher<
     /**
      * Get virtual node by key.
      * Virtual node will be unavailable if it is deleted
-     * @param key Key used to find DomProxy
+     * @param key - Key used to find DomProxy
      */
     getVirtualNodeByKey(key: unknown) {
         return (

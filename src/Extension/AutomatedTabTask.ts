@@ -9,29 +9,29 @@ interface AutomatedTabTaskSharedOptions {
      * If the task is memorable.
      * - true: Memorize by url and all options
      * - false: Does not use Memory
-     * @default false
+     * @defaultValue false
      */
     memorable: boolean
     /**
      * Task timeout.
-     * @default 30000
+     * @defaultValue 30000
      */
     timeout: number
     /**
      * Should the new tab pinned?
-     * @default true
+     * @defaultValue true
      *
      * !TODO: make it false on Vavaldi.
      */
     pinned: boolean
     /**
      * Should the new tab to be closed automatically?
-     * @default true
+     * @defaultValue true
      */
     autoClose: boolean
     /**
      * Should the new tab to be active?
-     * @default false
+     * @defaultValue false
      */
     active: boolean
 }
@@ -39,17 +39,17 @@ export interface AutomatedTabTaskDefineTimeOptions extends AutomatedTabTaskShare
     /**
      * At most run `concurrent` tasks.
      * Prevents open too many tabs at the same time.
-     * @default 3
+     * @defaultValue 3
      */
     concurrent: number
     /**
      * A unique key
-     * @default `a extension specific url.`
+     * @defaultValue `a extension specific url.`
      */
     key: string
     /**
      * TTL for memorize
-     * @default 30 * 60 * 1000
+     * @defaultValue 30 * 60 * 1000
      */
     memorizeTTL: number
 }
@@ -62,10 +62,9 @@ export interface AutomatedTabTaskRuntimeOptions extends AutomatedTabTaskSharedOp
 /**
  * Based on AsyncCall. Open a new page in the background, execute some task, then close it automatically.
  *
- * Usage:
+ * @example
  *
- * > In content script: (You must run this in the page you wanted to run task in!)
- *
+ * In content script: (You must run this in the page you wanted to run task in!)
  * ```ts
  * export const task = AutomatedTabTask({
  *   async taskA() {
@@ -74,15 +73,16 @@ export interface AutomatedTabTaskRuntimeOptions extends AutomatedTabTaskSharedOp
  * })
  * ```
  *
- * > In background script:
+ * In background script:
  *
+ * Open https://example.com/ then run taskA() on that page, which will return 'Done!'
  * ```ts
  * import { task } from '...'
  * task('https://example.com/').taskA()
- * // Open https://example.com/ then run taskA() on that page, which will return 'Done!'
  * ```
- * @param taskImplements All tasks that background page can call.
- * @param options Options
+ *
+ * @param taskImplements - All tasks that background page can call.
+ * @param options - Options
  */
 export function AutomatedTabTask<T extends Record<string, (...args: any[]) => Promise<any>>>(
     taskImplements: T,

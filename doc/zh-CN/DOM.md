@@ -13,7 +13,7 @@
 
 假设被注入页面是由 React 生成的机票价格页面，它会动态刷新。你想在每张机票的价格后面加上它的美元价格。
 
-```typescript
+```ts
 import { LiveSelector, MutationObserverWatcher } from '@holoflows/kit/DOM'
 
 const price = new LiveSelector()
@@ -155,7 +155,7 @@ const ls = new LiveSelector()
 
 同 [document.querySelector](https://mdn.io/document.querySelector)，计算时，将选中的元素加入列表。
 
-```typescript
+```ts
 ls.querySelector('div#root').querySelector('.nav')
 ```
 
@@ -169,7 +169,7 @@ ls.querySelector('div#root').querySelector('.nav')
 
 同 [document.querySelectorAll](https://mdn.io/document.querySelectorAll)，计算时，将选中的元素加入列表。
 
-```typescript
+```ts
 ls.querySelectorAll('div').querySelectorAll('h1')
 ```
 

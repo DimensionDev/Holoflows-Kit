@@ -21,7 +21,10 @@ export class ValueRef<T> {
     constructor(private _value: T) {}
     /**
      * Add a listener. This will return a remover.
-     * Use it like: useEffect(() => ref.addListener(() => {...}))
+     * @example
+     * ```ts
+     * React.useEffect(() => ref.addListener(() => {...}))
+     * ```
      */
     addListener(fn: Fn<T>) {
         this.watcher.set(fn, true)

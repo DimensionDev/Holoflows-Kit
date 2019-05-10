@@ -15,7 +15,7 @@ It will automatically refresh, just like today's PWAs.
 
 You want to add price in USD after every ticket.
 
-```typescript
+```ts
 import { LiveSelector, MutationObserverWatcher } from '@holoflows/kit/DOM'
 
 const price = new LiveSelector()
@@ -156,7 +156,7 @@ const ls = new LiveSelector()
 
 Same as [document.querySelector](https://mdn.io/document.querySelector), add element to the list when evaluating.
 
-```typescript
+```ts
 ls.querySelector('div#root').querySelector('.nav')
 ```
 
@@ -170,7 +170,7 @@ ls.querySelector('div#root').querySelector('.nav')
 
 Same as [document.querySelectorAll](https://mdn.io/document.querySelectorAll), add elements to the list when evaluating.
 
-```typescript
+```ts
 ls.querySelectorAll('div').querySelectorAll('h1')
 ```
 

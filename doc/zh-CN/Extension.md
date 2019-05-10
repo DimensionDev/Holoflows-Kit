@@ -60,7 +60,7 @@ _提示: 两端可以定义同一个函数_
 
 例子:
 
-```typescript
+```ts
 // Mono repo
 // UI 一端
 const UI = {

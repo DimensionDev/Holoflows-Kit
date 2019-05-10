@@ -60,7 +60,7 @@ _Note: Two sides can implement the same function_
 
 Example:
 
-```typescript
+```ts
 // Mono repo
 // On UI
 const UI = {

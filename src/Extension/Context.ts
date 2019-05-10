@@ -26,8 +26,8 @@ export function GetContext(): Contexts {
 }
 /**
  * Make sure this file only run in (for Typescript user: but you can still export types) wanted context
- * @param context Wanted context or contexts
- * @param name name to throw
+ * @param context - Wanted context or contexts
+ * @param name - name to throw
  */
 export function OnlyRunInContext(context: Contexts | Contexts[], name: string): void
 export function OnlyRunInContext(context: Contexts | Contexts[], throws: false): boolean

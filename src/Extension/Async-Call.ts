@@ -1,5 +1,4 @@
 import { MessageCenter as HoloflowsMessageCenter } from './MessageCenter'
-import { memorize } from 'memorize-decorator'
 
 //#region Serialization
 /**
@@ -20,6 +19,9 @@ export const NoSerialization: Serialization = {
         return serialized
     },
 }
+/**
+ * @param replacer - Replacer of JSON.parse/stringify
+ */
 export const JSONSerialization = (replacer: Parameters<JSON['parse']>[1] = undefined) =>
     ({
         async serialization(from) {
@@ -42,12 +44,12 @@ type GeneratorDefault = Record<string, ((...args: any[]) => AsyncIterableIterato
 
 export interface AsyncCallOptions {
     /**
-     * @param key
+     * @param key -
      * A key to prevent collision with other AsyncCalls. Can be anything, but need to be the same on the both side.
      */
     key: string
     /**
-     * @param serializer
+     * @param serializer -
      * How to serialization and deserialization parameters and return values
      *
      * We offer some built-in serializer:
@@ -56,8 +58,7 @@ export interface AsyncCallOptions {
      */
     serializer: Serialization
     /**
-     * @param MessageCenter
-     * A class that can let you transfer messages between two sides
+     * @param MessageCenter - A class that can let you transfer messages between two sides
      */
     MessageCenter: {
         new (): {
@@ -66,13 +67,12 @@ export interface AsyncCallOptions {
         }
     }
     /**
-     * @param dontThrowOnNotImplemented
+     * @param dontThrowOnNotImplemented -
      * If this side receive messages that we didn't implemented, throw an error
      */
     dontThrowOnNotImplemented: boolean
     /**
-     * @param writeToConsole
-     * Write all calls to console.
+     * @param writeToConsole - Write all calls to console.
      */
     writeToConsole: boolean
 }
@@ -81,46 +81,51 @@ export interface AsyncCallOptions {
  *
  * High level abstraction of MessageCenter.
  *
- * > Shared code
+ * # Shared code
  * - How to stringify/parse parameters/returns should be shared, defaults to NoSerialization.
  * - `key` should be shared.
  *
- * > One side
+ * # One side
  * - Should provide some functions then export its type (for example, `BackgroundCalls`)
  * - `const call = AsyncCall<ForegroundCalls>(backgroundCalls)`
  * - Then you can `call` any method on `ForegroundCalls`
  *
- * > Other side
+ * # Other side
  * - Should provide some functions then export its type (for example, `ForegroundCalls`)
  * - `const call = AsyncCall<BackgroundCalls>(foregroundCalls)`
  * - Then you can `call` any method on `BackgroundCalls`
  *
  * Note: Two sides can implement the same function
  *
- * @example ```typescript
- // Mono repo
- // UI part
- const UI = {
-     async dialog(text: string) {
-         alert(text)
-     },
- }
- export type UI = typeof UI
- const callsClient = AsyncCall<Server>(UI)
- callsClient.sendMail('hello world', 'what')
- 
- // On server
- const Server = {
-    async sendMail(text: string, to: string) {
-        return true
-    },
- }
- export type Server = typeof Server
- const calls = AsyncCall<UI>(Server)
- calls.dialog('hello')
- ```
- * @param implementation Implementation of this side.
- * @param options Define your own serializer, MessageCenter or other options.
+ * @example
+ * - Mono repo
+ * - - UI part
+ * ```ts
+ * const UI = {
+ *      async dialog(text: string) {
+ *          alert(text)
+ *      },
+ * }
+ * export type UI = typeof UI
+ * const callsClient = AsyncCall<Server>(UI)
+ * callsClient.sendMail('hello world', 'what')
+ * ```
+ *
+ * - - On server
+ * ```ts
+ * const Server = {
+ *      async sendMail(text: string, to: string) {
+ *          return true
+ *      }
+ * }
+ * export type Server = typeof Server
+ * const calls = AsyncCall<UI>(Server)
+ * calls.dialog('hello')
+ * ```
+ *
+ * @param implementation - Implementation of this side.
+ * @param options - Define your own serializer, MessageCenter or other options.
+ *
  */
 export const AsyncCall = <OtherSideImplementedFunctions = {}>(
     implementation: Default,

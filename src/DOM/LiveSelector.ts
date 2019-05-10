@@ -1,38 +1,62 @@
-type RecordType<T extends string, F> = { type: T; param: F }
 /**
  * Define all possible recordable operations.
  */
 interface SelectorChainType {
-    getElementsByClassName: RecordType<'getElementsByClassName', string>
-    getElementsByTagName: RecordType<'getElementsByTagName', string>
-    querySelector: RecordType<'querySelector', string>
-    closest: RecordType<'closest', string | number>
-    querySelectorAll: RecordType<'querySelectorAll', string>
-    filter: RecordType<'filter', (element: any, index: number, array: any[]) => boolean>
-    map: RecordType<'map', (element: any) => any>
-    concat: RecordType<'concat', LiveSelector<any>>
-    reverse: RecordType<'reverse', undefined>
-    slice: RecordType<'slice', [number | undefined, number | undefined]>
-    sort: RecordType<'sort', (a: any, b: any) => number>
-    flat: RecordType<'flat', undefined>
-    nth: RecordType<'nth', number>
-    replace: RecordType<'replace', (array: any[]) => any[]>
+    getElementsByClassName: string
+    getElementsByTagName: string
+    querySelector: string
+    closest: string | number
+    querySelectorAll: string
+    filter: (element: any, index: number, array: any[]) => boolean
+    map: (element: any) => any
+    concat: LiveSelector<any>
+    reverse: undefined
+    slice: [number | undefined, number | undefined]
+    sort: ((a: any, b: any) => number) | undefined
+    flat: undefined
+    nth: number
+    replace: (array: any[]) => any[]
 }
-type Keys = SelectorChainType[keyof SelectorChainType]['type']
-type Params = { [key in keyof SelectorChainType]: SelectorChainType[key]['param'] }
+type MapOf<
+    Original,
+    Type = {
+        [T in keyof Original]: {
+            type: T
+            param: Original[T]
+        }
+    },
+    EachType = Type[keyof Type]
+> = EachType
+type SelectorChainTypeItem = MapOf<SelectorChainType>
+
 /**
  * Create a live selector that can continuously select the element you want
  *
  * call `#evaluateOnce` to evaluate the element. Falsy will be ignored.
+ *
+ * @param T - Type of Element that LiveSelector contains
  */
 export class LiveSelector<T> {
-    private generateMethod = <Key extends Keys>(type: Key) => (param: Params[Key]): LiveSelector<any> => {
+    /**
+     * Record a method call into {@link LiveSelector.selectorChain}
+     */
+    private appendSelectorChain = <Key extends keyof SelectorChainType>(type: Key) => (
+        param: SelectorChainType[Key],
+    ): LiveSelector<any> => {
         this.selectorChain.push({ type: type as any, param: param as any })
         return this as LiveSelector<any>
     }
-    private readonly selectorChain: (SelectorChainType[keyof SelectorChainType])[] = []
     /**
-     * @return a new LiveSelector with same action
+     * Records of previous calls on LiveSelector
+     */
+    private readonly selectorChain: SelectorChainTypeItem[] = []
+    /**
+     * @returns a new LiveSelector with same action
+     * @example
+     * ```ts
+     * ls.clone()
+     * ls.clone()
+     * ```
      */
     clone() {
         const ls = new LiveSelector<T>()
@@ -43,67 +67,75 @@ export class LiveSelector<T> {
     /**
      * Select the first element that is a descendant of node that matches selectors.
      *
-     * @example ```ts
-     * ls.querySelector('div#root')```
+     * @example
+     * ```ts
+     * ls.querySelector('div#root')
+     * ```
      */
     querySelector<K extends keyof HTMLElementTagNameMap>(selector: K): LiveSelector<HTMLElementTagNameMap[K]>
     querySelector<K extends keyof SVGElementTagNameMap>(selector: K): LiveSelector<SVGElementTagNameMap[K]>
     querySelector<E extends Element = Element>(selector: string): LiveSelector<E>
     querySelector<T>(selector: string): LiveSelector<T> {
-        return this.generateMethod('querySelector')(selector)
+        return this.appendSelectorChain('querySelector')(selector)
     }
     /**
      * Select all element descendants of node that match selectors.
      *
-     * @param selector Selector
-     * @example ```ts
-     * ls.querySelector('div > div')```
+     * @param selector - Selector
+     * @example
+     * ```ts
+     * ls.querySelector('div > div')
+     * ```
      */
     querySelectorAll<K extends keyof HTMLElementTagNameMap>(selector: K): LiveSelector<HTMLElementTagNameMap[K]>
     querySelectorAll<K extends keyof SVGElementTagNameMap>(selector: K): LiveSelector<SVGElementTagNameMap[K]>
     querySelectorAll<E extends Element = Element>(selector: string): LiveSelector<E>
     querySelectorAll<T>(selector: string): LiveSelector<T> {
-        return this.generateMethod('querySelectorAll')(selector)
+        return this.appendSelectorChain('querySelectorAll')(selector)
     }
     /**
      * Select all element base on the current result.
-     * @param className Class name
-     * @example ```ts
+     * @param className - Class name
+     * @example
+     * Equal to ls.querySelectorAll('.a .b')
+     * ```ts
      * ls.getElementsByClassName('a').getElementsByClassName('b')
-     * // Equal to ls.querySelectorAll('.a .b')```
+     * ```
      */
     getElementsByClassName<T extends Element = Element>(className: string): LiveSelector<T>
     getElementsByClassName<T>(className: string): LiveSelector<T> {
-        return this.generateMethod('getElementsByClassName')(className)
+        return this.appendSelectorChain('getElementsByClassName')(className)
     }
     /**
      * Select all element base on the current result.
-     * @param tag Tag name
-     * @example ```ts
+     * @param tag - Tag name
+     * @example
+     * Equal to ls.querySelectorAll('a b')
+     * ```ts
      * ls.getElementsByTagName('a').getElementsByTagName('b')
-     * // Equal to ls.querySelectorAll('a b')```
+     * ```
      */
     getElementsByTagName<K extends keyof HTMLElementTagNameMap>(tag: K): LiveSelector<HTMLElementTagNameMap[K]>
     getElementsByTagName<K extends keyof SVGElementTagNameMap>(tag: K): LiveSelector<SVGElementTagNameMap[K]>
     getElementsByTagName<E extends Element = Element>(tag: string): LiveSelector<E>
     getElementsByTagName<T>(tag: string): LiveSelector<T> {
-        return this.generateMethod('getElementsByTagName')(tag)
+        return this.appendSelectorChain('getElementsByTagName')(tag)
     }
     /**
      * Reversely select element in the parent
-     *
-     * ! Experimental API
-     *
-     * @example ```ts
+     * @example
+     * ```ts
      * ls.closest('div')
      * ls.closest(2) // parentElement.parentElement
      * ```
+     *
+     * @beta
      */
     unstable_closest<K extends keyof HTMLElementTagNameMap>(selectors: K): LiveSelector<HTMLElementTagNameMap[K]>
     unstable_closest<K extends keyof SVGElementTagNameMap>(selectors: K): LiveSelector<SVGElementTagNameMap[K]>
     unstable_closest<E extends Element = Element>(selectors: string): LiveSelector<E>
     unstable_closest<T>(selectors: string | number): LiveSelector<T> {
-        return this.generateMethod('closest')(selectors)
+        return this.appendSelectorChain('closest')(selectors)
     }
     //#endregion
 
@@ -111,83 +143,107 @@ export class LiveSelector<T> {
     /**
      * Select the elements of a LiveSelector that meet the condition specified in a callback function.
      *
-     * @example ```ts
-     * ls.filter(x => x.innerText.match('hello'))```
+     * @example
+     * ```ts
+     * ls.filter(x => x.innerText.match('hello'))
+     * ```
      */
-    filter: (<S extends T = T>(f: (value: T, index: number, array: T[]) => value is S) => LiveSelector<S>) &
-        ((f: (value: T, index: number, array: T[]) => any) => LiveSelector<NonNullable<T>>) = this.generateMethod(
-        'filter',
-    )
+    filter<S extends T = T>(f: (value: T, index: number, array: T[]) => value is S): LiveSelector<S>
+    filter(f: (value: T, index: number, array: T[]) => any): LiveSelector<NonNullable<T>> {
+        return this.appendSelectorChain('filter')(f)
+    }
     /**
      * Calls a defined callback function on each element of a LiveSelector, and continues with the results.
      *
-     * @example ```ts
-     * ls.map(x => x.parentElement)```
+     * @example
+     * ```ts
+     * ls.map(x => x.parentElement)
+     * ```
      */
-    map: <NextType>(callbackfn: (element: T) => NextType) => LiveSelector<NonNullable<NextType>> = this.generateMethod(
-        'map',
-    )
+    map<NextType>(callbackfn: (element: T) => NextType): LiveSelector<NonNullable<NextType>> {
+        return this.appendSelectorChain('map')(callbackfn)
+    }
     /**
      * Combines two LiveSelector.
-     * @param item Additional LiveSelector to combine.
+     * @param item - Additional LiveSelector to combine.
      *
-     * @example ```ts
-     * ls.concat(new LiveSelector().querySelector('#root'))```
+     * @example
+     * ```ts
+     * ls.concat(new LiveSelector().querySelector('#root'))
+     * ```
      */
-    concat: <NextType>(newEle: LiveSelector<NextType>) => LiveSelector<T | NextType> = this.generateMethod('concat')
+    concat<NextType>(newEle: LiveSelector<NextType>): LiveSelector<T | NextType> {
+        return this.appendSelectorChain('concat')(newEle)
+    }
     /**
      * Reverses the elements in an Array.
      *
-     * @example ```ts
-     * ls.reverse()```
+     * @example
+     * ```ts
+     * ls.reverse()
+     * ```
      */
     reverse(): LiveSelector<T> {
-        return this.generateMethod('reverse')(undefined)
+        return this.appendSelectorChain('reverse')(undefined)
     }
     /**
      * Returns a section of an array.
-     * @param start The beginning of the specified portion of the array.
-     * @param end The end of the specified portion of the array.
+     * @param start - The beginning of the specified portion of the array.
+     * @param end - The end of the specified portion of the array.
      *
-     * @example ```ts
-     * ls.slice(2, 4)```
+     * @example
+     * ```ts
+     * ls.slice(2, 4)
+     * ```
      */
-    slice: (start?: number, end?: number) => LiveSelector<T> = (a, b) => this.generateMethod('slice')([a, b])
+    slice: (start?: number, end?: number) => LiveSelector<T> = (a, b) => this.appendSelectorChain('slice')([a, b])
     /**
      * Sorts an array.
-     * @param compareFn The name of the function used to determine the order of the elements. If omitted, the elements are sorted in ascending, ASCII character order.
+     * @param compareFn - The name of the function used to determine the order of the elements. If omitted, the elements are sorted in ascending, ASCII character order.
      *
-     * @example ```ts
-     * ls.sort((a, b) => a.innerText.length - b.innerText.length)```
+     * @example
+     * ```ts
+     * ls.sort((a, b) => a.innerText.length - b.innerText.length)
+     * ```
      */
-    sort: (compareFn?: (a: T, b: T) => number) => LiveSelector<T> = this.generateMethod('sort')
+    sort(compareFn?: (a: T, b: T) => number): LiveSelector<T> {
+        return this.appendSelectorChain('sort')(compareFn)
+    }
     /**
      * Flat T[][] to T[]
      *
-     * @example ```ts
-     * ls.flat()```
+     * @example
+     * ```ts
+     * ls.flat()
+     * ```
      */
     flat(): LiveSelector<T extends ArrayLike<infer U> ? U : never> {
-        return this.generateMethod('flat')(undefined)
+        return this.appendSelectorChain('flat')(undefined)
     }
     /**
      * Select only nth element
      *
-     * @example ```ts
-     * ls.nth(-1)```
+     * @example
+     * ```ts
+     * ls.nth(-1)
+     * ```
      */
     nth(n: number): LiveSelector<T> {
-        return this.generateMethod('nth')(n)
+        return this.appendSelectorChain('nth')(n)
     }
     /**
      * Replace the whole array.
      *
-     * @example ```typescript
-     * liveselector.replace(x => lodash.dropRight(x, 2))```
+     * @example
+     * ```ts
+     * ls.replace(x => lodash.dropRight(x, 2))
+     * ```
      *
-     * @param f returns new array.
+     * @param f - returns new array.
      */
-    replace: <NextType>(f: (arr: T[]) => NextType[]) => LiveSelector<NextType> = this.generateMethod('replace')
+    replace<NextType>(f: (arr: T[]) => NextType[]): LiveSelector<NextType> {
+        return this.appendSelectorChain('replace')(f)
+    }
     //#endregion
 
     //#region Build

@@ -2,7 +2,7 @@ import { Watcher } from '../Watcher'
 
 /**
  * To use EventWatcher, do this
- * ```typescript
+ * ```ts
  * const e = new EventWatcher(...)
  * document.addEventListener('event', e.eventListener)
  * ```

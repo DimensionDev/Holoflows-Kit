@@ -29,7 +29,7 @@ export class MessageCenter<ITypedMessages> {
         this.listeners.filter(it => it.key === key).forEach(it => it.handler(data))
     }
     /**
-     * @param instanceKey Use this instanceKey to distinguish your messages and others.
+     * @param instanceKey - Use this instanceKey to distinguish your messages and others.
      * This option cannot make your message safe!
      */
     constructor(private instanceKey = '') {
@@ -44,8 +44,8 @@ export class MessageCenter<ITypedMessages> {
     }
     /**
      * Listen to an event
-     * @param event Name of the event
-     * @param handler Handler of the event
+     * @param event - Name of the event
+     * @param handler - Handler of the event
      */
     public on<Key extends keyof ITypedMessages>(event: Key, handler: (data: ITypedMessages[Key]) => void): void {
         this.listeners.push({
@@ -56,9 +56,9 @@ export class MessageCenter<ITypedMessages> {
 
     /**
      * Send message to local or other instance of extension
-     * @param key Key of the message
-     * @param data Data of the message
-     * @param alsoSendToDocument ! Send message to document. This may leaks secret! Only open in localhost!
+     * @param key - Key of the message
+     * @param data - Data of the message
+     * @param alsoSendToDocument - ! Send message to document. This may leaks secret! Only open in localhost!
      */
     public send<Key extends keyof ITypedMessages>(
         key: Key,
