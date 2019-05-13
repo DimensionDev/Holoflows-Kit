@@ -4,26 +4,23 @@
 
 ## LiveSelector.closest() method
 
-> This API is provided as a preview for developers and may change based on feedback that we receive. Do not use this API in a production environment.
-> 
-
 Reversely select element in the parent
 
 <b>Signature:</b>
 
 ```typescript
-closest<K extends keyof HTMLElementTagNameMap>(selectors: K): LiveSelector<HTMLElementTagNameMap[K]>;
+closest<T>(parentOfNth: number): LiveSelector<T>;
 ```
 
 ## Parameters
 
 |  Parameter | Type | Description |
 |  --- | --- | --- |
-|  selectors | <code>K</code> |  |
+|  parentOfNth | <code>number</code> |  |
 
 <b>Returns:</b>
 
-`LiveSelector<HTMLElementTagNameMap[K]>`
+`LiveSelector<T>`
 
 ## Example
 

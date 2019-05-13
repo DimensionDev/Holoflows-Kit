@@ -131,9 +131,8 @@ export class LiveSelector<T> {
      * ls.closest('div')
      * ls.closest(2) // parentElement.parentElement
      * ```
-     *
-     * @beta
      */
+    closest<T>(parentOfNth: number): LiveSelector<T>
     closest<K extends keyof HTMLElementTagNameMap>(selectors: K): LiveSelector<HTMLElementTagNameMap[K]>
     closest<K extends keyof SVGElementTagNameMap>(selectors: K): LiveSelector<SVGElementTagNameMap[K]>
     closest<E extends Element = Element>(selectors: string): LiveSelector<E>
@@ -153,8 +152,8 @@ export class LiveSelector<T> {
      * ls.filter(x => x.innerText.match('hello'))
      * ```
      */
-    filter<S extends T = T>(f: (value: T, index: number, array: T[]) => value is S): LiveSelector<S>
-    filter(f: (value: T, index: number, array: T[]) => any): LiveSelector<NonNullable<T>> {
+    filter(f: (value: T, index: number, array: T[]) => any): LiveSelector<NonNullable<T>>
+    filter<S extends T = T>(f: (value: T, index: number, array: T[]) => value is S): LiveSelector<S> {
         return this.appendSelectorChain('filter')(f)
     }
     /**
@@ -306,7 +305,6 @@ export class LiveSelector<T> {
                     break
                 }
                 case 'closest':
-                    console.warn('LiveSelector#closet is a experimental API. Be careful with it')
                     if (arr.length === 0) {
                         break
                     } else if (isElementArray(arr)) {

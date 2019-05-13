@@ -9,18 +9,18 @@ Select the elements of a LiveSelector that meet the condition specified in a cal
 <b>Signature:</b>
 
 ```typescript
-filter<S extends T = T>(f: (value: T, index: number, array: T[]) => value is S): LiveSelector<S>;
+filter(f: (value: T, index: number, array: T[]) => any): LiveSelector<NonNullable<T>>;
 ```
 
 ## Parameters
 
 |  Parameter | Type | Description |
 |  --- | --- | --- |
-|  f | <code>(value: T, index: number, array: T[]) =&gt; value is S</code> | The filter method |
+|  f | <code>(value: T, index: number, array: T[]) =&gt; any</code> | The filter method |
 
 <b>Returns:</b>
 
-`LiveSelector<S>`
+`LiveSelector<NonNullable<T>>`
 
 ## Example
 

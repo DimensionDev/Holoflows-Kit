@@ -4,22 +4,19 @@
 
 ## LiveSelector.closest() method
 
-> This API is provided as a preview for developers and may change based on feedback that we receive. Do not use this API in a production environment.
-> 
-
 <b>Signature:</b>
 
 ```typescript
-closest<E extends Element = Element>(selectors: string): LiveSelector<E>;
+closest<K extends keyof SVGElementTagNameMap>(selectors: K): LiveSelector<SVGElementTagNameMap[K]>;
 ```
 
 ## Parameters
 
 |  Parameter | Type | Description |
 |  --- | --- | --- |
-|  selectors | <code>string</code> |  |
+|  selectors | <code>K</code> |  |
 
 <b>Returns:</b>
 
-`LiveSelector<E>`
+`LiveSelector<SVGElementTagNameMap[K]>`
 

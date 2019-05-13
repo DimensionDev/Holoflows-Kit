@@ -17,9 +17,10 @@ export declare class LiveSelector<T>
 |  Method | Modifiers | Description |
 |  --- | --- | --- |
 |  [clone()](./kit.liveselector.clone.md) |  | Clone this LiveSelector and return a new LiveSelector. |
-|  [closest(selectors)](./kit.liveselector.closest.md) |  | <b><i>(BETA)</i></b> Reversely select element in the parent |
-|  [closest(selectors)](./kit.liveselector.closest_1.md) |  | <b><i>(BETA)</i></b> |
-|  [closest(selectors)](./kit.liveselector.closest_2.md) |  | <b><i>(BETA)</i></b> |
+|  [closest(parentOfNth)](./kit.liveselector.closest.md) |  | Reversely select element in the parent |
+|  [closest(selectors)](./kit.liveselector.closest_1.md) |  |  |
+|  [closest(selectors)](./kit.liveselector.closest_2.md) |  |  |
+|  [closest(selectors)](./kit.liveselector.closest_3.md) |  |  |
 |  [concat(newEle)](./kit.liveselector.concat.md) |  | Combines two LiveSelector. |
 |  [evaluateOnce()](./kit.liveselector.evaluateonce.md) |  | Evaluate selector expression |
 |  [filter(f)](./kit.liveselector.filter.md) |  | Select the elements of a LiveSelector that meet the condition specified in a callback function. |
