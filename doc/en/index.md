@@ -4,10 +4,9 @@ A toolkit for browser extension developing.
 
 ## Components
 
-@holoflows/kit 由以下部分组成
+See [API documents](../../api-documents/kit.md)
 
--   [DOM](./DOM.md) - Help developer to track changes in the content script
--   [Extension](./Extension.md) - Some tools that useful in extension developing
+See tutorial of [DOM watcher](./DOM.md)
 
 ## Installation
 
@@ -15,7 +14,10 @@ Use `yarn` or `npm`. Or use UMD.
 
 > https://unpkg.com/@holoflows/kit@latest/dist/out.js
 
-使用模块加载器时，使用 `@holoflows/kit` 导入；使用 umd 时，使用 `window.HoloflowsKit`。
+If you're using module bundler, use `@holoflows/kit` to import;
+using umd, use `window.HoloflowsKit`.
+
+You need to load a polyfill for WebExtension in Chrome (`webextension-polyfill`)
 
 ### ECMAScript version
 

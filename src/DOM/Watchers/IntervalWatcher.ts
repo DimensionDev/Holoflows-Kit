@@ -2,7 +2,11 @@ import { Watcher } from '../Watcher'
 /**
  * A watcher based on time interval.
  */
-export class IntervalWatcher<T> extends Watcher<T> {
+export class IntervalWatcher<
+    T,
+    Before extends Element = HTMLSpanElement,
+    After extends Element = HTMLSpanElement
+> extends Watcher<T, Before, After> {
     private timer: NodeJS.Timer | undefined
     /** Start to watch the LiveSelector at a interval(ms). */
     startWatch(interval: number) {
@@ -13,7 +17,7 @@ export class IntervalWatcher<T> extends Watcher<T> {
         return this
     }
     stopWatch() {
-        this.watching = false
+        super.stopWatch()
         if (this.timer) clearInterval(this.timer)
     }
 }

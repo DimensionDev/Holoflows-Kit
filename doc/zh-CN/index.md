@@ -6,8 +6,20 @@
 
 @holoflows/kit 由以下部分组成
 
--   [DOM](./DOM.md) - 帮助扩展开发者追踪被注入网页中的内容变化
--   [Extension](./Extension.md) - 一些扩展开发会使用到的实用工具
+-   [DOM 相关的工具的教程](./DOM.md) - 帮助扩展开发者追踪被注入网页中的内容变化
+-   -   [DomProxy](../../api-documents/kit.domproxy.md) 用于持续追踪网页变化而不丢失引用和副作用
+-   -   [LiveSelector](../../api-documents/kit.liveselector.md) 用于持续选择网页中的元素。
+-   -   `abstract` [Watcher](../../api-documents/kit.watcher.md)
+-   -   -   [MutationObserverWatcher](../../api-documents/kit.mutationobserverwatcher.md) 通过 `MutationObserver` 追踪网页中的变化
+-   -   -   [IntervalWatcher](../../api-documents/kit.intervalwatcher.md) 通过 `setInterval` 追踪网页中的变化
+-   -   -   [EventWatcher](../../api-documents/kit.eventwatcher.md) 通过事件回调追踪网页中的变化
+-   -   [ValueRef](../../api-documents/kit.valueref.md) 通过 `setter` 订阅值的变化
+
+-   Extension - 一些扩展开发会使用到的实用工具
+-   -   [AsyncCall](../../api-documents/kit.asynccall.md) 跨上下文的远程过程调用工具
+-   -   [Context](../../api-documents/kit.context.md) 在扩展开发中检测当前的上下文
+-   -   [MessageCenter](../../api-documents/kit.messagecenter.md) 在插件开发的不同上下文中通信
+-   -   [AutomatedTabTask](../../api-documents/kit.automatedtabtask.md) 打开一个新的标签页，自动执行某些任务，然后回传结果
 
 ## 安装
 
@@ -16,6 +28,8 @@
 > https://unpkg.com/@holoflows/kit@latest/dist/out.js
 
 使用模块加载器时，使用 `@holoflows/kit` 导入；使用 umd 时，使用 `window.HoloflowsKit`。
+
+如果在 Chrome 中使用，需要加载 WebExtension 的 Polyfill (`webextension-polyfill`)。
 
 ### ECMAScript 版本
 

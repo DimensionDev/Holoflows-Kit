@@ -7,16 +7,16 @@ type Key = string | number | symbol
 const MessageCenterEvent = 'Holoflows-Kit MessageCenter'
 const newMessage = (key: InternalMessageType['key'], data: InternalMessageType['data']) =>
     new CustomEvent(MessageCenterEvent, { detail: { data, key } })
-/** Send and receive messages in different contexts. */
+const noop = () => {}
+/**
+ * Send and receive messages in different contexts.
+ */
 export class MessageCenter<ITypedMessages> {
     private listeners: Array<{ key: Key; handler: (data: any) => void }> = []
-    // private id: any
     private listener = (request: InternalMessageType | Event) => {
-        let key: Key, data: any, instanceKey: string
-        if (request instanceof Event) ({ key, data, instanceKey } = (request as CustomEvent).detail)
-        else ({ key, data, instanceKey } = request)
+        let { key, data, instanceKey } = (request as CustomEvent).detail || request
         // Message is not for us
-        if (this.instanceKey !== instanceKey) return
+        if (this.instanceKey !== (instanceKey || '')) return
         if (this.writeToConsole) {
             console.log(
                 `%cReceive%c %c${key.toString()}`,
@@ -28,23 +28,25 @@ export class MessageCenter<ITypedMessages> {
         }
         this.listeners.filter(it => it.key === key).forEach(it => it.handler(data))
     }
+    /**
+     * @param instanceKey - Use this instanceKey to distinguish your messages and others.
+     * This option cannot make your message safe!
+     */
     constructor(private instanceKey = '') {
-        if (chrome && chrome.runtime) {
+        if (typeof browser !== 'undefined' && browser.runtime && browser.runtime.onMessage) {
             // Fired when a message is sent from either an extension process (by runtime.sendMessage)
             // or a content script (by tabs.sendMessage).
-            if (chrome.runtime.onMessage) {
-                chrome.runtime.onMessage.addListener(this.listener)
-            }
-            // Fired when a message is sent from another extension/app (by runtime.sendMessage).
-            // Cannot be used in a content script.
-            if (chrome.runtime.onMessageExternal) {
-                chrome.runtime.onMessageExternal.addListener(this.listener)
-            }
+            browser.runtime.onMessage.addListener(this.listener)
         }
-        if (document && document.addEventListener) {
+        if (typeof document !== 'undefined' && document.addEventListener) {
             document.addEventListener(MessageCenterEvent, this.listener)
         }
     }
+    /**
+     * Listen to an event
+     * @param event - Name of the event
+     * @param handler - Handler of the event
+     */
     public on<Key extends keyof ITypedMessages>(event: Key, handler: (data: ITypedMessages[Key]) => void): void {
         this.listeners.push({
             handler: data => handler(data),
@@ -52,8 +54,17 @@ export class MessageCenter<ITypedMessages> {
         })
     }
 
-    /** Send message to local or other instance of extension */
-    public send<Key extends keyof ITypedMessages>(key: Key, data: ITypedMessages[Key]): void {
+    /**
+     * Send message to local or other instance of extension
+     * @param key - Key of the message
+     * @param data - Data of the message
+     * @param alsoSendToDocument - ! Send message to document. This may leaks secret! Only open in localhost!
+     */
+    public send<Key extends keyof ITypedMessages>(
+        key: Key,
+        data: ITypedMessages[Key],
+        alsoSendToDocument = location.hostname === 'localhost',
+    ): void {
         if (this.writeToConsole) {
             console.log(
                 `%cSend%c %c${key.toString()}`,
@@ -64,27 +75,21 @@ export class MessageCenter<ITypedMessages> {
             )
         }
         const msg: InternalMessageType = { data, key, instanceKey: this.instanceKey || '' }
-        if (chrome && chrome.runtime) {
-            if (chrome.runtime.sendMessage) {
-                try {
-                    chrome.runtime.sendMessage(msg)
-                } catch (error) {
-                    // if (this.id) {
-                    //     chrome.runtime.sendMessage(this.id, msg)
-                    // }
-                }
+        if (typeof browser !== 'undefined') {
+            if (browser.runtime && browser.runtime.sendMessage) {
+                browser.runtime.sendMessage(msg).catch(noop)
+            }
+            if (browser.tabs) {
+                // Send message to Content Script
+                browser.tabs.query({ discarded: false }).then(tabs => {
+                    for (const tab of tabs) {
+                        if (tab.id) browser.tabs.sendMessage(tab.id, msg).catch(noop)
+                    }
+                })
             }
         }
-        if (document && document.dispatchEvent) {
+        if (alsoSendToDocument && typeof document !== 'undefined' && document.dispatchEvent) {
             document.dispatchEvent(newMessage(key, data))
-        }
-        // Send message to Content Script
-        if (chrome && chrome.tabs) {
-            chrome.tabs.query({ discarded: false }, tabs => {
-                for (const tab of tabs) {
-                    if (tab.id) chrome.tabs.sendMessage(tab.id, msg)
-                }
-            })
         }
     }
     writeToConsole = false
