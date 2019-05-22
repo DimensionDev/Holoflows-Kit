@@ -149,9 +149,24 @@ export function AutomatedTabTask<T extends Record<string, (...args: any[]) => Pr
         )
         return null
     } else if (GetContext() === 'background' || GetContext() === 'options') {
+        const key = '@holoflows/kit/AutomatedTabTask/tabs'
+        if (key in window === false) closeTabsOfPreviousSession()
+        Object.assign(window, { [key]: true })
         type tabId = number
         /** If `tab` is ready */
         const readyMap: Record<tabId, boolean> = {}
+        /** If `tab` is opened by AutomatedTabTask */
+        const opener = {
+            async open(tab: tabId) {
+                const arr = ((await browser.storage.local.get())[key] as tabId[]) || []
+                arr.push(tab)
+                await browser.storage.local.set({ [key]: arr })
+            },
+            async close(tab: tabId) {
+                const arr = (await browser.storage.local.get())[key] as tabId[]
+                await browser.storage.local.set({ [key]: arr.filter(x => tab !== x) })
+            },
+        }
         // Listen to tab REGISTER event
         browser.runtime.onMessage.addListener(((message, sender) => {
             if ((message as any).type === REGISTER) {
@@ -179,6 +194,7 @@ export function AutomatedTabTask<T extends Record<string, (...args: any[]) => Pr
             // Create a new tab
             const tab = await browser.tabs.create({ active, pinned, url })
             const tabId = tab.id!
+            autoClose && (await opener.open(tabId))
             // Wait for the tab register
             while (readyMap[tabId] !== true) await sleep(50)
 
@@ -189,8 +205,8 @@ export function AutomatedTabTask<T extends Record<string, (...args: any[]) => Pr
                 return await timeoutFn(task, timeout)
             } finally {
                 if (!withoutLock) lock.unlock()
-                autoClose && browser.tabs.remove(tabId)
                 delete readyMap[tabId]
+                autoClose && browser.tabs.remove(tabId) && (await opener.close(tabId))
             }
         }
         const memoRunTask = memorize(runTask, { ttl: memorizeTTL })
@@ -246,4 +262,13 @@ export function AutomatedTabTask<T extends Record<string, (...args: any[]) => Pr
     } else {
         return null
     }
+}
+/**
+ * This function can close last-time auto opened
+ */
+async function closeTabsOfPreviousSession() {
+    const key = '@holoflows/kit/AutomatedTabTask/tabs'
+    const arr = ((await browser.storage.local.get())[key] || []) as number[]
+    await browser.tabs.remove(arr)
+    await browser.storage.local.set({ [key]: [] })
 }
