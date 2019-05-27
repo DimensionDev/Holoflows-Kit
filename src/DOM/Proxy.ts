@@ -51,7 +51,8 @@ export function DomProxy<
     // Nodes
     let virtualBefore: Before | null = null
     let virtualBeforeShadow: ShadowRoot | null = null
-    let current: Element | null = document.createElement('div')
+    const defaultCurrent: Element | null = document.createElement('div')
+    let current: Element | null = defaultCurrent
     let virtualAfter: After | null = null
     let virtualAfterShadow: ShadowRoot | null = null
     /** All changes applied on the `proxy` */
@@ -232,10 +233,6 @@ export function DomProxy<
                 return observer
             },
         },
-        get weakBefore() {
-            if (isDestroyed) return null
-            return virtualBefore
-        },
         get before() {
             if (isDestroyed) throw new TypeError('Try to access `before` node after VirtualNode is destroyed')
             if (!virtualBefore) {
@@ -252,10 +249,6 @@ export function DomProxy<
             if (isDestroyed) throw new TypeError('Try to access `current` node after VirtualNode is destroyed')
             return proxy.proxy
         },
-        get weakAfter() {
-            if (isDestroyed) return null
-            return virtualAfter
-        },
         get after(): After {
             if (isDestroyed) throw new TypeError('Try to access `after` node after VirtualNode is destroyed')
             if (!virtualAfter) {
@@ -268,8 +261,16 @@ export function DomProxy<
             if (!virtualAfterShadow) virtualAfterShadow = this.after.attachShadow(afterShadowRootInit)
             return virtualAfterShadow
         },
+        has(type: 'beforeShadow' | 'afterShadow' | 'before' | 'after'): any | null {
+            if (type === 'before') return virtualBefore
+            else if (type === 'after') return virtualAfter
+            else if (type === 'afterShadow') return virtualAfterShadow
+            else if (type === 'beforeShadow') return virtualBeforeShadow
+            else return null
+        },
         get realCurrent(): ProxiedElement | null {
             if (isDestroyed) return null
+            if (current === defaultCurrent) return null
             return current as any
         },
         set realCurrent(node: ProxiedElement | null) {
@@ -312,8 +313,6 @@ export interface DomProxy<
 > {
     /** Destroy the DomProxy */
     destroy(): void
-    /** Returns the `before` element without implicitly create it. */
-    readonly weakBefore: Before | null
     /** Returns the `before` element, if it doesn't exist, create it implicitly. */
     readonly before: Before
     /** Returns the `ShadowRoot` of the `before` element. */
@@ -323,12 +322,16 @@ export interface DomProxy<
      * and if `realCurrent` changes, all action will be forwarded to new `realCurrent`
      */
     readonly current: ProxiedElement
-    /** Returns the `after` element without implicitly create it. */
-    readonly weakAfter: After | null
     /** Returns the `after` element, if it doesn't exist, create it implicitly. */
     readonly after: After
     /** Returns the `ShadowRoot` of the `after` element. */
     readonly afterShadow: ShadowRoot
+    /** Get weak reference to `before` node */
+    has(type: 'before'): Before | null
+    /** Get weak reference to `after` node */
+    has(type: 'after'): After | null
+    /** Get weak reference to `beforeShadow` or `afterShadow` node */
+    has(type: 'beforeShadow' | 'afterShadow'): ShadowRoot | null
     /**
      * The real current of the `current`
      */

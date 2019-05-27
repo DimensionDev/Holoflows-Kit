@@ -60,6 +60,17 @@ export abstract class Watcher<
      */
     setDomProxyOption(option: Partial<DomProxyOptions<DomProxyBefore, DomProxyAfter>>): this {
         this.domProxyOption = option
+        const oldProxy = this._firstVirtualNode
+        if (
+            oldProxy.has('after') ||
+            oldProxy.has('before') ||
+            oldProxy.has('afterShadow') ||
+            oldProxy.has('beforeShadow') ||
+            oldProxy.realCurrent
+        ) {
+            console.warn("Don't set DomProxy before using it.")
+        }
+        this._firstVirtualNode = DomProxy(option)
         return this
     }
     //#endregion
@@ -305,13 +316,18 @@ export abstract class Watcher<
         return this.eventEmitter.emit(event, { data })
     }
     //#endregion
+    private _firstVirtualNode = DomProxy(this.domProxyOption) as DomProxy<
+        ElementLikeT<T>,
+        DomProxyBefore,
+        DomProxyAfter
+    >
     /**
      * This virtualNode always point to the first node in the LiveSelector
      */
-    readonly firstVirtualNode = (DomProxy(this.domProxyOption) as any) as RequireElement<
-        T,
-        DomProxy<ElementLikeT<T>, DomProxyBefore, DomProxyAfter>
-    >
+    get firstVirtualNode() {
+        const fvn = this._firstVirtualNode
+        return this._firstVirtualNode as RequireElement<T, typeof fvn>
+    }
     //#region For multiple nodes injection
     /**
      * Map `Node -> Key`, in case of you don't want the default behavior
