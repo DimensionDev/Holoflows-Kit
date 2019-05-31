@@ -269,6 +269,9 @@ export function AutomatedTabTask<T extends Record<string, (...args: any[]) => Pr
 async function closeTabsOfPreviousSession() {
     const key = '@holoflows/kit/AutomatedTabTask/tabs'
     const arr = ((await browser.storage.local.get())[key] || []) as number[]
-    await browser.tabs.remove(arr)
-    await browser.storage.local.set({ [key]: [] })
+    try {
+        await browser.tabs.remove(arr)
+    } finally {
+        await browser.storage.local.set({ [key]: [] })
+    }
 }
