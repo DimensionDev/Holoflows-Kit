@@ -1,3 +1,12 @@
+/**
+ * This is a light implementation of JSON RPC 2.0
+ *
+ * https://www.jsonrpc.org/specification
+ *
+ * ! Not implemented:
+ * - Notification (request without id)
+ * - Batch invocation (defined in the section 6 of the spec)
+ */
 import { MessageCenter as HoloflowsMessageCenter } from './MessageCenter'
 
 //#region Serialization
@@ -158,26 +167,22 @@ export function AsyncCall<OtherSideImplementedFunctions = {}>(
         ...options,
     } as Required<typeof options>
     const message = new MessageCenter()
-    const CALL = `${key}-call`
-    const RESPONSE = `${key}-return`
+    const CALL = `${key}-jsonrpc`
     type PromiseParam = Parameters<(ConstructorParameters<typeof Promise>)[0]>
-    const map = new Map<string, PromiseParam>()
-    message.on(CALL, async (_data: unknown) => {
-        const data: Request = await serializer.deserialization(_data)
+    const map = new Map<string | number, PromiseParam>()
+    async function onCall(data: Request): Promise<Response | void> {
         try {
             const executor = implementation[data.method as keyof typeof implementation]
             if (!executor) {
                 if (dontThrowOnNotImplemented) {
                     return console.debug('Receive remote call, but not implemented.', key, data)
-                } else {
-                    throw new Error(`Remote-call: ${data.method}() not implemented!`)
-                }
+                } else return ErrorResponse.MethodNotFound(data.id)
             }
-            const args: any[] = data.args
+            const args: any[] = data.params
             const promise = executor(...args)
             if (writeToConsole)
                 console.log(
-                    `${key}.%c${data.method}%c(${args.map(() => '%o').join(', ')}%c)\n%o %c@${data.callId}`,
+                    `${key}.%c${data.method}%c(${args.map(() => '%o').join(', ')}%c)\n%o %c@${data.id}`,
                     'color: #d2c057',
                     '',
                     ...args,
@@ -186,60 +191,54 @@ export function AsyncCall<OtherSideImplementedFunctions = {}>(
                     'color: gray; font-style: italic;',
                 )
             const result = await promise
-            const response: Response = {
-                method: data.method,
-                return: result,
-                callId: data.callId,
-            }
-            message.send(RESPONSE, await serializer.serialization(response))
-        } catch (err) {
-            if (writeToConsole) console.error(`${err.message} %c@${data.callId}\n%c${err.stack}`, 'color: gray', '')
-            const response = await serializer.serialization({
-                method: data.method,
-                error: err instanceof Error ? { message: err.message, stack: err.stack } : err,
-                return: undefined,
-                callId: data.callId,
-            })
-            message.send(RESPONSE, response)
+            const response = new SuccessResponse(data.id, result)
+            return response
+        } catch (e) {
+            return new ErrorResponse(data.id, -1, e.message, e.stack)
         }
-    })
-    message.on(RESPONSE, async (_data: unknown) => {
-        const data: Response = await serializer.deserialization(_data)
-        const [resolve, reject] = map.get(data.callId) || (([null, null] as any) as PromiseParam)
+    }
+    async function onResponse(data: Response): Promise<void> {
+        if (data.id === null) return
+        const [resolve, reject] = map.get(data.id) || (([null, null] as any) as PromiseParam)
         if (!resolve) return // drop this response
-        map.delete(data.callId)
-        if (data.error) {
+        map.delete(data.id)
+        if ('error' in data) {
             const err = new Error(data.error.message)
-            err.stack = data.error.stack
+            err.stack = data.error.data.stack
             reject(err)
             if (writeToConsole)
-                console.error(`${data.error.message} %c@${data.callId}\n%c${data.error.stack}`, 'color: gray', '')
+                console.error(`${data.error.message} %c@${data.id}\n%c${data.error.data.stack}`, 'color: gray', '')
         } else {
-            resolve(data.return)
+            resolve(data.result)
+        }
+    }
+    message.on(CALL, async (_: unknown) => {
+        try {
+            const data: SuccessResponse | ErrorResponse | Request = await serializer.deserialization(_)
+            if (typeof data === 'object' && data !== null && 'jsonrpc' in data && data.jsonrpc === '2.0') {
+                if ('method' in data) {
+                    const result = await onCall(data)
+                    if (result) message.send(CALL, await serializer.serialization(result))
+                } else if ('error' in data) onResponse(data)
+                else if ('result' in data) onResponse(data)
+            } else {
+                // ? Ignore this message. But according to the spec, we should send a parse error
+            }
+        } catch (e) {
+            message.send(CALL, await serializer.serialization(ErrorResponse.ParseError(e.stack)))
         }
     })
-    interface Request {
-        method: string
-        args: any[]
-        callId: string
-    }
-    interface Response {
-        return: any
-        callId: string
-        method: string
-        error?: { message: string; stack: string }
-    }
     return new Proxy(
         {},
         {
             get(target, method, receiver) {
-                return (...args: any[]) =>
+                return (...params: any[]) =>
                     new Promise((resolve, reject) => {
                         if (typeof method !== 'string') return reject('Only string can be keys')
                         const id = Math.random()
                             .toString(36)
                             .slice(2)
-                        const req: Request = { method: method, args: args, callId: id }
+                        const req = new Request(id, method, params)
                         serializer.serialization(req).then(data => {
                             message.send(CALL, data)
                             map.set(id, [resolve, reject])
@@ -266,3 +265,33 @@ export function AsyncCall<OtherSideImplementedFunctions = {}>(
 // ) => {
 //     return {} as OtherSideImplementedFunctions
 // }
+function removeProto(obj: any) {
+    Object.setPrototypeOf(obj, Object.prototype)
+}
+class Request {
+    readonly jsonrpc = '2.0'
+    constructor(public id: string, public method: string, public params: any[]) {
+        removeProto(this)
+    }
+}
+class SuccessResponse {
+    readonly jsonrpc = '2.0'
+    constructor(public id: string | number | null, public result: any) {
+        removeProto(this)
+    }
+}
+class ErrorResponse {
+    readonly jsonrpc = '2.0'
+    error: { code: number; message: string; data: { stack: string } }
+    constructor(public id: string | number | null, code: number, message: string, stack: string) {
+        this.error = { code, message, data: { stack } }
+        removeProto(this)
+    }
+    // Pre defined error in section 5.1
+    static readonly ParseError = (stack = '') => new ErrorResponse(null, -32700, 'Parse error', stack)
+    static readonly InvalidRequest = new ErrorResponse(null, -32600, 'Invalid Request', '')
+    static readonly MethodNotFound = (id: string | number) => new ErrorResponse(id, -32601, 'Method not found', '')
+    static readonly InvalidParams = (id: string | number) => new ErrorResponse(id, -32602, 'Invalid params', '')
+    static readonly InternalError = (id: string | number) => new ErrorResponse(id, -32603, 'Internal error', '')
+}
+type Response = SuccessResponse | ErrorResponse
