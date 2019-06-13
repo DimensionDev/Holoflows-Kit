@@ -4,7 +4,7 @@
  * https://www.jsonrpc.org/specification
  *
  * ! Not implemented:
- * - Notification (request without id)
+ * - Send Notification (receive Notification is okay)
  * - Batch invocation (defined in the section 6 of the spec)
  */
 import { MessageCenter as HoloflowsMessageCenter } from './MessageCenter'
@@ -92,6 +92,12 @@ export interface AsyncCallOptions {
      * @param writeToConsole - Write all calls to console.
      */
     writeToConsole: boolean
+    /**
+     * @param strictJSONRPC - strict mode.
+     * Open this option, `undefined` and `null` will all becomes `null`
+     * When receive unknown message on the message channel, will response an error response
+     */
+    strictJSONRPC: boolean
 }
 /**
  * Async call between different context.
@@ -158,24 +164,26 @@ export function AsyncCall<OtherSideImplementedFunctions = {}>(
     implementation: Default,
     options: Partial<AsyncCallOptions> = {},
 ): OtherSideImplementedFunctions {
-    const { writeToConsole, serializer, dontThrowOnNotImplemented, MessageCenter, key } = {
+    const { writeToConsole, serializer, dontThrowOnNotImplemented, MessageCenter, key, strictJSONRPC } = {
         MessageCenter: HoloflowsMessageCenter,
         dontThrowOnNotImplemented: true,
         serializer: NoSerialization,
         writeToConsole: true,
         key: 'default',
+        strictJSONRPC: false,
         ...options,
     } as Required<typeof options>
     const message = new MessageCenter()
     const CALL = `${key}-jsonrpc`
     type PromiseParam = Parameters<(ConstructorParameters<typeof Promise>)[0]>
     const map = new Map<string | number, PromiseParam>()
-    async function onCall(data: Request): Promise<Response | void> {
+    async function onRequest(data: Request): Promise<Response | undefined> {
         try {
             const executor = implementation[data.method as keyof typeof implementation]
             if (!executor) {
                 if (dontThrowOnNotImplemented) {
-                    return console.debug('Receive remote call, but not implemented.', key, data)
+                    console.debug('Receive remote call, but not implemented.', key, data)
+                    return
                 } else return ErrorResponse.MethodNotFound(data.id)
             }
             const args: any[] = data.params
@@ -190,14 +198,18 @@ export function AsyncCall<OtherSideImplementedFunctions = {}>(
                     promise,
                     'color: gray; font-style: italic;',
                 )
-            const result = await promise
-            const response = new SuccessResponse(data.id, result)
-            return response
+            return new SuccessResponse(data.id, await promise)
         } catch (e) {
             return new ErrorResponse(data.id, -1, e.message, e.stack)
         }
     }
     async function onResponse(data: Response): Promise<void> {
+        if ('error' in data && writeToConsole)
+            console.error(
+                `${data.error.message}(${data.error.code}) %c@${data.id}\n%c${data.error.data.stack}`,
+                'color: gray',
+                '',
+            )
         if (data.id === null) return
         const [resolve, reject] = map.get(data.id) || (([null, null] as any) as PromiseParam)
         if (!resolve) return // drop this response
@@ -206,26 +218,40 @@ export function AsyncCall<OtherSideImplementedFunctions = {}>(
             const err = new Error(data.error.message)
             err.stack = data.error.data.stack
             reject(err)
-            if (writeToConsole)
-                console.error(`${data.error.message} %c@${data.id}\n%c${data.error.data.stack}`, 'color: gray', '')
         } else {
             resolve(data.result)
         }
     }
-    message.on(CALL, async (_: unknown) => {
+    message.on(CALL, async _ => {
         try {
-            const data: SuccessResponse | ErrorResponse | Request = await serializer.deserialization(_)
-            if (typeof data === 'object' && data !== null && 'jsonrpc' in data && data.jsonrpc === '2.0') {
+            const data: unknown = await serializer.deserialization(_)
+            if (isJSONRPCObject(data)) {
                 if ('method' in data) {
-                    const result = await onCall(data)
-                    if (result) message.send(CALL, await serializer.serialization(result))
-                } else if ('error' in data) onResponse(data)
-                else if ('result' in data) onResponse(data)
+                    await send(await onRequest(data))
+                } else if ('error' in data || 'result' in data) {
+                    if ('resultIsUndefined' in data && data.result === null) {
+                        data.result = undefined
+                    }
+                    onResponse(data)
+                } else {
+                    await send(ErrorResponse.InvalidRequest((data as any).id || null))
+                }
+            } else if (Array.isArray(data) && data.every(isJSONRPCObject)) {
+                await send(ErrorResponse.InternalError(null, ": Async-Call isn't implement patch jsonrpc yet."))
             } else {
-                // ? Ignore this message. But according to the spec, we should send a parse error
+                if (strictJSONRPC) {
+                    await send(ErrorResponse.InvalidRequest(null))
+                } else {
+                    // ? Ignore this message. The message channel maybe also used to transfer other message too.
+                }
             }
         } catch (e) {
-            message.send(CALL, await serializer.serialization(ErrorResponse.ParseError(e.stack)))
+            console.error(e)
+            send(ErrorResponse.ParseError(e.stack))
+        }
+        async function send(res?: Response) {
+            if (!res) return
+            message.send(CALL, await serializer.serialization(res))
         }
     })
     return new Proxy(
@@ -265,33 +291,39 @@ export function AsyncCall<OtherSideImplementedFunctions = {}>(
 // ) => {
 //     return {} as OtherSideImplementedFunctions
 // }
-function removeProto(obj: any) {
-    Object.setPrototypeOf(obj, Object.prototype)
-}
+const jsonrpc = '2.0'
 class Request {
     readonly jsonrpc = '2.0'
     constructor(public id: string, public method: string, public params: any[]) {
-        removeProto(this)
+        return { id, method, params, jsonrpc }
     }
 }
 class SuccessResponse {
     readonly jsonrpc = '2.0'
+    // ? This is not in the spec !
+    resultIsUndefined?: boolean
     constructor(public id: string | number | null, public result: any) {
-        removeProto(this)
+        const obj = { id, jsonrpc, result: result === undefined ? null : result } as this
+        return obj
     }
 }
 class ErrorResponse {
     readonly jsonrpc = '2.0'
     error: { code: number; message: string; data: { stack: string } }
     constructor(public id: string | number | null, code: number, message: string, stack: string) {
-        this.error = { code, message, data: { stack } }
-        removeProto(this)
+        const error = (this.error = { code, message, data: { stack } })
+        return { error, id, jsonrpc }
     }
     // Pre defined error in section 5.1
     static readonly ParseError = (stack = '') => new ErrorResponse(null, -32700, 'Parse error', stack)
-    static readonly InvalidRequest = new ErrorResponse(null, -32600, 'Invalid Request', '')
+    static readonly InvalidRequest = (id: string | number | null) =>
+        new ErrorResponse(id, -32600, 'Invalid Request', '')
     static readonly MethodNotFound = (id: string | number) => new ErrorResponse(id, -32601, 'Method not found', '')
     static readonly InvalidParams = (id: string | number) => new ErrorResponse(id, -32602, 'Invalid params', '')
-    static readonly InternalError = (id: string | number) => new ErrorResponse(id, -32603, 'Internal error', '')
+    static readonly InternalError = (id: string | number | null, message: string = '') =>
+        new ErrorResponse(id, -32603, 'Internal error' + message, '')
 }
 type Response = SuccessResponse | ErrorResponse
+function isJSONRPCObject(data: any): data is Response | Request {
+    return typeof data === 'object' && data !== null && 'jsonrpc' in data && data.jsonrpc === '2.0'
+}
