@@ -6,14 +6,16 @@ import { LiveSelector } from '../LiveSelector'
 export class MutationObserverWatcher<
     T,
     Before extends Element = HTMLSpanElement,
-    After extends Element = HTMLSpanElement
-> extends Watcher<T, Before, After> {
+    After extends Element = HTMLSpanElement,
+    SingleMode extends boolean = false
+> extends Watcher<T, Before, After, SingleMode> {
     constructor(
-        protected liveSelector: LiveSelector<T>,
+        protected liveSelector: LiveSelector<T, SingleMode>,
         /** The element that won't change during the whole watching lifetime. This may improve performance. */
         private consistentWatchRoot: Node = document.body,
     ) {
         super(liveSelector)
+        this.notifyDeveloperCallStartWatch()
     }
 
     /** Observe whole document change */
@@ -50,5 +52,9 @@ export class MutationObserverWatcher<
     stopWatch() {
         super.stopWatch()
         this.observer.disconnect()
+    }
+    enableSingleMode(): MutationObserverWatcher<T, Before, After, true> {
+        super._enableSingleMode()
+        return this as any
     }
 }

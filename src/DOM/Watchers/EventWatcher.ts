@@ -12,8 +12,9 @@ import { Watcher } from '../Watcher'
 export class EventWatcher<
     T,
     Before extends Element = HTMLSpanElement,
-    After extends Element = HTMLSpanElement
-> extends Watcher<T, Before, After> {
+    After extends Element = HTMLSpanElement,
+    SingleMode extends boolean = false
+> extends Watcher<T, Before, After, SingleMode> {
     /** Limit computation by rAF */
     private rICLock = false
     /**
@@ -34,5 +35,9 @@ export class EventWatcher<
     startWatch() {
         this.watching = true
         return this
+    }
+    enableSingleMode(): EventWatcher<T, Before, After, true> {
+        this._enableSingleMode()
+        return this as any
     }
 }
