@@ -291,7 +291,7 @@ export abstract class Watcher<
             this.singleModeHasLastValue = true
         }
         // ? Case: value has changed
-        else if (this.singleModeHasLastValue && this.valueComparer(this.singleModeLastValue!, firstValue)) {
+        else if (this.singleModeHasLastValue && !this.valueComparer(this.singleModeLastValue!, firstValue)) {
             applyUseForeachCallback(this.singleModeCallback)('target change')(this.singleModeLastValue!, firstValue)
             this.emit('onChange', {
                 newKey: undefined,
@@ -493,7 +493,7 @@ export abstract class Watcher<
     addListener(event: 'onRemove', fn: EventCallback<OnAddOrRemoveEvent<T>>): this
     addListener(event: 'onAdd', fn: EventCallback<OnAddOrRemoveEvent<T>>): this
     addListener(event: string, fn: (...args: any[]) => void): this {
-        if (event === 'onChangeFull') this.noNeedInSingleMode('addListener("onChangeFull", ...)')
+        if (event === 'onIteration') this.noNeedInSingleMode('addListener("onIteration", ...)')
         this.eventEmitter.addListener(event, fn)
         return this
     }
@@ -543,16 +543,21 @@ export abstract class Watcher<
      * If the key is changed, the same node will call through `forEachRemove` then `forEach`
      *
      * @param keyAssigner - map `node` to `key`, defaults to `node => node`
+     */
+    assignKeys<Q = unknown>(keyAssigner: (node: T, index: number, arr: readonly T[]) => Q) {
+        this.noNeedInSingleMode(this.assignKeys.name)
+        this.mapNodeToKey = keyAssigner
+        return this
+    }
+    /**
+     * To help identify same nodes in different iteration,
+     * you need to implement a map function to compare `node` and `key`
+     *
      * @param keyComparer - compare between two keys, defaults to `===`
      * @param valueComparer - compare between two value, defaults to `===`
      */
-    assignKeys<Q = unknown>(
-        keyAssigner: (node: T, index: number, arr: readonly T[]) => Q,
-        keyComparer?: (a: Q, b: Q) => boolean,
-        valueComparer?: (a: T, b: T) => boolean,
-    ) {
-        this.noNeedInSingleMode(this.assignKeys.name)
-        this.mapNodeToKey = keyAssigner
+    setComparer<Q = unknown>(keyComparer?: (a: Q, b: Q) => boolean, valueComparer?: (a: T, b: T) => boolean) {
+        if (keyComparer) this.noNeedInSingleMode(this.setComparer.name)
         if (keyComparer) this.keyComparer = keyComparer
         if (valueComparer) this.valueComparer = valueComparer
         return this
