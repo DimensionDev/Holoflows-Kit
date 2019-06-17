@@ -198,8 +198,9 @@ export function AsyncCall<OtherSideImplementedFunctions = {}>(
                     promise,
                     'color: gray; font-style: italic;',
                 )
-            return new SuccessResponse(data.id, await promise)
+            return new SuccessResponse(data.id, await promise, strictJSONRPC)
         } catch (e) {
+            console.error(e)
             return new ErrorResponse(data.id, -1, e.message, e.stack)
         }
     }
@@ -223,24 +224,27 @@ export function AsyncCall<OtherSideImplementedFunctions = {}>(
         }
     }
     message.on(CALL, async _ => {
+        let data: unknown
         try {
-            const data: unknown = await serializer.deserialization(_)
+            data = await serializer.deserialization(_)
             if (isJSONRPCObject(data)) {
                 if ('method' in data) {
                     await send(await onRequest(data))
                 } else if ('error' in data || 'result' in data) {
-                    if ('resultIsUndefined' in data && data.result === null) {
-                        data.result = undefined
-                    }
                     onResponse(data)
                 } else {
-                    await send(ErrorResponse.InvalidRequest((data as any).id || null))
+                    if ('resultIsUndefined' in data) {
+                        ;(data as any).result = undefined
+                        onResponse(data)
+                    } else {
+                        await send(ErrorResponse.InvalidRequest((data as any).id || null))
+                    }
                 }
             } else if (Array.isArray(data) && data.every(isJSONRPCObject)) {
                 await send(ErrorResponse.InternalError(null, ": Async-Call isn't implement patch jsonrpc yet."))
             } else {
                 if (strictJSONRPC) {
-                    await send(ErrorResponse.InvalidRequest(null))
+                    await send(ErrorResponse.InvalidRequest((data as any).id || null))
                 } else {
                     // ? Ignore this message. The message channel maybe also used to transfer other message too.
                 }
@@ -302,8 +306,9 @@ class SuccessResponse {
     readonly jsonrpc = '2.0'
     // ? This is not in the spec !
     resultIsUndefined?: boolean
-    constructor(public id: string | number | null, public result: any) {
-        const obj = { id, jsonrpc, result: result === undefined ? null : result } as this
+    constructor(public id: string | number | null, public result: any, strictMode: boolean) {
+        const obj = { id, jsonrpc, result: result || null } as this
+        if (!strictMode && result === undefined) obj.resultIsUndefined = true
         return obj
     }
 }
