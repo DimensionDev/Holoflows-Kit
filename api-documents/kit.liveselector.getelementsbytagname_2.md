@@ -7,7 +7,7 @@
 <b>Signature:</b>
 
 ```typescript
-getElementsByTagName<E extends Element = Element>(tag: string): LiveSelector<E>;
+getElementsByTagName<E extends Element = Element>(tag: string): LiveSelector<E, SingleMode>;
 ```
 
 ## Parameters
@@ -18,5 +18,5 @@ getElementsByTagName<E extends Element = Element>(tag: string): LiveSelector<E>;
 
 <b>Returns:</b>
 
-`LiveSelector<E>`
+`LiveSelector<E, SingleMode>`
 

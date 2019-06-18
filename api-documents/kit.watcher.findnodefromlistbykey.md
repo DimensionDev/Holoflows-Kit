@@ -9,5 +9,5 @@ Find node from the given list by key
 <b>Signature:</b>
 
 ```typescript
-protected findNodeFromListByKey: (list: T[], keys: unknown[]) => (key: unknown) => T | null;
+protected findNodeFromListByKey: (list: readonly T[], keys: readonly unknown[]) => (key: unknown) => T | null;
 ```

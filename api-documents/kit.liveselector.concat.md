@@ -9,18 +9,18 @@ Combines two LiveSelector.
 <b>Signature:</b>
 
 ```typescript
-concat<NextType>(newEle: LiveSelector<NextType>): LiveSelector<T | NextType>;
+concat<NextType>(newEle: LiveSelector<NextType, SingleMode>): LiveSelector<T | NextType, SingleMode>;
 ```
 
 ## Parameters
 
 |  Parameter | Type | Description |
 |  --- | --- | --- |
-|  newEle | <code>LiveSelector&lt;NextType&gt;</code> | Additional LiveSelector to combine. |
+|  newEle | <code>LiveSelector&lt;NextType, SingleMode&gt;</code> | Additional LiveSelector to combine. |
 
 <b>Returns:</b>
 
-`LiveSelector<T | NextType>`
+`LiveSelector<T | NextType, SingleMode>`
 
 ## Example
 

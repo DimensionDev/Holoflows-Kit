@@ -9,3 +9,8 @@
 ```typescript
 serializer: Serialization;
 ```
+
+## Remarks
+
+We offer some built-in serializer: - NoSerialization (Do not do any serialization) - JSONSerialization (Use JSON.parse/stringify)
+

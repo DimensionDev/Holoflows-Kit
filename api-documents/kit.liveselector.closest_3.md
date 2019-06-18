@@ -7,7 +7,7 @@
 <b>Signature:</b>
 
 ```typescript
-closest<E extends Element = Element>(selectors: string): LiveSelector<E>;
+closest<E extends Element = Element>(selectors: string): LiveSelector<E, SingleMode>;
 ```
 
 ## Parameters
@@ -18,5 +18,5 @@ closest<E extends Element = Element>(selectors: string): LiveSelector<E>;
 
 <b>Returns:</b>
 
-`LiveSelector<E>`
+`LiveSelector<E, SingleMode>`
 

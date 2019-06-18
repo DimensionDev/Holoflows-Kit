@@ -9,5 +9,5 @@ Saved callback map of last watch
 <b>Signature:</b>
 
 ```typescript
-protected lastCallbackMap: Map<unknown, useNodeForeachReturns<T>>;
+protected lastCallbackMap: Map<unknown, useForeachReturns<T>>;
 ```

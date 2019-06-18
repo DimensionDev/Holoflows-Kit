@@ -9,7 +9,7 @@ Select the first element that is a descendant of node that matches selectors.
 <b>Signature:</b>
 
 ```typescript
-querySelector<K extends keyof HTMLElementTagNameMap>(selector: K): LiveSelector<HTMLElementTagNameMap[K]>;
+querySelector<K extends keyof HTMLElementTagNameMap>(selector: K): LiveSelector<HTMLElementTagNameMap[K], SingleMode>;
 ```
 
 ## Parameters
@@ -20,7 +20,7 @@ querySelector<K extends keyof HTMLElementTagNameMap>(selector: K): LiveSelector<
 
 <b>Returns:</b>
 
-`LiveSelector<HTMLElementTagNameMap[K]>`
+`LiveSelector<HTMLElementTagNameMap[K], SingleMode>`
 
 ## Example
 

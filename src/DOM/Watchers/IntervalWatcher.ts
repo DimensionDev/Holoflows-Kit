@@ -1,6 +1,15 @@
 import { Watcher } from '../Watcher'
 /**
  * A watcher based on time interval.
+ *
+ * @example
+ * ```ts
+ * new IntervalWatcher(ls)
+ * .useForeach(node => {
+ *     console.log(node)
+ * })
+ * .startWatch()
+ * ```
  */
 export class IntervalWatcher<
     T,

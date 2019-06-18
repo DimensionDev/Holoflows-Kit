@@ -9,7 +9,7 @@ Select all element base on the current result.
 <b>Signature:</b>
 
 ```typescript
-getElementsByClassName<T extends Element = Element>(className: string): LiveSelector<T>;
+getElementsByClassName<T extends Element = Element>(className: string): LiveSelector<T, SingleMode>;
 ```
 
 ## Parameters
@@ -20,7 +20,7 @@ getElementsByClassName<T extends Element = Element>(className: string): LiveSele
 
 <b>Returns:</b>
 
-`LiveSelector<T>`
+`LiveSelector<T, SingleMode>`
 
 ## Example
 

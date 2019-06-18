@@ -7,7 +7,7 @@
 <b>Signature:</b>
 
 ```typescript
-querySelectorAll<E extends Element = Element>(selector: string): LiveSelector<E>;
+querySelectorAll<E extends Element = Element>(selector: string): LiveSelector<E, SingleMode>;
 ```
 
 ## Parameters
@@ -18,5 +18,5 @@ querySelectorAll<E extends Element = Element>(selector: string): LiveSelector<E>
 
 <b>Returns:</b>
 
-`LiveSelector<E>`
+`LiveSelector<E, SingleMode>`
 

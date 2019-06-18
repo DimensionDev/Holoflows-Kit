@@ -9,7 +9,7 @@ Select the elements of a LiveSelector that meet the condition specified in a cal
 <b>Signature:</b>
 
 ```typescript
-filter(f: (value: T, index: number, array: T[]) => any): LiveSelector<NonNullable<T>>;
+filter(f: (value: T, index: number, array: T[]) => any): LiveSelector<NonNullable<T>, SingleMode>;
 ```
 
 ## Parameters
@@ -20,7 +20,7 @@ filter(f: (value: T, index: number, array: T[]) => any): LiveSelector<NonNullabl
 
 <b>Returns:</b>
 
-`LiveSelector<NonNullable<T>>`
+`LiveSelector<NonNullable<T>, SingleMode>`
 
 ## Example
 

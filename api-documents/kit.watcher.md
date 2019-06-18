@@ -6,55 +6,66 @@
 
 Use LiveSelector to watch dom change
 
-You need to implement `startWatch`
-
 <b>Signature:</b>
 
 ```typescript
-export declare abstract class Watcher<T, DomProxyBefore extends Element = HTMLSpanElement, DomProxyAfter extends Element = HTMLSpanElement> 
+export declare abstract class Watcher<T, Before extends Element, After extends Element, SingleMode extends boolean> 
 ```
 
 ## Properties
 
 |  Property | Modifiers | Type | Description |
 |  --- | --- | --- | --- |
-|  [\_omitWarningForRepeatedKeys](./kit.watcher._omitwarningforrepeatedkeys.md) |  | <code>boolean</code> |  |
-|  [domProxyOption](./kit.watcher.domproxyoption.md) |  | <code>Partial&lt;DomProxyOptions&lt;DomProxyBefore, DomProxyAfter&gt;&gt;</code> |  |
+|  [\_firstVirtualNode](./kit.watcher._firstvirtualnode.md) |  | <code>DomProxy&lt;any, Before, After&gt;</code> |  |
+|  [\_warning\_forget\_watch\_](./kit.watcher._warning_forget_watch_.md) |  | <code>{</code><br/><code>        warn(f?: (stack: string) =&gt; void): void;</code><br/><code>        ignored: boolean;</code><br/><code>        stack?: undefined;</code><br/><code>    } &#124; {</code><br/><code>        ignored: boolean;</code><br/><code>        stack: string;</code><br/><code>        warn(f?: (stack: string) =&gt; void): void;</code><br/><code>    }</code> |  |
+|  [domProxyOption](./kit.watcher.domproxyoption.md) |  | <code>Partial&lt;DomProxyOptions&lt;Before, After&gt;&gt;</code> |  |
 |  [eventEmitter](./kit.watcher.eventemitter.md) |  | <code>EventEmitter</code> | Event emitter |
-|  [findNodeFromListByKey](./kit.watcher.findnodefromlistbykey.md) |  | <code>(list: T[], keys: unknown[]) =&gt; (key: unknown) =&gt; T &#124; null</code> | Find node from the given list by key |
-|  [firstVirtualNode](./kit.watcher.firstvirtualnode.md) |  | <code>RequireElement&lt;T, DomProxy&lt;ElementLikeT&lt;T&gt;, DomProxyBefore, DomProxyAfter&gt;&gt;</code> | This virtualNode always point to the first node in the LiveSelector |
-|  [lastCallbackMap](./kit.watcher.lastcallbackmap.md) |  | <code>Map&lt;unknown, useNodeForeachReturns&lt;T&gt;&gt;</code> | Saved callback map of last watch |
-|  [lastKeyList](./kit.watcher.lastkeylist.md) |  | <code>unknown[]</code> | Found key list of last watch |
-|  [lastNodeList](./kit.watcher.lastnodelist.md) |  | <code>T[]</code> | Found Node list of last watch |
-|  [lastVirtualNodesMap](./kit.watcher.lastvirtualnodesmap.md) |  | <code>Map&lt;unknown, DomProxy&lt;ElementLikeT&lt;T&gt;, DomProxyBefore, DomProxyAfter&gt;&gt;</code> | Saved virtual node of last watch |
-|  [liveSelector](./kit.watcher.liveselector.md) |  | <code>LiveSelector&lt;T&gt;</code> |  |
-|  [useNodeForeachFn](./kit.watcher.usenodeforeachfn.md) |  | <code>Parameters&lt;Watcher&lt;T, DomProxyBefore, DomProxyAfter&gt;['useNodeForeach']&gt;[0] &#124; null</code> | Saved useNodeForeach |
+|  [findNodeFromListByKey](./kit.watcher.findnodefromlistbykey.md) |  | <code>(list: readonly T[], keys: readonly unknown[]) =&gt; (key: unknown) =&gt; T &#124; null</code> | Find node from the given list by key |
+|  [firstVirtualNode](./kit.watcher.firstvirtualnode.md) |  | <code>T extends Element ? DomProxy&lt;T, Before, After&gt; : never</code> | This virtualNode always point to the first node in the LiveSelector |
+|  [keyComparer](./kit.watcher.keycomparer.md) |  | <code>(a: unknown, b: unknown) =&gt; boolean</code> | Compare between <code>key</code> and <code>key</code>, in case of you don't want the default behavior |
+|  [lastCallbackMap](./kit.watcher.lastcallbackmap.md) |  | <code>Map&lt;unknown, useForeachReturns&lt;T&gt;&gt;</code> | Saved callback map of last watch |
+|  [lastKeyList](./kit.watcher.lastkeylist.md) |  | <code>readonly unknown[]</code> | Found key list of last watch |
+|  [lastNodeList](./kit.watcher.lastnodelist.md) |  | <code>readonly T[]</code> | Found Node list of last watch |
+|  [lastVirtualNodesMap](./kit.watcher.lastvirtualnodesmap.md) |  | <code>Map&lt;unknown, DomProxy&lt;any, Before, After&gt;&gt;</code> | Saved virtual node of last watch |
+|  [liveSelector](./kit.watcher.liveselector.md) |  | <code>LiveSelector&lt;T, SingleMode&gt;</code> |  |
+|  [mapNodeToKey](./kit.watcher.mapnodetokey.md) |  | <code>(node: T, index: number, arr: readonly T[]) =&gt; unknown</code> | Map <code>Node -&gt; Key</code>, in case of you don't want the default behavior |
+|  [requestIdleCallback](./kit.watcher.requestidlecallback.md) |  | <code>typeof requestIdleCallback</code> |  |
+|  [singleMode](./kit.watcher.singlemode.md) |  | <code>boolean</code> |  |
+|  [singleModeCallback](./kit.watcher.singlemodecallback.md) |  | <code>useForeachReturns&lt;T&gt;</code> | Callback for single mode |
+|  [singleModeHasLastValue](./kit.watcher.singlemodehaslastvalue.md) |  | <code>boolean</code> | Does it has a last iteration value in single mode? |
+|  [singleModeLastValue](./kit.watcher.singlemodelastvalue.md) |  | <code>T</code> | Last iteration value for single mode |
+|  [useForeachFn](./kit.watcher.useforeachfn.md) |  | <code>useForeachFn&lt;T, Before, After&gt;</code> | Saved useForeach |
+|  [valueComparer](./kit.watcher.valuecomparer.md) |  | <code>(a: T, b: T) =&gt; boolean</code> | Compare between <code>value</code> and <code>value</code>, in case of you don't want the default behavior |
 |  [watcherCallback](./kit.watcher.watchercallback.md) |  | <code>(deadline?: Deadline &#124; undefined) =&gt; void</code> | Should be called every watch |
-|  [watching](./kit.watcher.watching.md) |  | <code>boolean</code> |  |
+|  [watching](./kit.watcher.watching.md) |  | <code>boolean</code> | Is the watcher running |
 
 ## Methods
 
 |  Method | Modifiers | Description |
 |  --- | --- | --- |
+|  [\_enableSingleMode()](./kit.watcher._enablesinglemode.md) |  |  |
 |  [addListener(event, fn)](./kit.watcher.addlistener.md) |  |  |
 |  [addListener(event, fn)](./kit.watcher.addlistener_1.md) |  |  |
 |  [addListener(event, fn)](./kit.watcher.addlistener_2.md) |  |  |
-|  [assignKeys(assigner, comparer)](./kit.watcher.assignkeys.md) |  | To help identify same nodes in different iteration, you need to implement a map function that map <code>node</code> to <code>key</code>If the key is changed, the same node will call through <code>forEachRemove</code> then <code>forEach</code> |
+|  [addListener(event, fn)](./kit.watcher.addlistener_3.md) |  |  |
+|  [assignKeys(keyAssigner)](./kit.watcher.assignkeys.md) |  | To help identify same nodes in different iteration, you need to implement a map function that map <code>node</code> to <code>key</code>If the key is changed, the same node will call through <code>forEachRemove</code> then <code>forEach</code> |
+|  [await()](./kit.watcher.await.md) |  | Start the watcher, once it emited data, stop watching. |
+|  [await(map)](./kit.watcher.await_1.md) |  |  |
 |  [emit(event, data)](./kit.watcher.emit.md) |  |  |
 |  [emit(event, data)](./kit.watcher.emit_1.md) |  |  |
 |  [emit(event, data)](./kit.watcher.emit_2.md) |  |  |
+|  [emit(event, data)](./kit.watcher.emit_3.md) |  |  |
+|  [enableBatchMode()](./kit.watcher.enablebatchmode.md) |  | Dismiss the warning that let you enable single mode but the warning is false positive. |
+|  [enableSingleMode()](./kit.watcher.enablesinglemode.md) |  | Enable single mode.<!-- -->Subclass need to implement it to get the correct type. |
 |  [getVirtualNodeByKey(key)](./kit.watcher.getvirtualnodebykey.md) |  | Get virtual node by key. Virtual node will be unavailable if it is deleted |
-|  [keyComparer(a, b)](./kit.watcher.keycomparer.md) |  | Compare between <code>key</code> and <code>key</code>, in case of you don't want the default behavior |
-|  [mapNodeToKey(node, index, arr)](./kit.watcher.mapnodetokey.md) |  | Map <code>Node -&gt; Key</code>, in case of you don't want the default behavior |
 |  [omitWarningForRepeatedKeys()](./kit.watcher.omitwarningforrepeatedkeys.md) |  | If you're expecting repeating keys, call this function, this will omit the warning. |
-|  [once()](./kit.watcher.once.md) |  | Run the Watcher once. Once it emit data, stop watching. |
-|  [once(fn)](./kit.watcher.once_1.md) |  |  |
 |  [removeListener(event, fn)](./kit.watcher.removelistener.md) |  |  |
 |  [removeListener(event, fn)](./kit.watcher.removelistener_1.md) |  |  |
 |  [removeListener(event, fn)](./kit.watcher.removelistener_2.md) |  |  |
-|  [requestIdleCallback(fn, timeout)](./kit.watcher.requestidlecallback.md) |  | Is the watcher running |
+|  [removeListener(event, fn)](./kit.watcher.removelistener_3.md) |  |  |
+|  [setComparer(keyComparer, valueComparer)](./kit.watcher.setcomparer.md) |  | To help identify same nodes in different iteration, you need to implement a map function to compare <code>node</code> and <code>key</code>You probably don't need this. |
 |  [setDomProxyOption(option)](./kit.watcher.setdomproxyoption.md) |  | Set option for DomProxy |
-|  [startWatch(args)](./kit.watcher.startwatch.md) |  |  |
-|  [stopWatch(args)](./kit.watcher.stopwatch.md) |  |  |
-|  [useNodeForeach(fn)](./kit.watcher.usenodeforeach.md) |  | Just like React hooks. Provide callbacks for each node changes. |
+|  [startWatch(args)](./kit.watcher.startwatch.md) |  | Let the watcher start to watching |
+|  [stopWatch(args)](./kit.watcher.stopwatch.md) |  | Stop the watcher |
+|  [useForeach(forEachFunction)](./kit.watcher.useforeach.md) |  | Just like React hooks. Provide callbacks for each node changes. |
 

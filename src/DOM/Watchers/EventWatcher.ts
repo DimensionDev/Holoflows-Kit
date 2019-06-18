@@ -6,7 +6,7 @@ import { LiveSelector } from '../LiveSelector'
  *
  * @example
  * ```ts
- * const e = new EventWatcher(ls)
+ * const e = new EventWatcher(ls).useForeach(node => console.log(node))
  * document.addEventListener('event', e.eventListener)
  * ```
  */
@@ -20,7 +20,7 @@ export class EventWatcher<
         super(liveSelector)
         this.startWatch()
     }
-    /** Limit computation by rAF */
+    /** Limit computation by rIC */
     private rICLock = false
     /**
      * Use this function as event listener to invoke watcher.
@@ -36,5 +36,5 @@ export class EventWatcher<
             { timeout: 500 },
         )
     }
-    enableSingleMode: () => EventWatcher<T, Before, After, true> = this._enableSingleMode as any    
+    enableSingleMode: () => EventWatcher<T, Before, After, true> = this._enableSingleMode as any
 }

@@ -9,5 +9,5 @@ Found key list of last watch
 <b>Signature:</b>
 
 ```typescript
-protected lastKeyList: unknown[];
+protected lastKeyList: readonly unknown[];
 ```

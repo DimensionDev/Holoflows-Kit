@@ -9,7 +9,7 @@ Reversely select element in the parent
 <b>Signature:</b>
 
 ```typescript
-closest<T>(parentOfNth: number): LiveSelector<T>;
+closest<T>(parentOfNth: number): LiveSelector<T, SingleMode>;
 ```
 
 ## Parameters
@@ -20,7 +20,7 @@ closest<T>(parentOfNth: number): LiveSelector<T>;
 
 <b>Returns:</b>
 
-`LiveSelector<T>`
+`LiveSelector<T, SingleMode>`
 
 ## Example
 

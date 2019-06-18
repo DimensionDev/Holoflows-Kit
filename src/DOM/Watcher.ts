@@ -343,7 +343,7 @@ export abstract class Watcher<T, Before extends Element, After extends Element, 
      * Enable single mode.
      *
      * Subclass need to implement it to get the correct type.
-     * @remark
+     * @remarks
      * Example to subclass implementor:
      *
      * ```ts
@@ -596,6 +596,9 @@ Or to ignore this message, call \`.enableBatchMode()\` on the watcher.\n`,
             )
         },
     })
+    /**
+     * Dismiss the warning that let you enable single mode but the warning is false positive.
+     */
     public enableBatchMode(): this {
         this._warning_single_mode.ignored = true
         return this

@@ -7,5 +7,5 @@
 <b>Signature:</b>
 
 ```typescript
-protected liveSelector: LiveSelector<T>;
+protected liveSelector: LiveSelector<T, SingleMode>;
 ```

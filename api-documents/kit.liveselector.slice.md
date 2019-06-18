@@ -9,7 +9,7 @@ Returns a section of an array.
 <b>Signature:</b>
 
 ```typescript
-slice(start?: number, end?: number): LiveSelector<T>;
+slice(start?: number, end?: number): LiveSelector<T, SingleMode>;
 ```
 
 ## Parameters
@@ -21,7 +21,7 @@ slice(start?: number, end?: number): LiveSelector<T>;
 
 <b>Returns:</b>
 
-`LiveSelector<T>`
+`LiveSelector<T, SingleMode>`
 
 ## Example
 

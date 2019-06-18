@@ -9,8 +9,14 @@ A watcher based on time interval.
 <b>Signature:</b>
 
 ```typescript
-export declare class IntervalWatcher<T, Before extends Element = HTMLSpanElement, After extends Element = HTMLSpanElement> extends Watcher<T, Before, After> 
+export declare class IntervalWatcher<T, Before extends Element = HTMLSpanElement, After extends Element = HTMLSpanElement, SingleMode extends boolean = false> extends Watcher<T, Before, After, SingleMode> 
 ```
+
+## Properties
+
+|  Property | Modifiers | Type | Description |
+|  --- | --- | --- | --- |
+|  [enableSingleMode](./kit.intervalwatcher.enablesinglemode.md) |  | <code>() =&gt; IntervalWatcher&lt;T, Before, After, true&gt;</code> |  |
 
 ## Methods
 
@@ -18,4 +24,16 @@ export declare class IntervalWatcher<T, Before extends Element = HTMLSpanElement
 |  --- | --- | --- |
 |  [startWatch(interval)](./kit.intervalwatcher.startwatch.md) |  | Start to watch the LiveSelector at a interval(ms). |
 |  [stopWatch()](./kit.intervalwatcher.stopwatch.md) |  |  |
+
+## Example
+
+
+```ts
+new IntervalWatcher(ls)
+.useForeach(node => {
+    console.log(node)
+})
+.startWatch()
+
+```
 

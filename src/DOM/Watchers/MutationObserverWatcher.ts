@@ -2,6 +2,15 @@ import { Watcher } from '../Watcher'
 import { LiveSelector } from '../LiveSelector'
 /**
  * A watcher based on MutationObserver
+ *
+ * @example
+ * ```ts
+ * new MutationObserverWatcher(ls)
+ *     .useForeach(node => {
+ *         console.log(node)
+ *     })
+ *     .startWatch()
+ * ```
  */
 export class MutationObserverWatcher<
     T,
@@ -11,7 +20,10 @@ export class MutationObserverWatcher<
 > extends Watcher<T, Before, After, SingleMode> {
     constructor(
         protected liveSelector: LiveSelector<T, SingleMode>,
-        /** The element that won't change during the whole watching lifetime. This may improve performance. */
+        /**
+         * If you know the element is always inside of a node, set this option.
+         * This may improve performance.
+         */
         private consistentWatchRoot: Node = document.body,
     ) {
         super(liveSelector)
@@ -21,15 +33,15 @@ export class MutationObserverWatcher<
     /** Observe whole document change */
     private observer: MutationObserver = new MutationObserver((mutations, observer) => {
         this.requestIdleCallback(() => {
-            if (this.rAFLock) return
-            this.rAFLock = true
+            if (this.rICLock) return
+            this.rICLock = true
             this.watcherCallback()
-            this.rAFLock = false
+            this.rICLock = false
         })
     })
 
-    /** Limit onMutation computation by rAF */
-    private rAFLock = false
+    /** Limit onMutation computation by rIC */
+    private rICLock = false
     startWatch(options?: MutationObserverInit) {
         super.startWatch()
         this.watching = true

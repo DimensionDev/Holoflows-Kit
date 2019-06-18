@@ -16,7 +16,7 @@ A toolkit for browser extension developing.
 |  [MessageCenter](./kit.messagecenter.md) | Send and receive messages in different contexts. |
 |  [MutationObserverWatcher](./kit.mutationobserverwatcher.md) | A watcher based on MutationObserver |
 |  [ValueRef](./kit.valueref.md) | A <code>ref</code> object with <code>addListener</code> |
-|  [Watcher](./kit.watcher.md) | Use LiveSelector to watch dom change<!-- -->You need to implement <code>startWatch</code> |
+|  [Watcher](./kit.watcher.md) | Use LiveSelector to watch dom change |
 
 ## Functions
 

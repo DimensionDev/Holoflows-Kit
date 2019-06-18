@@ -7,7 +7,7 @@
 <b>Signature:</b>
 
 ```typescript
-closest<K extends keyof SVGElementTagNameMap>(selectors: K): LiveSelector<SVGElementTagNameMap[K]>;
+closest<K extends keyof SVGElementTagNameMap>(selectors: K): LiveSelector<SVGElementTagNameMap[K], SingleMode>;
 ```
 
 ## Parameters
@@ -18,5 +18,5 @@ closest<K extends keyof SVGElementTagNameMap>(selectors: K): LiveSelector<SVGEle
 
 <b>Returns:</b>
 
-`LiveSelector<SVGElementTagNameMap[K]>`
+`LiveSelector<SVGElementTagNameMap[K], SingleMode>`
 

@@ -4,7 +4,7 @@
 
 ## ValueRef.value property
 
-Set current value of a ValueRef
+Set current value
 
 <b>Signature:</b>
 

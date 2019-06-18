@@ -7,18 +7,15 @@
 <b>Signature:</b>
 
 ```typescript
-addListener(event: 'onRemove' | 'onAdd', fn: EventCallback<{
-        node: T;
-        key: unknown;
-    }[]>): this;
+addListener(event: 'onRemove', fn: EventCallback<OnAddOrRemoveEvent<T>>): this;
 ```
 
 ## Parameters
 
 |  Parameter | Type | Description |
 |  --- | --- | --- |
-|  event | <code>'onRemove' &#124; 'onAdd'</code> |  |
-|  fn | <code>EventCallback&lt;{</code><br/><code>        node: T;</code><br/><code>        key: unknown;</code><br/><code>    }[]&gt;</code> |  |
+|  event | <code>'onRemove'</code> |  |
+|  fn | <code>EventCallback&lt;OnAddOrRemoveEvent&lt;T&gt;&gt;</code> |  |
 
 <b>Returns:</b>
 

@@ -9,7 +9,7 @@ Sorts an array.
 <b>Signature:</b>
 
 ```typescript
-sort(compareFn?: (a: T, b: T) => number): LiveSelector<T>;
+sort(compareFn?: (a: T, b: T) => number): LiveSelector<T, SingleMode>;
 ```
 
 ## Parameters
@@ -20,7 +20,7 @@ sort(compareFn?: (a: T, b: T) => number): LiveSelector<T>;
 
 <b>Returns:</b>
 
-`LiveSelector<T>`
+`LiveSelector<T, SingleMode>`
 
 ## Example
 

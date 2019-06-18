@@ -26,7 +26,7 @@ addListener(fn: Fn<T>): () => void;
 
 
 ```ts
-React.useEffect(() => ref.addListener(() => {...}))
+React.useEffect(() => ref.addListener(setState))
 
 ```
 

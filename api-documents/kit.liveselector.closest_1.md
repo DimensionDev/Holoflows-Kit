@@ -7,7 +7,7 @@
 <b>Signature:</b>
 
 ```typescript
-closest<K extends keyof HTMLElementTagNameMap>(selectors: K): LiveSelector<HTMLElementTagNameMap[K]>;
+closest<K extends keyof HTMLElementTagNameMap>(selectors: K): LiveSelector<HTMLElementTagNameMap[K], SingleMode>;
 ```
 
 ## Parameters
@@ -18,5 +18,5 @@ closest<K extends keyof HTMLElementTagNameMap>(selectors: K): LiveSelector<HTMLE
 
 <b>Returns:</b>
 
-`LiveSelector<HTMLElementTagNameMap[K]>`
+`LiveSelector<HTMLElementTagNameMap[K], SingleMode>`
 

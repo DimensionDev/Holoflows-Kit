@@ -4,6 +4,8 @@
 
 ## Watcher.watching property
 
+Is the watcher running
+
 <b>Signature:</b>
 
 ```typescript

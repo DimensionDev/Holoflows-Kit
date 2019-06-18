@@ -7,7 +7,7 @@
 <b>Signature:</b>
 
 ```typescript
-getElementsByTagName<K extends keyof SVGElementTagNameMap>(tag: K): LiveSelector<SVGElementTagNameMap[K]>;
+getElementsByTagName<K extends keyof SVGElementTagNameMap>(tag: K): LiveSelector<SVGElementTagNameMap[K], SingleMode>;
 ```
 
 ## Parameters
@@ -18,5 +18,5 @@ getElementsByTagName<K extends keyof SVGElementTagNameMap>(tag: K): LiveSelector
 
 <b>Returns:</b>
 
-`LiveSelector<SVGElementTagNameMap[K]>`
+`LiveSelector<SVGElementTagNameMap[K], SingleMode>`
 

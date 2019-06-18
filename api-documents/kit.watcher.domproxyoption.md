@@ -7,5 +7,5 @@
 <b>Signature:</b>
 
 ```typescript
-protected domProxyOption: Partial<DomProxyOptions<DomProxyBefore, DomProxyAfter>>;
+protected domProxyOption: Partial<DomProxyOptions<Before, After>>;
 ```

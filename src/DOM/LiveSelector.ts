@@ -36,6 +36,12 @@ type SelectorChainTypeItem = MapOf<SelectorChainType>
  * Call {@link LiveSelector.evaluateOnce | #evaluateOnce} to evaluate the element. Falsy value will be ignored.
  *
  * @param T - Type of Element that LiveSelector contains
+ * 
+ * @example
+ * ```ts
+ * const ls = new LiveSelector().querySelectorAll('a').map(x => x.href)
+ * ls.evaluateOnce() // returns all urls at the current time.
+ * ```
  */
 export class LiveSelector<T, SingleMode extends boolean = false> {
     protected readonly stack = new Error().stack

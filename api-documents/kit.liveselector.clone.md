@@ -9,11 +9,11 @@ Clone this LiveSelector and return a new LiveSelector.
 <b>Signature:</b>
 
 ```typescript
-clone(): LiveSelector<T>;
+clone(): LiveSelector<T, SingleMode>;
 ```
 <b>Returns:</b>
 
-`LiveSelector<T>`
+`LiveSelector<T, SingleMode>`
 
 a new LiveSelector with same action
 

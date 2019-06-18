@@ -9,27 +9,21 @@ A Watcher based on event handlers.
 <b>Signature:</b>
 
 ```typescript
-export declare class EventWatcher<T, Before extends Element = HTMLSpanElement, After extends Element = HTMLSpanElement> extends Watcher<T, Before, After> 
+export declare class EventWatcher<T, Before extends Element = HTMLSpanElement, After extends Element = HTMLSpanElement, SingleMode extends boolean = false> extends Watcher<T, Before, After, SingleMode> 
 ```
 
 ## Properties
 
 |  Property | Modifiers | Type | Description |
 |  --- | --- | --- | --- |
+|  [enableSingleMode](./kit.eventwatcher.enablesinglemode.md) |  | <code>() =&gt; EventWatcher&lt;T, Before, After, true&gt;</code> |  |
 |  [eventListener](./kit.eventwatcher.eventlistener.md) |  | <code>() =&gt; void</code> | Use this function as event listener to invoke watcher. |
-|  [watching](./kit.eventwatcher.watching.md) |  | <code>boolean</code> |  |
-
-## Methods
-
-|  Method | Modifiers | Description |
-|  --- | --- | --- |
-|  [startWatch()](./kit.eventwatcher.startwatch.md) |  |  |
 
 ## Example
 
 
 ```ts
-const e = new EventWatcher(ls)
+const e = new EventWatcher(ls).useForeach(node => console.log(node))
 document.addEventListener('event', e.eventListener)
 
 ```

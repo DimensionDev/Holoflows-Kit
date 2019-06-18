@@ -55,7 +55,6 @@ export interface AsyncCallExecutorOptions
         memorable: number
     }> {}
 type Default = Record<string, ((...args: any[]) => Promise<any>) & AsyncCallExecutorOptions>
-type GeneratorDefault = Record<string, ((...args: any[]) => AsyncIterableIterator<any>) & AsyncCallExecutorOptions>
 /**
  * Options for {@link AsyncCall}
  */
@@ -69,6 +68,7 @@ export interface AsyncCallOptions {
      * @param serializer -
      * How to serialization and deserialization parameters and return values
      *
+     * @remarks
      * We offer some built-in serializer:
      * - NoSerialization (Do not do any serialization)
      * - JSONSerialization (Use JSON.parse/stringify)
@@ -93,9 +93,10 @@ export interface AsyncCallOptions {
      */
     writeToConsole: boolean
     /**
-     * @param strictJSONRPC - strict mode.
      * Open this option, `undefined` and `null` will all becomes `null`
      * When receive unknown message on the message channel, will response an error response
+     *
+     * @param strictJSONRPC - strict mode.
      */
     strictJSONRPC: boolean
 }
@@ -281,22 +282,6 @@ export function AsyncCall<OtherSideImplementedFunctions = {}>(
     ) as OtherSideImplementedFunctions
 }
 
-// Generator version for AsyncCall seems not quite useful.
-// If someone need it, open an issue.
-// export const AsyncGeneratorCall = <OtherSideImplementedFunctions extends GeneratorDefault = {}>(
-//     /**
-//      * @param implementation
-//      * Implementation of this side.
-//      */
-//     implementation: GeneratorDefault,
-//     /**
-//      * @param options
-//      * You can define your own serializer, MessageCenter and other options.
-//      */
-//     options: Partial<AsyncCallOptions> = {},
-// ) => {
-//     return {} as OtherSideImplementedFunctions
-// }
 const jsonrpc = '2.0'
 class Request {
     readonly jsonrpc = '2.0'

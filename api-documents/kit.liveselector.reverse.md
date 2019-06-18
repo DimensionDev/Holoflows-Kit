@@ -9,11 +9,11 @@ Reverses the elements in an Array.
 <b>Signature:</b>
 
 ```typescript
-reverse(): LiveSelector<T>;
+reverse(): LiveSelector<T, SingleMode>;
 ```
 <b>Returns:</b>
 
-`LiveSelector<T>`
+`LiveSelector<T, SingleMode>`
 
 ## Example
 

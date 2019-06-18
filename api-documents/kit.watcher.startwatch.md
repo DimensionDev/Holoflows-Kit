@@ -4,10 +4,12 @@
 
 ## Watcher.startWatch() method
 
+Let the watcher start to watching
+
 <b>Signature:</b>
 
 ```typescript
-abstract startWatch(...args: any[]): this;
+startWatch(...args: any[]): this;
 ```
 
 ## Parameters

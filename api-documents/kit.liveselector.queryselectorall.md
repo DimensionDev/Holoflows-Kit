@@ -9,7 +9,7 @@ Select all element descendants of node that match selectors.
 <b>Signature:</b>
 
 ```typescript
-querySelectorAll<K extends keyof HTMLElementTagNameMap>(selector: K): LiveSelector<HTMLElementTagNameMap[K]>;
+querySelectorAll<K extends keyof HTMLElementTagNameMap>(selector: K): LiveSelector<HTMLElementTagNameMap[K], SingleMode>;
 ```
 
 ## Parameters
@@ -20,7 +20,7 @@ querySelectorAll<K extends keyof HTMLElementTagNameMap>(selector: K): LiveSelect
 
 <b>Returns:</b>
 
-`LiveSelector<HTMLElementTagNameMap[K]>`
+`LiveSelector<HTMLElementTagNameMap[K], SingleMode>`
 
 ## Example
 

@@ -9,14 +9,15 @@ A watcher based on MutationObserver
 <b>Signature:</b>
 
 ```typescript
-export declare class MutationObserverWatcher<T, Before extends Element = HTMLSpanElement, After extends Element = HTMLSpanElement> extends Watcher<T, Before, After> 
+export declare class MutationObserverWatcher<T, Before extends Element = HTMLSpanElement, After extends Element = HTMLSpanElement, SingleMode extends boolean = false> extends Watcher<T, Before, After, SingleMode> 
 ```
 
 ## Properties
 
 |  Property | Modifiers | Type | Description |
 |  --- | --- | --- | --- |
-|  [liveSelector](./kit.mutationobserverwatcher.liveselector.md) |  | <code>LiveSelector&lt;T&gt;</code> |  |
+|  [enableSingleMode](./kit.mutationobserverwatcher.enablesinglemode.md) |  | <code>() =&gt; MutationObserverWatcher&lt;T, Before, After, true&gt;</code> |  |
+|  [liveSelector](./kit.mutationobserverwatcher.liveselector.md) |  | <code>LiveSelector&lt;T, SingleMode&gt;</code> |  |
 
 ## Methods
 
@@ -24,4 +25,16 @@ export declare class MutationObserverWatcher<T, Before extends Element = HTMLSpa
 |  --- | --- | --- |
 |  [startWatch(options)](./kit.mutationobserverwatcher.startwatch.md) |  |  |
 |  [stopWatch()](./kit.mutationobserverwatcher.stopwatch.md) |  |  |
+
+## Example
+
+
+```ts
+new MutationObserverWatcher(ls)
+    .useForeach(node => {
+        console.log(node)
+    })
+    .startWatch()
+
+```
 

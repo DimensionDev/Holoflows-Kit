@@ -7,20 +7,15 @@
 <b>Signature:</b>
 
 ```typescript
-removeListener(event: 'onChange', fn: EventCallback<{
-        oldNode: T;
-        newNode: T;
-        oldKey: unknown;
-        newKey: unknown;
-    }[]>): this;
+removeListener(event: 'onIteration', fn: EventCallback<OnIterationEvent<T>>): this;
 ```
 
 ## Parameters
 
 |  Parameter | Type | Description |
 |  --- | --- | --- |
-|  event | <code>'onChange'</code> |  |
-|  fn | <code>EventCallback&lt;{</code><br/><code>        oldNode: T;</code><br/><code>        newNode: T;</code><br/><code>        oldKey: unknown;</code><br/><code>        newKey: unknown;</code><br/><code>    }[]&gt;</code> |  |
+|  event | <code>'onIteration'</code> |  |
+|  fn | <code>EventCallback&lt;OnIterationEvent&lt;T&gt;&gt;</code> |  |
 
 <b>Returns:</b>
 

@@ -2,25 +2,12 @@
 
 [Home](./index.md) &gt; [@holoflows/kit](./kit.md) &gt; [Watcher](./kit.watcher.md) &gt; [mapNodeToKey](./kit.watcher.mapnodetokey.md)
 
-## Watcher.mapNodeToKey() method
+## Watcher.mapNodeToKey property
 
 Map `Node -> Key`<!-- -->, in case of you don't want the default behavior
 
 <b>Signature:</b>
 
 ```typescript
-protected mapNodeToKey(node: T, index: number, arr: T[]): unknown;
+protected mapNodeToKey: (node: T, index: number, arr: readonly T[]) => unknown;
 ```
-
-## Parameters
-
-|  Parameter | Type | Description |
-|  --- | --- | --- |
-|  node | <code>T</code> |  |
-|  index | <code>number</code> |  |
-|  arr | <code>T[]</code> |  |
-
-<b>Returns:</b>
-
-`unknown`
-

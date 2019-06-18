@@ -20,5 +20,6 @@ export interface AsyncCallOptions
 |  [key](./kit.asynccalloptions.key.md) | <code>string</code> |  |
 |  [MessageCenter](./kit.asynccalloptions.messagecenter.md) | <code>{</code><br/><code>        new (): {</code><br/><code>            on(event: string, cb: (data: any) =&gt; void): void;</code><br/><code>            send(event: string, data: any): void;</code><br/><code>        };</code><br/><code>    }</code> |  |
 |  [serializer](./kit.asynccalloptions.serializer.md) | <code>Serialization</code> |  |
+|  [strictJSONRPC](./kit.asynccalloptions.strictjsonrpc.md) | <code>boolean</code> | Open this option, <code>undefined</code> and <code>null</code> will all becomes <code>null</code> When receive unknown message on the message channel, will response an error response |
 |  [writeToConsole](./kit.asynccalloptions.writetoconsole.md) | <code>boolean</code> |  |
 

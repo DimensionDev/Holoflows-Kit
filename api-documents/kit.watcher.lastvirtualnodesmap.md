@@ -9,5 +9,5 @@ Saved virtual node of last watch
 <b>Signature:</b>
 
 ```typescript
-protected lastVirtualNodesMap: Map<unknown, DomProxy<ElementLikeT<T>, DomProxyBefore, DomProxyAfter>>;
+protected lastVirtualNodesMap: Map<unknown, DomProxy<any, Before, After>>;
 ```
