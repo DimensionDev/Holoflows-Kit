@@ -15,7 +15,7 @@ export class MutationObserverWatcher<
         private consistentWatchRoot: Node = document.body,
     ) {
         super(liveSelector)
-        this.notifyDeveloperCallStartWatch()
+        setTimeout(this._warning_forget_watch_.warn, 5000)
     }
 
     /** Observe whole document change */
@@ -31,7 +31,7 @@ export class MutationObserverWatcher<
     /** Limit onMutation computation by rAF */
     private rAFLock = false
     startWatch(options?: MutationObserverInit) {
-        this.stopWatch()
+        super.startWatch()
         this.watching = true
         const option = {
             attributes: true,
@@ -53,8 +53,5 @@ export class MutationObserverWatcher<
         super.stopWatch()
         this.observer.disconnect()
     }
-    enableSingleMode(): MutationObserverWatcher<T, Before, After, true> {
-        super._enableSingleMode()
-        return this as any
-    }
+    enableSingleMode: () => MutationObserverWatcher<T, Before, After, true> = this._enableSingleMode as any
 }

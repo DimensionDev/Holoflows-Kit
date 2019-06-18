@@ -1,4 +1,5 @@
 import { Watcher } from '../Watcher'
+import { LiveSelector } from '../LiveSelector'
 
 /**
  * A Watcher based on event handlers.
@@ -15,6 +16,10 @@ export class EventWatcher<
     After extends Element = HTMLSpanElement,
     SingleMode extends boolean = false
 > extends Watcher<T, Before, After, SingleMode> {
+    constructor(liveSelector: LiveSelector<T, SingleMode>) {
+        super(liveSelector)
+        this.startWatch()
+    }
     /** Limit computation by rAF */
     private rICLock = false
     /**
@@ -31,13 +36,5 @@ export class EventWatcher<
             { timeout: 500 },
         )
     }
-    protected watching = true
-    startWatch() {
-        this.watching = true
-        return this
-    }
-    enableSingleMode(): EventWatcher<T, Before, After, true> {
-        this._enableSingleMode()
-        return this as any
-    }
+    enableSingleMode: () => EventWatcher<T, Before, After, true> = this._enableSingleMode as any    
 }

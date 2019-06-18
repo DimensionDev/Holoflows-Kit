@@ -8,7 +8,7 @@ interface SelectorChainType {
     closest: string | number
     querySelectorAll: string
     filter: (element: any, index: number, array: any[]) => boolean
-    map: (element: any) => any
+    map: (element: any, index: number, array: any[]) => any
     concat: LiveSelector<any, any>
     reverse: undefined
     slice: [number | undefined, number | undefined]
@@ -185,7 +185,9 @@ export class LiveSelector<T, SingleMode extends boolean = false> {
      * ls.map(x => x.parentElement)
      * ```
      */
-    map<NextType>(callbackfn: (element: T) => NextType): LiveSelector<NonNullable<NextType>, SingleMode> {
+    map<NextType>(
+        callbackfn: (element: T, index: number, array: T[]) => NextType,
+    ): LiveSelector<NonNullable<NextType>, SingleMode> {
         return this.appendSelectorChain('map')(callbackfn)
     }
     /**
@@ -383,8 +385,8 @@ export class LiveSelector<T, SingleMode extends boolean = false> {
                     throw new TypeError('Unknown operation type')
             }
         }
-        if (this.singleMode) return (arr.filter(x => x) as T[])[0] as any
-        return (arr.filter(x => x) as T[]) as any
+        if (this.singleMode) return (arr.filter(nonNull) as T[])[0] as any
+        return (arr.filter(nonNull) as T[]) as any
     }
     //#endregion
 }

@@ -11,9 +11,7 @@ export class IntervalWatcher<
     private timer: NodeJS.Timer | undefined
     /** Start to watch the LiveSelector at a interval(ms). */
     startWatch(interval: number) {
-        this.stopWatch()
-        this.watching = true
-        this.watcherCallback()
+        super.startWatch()
         this.timer = setInterval(() => this.watcherCallback(), interval)
         return this
     }
@@ -21,8 +19,5 @@ export class IntervalWatcher<
         super.stopWatch()
         if (this.timer) clearInterval(this.timer)
     }
-    enableSingleMode(): IntervalWatcher<T, Before, After, true> {
-        this._enableSingleMode()
-        return this as any
-    }
+    enableSingleMode: () => IntervalWatcher<T, Before, After, true> = this._enableSingleMode as any
 }
