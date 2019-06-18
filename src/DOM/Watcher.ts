@@ -16,7 +16,6 @@ import { LiveSelector } from './LiveSelector'
 import differenceWith from 'lodash-es/differenceWith'
 import intersectionWith from 'lodash-es/intersectionWith'
 import uniqWith from 'lodash-es/uniqWith'
-import { warning } from '../util/warning'
 
 /**
  * Use LiveSelector to watch dom change
@@ -54,15 +53,48 @@ export abstract class Watcher<T, Before extends Element, After extends Element, 
      *
      * - `((oldNode: T) => void)`: it will be called when the node is removed.
      *
-     * - `{ onRemove?: (old: T) => void; onTargetChanged?: (oldNode: T, newNode: T) => void; onNodeMutation?: (node: T) => void }`,
+     * - `{ onRemove?: (old: T) => void; onTargetChanged?: (newNode: T, oldNode: T) => void; onNodeMutation?: (node: T) => void }`,
      *
      * - - `onRemove` will be called when node is removed.
      *
      * - - `onTargetChanged` will be called when the node is still existing but target has changed.
      *
      * - - `onNodeMutation` will be called when the node is the same, but it inner content or attributes are modified.
+     *
+     * @example
+     * ```
+     * // ? if your LiveSelector return Element
+     * watcher.useForeach((node, key, realNode) => {
+     *     console.log(node.innerHTML) // when a new key is found
+     *     return {
+     *         onRemove() { console.log('The node is gone!') },
+     *         onTargetChanged() {
+     *             console.log('Key is the same, but the node has changed!')
+     *             console.log(node.innerHTML) // `node` is still the latest node!
+     *             // appendChild, addEventListener will not lost too!
+     *             // ! But `realNode` is still the original node. Be careful with it.
+     *         },
+     *         onNodeMutation() {
+     *             console.log('Key and node are both the same, but node has been mutated.')
+     *         }
+     *     }
+     * })
+     *
+     * // ? if your LiveSelector does not return Element but something else
+     * watcher.useForeach((value, key) => {
+     *     console.log(value) // your value here.
+     *     return {
+     *         onRemove() { console.log('The value is gone!') },
+     *         onTargetChanged(value) {
+     *             console.log('Key is the same, but the value has changed!')
+     *             console.log(value) // New value
+     *         }
+     *     }
+     * })
+     *
+     * ```
      */
-    public useForeach(forEachFunction: NonNullable<typeof typeofFn>, typeofFn = this.useForeachFn) {
+    public useForeach(forEachFunction: useForeachFn<T, Before, After>) {
         if (this.useForeachFn) {
             console.warn("You can't chain useForeach currently. The old one will be replaced.")
         }
@@ -76,6 +108,11 @@ export abstract class Watcher<T, Before extends Element, After extends Element, 
      * @param map - Map function transform T to Result
      * @param options - Options for watcher
      * @param starter - How to start the watcher
+     *
+     * @example
+     * ```ts
+     * const value = await watcher.await()
+     * ```
      */
     await(): Promise<ResultOf<SingleMode, T>>
     await<Result>(map: (data: T) => PromiseLike<Result> | Result): Promise<ResultOf<SingleMode, Result>>
@@ -139,7 +176,8 @@ export abstract class Watcher<T, Before extends Element, After extends Element, 
         if (i === -1) return null
         return list[i]
     }
-    protected normalModeWatcherCallback(currentIteration: readonly T[]) {
+    /** Watcher callback with single mode is off */
+    private normalModeWatcherCallback(currentIteration: readonly T[]) {
         /** Key list in this iteration */
         const thisKeyList: readonly unknown[] =
             this.mapNodeToKey === defaultMapNodeToKey ? currentIteration : currentIteration.map(this.mapNodeToKey)
@@ -217,7 +255,7 @@ export abstract class Watcher<T, Before extends Element, After extends Element, 
                     nextCallbackMap.set(newKey, callbacks)
                     nextVirtualNodesMap.set(newKey, virtualNode)
                 } else {
-                    const callbacks = (this.useForeachFn as useForeachFnWithoutElement<T>)(node!)
+                    const callbacks = (this.useForeachFn as useForeachFnWithoutElement<T>)(node!, newKey)
                     applyUseForeachCallback(callbacks)('warn mutation')(this._warning_mutation_)
                     nextCallbackMap.set(newKey, callbacks)
                 }
@@ -240,7 +278,7 @@ export abstract class Watcher<T, Before extends Element, After extends Element, 
                 virtualNode.realCurrent = newNode
             }
             // This should be ordered. So keep it sync now.
-            applyUseForeachCallback(fn)('target change')(oldNode, newNode)
+            applyUseForeachCallback(fn)('target change')(newNode, oldNode)
         }
         //#endregion
 
@@ -302,7 +340,18 @@ export abstract class Watcher<T, Before extends Element, After extends Element, 
     //#endregion
     //#region Single mode
     /**
-     * Child class have to implement it to get the correct type.
+     * Enable single mode.
+     *
+     * Subclass need to implement it to get the correct type.
+     * @remark
+     * Example to subclass implementor:
+     *
+     * ```ts
+     * class MyWatcher<T, Before extends Element, After extends Element, SingleMode extends boolean>
+     * extends Watcher<T, Before, After, SingleMode> {
+     *      public enableSingleMode: MyWatcher<T, Before, After, true> = this.__enableSingleMode as any
+     * }
+     * ```
      */
     public abstract enableSingleMode(): Watcher<T, Before, After, true>
     protected _enableSingleMode() {
@@ -318,7 +367,8 @@ export abstract class Watcher<T, Before extends Element, After extends Element, 
     protected singleModeHasLastValue = false
     /** Callback for single mode */
     protected singleModeCallback?: useForeachReturns<T>
-    protected singleModeWatcherCallback(firstValue: T) {
+    /** Watcher callback for single mode */
+    private singleModeWatcherCallback(firstValue: T) {
         // Simple version of watcherCallback. Improve performance.
         if (firstValue instanceof Element) {
             this.firstVirtualNode.realCurrent = firstValue
@@ -346,7 +396,10 @@ export abstract class Watcher<T, Before extends Element, After extends Element, 
                 }
             } else {
                 if (this.useForeachFn) {
-                    this.singleModeCallback = (this.useForeachFn as useForeachFnWithoutElement<T>)(firstValue)
+                    this.singleModeCallback = (this.useForeachFn as useForeachFnWithoutElement<T>)(
+                        firstValue,
+                        undefined,
+                    )
                     applyUseForeachCallback(this.singleModeCallback)('warn mutation')(this._warning_mutation_)
                 }
             }
@@ -356,7 +409,7 @@ export abstract class Watcher<T, Before extends Element, After extends Element, 
         }
         // ? Case: value has changed
         else if (this.singleModeHasLastValue && !this.valueComparer(this.singleModeLastValue!, firstValue)) {
-            applyUseForeachCallback(this.singleModeCallback)('target change')(this.singleModeLastValue!, firstValue)
+            applyUseForeachCallback(this.singleModeCallback)('target change')(firstValue, this.singleModeLastValue!)
             this.emit('onChange', {
                 newKey: undefined,
                 oldKey: undefined,
@@ -466,6 +519,11 @@ export abstract class Watcher<T, Before extends Element, After extends Element, 
      * If the key is changed, the same node will call through `forEachRemove` then `forEach`
      *
      * @param keyAssigner - map `node` to `key`, defaults to `node => node`
+     *
+     * @example
+     * ```ts
+     * watcher.assignKeys(node => node.innerText)
+     * ```
      */
     public assignKeys<Q = unknown>(keyAssigner: (node: T, index: number, arr: readonly T[]) => Q) {
         this.noNeedInSingleMode(this.assignKeys.name)
@@ -476,8 +534,18 @@ export abstract class Watcher<T, Before extends Element, After extends Element, 
      * To help identify same nodes in different iteration,
      * you need to implement a map function to compare `node` and `key`
      *
+     * You probably don't need this.
+     *
      * @param keyComparer - compare between two keys, defaults to `===`
      * @param valueComparer - compare between two value, defaults to `===`
+     *
+     * @example
+     * ```ts
+     * watcher.setComparer(
+     *     (a, b) => JSON.stringify(a) === JSON.stringify(b),
+     *     (a, b) => a.equals(b)
+     * )
+     * ```
      */
     public setComparer<Q = unknown>(keyComparer?: (a: Q, b: Q) => boolean, valueComparer?: (a: T, b: T) => boolean) {
         if (keyComparer) this.noNeedInSingleMode(this.setComparer.name)
@@ -575,7 +643,7 @@ type OnIterationEvent<T> = {
 /** Callback on Remove */
 type RemoveCallback<T> = (oldNode: T) => void
 /** Callback on target changed */
-type TargetChangedCallback<T> = (oldNode: T, newNode: T) => void
+type TargetChangedCallback<T> = (newNode: T, oldNode: T) => void
 /** Callback on  */
 type MutationCallback<T> = (node: T, mutations: MutationRecord[]) => void
 type EventCallback<T> = (fn: Event & { data: T }) => void
@@ -598,7 +666,7 @@ type useForeachFnWithElement<T, Before extends Element, After extends Element> =
     (virtualNode: DomProxy<T & Element, Before, After>, key: unknown, realNode: Element): useForeachReturns<T>
 }
 type useForeachFnWithoutElement<T> = {
-    (node: T): useForeachReturns<T>
+    (node: T, key: unknown): useForeachReturns<T>
 }
 interface useForeachFn<T, Before extends Element, After extends Element> {
     (
@@ -661,5 +729,33 @@ function isWatcherWithElement<T>(
     ? Watcher<U & Element, P, Q, R>
     : never {
     return node instanceof Element
+}
+//#endregion
+//#region Warnings
+interface WarningOptions {
+    /** warn only one time (or at nth time) pre instance, defaults to true */
+    once: boolean | number
+    /** only run in dev, defaults to false */
+    dev: boolean
+    /** default warn function */
+    fn: (stack: string) => void
+}
+function warning(_: Partial<WarningOptions> = {}) {
+    const { dev, once, fn } = { ..._, ...({ dev: false, once: true, fn: () => {} } as WarningOptions) }
+    if (dev) if (process.env.NODE_ENV !== 'development') return { warn(f = fn) {}, ignored: true }
+    const [_0, _1, _2, ...lines] = (new Error().stack || '').split('\n')
+    const stack = lines.join('\n')
+    let warned = 0
+    return {
+        ignored: false,
+        stack,
+        warn(f = fn) {
+            if (this.ignored) return
+            if (warned && once) return
+            if (typeof once === 'number' && warned <= once) return
+            warned++
+            f(stack)
+        },
+    }
 }
 //#endregion
