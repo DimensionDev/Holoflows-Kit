@@ -225,11 +225,13 @@ export function AsyncCall<OtherSideImplementedFunctions = {}>(
     }
     message.on(CALL, async _ => {
         let data: unknown
+        let result: Response | undefined = undefined
         try {
             data = await serializer.deserialization(_)
             if (isJSONRPCObject(data)) {
                 if ('method' in data) {
-                    await send(await onRequest(data))
+                    result = await onRequest(data)
+                    await send(result)
                 } else if ('error' in data || 'result' in data) {
                     onResponse(data)
                 } else {
@@ -250,7 +252,7 @@ export function AsyncCall<OtherSideImplementedFunctions = {}>(
                 }
             }
         } catch (e) {
-            console.error(e)
+            console.error(e, data, result)
             send(ErrorResponse.ParseError(e.stack))
         }
         async function send(res?: Response) {
