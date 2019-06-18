@@ -12,6 +12,12 @@ Use LiveSelector to watch dom change
 export declare abstract class Watcher<T, Before extends Element, After extends Element, SingleMode extends boolean> 
 ```
 
+## Constructors
+
+|  Constructor | Modifiers | Description |
+|  --- | --- | --- |
+|  [(constructor)(liveSelector)](./kit.watcher.(constructor).md) |  | Constructs a new instance of the <code>Watcher</code> class |
+
 ## Properties
 
 |  Property | Modifiers | Type | Description |

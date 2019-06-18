@@ -12,6 +12,12 @@ Send and receive messages in different contexts.
 export declare class MessageCenter<ITypedMessages> 
 ```
 
+## Constructors
+
+|  Constructor | Modifiers | Description |
+|  --- | --- | --- |
+|  [(constructor)(instanceKey)](./kit.messagecenter.(constructor).md) |  | Constructs a new instance of the <code>MessageCenter</code> class |
+
 ## Properties
 
 |  Property | Modifiers | Type | Description |

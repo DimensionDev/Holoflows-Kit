@@ -12,6 +12,12 @@ A `ref` object with `addListener`
 export declare class ValueRef<T> 
 ```
 
+## Constructors
+
+|  Constructor | Modifiers | Description |
+|  --- | --- | --- |
+|  [(constructor)(\_value)](./kit.valueref.(constructor).md) |  | Constructs a new instance of the <code>ValueRef</code> class |
+
 ## Properties
 
 |  Property | Modifiers | Type | Description |

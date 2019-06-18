@@ -14,7 +14,7 @@ const config = {
         nodeResolve({
             browser: true,
             preferBuiltins: false,
-            module: true,
+            mainFields: ['module', 'main'],
         }),
         typescript({ tsconfigOverride: { compilerOptions: { target: 'es6' } } }),
         replace({

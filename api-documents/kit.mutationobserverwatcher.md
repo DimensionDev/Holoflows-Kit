@@ -12,6 +12,12 @@ A watcher based on MutationObserver
 export declare class MutationObserverWatcher<T, Before extends Element = HTMLSpanElement, After extends Element = HTMLSpanElement, SingleMode extends boolean = false> extends Watcher<T, Before, After, SingleMode> 
 ```
 
+## Constructors
+
+|  Constructor | Modifiers | Description |
+|  --- | --- | --- |
+|  [(constructor)(liveSelector, consistentWatchRoot)](./kit.mutationobserverwatcher.(constructor).md) |  | Constructs a new instance of the <code>MutationObserverWatcher</code> class |
+
 ## Properties
 
 |  Property | Modifiers | Type | Description |

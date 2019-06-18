@@ -12,6 +12,12 @@ A Watcher based on event handlers.
 export declare class EventWatcher<T, Before extends Element = HTMLSpanElement, After extends Element = HTMLSpanElement, SingleMode extends boolean = false> extends Watcher<T, Before, After, SingleMode> 
 ```
 
+## Constructors
+
+|  Constructor | Modifiers | Description |
+|  --- | --- | --- |
+|  [(constructor)(liveSelector)](./kit.eventwatcher.(constructor).md) |  | Constructs a new instance of the <code>EventWatcher</code> class |
+
 ## Properties
 
 |  Property | Modifiers | Type | Description |
