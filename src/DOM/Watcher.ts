@@ -710,8 +710,9 @@ interface Deadline {
     timeRemaining(): number
 }
 function requestIdleCallback(fn: (t: Deadline) => void, timeout?: { timeout: number }) {
-    const nativeImpl = (window as any).requestIdleCallback
-    if (nativeImpl) return nativeImpl(fn)
+    if ('requestIdleCallback' in window) {
+        return (window as any).requestIdleCallback(fn)
+    }
     const start = Date.now()
     return setTimeout(() => {
         fn({
