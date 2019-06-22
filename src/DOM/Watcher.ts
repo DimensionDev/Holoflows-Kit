@@ -20,7 +20,8 @@ import uniqWith from 'lodash-es/uniqWith'
 /**
  * Use LiveSelector to watch dom change
  */
-export abstract class Watcher<T, Before extends Element, After extends Element, SingleMode extends boolean> {
+export abstract class Watcher<T, Before extends Element, After extends Element, SingleMode extends boolean>
+    implements PromiseLike<ResultOf<SingleMode, T>> {
     constructor(protected liveSelector: LiveSelector<T, SingleMode>) {}
     //#region How to start and stop the watcher
     /** Let the watcher start to watching */
@@ -104,61 +105,64 @@ export abstract class Watcher<T, Before extends Element, After extends Element, 
     //#endregion
     //#region .await() (Once mode)
     /**
-     * Start the watcher, once it emited data, stop watching.
+     * Start the watcher, once it emitted data, stop watching.
      * @param map - Map function transform T to Result
      * @param options - Options for watcher
      * @param starter - How to start the watcher
      *
+     * @remarks This is an implementation of `PromiseLike`
+     *
      * @example
      * ```ts
-     * const value = await watcher.await()
+     * const value = await watcher.then(x => x.toString())
      * ```
      */
-    await(): Promise<ResultOf<SingleMode, T>>
-    await<Result>(map: (data: T) => PromiseLike<Result> | Result): Promise<ResultOf<SingleMode, Result>>
-    await<Result>(
-        map: (data: T) => PromiseLike<Result> | Result = data => (data as any) as Result,
-        options: Partial<{
-            minimalResultsRequired: number
-        }> = {},
+    // The PromiseLike<T> interface
+    public then<TResult1 = ResultOf<SingleMode, T>, TResult2 = never>(
+        onfulfilled?: ((value: ResultOf<SingleMode, T>) => TResult1 | PromiseLike<TResult1>) | null,
+        onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | null,
+        options: { minimalResultsRequired?: number } = {},
         starter: (this: this, self: this) => void = watcher => watcher.startWatch(),
-    ): Promise<ResultOf<SingleMode, Result>> {
+    ): Promise<TResult1 | TResult2> {
         const { minimalResultsRequired } = {
             ...({
                 minimalResultsRequired: 1,
             } as Required<typeof options>),
             ...options,
         }
-        if (minimalResultsRequired < 1)
-            throw new TypeError('Invalid minimalResultsRequired, must equal to or bigger than 1')
-        if (this.singleMode && minimalResultsRequired > 1) {
-            console.warn('In single mode, the watcher will ignore the option minimalResultsRequired')
-        }
-        const result = this.liveSelector.evaluateOnce()
-        // If in single mode, return the value now
-        if (this.singleMode) {
-            const returns = map(result as T)
-            return Promise.resolve(returns as any)
-        } else if ((result as T[]).length >= minimalResultsRequired) {
-            const returns = (result as T[]).map(map)
-            return Promise.all(returns) as Promise<any>
-        }
-        // Or return a promise to wait the value
-        return new Promise<ResultOf<SingleMode, Result>>((resolve, reject) => {
-            starter.bind(this)(this)
-            const f: EventCallback<OnIterationEvent<T>> = e => {
-                const nodes = e.data.values.current
-                if (this.singleMode && nodes.length >= 1) {
-                    const returns = map(nodes[0])
-                    resolve(returns as any)
-                }
-                if (nodes.length < minimalResultsRequired) return
-                this.stopWatch()
-                Promise.all(nodes.map(map)).then(resolve as any, reject)
-                this.removeListener('onIteration', f)
+        const map = onfulfilled || (x => x)
+        const then = async () => {
+            if (minimalResultsRequired < 1)
+                throw new TypeError('Invalid minimalResultsRequired, must equal to or bigger than 1')
+            if (this.singleMode && minimalResultsRequired > 1) {
+                console.warn('In single mode, the watcher will ignore the option minimalResultsRequired')
             }
-            this.addListener('onIteration', f)
-        })
+            const result = this.liveSelector.evaluateOnce()
+            if (Array.isArray(result) && result.length >= minimalResultsRequired) {
+                // If we get the value now, return it
+                return result.map(v => map(v))
+            } else if (this.singleMode) {
+                // If in single mode, return the value now
+                return result
+            }
+            // Or return a promise to wait the value
+            return new Promise<ResultOf<SingleMode, TResult1>>((resolve, reject) => {
+                starter.bind(this)(this)
+                const f: EventCallback<OnIterationEvent<T>> = e => {
+                    const nodes = e.data.values.current
+                    if (this.singleMode && nodes.length >= 1) {
+                        const returns = map(nodes[0] as ResultOf<SingleMode, T>)
+                        resolve(Promise.resolve(returns as any))
+                    }
+                    if (nodes.length < minimalResultsRequired) return
+                    this.stopWatch()
+                    Promise.all(nodes.map(map as any)).then(resolve as any, reject)
+                    this.removeListener('onIteration', f)
+                }
+                this.addListener('onIteration', f)
+            })
+        }
+        return then().then(onfulfilled, onrejected)
     }
     //#endregion
     //#region Multiple mode
@@ -431,10 +435,11 @@ export abstract class Watcher<T, Before extends Element, After extends Element, 
     protected watcherCallback = (deadline?: Deadline) => {
         if (!this.watching) return
 
-        const thisNodes: readonly T[] | T = this.liveSelector.evaluateOnce()
+        const thisNodes: readonly T[] | T | undefined = this.liveSelector.evaluateOnce()
 
-        if (this.singleMode) return this.singleModeWatcherCallback(thisNodes as T)
-        else return this.normalModeWatcherCallback(thisNodes as readonly T[])
+        if (this.singleMode) {
+            if (thisNodes !== undefined) return this.singleModeWatcherCallback(thisNodes as T)
+        } else return this.normalModeWatcherCallback(thisNodes as readonly T[])
     }
     //#endregion
     //#region LiveSelector settings

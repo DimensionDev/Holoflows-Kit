@@ -36,7 +36,7 @@ type SelectorChainTypeItem = MapOf<SelectorChainType>
  * Call {@link LiveSelector.evaluateOnce | #evaluateOnce} to evaluate the element. Falsy value will be ignored.
  *
  * @param T - Type of Element that LiveSelector contains
- * 
+ *
  * @example
  * ```ts
  * const ls = new LiveSelector().querySelectorAll('a').map(x => x.href)
@@ -287,7 +287,7 @@ export class LiveSelector<T, SingleMode extends boolean = false> {
     /**
      * Evaluate selector expression
      */
-    evaluateOnce(): SingleMode extends true ? T : T[] {
+    evaluateOnce(): SingleMode extends true ? (T | undefined) : T[] {
         let arr: (T | Element)[] = []
         function isElementArray(x: any[]): x is Element[] {
             // Do a simple check
