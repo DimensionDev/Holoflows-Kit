@@ -15,7 +15,7 @@ export const sleep = (time: number) =>
  *
  * @internal
  */
-export const timeout = <T>(promise: Promise<T>, time: number, rejectReason?: string) =>
+export const timeout = <T>(promise: PromiseLike<T>, time: number, rejectReason?: string) =>
     Number.isFinite(time)
         ? Promise.race([
               promise,
