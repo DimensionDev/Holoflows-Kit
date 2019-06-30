@@ -4,7 +4,10 @@ import { GetContext } from './Context'
 import Lock from 'concurrent-lock'
 import { memorize } from 'memorize-decorator'
 
-interface AutomatedTabTaskSharedOptions {
+/**
+ * Shared options for AutomatedTabTask between the define-time and the runtime.
+ */
+export interface AutomatedTabTaskSharedOptions {
     /**
      * If the task is memorable.
      * - true: Memorize by url and all options

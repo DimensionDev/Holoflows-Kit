@@ -4,6 +4,8 @@
 
 ## LiveSelector.closest() method
 
+Reversely select element in the parent
+
 <b>Signature:</b>
 
 ```typescript
@@ -19,4 +21,12 @@ closest<K extends keyof HTMLElementTagNameMap>(selectors: K): LiveSelector<HTMLE
 <b>Returns:</b>
 
 `LiveSelector<HTMLElementTagNameMap[K], SingleMode>`
+
+## Example
+
+
+```ts
+ls.closest('div')
+
+```
 

@@ -16,14 +16,14 @@ export declare class IntervalWatcher<T, Before extends Element = HTMLSpanElement
 
 |  Property | Modifiers | Type | Description |
 |  --- | --- | --- | --- |
-|  [enableSingleMode](./kit.intervalwatcher.enablesinglemode.md) |  | <code>() =&gt; IntervalWatcher&lt;T, Before, After, true&gt;</code> |  |
+|  [enableSingleMode](./kit.intervalwatcher.enablesinglemode.md) |  | <code>() =&gt; IntervalWatcher&lt;T, Before, After, true&gt;</code> | Enable single mode. |
 
 ## Methods
 
 |  Method | Modifiers | Description |
 |  --- | --- | --- |
 |  [startWatch(interval)](./kit.intervalwatcher.startwatch.md) |  | Start to watch the LiveSelector at a interval(ms). |
-|  [stopWatch()](./kit.intervalwatcher.stopwatch.md) |  |  |
+|  [stopWatch()](./kit.intervalwatcher.stopwatch.md) |  | Stop the watcher |
 
 ## Example
 

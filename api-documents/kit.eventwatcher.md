@@ -22,7 +22,7 @@ export declare class EventWatcher<T, Before extends Element = HTMLSpanElement, A
 
 |  Property | Modifiers | Type | Description |
 |  --- | --- | --- | --- |
-|  [enableSingleMode](./kit.eventwatcher.enablesinglemode.md) |  | <code>() =&gt; EventWatcher&lt;T, Before, After, true&gt;</code> |  |
+|  [enableSingleMode](./kit.eventwatcher.enablesinglemode.md) |  | <code>() =&gt; EventWatcher&lt;T, Before, After, true&gt;</code> | Enable single mode. |
 |  [eventListener](./kit.eventwatcher.eventlistener.md) |  | <code>() =&gt; void</code> | Use this function as event listener to invoke watcher. |
 
 ## Example

@@ -4,7 +4,7 @@
 
 ## LiveSelector.closest() method
 
-Reversely select element in the parent
+Select the nth parent
 
 <b>Signature:</b>
 
@@ -26,7 +26,6 @@ closest<T>(parentOfNth: number): LiveSelector<T, SingleMode>;
 
 
 ```ts
-ls.closest('div')
 ls.closest(2) // parentElement.parentElement
 
 ```

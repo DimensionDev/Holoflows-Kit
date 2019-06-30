@@ -4,6 +4,8 @@
 
 ## AsyncCallOptions.dontThrowOnNotImplemented property
 
+If this side receive messages that we didn't implemented, throw an error
+
 <b>Signature:</b>
 
 ```typescript

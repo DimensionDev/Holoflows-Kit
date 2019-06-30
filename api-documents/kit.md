@@ -36,6 +36,7 @@ A toolkit for browser extension developing.
 |  [AsyncCallOptions](./kit.asynccalloptions.md) | Options for [AsyncCall()](./kit.asynccall.md) |
 |  [AutomatedTabTaskDefineTimeOptions](./kit.automatedtabtaskdefinetimeoptions.md) | Define-time options for [AutomatedTabTask()](./kit.automatedtabtask.md) |
 |  [AutomatedTabTaskRuntimeOptions](./kit.automatedtabtaskruntimeoptions.md) | Runtime options for [AutomatedTabTask()](./kit.automatedtabtask.md) |
+|  [AutomatedTabTaskSharedOptions](./kit.automatedtabtasksharedoptions.md) | Shared options for AutomatedTabTask between the define-time and the runtime. |
 |  [DomProxy](./kit.domproxy.md) | A DomProxy object |
 |  [DomProxyOptions](./kit.domproxyoptions.md) | Options for DomProxy |
 |  [Serialization](./kit.serialization.md) | Define how to do serialization and deserialization of remote procedure call |

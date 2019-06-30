@@ -4,6 +4,8 @@
 
 ## AsyncCallOptions.key property
 
+A key to prevent collision with other AsyncCalls. Can be anything, but need to be the same on the both side.
+
 <b>Signature:</b>
 
 ```typescript

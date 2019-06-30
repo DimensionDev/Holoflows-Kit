@@ -23,8 +23,8 @@ export declare class LiveSelector<T, SingleMode extends boolean = false>
 |  Method | Modifiers | Description |
 |  --- | --- | --- |
 |  [clone()](./kit.liveselector.clone.md) |  | Clone this LiveSelector and return a new LiveSelector. |
-|  [closest(parentOfNth)](./kit.liveselector.closest.md) |  | Reversely select element in the parent |
-|  [closest(selectors)](./kit.liveselector.closest_1.md) |  |  |
+|  [closest(parentOfNth)](./kit.liveselector.closest.md) |  | Select the nth parent |
+|  [closest(selectors)](./kit.liveselector.closest_1.md) |  | Reversely select element in the parent |
 |  [closest(selectors)](./kit.liveselector.closest_2.md) |  |  |
 |  [closest(selectors)](./kit.liveselector.closest_3.md) |  |  |
 |  [concat(newEle)](./kit.liveselector.concat.md) |  | Combines two LiveSelector. |

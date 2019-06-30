@@ -45,27 +45,26 @@ export const JSONSerialization = (replacer: Parameters<JSON['parse']>[1] = undef
 //#endregion
 /**
  * Options of {@link AsyncCall}
+ * todo: Not implemented yet.
+ *
  * @alpha
  */
-export interface AsyncCallExecutorOptions
+interface AsyncCallExecutorOptions
     extends Partial<{
         /**
          * Allow this function to be memorized for `memorable` ms.
          */
         memorable: number
     }> {}
-type Default = Record<string, ((...args: any[]) => Promise<any>) & AsyncCallExecutorOptions>
 /**
  * Options for {@link AsyncCall}
  */
 export interface AsyncCallOptions {
     /**
-     * @param key -
      * A key to prevent collision with other AsyncCalls. Can be anything, but need to be the same on the both side.
      */
     key: string
     /**
-     * @param serializer -
      * How to serialization and deserialization parameters and return values
      *
      * @remarks
@@ -75,7 +74,7 @@ export interface AsyncCallOptions {
      */
     serializer: Serialization
     /**
-     * @param MessageCenter - A class that can let you transfer messages between two sides
+     * A class that can let you transfer messages between two sides
      */
     MessageCenter: {
         new (): {
@@ -84,19 +83,16 @@ export interface AsyncCallOptions {
         }
     }
     /**
-     * @param dontThrowOnNotImplemented -
      * If this side receive messages that we didn't implemented, throw an error
      */
     dontThrowOnNotImplemented: boolean
     /**
-     * @param writeToConsole - Write all calls to console.
+     * Write all calls to console.
      */
     writeToConsole: boolean
     /**
      * Open this option, `undefined` and `null` will all becomes `null`
      * When receive unknown message on the message channel, will response an error response
-     *
-     * @param strictJSONRPC - strict mode.
      */
     strictJSONRPC: boolean
 }
@@ -162,7 +158,7 @@ export interface AsyncCallOptions {
  *
  */
 export function AsyncCall<OtherSideImplementedFunctions = {}>(
-    implementation: Default,
+    implementation: Record<string, (...args: any[]) => Promise<any>>,
     options: Partial<AsyncCallOptions> = {},
 ): OtherSideImplementedFunctions {
     const { writeToConsole, serializer, dontThrowOnNotImplemented, MessageCenter, key, strictJSONRPC } = {

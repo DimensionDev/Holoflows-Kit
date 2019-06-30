@@ -4,6 +4,8 @@
 
 ## AsyncCallOptions.MessageCenter property
 
+A class that can let you transfer messages between two sides
+
 <b>Signature:</b>
 
 ```typescript

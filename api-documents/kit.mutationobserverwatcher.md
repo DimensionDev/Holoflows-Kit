@@ -22,7 +22,7 @@ export declare class MutationObserverWatcher<T, Before extends Element = HTMLSpa
 
 |  Property | Modifiers | Type | Description |
 |  --- | --- | --- | --- |
-|  [enableSingleMode](./kit.mutationobserverwatcher.enablesinglemode.md) |  | <code>() =&gt; MutationObserverWatcher&lt;T, Before, After, true&gt;</code> |  |
+|  [enableSingleMode](./kit.mutationobserverwatcher.enablesinglemode.md) |  | <code>() =&gt; MutationObserverWatcher&lt;T, Before, After, true&gt;</code> | Enable single mode. |
 |  [liveSelector](./kit.mutationobserverwatcher.liveselector.md) |  | <code>LiveSelector&lt;T, SingleMode&gt;</code> |  |
 
 ## Methods

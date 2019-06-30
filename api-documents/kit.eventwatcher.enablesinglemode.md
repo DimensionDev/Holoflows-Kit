@@ -4,6 +4,8 @@
 
 ## EventWatcher.enableSingleMode property
 
+Enable single mode.
+
 <b>Signature:</b>
 
 ```typescript

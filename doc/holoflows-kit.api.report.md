@@ -6,42 +6,27 @@
 
 import { EventEmitter } from 'events';
 
-// Warning: (ae-forgotten-export) The symbol "Default" needs to be exported by the entry point index.d.ts
-// 
 // @public
-export function AsyncCall<OtherSideImplementedFunctions = {}>(implementation: Default, options?: Partial<AsyncCallOptions>): OtherSideImplementedFunctions;
-
-// @alpha
-export interface AsyncCallExecutorOptions extends Partial<{
-    memorable: number;
-}> {
-}
+export function AsyncCall<OtherSideImplementedFunctions = {}>(implementation: Record<string, (...args: any[]) => Promise<any>>, options?: Partial<AsyncCallOptions>): OtherSideImplementedFunctions;
 
 // @public
 export interface AsyncCallOptions {
-    // (undocumented)
     dontThrowOnNotImplemented: boolean;
-    // (undocumented)
     key: string;
-    // (undocumented)
     MessageCenter: {
         new (): {
             on(event: string, cb: (data: any) => void): void;
             send(event: string, data: any): void;
         };
     };
-    // (undocumented)
     serializer: Serialization;
     strictJSONRPC: boolean;
-    // (undocumented)
     writeToConsole: boolean;
 }
 
 // @public
 export function AutomatedTabTask<T extends Record<string, (...args: any[]) => Promise<any>>>(taskImplements: T, options?: Partial<AutomatedTabTaskDefineTimeOptions>): ((url: string, options?: Partial<AutomatedTabTaskRuntimeOptions>) => T) | null;
 
-// Warning: (ae-forgotten-export) The symbol "AutomatedTabTaskSharedOptions" needs to be exported by the entry point index.d.ts
-// 
 // @public
 export interface AutomatedTabTaskDefineTimeOptions extends AutomatedTabTaskSharedOptions {
     concurrent: number;
@@ -54,6 +39,15 @@ export interface AutomatedTabTaskRuntimeOptions extends AutomatedTabTaskSharedOp
     important: boolean;
     needRedirect: boolean;
     runAtTabID: number;
+}
+
+// @public
+export interface AutomatedTabTaskSharedOptions {
+    active: boolean;
+    autoClose: boolean;
+    memorable: boolean;
+    pinned: boolean;
+    timeout: number;
 }
 
 // @public
@@ -92,7 +86,6 @@ export interface DomProxyOptions<Before extends Element = HTMLSpanElement, After
 // @public
 export class EventWatcher<T, Before extends Element = HTMLSpanElement, After extends Element = HTMLSpanElement, SingleMode extends boolean = false> extends Watcher<T, Before, After, SingleMode> {
     constructor(liveSelector: LiveSelector<T, SingleMode>);
-    // (undocumented)
     enableSingleMode: () => EventWatcher<T, Before, After, true>;
     eventListener: () => void;
 }
@@ -102,10 +95,8 @@ export function GetContext(): Contexts;
 
 // @public
 export class IntervalWatcher<T, Before extends Element = HTMLSpanElement, After extends Element = HTMLSpanElement, SingleMode extends boolean = false> extends Watcher<T, Before, After, SingleMode> {
-    // (undocumented)
     enableSingleMode: () => IntervalWatcher<T, Before, After, true>;
     startWatch(interval: number): this;
-    // (undocumented)
     stopWatch(): void;
     }
 
@@ -116,7 +107,6 @@ export const JSONSerialization: (replacer?: ((this: any, key: string, value: any
 export class LiveSelector<T, SingleMode extends boolean = false> {
     clone(): LiveSelector<T, SingleMode>;
     closest<T>(parentOfNth: number): LiveSelector<T, SingleMode>;
-    // (undocumented)
     closest<K extends keyof HTMLElementTagNameMap>(selectors: K): LiveSelector<HTMLElementTagNameMap[K], SingleMode>;
     // (undocumented)
     closest<K extends keyof SVGElementTagNameMap>(selectors: K): LiveSelector<SVGElementTagNameMap[K], SingleMode>;
@@ -166,7 +156,6 @@ export class MessageCenter<ITypedMessages> {
 export class MutationObserverWatcher<T, Before extends Element = HTMLSpanElement, After extends Element = HTMLSpanElement, SingleMode extends boolean = false> extends Watcher<T, Before, After, SingleMode> {
     constructor(liveSelector: LiveSelector<T, SingleMode>, 
     consistentWatchRoot?: Node);
-    // (undocumented)
     enableSingleMode: () => MutationObserverWatcher<T, Before, After, true>;
     // (undocumented)
     protected liveSelector: LiveSelector<T, SingleMode>;

@@ -16,10 +16,10 @@ export interface AsyncCallOptions
 
 |  Property | Type | Description |
 |  --- | --- | --- |
-|  [dontThrowOnNotImplemented](./kit.asynccalloptions.dontthrowonnotimplemented.md) | <code>boolean</code> |  |
-|  [key](./kit.asynccalloptions.key.md) | <code>string</code> |  |
-|  [MessageCenter](./kit.asynccalloptions.messagecenter.md) | <code>{</code><br/><code>        new (): {</code><br/><code>            on(event: string, cb: (data: any) =&gt; void): void;</code><br/><code>            send(event: string, data: any): void;</code><br/><code>        };</code><br/><code>    }</code> |  |
-|  [serializer](./kit.asynccalloptions.serializer.md) | <code>Serialization</code> |  |
+|  [dontThrowOnNotImplemented](./kit.asynccalloptions.dontthrowonnotimplemented.md) | <code>boolean</code> | If this side receive messages that we didn't implemented, throw an error |
+|  [key](./kit.asynccalloptions.key.md) | <code>string</code> | A key to prevent collision with other AsyncCalls. Can be anything, but need to be the same on the both side. |
+|  [MessageCenter](./kit.asynccalloptions.messagecenter.md) | <code>{</code><br/><code>        new (): {</code><br/><code>            on(event: string, cb: (data: any) =&gt; void): void;</code><br/><code>            send(event: string, data: any): void;</code><br/><code>        };</code><br/><code>    }</code> | A class that can let you transfer messages between two sides |
+|  [serializer](./kit.asynccalloptions.serializer.md) | <code>Serialization</code> | How to serialization and deserialization parameters and return values |
 |  [strictJSONRPC](./kit.asynccalloptions.strictjsonrpc.md) | <code>boolean</code> | Open this option, <code>undefined</code> and <code>null</code> will all becomes <code>null</code> When receive unknown message on the message channel, will response an error response |
-|  [writeToConsole](./kit.asynccalloptions.writetoconsole.md) | <code>boolean</code> |  |
+|  [writeToConsole](./kit.asynccalloptions.writetoconsole.md) | <code>boolean</code> | Write all calls to console. |
 

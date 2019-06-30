@@ -4,6 +4,8 @@
 
 ## AsyncCallOptions.writeToConsole property
 
+Write all calls to console.
+
 <b>Signature:</b>
 
 ```typescript

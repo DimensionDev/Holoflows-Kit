@@ -151,14 +151,20 @@ export class LiveSelector<T, SingleMode extends boolean = false> {
         return this.appendSelectorChain('getElementsByTagName')(tag)
     }
     /**
-     * Reversely select element in the parent
+     * Select the nth parent
      * @example
      * ```ts
-     * ls.closest('div')
      * ls.closest(2) // parentElement.parentElement
      * ```
      */
     closest<T>(parentOfNth: number): LiveSelector<T, SingleMode>
+    /**
+     * Reversely select element in the parent
+     * @example
+     * ```ts
+     * ls.closest('div')
+     * ```
+     */
     closest<K extends keyof HTMLElementTagNameMap>(selectors: K): LiveSelector<HTMLElementTagNameMap[K], SingleMode>
     closest<K extends keyof SVGElementTagNameMap>(selectors: K): LiveSelector<SVGElementTagNameMap[K], SingleMode>
     closest<E extends Element = Element>(selectors: string): LiveSelector<E, SingleMode>
