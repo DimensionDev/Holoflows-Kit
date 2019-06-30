@@ -28,6 +28,7 @@ export declare abstract class Watcher<T, Before extends Element, After extends E
 |  [eventEmitter](./kit.watcher.eventemitter.md) |  | <code>EventEmitter</code> | Event emitter |
 |  [findNodeFromListByKey](./kit.watcher.findnodefromlistbykey.md) |  | <code>(list: readonly T[], keys: readonly unknown[]) =&gt; (key: unknown) =&gt; T &#124; null</code> | Find node from the given list by key |
 |  [firstVirtualNode](./kit.watcher.firstvirtualnode.md) |  | <code>T extends Element ? DomProxy&lt;T, Before, After&gt; : never</code> | This virtualNode always point to the first node in the LiveSelector |
+|  [isWatching](./kit.watcher.iswatching.md) |  | <code>boolean</code> | Is the watcher running |
 |  [keyComparer](./kit.watcher.keycomparer.md) |  | <code>(a: unknown, b: unknown) =&gt; boolean</code> | Compare between <code>key</code> and <code>key</code>, in case of you don't want the default behavior |
 |  [lastCallbackMap](./kit.watcher.lastcallbackmap.md) |  | <code>Map&lt;unknown, useForeachReturns&lt;T&gt;&gt;</code> | Saved callback map of last watch |
 |  [lastKeyList](./kit.watcher.lastkeylist.md) |  | <code>readonly unknown[]</code> | Found key list of last watch |
@@ -36,14 +37,13 @@ export declare abstract class Watcher<T, Before extends Element, After extends E
 |  [liveSelector](./kit.watcher.liveselector.md) |  | <code>LiveSelector&lt;T, SingleMode&gt;</code> |  |
 |  [mapNodeToKey](./kit.watcher.mapnodetokey.md) |  | <code>(node: T, index: number, arr: readonly T[]) =&gt; unknown</code> | Map <code>Node -&gt; Key</code>, in case of you don't want the default behavior |
 |  [requestIdleCallback](./kit.watcher.requestidlecallback.md) |  | <code>typeof requestIdleCallback</code> |  |
+|  [scheduleWatcherCheck](./kit.watcher.schedulewatchercheck.md) |  | <code>(deadline?: Deadline &#124; undefined) =&gt; void</code> |  |
 |  [singleMode](./kit.watcher.singlemode.md) |  | <code>boolean</code> |  |
 |  [singleModeCallback](./kit.watcher.singlemodecallback.md) |  | <code>useForeachReturns&lt;T&gt;</code> | Callback for single mode |
 |  [singleModeHasLastValue](./kit.watcher.singlemodehaslastvalue.md) |  | <code>boolean</code> | Does it has a last iteration value in single mode? |
 |  [singleModeLastValue](./kit.watcher.singlemodelastvalue.md) |  | <code>T</code> | Last iteration value for single mode |
 |  [useForeachFn](./kit.watcher.useforeachfn.md) |  | <code>useForeachFn&lt;T, Before, After&gt;</code> | Saved useForeach |
 |  [valueComparer](./kit.watcher.valuecomparer.md) |  | <code>(a: T, b: T) =&gt; boolean</code> | Compare between <code>value</code> and <code>value</code>, in case of you don't want the default behavior |
-|  [watcherCallback](./kit.watcher.watchercallback.md) |  | <code>(deadline?: Deadline &#124; undefined) =&gt; void</code> | Should be called every watch |
-|  [watching](./kit.watcher.watching.md) |  | <code>boolean</code> | Is the watcher running |
 
 ## Methods
 

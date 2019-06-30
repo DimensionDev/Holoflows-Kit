@@ -35,7 +35,10 @@ This is an implementation of `PromiseLike`
 
 
 ```ts
-const value = await watcher.then(x => x.toString())
+const value = await watcher
+const value2 = await watcher(undefined, undefined, { minimalResultsRequired: 5 })
+// If your watcher need parameters for startWatch
+const value3 = await watcher(undefined, undefined, {}, s => s.startWatch(...))
 
 ```
 
