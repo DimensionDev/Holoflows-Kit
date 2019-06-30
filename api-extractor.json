@@ -94,7 +94,7 @@
         /**
          * (REQUIRED) Whether to generate an API report.
          */
-        "enabled": false
+        "enabled": true,
 
         /**
          * The filename for the API report files.  It will be combined with "reportFolder" or "reportTempFolder" to produce
@@ -105,7 +105,7 @@
          * SUPPORTED TOKENS: <packageName>, <unscopedPackageName>
          * DEFAULT VALUE: "<unscopedPackageName>.api.md"
          */
-        // "reportFileName": "<unscopedPackageName>.api.md",
+        "reportFileName": "holoflows-kit.api.report.md",
 
         /**
          * Specifies the folder where the API report file is written.  The file name portion is determined by
@@ -120,7 +120,7 @@
          * SUPPORTED TOKENS: <projectFolder>, <packageName>, <unscopedPackageName>
          * DEFAULT VALUE: "<projectFolder>/etc/"
          */
-        // "reportFolder": "<projectFolder>/etc/",
+        "reportFolder": "<projectFolder>/doc"
 
         /**
          * Specifies the folder where the temporary report file is written.  The file name portion is determined by

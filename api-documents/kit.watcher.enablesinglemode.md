@@ -6,8 +6,6 @@
 
 Enable single mode.
 
-Subclass need to implement it to get the correct type.
-
 <b>Signature:</b>
 
 ```typescript
@@ -16,16 +14,4 @@ abstract enableSingleMode(): Watcher<T, Before, After, true>;
 <b>Returns:</b>
 
 `Watcher<T, Before, After, true>`
-
-## Remarks
-
-Example to subclass implementor:
-
-```ts
-class MyWatcher<T, Before extends Element, After extends Element, SingleMode extends boolean>
-extends Watcher<T, Before, After, SingleMode> {
-     public enableSingleMode: MyWatcher<T, Before, After, true> = this.__enableSingleMode as any
-}
-
-```
 

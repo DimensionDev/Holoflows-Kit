@@ -350,14 +350,14 @@ export abstract class Watcher<T, Before extends Element, After extends Element, 
     /**
      * Enable single mode.
      *
+     * @privateRemarks
      * Subclass need to implement it to get the correct type.
-     * @remarks
      * Example to subclass implementor:
      *
      * ```ts
      * class MyWatcher<T, Before extends Element, After extends Element, SingleMode extends boolean>
      * extends Watcher<T, Before, After, SingleMode> {
-     *      public enableSingleMode: MyWatcher<T, Before, After, true> = this.__enableSingleMode as any
+     *      public enableSingleMode: MyWatcher<T, Before, After, true> = this._enableSingleMode as any
      * }
      * ```
      */
