@@ -10,7 +10,7 @@
  * - Event watcher (based on addEventListener)
  */
 import { DomProxy, DomProxyOptions } from './Proxy'
-import { EventEmitter } from 'events'
+import mitt from 'mitt'
 import { LiveSelector } from './LiveSelector'
 
 import differenceWith from 'lodash-es/differenceWith'
@@ -304,7 +304,7 @@ export abstract class Watcher<T, Before extends Element, After extends Element, 
         this.lastKeyList = thisKeyList
         this.lastNodeList = currentIteration
 
-        if (this.listenerCount('onIteration') && changedNodes.length + goneKeys.length + newKeys.length) {
+        if (this.isEventsListening.onIteration && changedNodes.length + goneKeys.length + newKeys.length) {
             // Make a copy to prevent modifications
             this.emit('onIteration', {
                 keys: {
@@ -319,17 +319,17 @@ export abstract class Watcher<T, Before extends Element, After extends Element, 
                 },
             } as OnIterationEvent<T>)
         }
-        if (this.listenerCount('onChange'))
+        if (this.isEventsListening.onChange)
             for (const [oldNode, newNode, oldKey, newKey] of changedNodes) {
                 this.emit('onChange', { oldValue: oldNode, newValue: newNode, oldKey, newKey })
             }
-        if (this.listenerCount('onRemove'))
+        if (this.isEventsListening.onRemove)
             for (const key of goneKeys) {
                 this.emit('onRemove', { key, value: findFromLast(key)! })
             }
-        if (this.listenerCount('onRemove'))
+        if (this.isEventsListening.onAdd)
             for (const key of newKeys) {
-                this.emit('onRemove', { key, value: findFromNew(key)! })
+                this.emit('onAdd', { key, value: findFromNew(key)! })
             }
         // For firstVirtualNode
         const first = currentIteration[0]
@@ -470,14 +470,21 @@ export abstract class Watcher<T, Before extends Element, After extends Element, 
     //#endregion
     //#region events
     /** Event emitter */
-    protected readonly eventEmitter = new EventEmitter()
+    protected readonly eventEmitter = new mitt()
+    private isEventsListening: Record<'onIteration' | 'onChange' | 'onRemove' | 'onAdd', boolean> = {
+        onAdd: false,
+        onChange: false,
+        onIteration: false,
+        onRemove: false,
+    }
     addListener(event: 'onIteration', fn: EventCallback<OnIterationEvent<T>>): this
     addListener(event: 'onChange', fn: EventCallback<OnChangeEvent<T>>): this
     addListener(event: 'onRemove', fn: EventCallback<OnAddOrRemoveEvent<T>>): this
     addListener(event: 'onAdd', fn: EventCallback<OnAddOrRemoveEvent<T>>): this
     addListener(event: string, fn: (...args: any[]) => void): this {
         if (event === 'onIteration') this.noNeedInSingleMode('addListener("onIteration", ...)')
-        this.eventEmitter.addListener(event, fn)
+        this.eventEmitter.on(event, fn)
+        ;(this.isEventsListening as any)[event] = true
         return this
     }
     removeListener(event: 'onIteration', fn: EventCallback<OnIterationEvent<T>>): this
@@ -485,18 +492,15 @@ export abstract class Watcher<T, Before extends Element, After extends Element, 
     removeListener(event: 'onRemove', fn: EventCallback<OnAddOrRemoveEvent<T>>): this
     removeListener(event: 'onAdd', fn: EventCallback<OnAddOrRemoveEvent<T>>): this
     removeListener(event: string, fn: (...args: any[]) => void): this {
-        this.eventEmitter.removeListener(event, fn)
+        this.eventEmitter.off(event, fn)
         return this
     }
-    protected emit(event: 'onIteration', data: OnIterationEvent<T>): boolean
-    protected emit(event: 'onChange', data: OnChangeEvent<T>): boolean
-    protected emit(event: 'onRemove', data: OnAddOrRemoveEvent<T>): boolean
-    protected emit(event: 'onAdd', data: OnAddOrRemoveEvent<T>): boolean
-    protected emit(event: string | symbol, data: any) {
+    protected emit(event: 'onIteration', data: OnIterationEvent<T>): void
+    protected emit(event: 'onChange', data: OnChangeEvent<T>): void
+    protected emit(event: 'onRemove', data: OnAddOrRemoveEvent<T>): void
+    protected emit(event: 'onAdd', data: OnAddOrRemoveEvent<T>): void
+    protected emit(event: string, data: any) {
         return this.eventEmitter.emit(event, { data })
-    }
-    private listenerCount(event: 'onIteration' | 'onChange' | 'onRemove' | 'onAdd'): number {
-        return this.eventEmitter.listenerCount(event)
     }
     //#endregion
     //#region firstVirtualNode
