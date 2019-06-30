@@ -9,7 +9,7 @@ Use LiveSelector to watch dom change
 <b>Signature:</b>
 
 ```typescript
-export declare abstract class Watcher<T, Before extends Element, After extends Element, SingleMode extends boolean> 
+export declare abstract class Watcher<T, Before extends Element, After extends Element, SingleMode extends boolean> implements PromiseLike<ResultOf<SingleMode, T>> 
 ```
 
 ## Constructors
@@ -55,8 +55,6 @@ export declare abstract class Watcher<T, Before extends Element, After extends E
 |  [addListener(event, fn)](./kit.watcher.addlistener_2.md) |  |  |
 |  [addListener(event, fn)](./kit.watcher.addlistener_3.md) |  |  |
 |  [assignKeys(keyAssigner)](./kit.watcher.assignkeys.md) |  | To help identify same nodes in different iteration, you need to implement a map function that map <code>node</code> to <code>key</code>If the key is changed, the same node will call through <code>forEachRemove</code> then <code>forEach</code> |
-|  [await()](./kit.watcher.await.md) |  | Start the watcher, once it emited data, stop watching. |
-|  [await(map)](./kit.watcher.await_1.md) |  |  |
 |  [emit(event, data)](./kit.watcher.emit.md) |  |  |
 |  [emit(event, data)](./kit.watcher.emit_1.md) |  |  |
 |  [emit(event, data)](./kit.watcher.emit_2.md) |  |  |
@@ -73,5 +71,6 @@ export declare abstract class Watcher<T, Before extends Element, After extends E
 |  [setDomProxyOption(option)](./kit.watcher.setdomproxyoption.md) |  | Set option for DomProxy |
 |  [startWatch(args)](./kit.watcher.startwatch.md) |  | Let the watcher start to watching |
 |  [stopWatch(args)](./kit.watcher.stopwatch.md) |  | Stop the watcher |
+|  [then(onfulfilled, onrejected, options, starter)](./kit.watcher.then.md) |  | Start the watcher, once it emitted data, stop watching. |
 |  [useForeach(forEachFunction)](./kit.watcher.useforeach.md) |  | Just like React hooks. Provide callbacks for each node changes. |
 

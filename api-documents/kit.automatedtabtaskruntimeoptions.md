@@ -17,4 +17,6 @@ export interface AutomatedTabTaskRuntimeOptions extends AutomatedTabTaskSharedOp
 |  Property | Type | Description |
 |  --- | --- | --- |
 |  [important](./kit.automatedtabtaskruntimeoptions.important.md) | <code>boolean</code> | This task is important, need to start now without queue. |
+|  [needRedirect](./kit.automatedtabtaskruntimeoptions.needredirect.md) | <code>boolean</code> | Use with runAtTabID, tell AutomatedTabTask if you need to redirect the tab to the url provided<!-- -->defaults: false |
+|  [runAtTabID](./kit.automatedtabtaskruntimeoptions.runattabid.md) | <code>number</code> | Instead of start a new tab, run the script at the existing tab. |
 
