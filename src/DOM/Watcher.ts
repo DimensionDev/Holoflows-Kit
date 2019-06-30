@@ -16,6 +16,7 @@ import { LiveSelector } from './LiveSelector'
 import differenceWith from 'lodash-es/differenceWith'
 import intersectionWith from 'lodash-es/intersectionWith'
 import uniqWith from 'lodash-es/uniqWith'
+import { Deadline, requestIdleCallback } from '../util/requestIdleCallback'
 
 /**
  * Use LiveSelector to watch dom change
@@ -26,17 +27,17 @@ export abstract class Watcher<T, Before extends Element, After extends Element, 
     //#region How to start and stop the watcher
     /** Let the watcher start to watching */
     public startWatch(...args: any[]): this {
-        this.watching = true
+        this.isWatching = true
         this._warning_forget_watch_.ignored = true
-        this.watcherCallback()
+        this.watcherChecker()
         return this
     }
     /** Stop the watcher */
     public stopWatch(...args: any[]): void {
-        this.watching = false
+        this.isWatching = false
     }
     /** Is the watcher running */
-    protected watching = false
+    protected isWatching = false
     //#endregion
     //#region useForeach
     /** Saved useForeach */
@@ -103,7 +104,7 @@ export abstract class Watcher<T, Before extends Element, After extends Element, 
         return this
     }
     //#endregion
-    //#region .await() (Once mode)
+    //#region .then()
     /**
      * Start the watcher, once it emitted data, stop watching.
      * @param map - Map function transform T to Result
@@ -114,7 +115,10 @@ export abstract class Watcher<T, Before extends Element, After extends Element, 
      *
      * @example
      * ```ts
-     * const value = await watcher.then(x => x.toString())
+     * const value = await watcher
+     * const value2 = await watcher(undefined, undefined, { minimalResultsRequired: 5 })
+     * // If your watcher need parameters for startWatch
+     * const value3 = await watcher(undefined, undefined, {}, s => s.startWatch(...))
      * ```
      */
     // The PromiseLike<T> interface
@@ -432,8 +436,8 @@ export abstract class Watcher<T, Before extends Element, After extends Element, 
     //#endregion
     //#region Watcher callback
     /** Should be called every watch */
-    protected watcherCallback = (deadline?: Deadline) => {
-        if (!this.watching) return
+    private watcherChecker = (deadline?: Deadline) => {
+        if (!this.isWatching) return
 
         const thisNodes: readonly T[] | T | undefined = this.liveSelector.evaluateOnce()
 
@@ -557,6 +561,24 @@ export abstract class Watcher<T, Before extends Element, After extends Element, 
         if (keyComparer) this.keyComparer = keyComparer
         if (valueComparer) this.valueComparer = valueComparer
         return this
+    }
+    //#endregion
+    //#region Schedule a watcher callback run
+    private isWatcherCheckerRunning = false
+    private needCheckerRunAgainAfterCurrentSchedule = false
+    protected scheduleWatcherCheck = (deadline?: Deadline | undefined) => {
+        if (this.isWatcherCheckerRunning) {
+            this.needCheckerRunAgainAfterCurrentSchedule = true
+            return
+        }
+        this.isWatcherCheckerRunning = true
+        this.watcherChecker(deadline)
+        // Now watcherChecker is sync so this path will run at most once.
+        while (this.needCheckerRunAgainAfterCurrentSchedule) {
+            this.watcherChecker()
+            this.needCheckerRunAgainAfterCurrentSchedule = false
+        }
+        this.isWatcherCheckerRunning = false
     }
     //#endregion
     //#region Utils
@@ -706,27 +728,6 @@ function applyUseForeachCallback<T>(callback: useForeachReturns<T>) {
         else if (type === 'mutation') mutation && mutation(...args)
         else if (type === 'warn mutation') mutation && args[0]()
     }) as applyUseForeach
-}
-//#endregion
-//#region Polyfill for `requestIdleCallback`
-/** interface for `requestIdleCallback` */
-interface Deadline {
-    didTimeout: boolean
-    timeRemaining(): number
-}
-function requestIdleCallback(fn: (t: Deadline) => void, timeout?: { timeout: number }) {
-    if ('requestIdleCallback' in window) {
-        return (window as any).requestIdleCallback(fn)
-    }
-    const start = Date.now()
-    return setTimeout(() => {
-        fn({
-            didTimeout: false,
-            timeRemaining: function() {
-                return Math.max(0, 50 - (Date.now() - start))
-            },
-        })
-    }, 1)
 }
 //#endregion
 //#region Typescript generic helper

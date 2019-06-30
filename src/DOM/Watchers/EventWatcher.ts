@@ -20,21 +20,11 @@ export class EventWatcher<
         super(liveSelector)
         this.startWatch()
     }
-    /** Limit computation by rIC */
-    private rICLock = false
     /**
      * Use this function as event listener to invoke watcher.
      */
     public eventListener = () => {
-        this.requestIdleCallback(
-            deadline => {
-                if (this.rICLock) return
-                this.rICLock = true
-                this.watcherCallback(deadline)
-                this.rICLock = false
-            },
-            { timeout: 500 },
-        )
+        this.requestIdleCallback(this.scheduleWatcherCheck, { timeout: 500 })
     }
     enableSingleMode: () => EventWatcher<T, Before, After, true> = this._enableSingleMode as any
 }

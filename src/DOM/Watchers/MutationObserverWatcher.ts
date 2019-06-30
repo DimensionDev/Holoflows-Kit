@@ -32,19 +32,12 @@ export class MutationObserverWatcher<
 
     /** Observe whole document change */
     private observer: MutationObserver = new MutationObserver((mutations, observer) => {
-        this.requestIdleCallback(() => {
-            if (this.rICLock) return
-            this.rICLock = true
-            this.watcherCallback()
-            this.rICLock = false
-        })
+        this.requestIdleCallback(this.scheduleWatcherCheck)
     })
 
-    /** Limit onMutation computation by rIC */
-    private rICLock = false
     startWatch(options?: MutationObserverInit) {
         super.startWatch()
-        this.watching = true
+        this.isWatching = true
         const option = {
             attributes: true,
             characterData: true,
@@ -54,7 +47,7 @@ export class MutationObserverWatcher<
         }
         const watch = (root?: Node) => {
             this.observer.observe(root || document.body, option)
-            this.watcherCallback()
+            this.scheduleWatcherCheck()
         }
         if (document.readyState !== 'complete' && this.consistentWatchRoot === null) {
             document.addEventListener('load', () => watch())

@@ -21,7 +21,7 @@ export class IntervalWatcher<
     /** Start to watch the LiveSelector at a interval(ms). */
     startWatch(interval: number) {
         super.startWatch()
-        this.timer = setInterval(() => this.watcherCallback(), interval)
+        this.timer = setInterval(this.scheduleWatcherCheck, interval)
         return this
     }
     stopWatch() {
