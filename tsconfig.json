@@ -17,7 +17,7 @@
     "strictPropertyInitialization": true,
     "sourceMap": true,
     "pretty": true,
-    "target": "es2018",
+    "target": "es2019",
     "outDir": "./es/",
     "incremental": true,
     "emitDecoratorMetadata": true,

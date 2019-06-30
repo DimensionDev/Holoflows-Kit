@@ -31,13 +31,21 @@
     "prepublishOnly": "npm run build",
     "apigen": "api-extractor run --local --verbose",
     "mdgen": "api-documenter markdown -i temp -o api-documents",
-    "gendoc": "npm-run-all --serial build-tsc apigen mdgen"
+    "gendoc": "npm-run-all --serial build-tsc apigen mdgen",
+    "version": "npm run build"
   },
   "devDependencies": {
     "@microsoft/api-documenter": "^7.3.3",
     "@microsoft/api-extractor": "^7.2.1",
+    "@pika/pack": "^0.4.0",
+    "@pika/plugin-build-web": "^0.4.0",
+    "@pika/plugin-bundle-web": "^0.4.0",
+    "@pika/plugin-ts-standard-pkg": "^0.4.0",
+    "@ryaninvents/plugin-bundle-dependencies": "^1.1.7",
     "cross-env": "^5.2.0",
     "npm-run-all": "^4.1.5",
+    "pika-plugin-minify": "^0.1.0",
+    "pika-plugin-unpkg-field": "^1.1.0",
     "rimraf": "^2.6.3",
     "rollup": "^1.15.6",
     "rollup-plugin-commonjs": "^10.0.0",
@@ -45,6 +53,27 @@
     "rollup-plugin-replace": "^2.2.0",
     "rollup-plugin-typescript2": "^0.21.2",
     "typescript": "^3.4.1"
+  },
+  "@pika/pack": {
+    "pipeline": [
+      [
+        "@pika/plugin-ts-standard-pkg"
+      ],
+      [
+        "@pika/plugin-build-web"
+      ],
+      [
+        "@pika/plugin-bundle-web"
+      ],
+      [
+        "pika-plugin-unpkg-field"
+      ]
+    ],
+    "disabled-pipeline": [
+      [
+        "pika-plugin-minify"
+      ]
+    ]
   },
   "peerDependencies": {
     "webextension-polyfill": "^0.4.0"
