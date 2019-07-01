@@ -4,7 +4,7 @@
 
 ```ts
 
-import { EventEmitter } from 'events';
+import mitt from 'mitt';
 
 // @public
 export function AsyncCall<OtherSideImplementedFunctions = {}>(implementation: Record<string, (...args: any[]) => Promise<any>>, options?: Partial<AsyncCallOptions>): OtherSideImplementedFunctions;
@@ -54,10 +54,10 @@ export interface AutomatedTabTaskSharedOptions {
 export type Contexts = 'background' | 'content' | 'webpage' | 'unknown' | 'options' | 'debugging';
 
 // @public
-export function DomProxy<ProxiedElement extends Element = HTMLElement, Before extends Element = HTMLSpanElement, After extends Element = HTMLSpanElement>(options?: Partial<DomProxyOptions<Before, After>>): DomProxy<ProxiedElement, Before, After>;
+export function DomProxy<ProxiedElement extends Node = HTMLElement, Before extends Element = HTMLSpanElement, After extends Element = HTMLSpanElement>(options?: Partial<DomProxyOptions<Before, After>>): DomProxy<ProxiedElement, Before, After>;
 
 // @public
-export interface DomProxy<ProxiedElement extends Element = HTMLElement, Before extends Element = HTMLSpanElement, After extends Element = HTMLSpanElement> {
+export interface DomProxy<ProxiedElement extends Node = HTMLElement, Before extends Element = HTMLSpanElement, After extends Element = HTMLSpanElement> {
     readonly after: After;
     readonly afterShadow: ShadowRoot;
     readonly before: Before;
@@ -216,20 +216,20 @@ export abstract class Watcher<T, Before extends Element, After extends Element, 
     // (undocumented)
     protected domProxyOption: Partial<DomProxyOptions<Before, After>>;
     // (undocumented)
-    protected emit(event: 'onIteration', data: OnIterationEvent<T>): boolean;
+    protected emit(event: 'onIteration', data: OnIterationEvent<T>): void;
     // (undocumented)
-    protected emit(event: 'onChange', data: OnChangeEvent<T>): boolean;
+    protected emit(event: 'onChange', data: OnChangeEvent<T>): void;
     // (undocumented)
-    protected emit(event: 'onRemove', data: OnAddOrRemoveEvent<T>): boolean;
+    protected emit(event: 'onRemove', data: OnAddOrRemoveEvent<T>): void;
     // (undocumented)
-    protected emit(event: 'onAdd', data: OnAddOrRemoveEvent<T>): boolean;
+    protected emit(event: 'onAdd', data: OnAddOrRemoveEvent<T>): void;
     enableBatchMode(): this;
     abstract enableSingleMode(): Watcher<T, Before, After, true>;
     // (undocumented)
     protected _enableSingleMode(): this;
-    protected readonly eventEmitter: EventEmitter;
+    protected readonly eventEmitter: mitt.Emitter;
     protected findNodeFromListByKey: (list: readonly T[], keys: readonly unknown[]) => (key: unknown) => T | null;
-    readonly firstVirtualNode: T extends Element ? DomProxy<T, Before, After> : never;
+    readonly firstVirtualNode: T extends Node ? DomProxy<T, Before, After> : never;
     // (undocumented)
     protected _firstVirtualNode: DomProxy<any, Before, After>;
     getVirtualNodeByKey(key: unknown): DomProxy<any, Before, After> | null;

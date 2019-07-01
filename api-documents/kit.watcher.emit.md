@@ -7,7 +7,7 @@
 <b>Signature:</b>
 
 ```typescript
-protected emit(event: 'onIteration', data: OnIterationEvent<T>): boolean;
+protected emit(event: 'onIteration', data: OnIterationEvent<T>): void;
 ```
 
 ## Parameters
@@ -19,5 +19,5 @@ protected emit(event: 'onIteration', data: OnIterationEvent<T>): boolean;
 
 <b>Returns:</b>
 
-`boolean`
+`void`
 

@@ -7,7 +7,7 @@
 <b>Signature:</b>
 
 ```typescript
-protected emit(event: 'onChange', data: OnChangeEvent<T>): boolean;
+protected emit(event: 'onChange', data: OnChangeEvent<T>): void;
 ```
 
 ## Parameters
@@ -19,5 +19,5 @@ protected emit(event: 'onChange', data: OnChangeEvent<T>): boolean;
 
 <b>Returns:</b>
 
-`boolean`
+`void`
 

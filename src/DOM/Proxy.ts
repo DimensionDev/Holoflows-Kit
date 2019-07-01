@@ -32,7 +32,7 @@ export interface DomProxyOptions<Before extends Element = HTMLSpanElement, After
  * - appendChild (forward, undo, move)
  */
 export function DomProxy<
-    ProxiedElement extends Element = HTMLElement,
+    ProxiedElement extends Node = HTMLElement,
     Before extends Element = HTMLSpanElement,
     After extends Element = HTMLSpanElement
 >(options: Partial<DomProxyOptions<Before, After>> = {}): DomProxy<ProxiedElement, Before, After> {
@@ -52,7 +52,7 @@ export function DomProxy<
     let virtualBefore: Before | null = null
     let virtualBeforeShadow: ShadowRoot | null = null
     const defaultCurrent: Element | null = document.createElement('div')
-    let current: Element | null = defaultCurrent
+    let current: Node | null = defaultCurrent
     let virtualAfter: After | null = null
     let virtualAfterShadow: ShadowRoot | null = null
     /** All changes applied on the `proxy` */
@@ -155,11 +155,11 @@ export function DomProxy<
     const modifyTrapsWrite = modifyTraps(true)
     const modifyTrapsNotWrite = modifyTraps(false)
     const proxy = Proxy.revocable({}, { ...readonlyTraps, ...modifyTrapsWrite })
-    function hasStyle(e: Element): e is HTMLElement {
+    function hasStyle(e: Node): e is HTMLElement {
         return !!(e as any).style
     }
     /** Call before realCurrent change */
-    function undoEffects(nextCurrent?: Element | null) {
+    function undoEffects(nextCurrent?: Node | null) {
         for (const change of changes) {
             if (change.type === 'callMethods') {
                 const attr: keyof HTMLElement = change.op.name as any
@@ -191,10 +191,14 @@ export function DomProxy<
             else if (change.type === 'set') modifyTrapsNotWrite.set!(t, change.op[0], change.op[1], t)
             else if (change.type === 'delete') modifyTrapsNotWrite.deleteProperty!(t, change.op)
             else if (change.type === 'callMethods') {
-                const replayable: (keyof Element)[] = ['appendChild', 'addEventListener', 'before', 'after']
-                const key: keyof Element = change.op.name as any
+                const replayable = ['appendChild', 'addEventListener', 'before', 'after']
+                const key: keyof Node = change.op.name as any
                 if (replayable.indexOf(key) !== -1) {
-                    ;(current[key] as any)(...change.op.param)
+                    if (current[key]) {
+                        ;(current[key] as any)(...change.op.param)
+                    } else {
+                        console.warn(current, `doesn't have method "${key}", replay failed.`)
+                    }
                 }
             } else if (change.type === 'modifyStyle') {
                 ;(current as HTMLElement).style[change.op.name as any] = change.op.value
@@ -237,7 +241,7 @@ export function DomProxy<
             if (isDestroyed) throw new TypeError('Try to access `before` node after VirtualNode is destroyed')
             if (!virtualBefore) {
                 virtualBefore = createBefore()
-                current && current.before(virtualBefore)
+                if (current instanceof Element) current.before(virtualBefore)
             }
             return virtualBefore
         },
@@ -253,7 +257,7 @@ export function DomProxy<
             if (isDestroyed) throw new TypeError('Try to access `after` node after VirtualNode is destroyed')
             if (!virtualAfter) {
                 virtualAfter = createAfter()
-                current && current.after(virtualAfter)
+                if (current instanceof Element) current.after(virtualAfter)
             }
             return virtualAfter
         },
@@ -276,6 +280,12 @@ export function DomProxy<
         set realCurrent(node: ProxiedElement | null) {
             if (isDestroyed) throw new TypeError('You can not set current for a destroyed proxy')
             if (node === current) return
+            if ((node === virtualAfter || node === virtualBefore) && node !== null) {
+                console.warn(
+                    "In the DomProxy, you're setting .realCurrent to this DomProxy's virtualAfter or virtualBefore. Doing this may cause bugs. If you're confused with this warning, check your rules for LiveSelector.",
+                    this,
+                )
+            }
             undoEffects(node)
             reObserve(false)
             if (node === null || node === undefined) {
@@ -284,8 +294,8 @@ export function DomProxy<
                 if (virtualAfter) virtualAfter.remove()
             } else {
                 current = node
-                if (virtualAfter) current.after(virtualAfter)
-                if (virtualBefore) current.before(virtualBefore)
+                if (virtualAfter && current instanceof Element) current.after(virtualAfter)
+                if (virtualBefore && current instanceof Element) current.before(virtualBefore)
                 redoEffects()
             }
         },
@@ -307,7 +317,7 @@ export function DomProxy<
  * A DomProxy object
  */
 export interface DomProxy<
-    ProxiedElement extends Element = HTMLElement,
+    ProxiedElement extends Node = HTMLElement,
     Before extends Element = HTMLSpanElement,
     After extends Element = HTMLSpanElement
 > {

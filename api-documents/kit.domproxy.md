@@ -9,7 +9,7 @@ A DomProxy object
 <b>Signature:</b>
 
 ```typescript
-export interface DomProxy<ProxiedElement extends Element = HTMLElement, Before extends Element = HTMLSpanElement, After extends Element = HTMLSpanElement> 
+export interface DomProxy<ProxiedElement extends Node = HTMLElement, Before extends Element = HTMLSpanElement, After extends Element = HTMLSpanElement> 
 ```
 
 ## Properties

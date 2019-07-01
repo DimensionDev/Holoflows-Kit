@@ -17,6 +17,7 @@ import differenceWith from 'lodash-es/differenceWith'
 import intersectionWith from 'lodash-es/intersectionWith'
 import uniqWith from 'lodash-es/uniqWith'
 import { Deadline, requestIdleCallback } from '../util/requestIdleCallback'
+import { isNil } from 'lodash-es'
 
 /**
  * Use LiveSelector to watch dom change
@@ -242,11 +243,11 @@ export abstract class Watcher<T, Before extends Element, After extends Element, 
             for (const newKey of newKeys) {
                 if (!this.useForeachFn) break
                 const node = findFromNew(newKey)
-                if (node instanceof Element) {
+                if (node instanceof Node) {
                     const virtualNode = DomProxy<typeof node, Before, After>(this.domProxyOption)
                     virtualNode.realCurrent = node
                     // This step must be sync.
-                    const callbacks = (this.useForeachFn as useForeachFnWithElement<T, Before, After>)(
+                    const callbacks = (this.useForeachFn as useForeachFnWithNode<T, Before, After>)(
                         virtualNode,
                         newKey,
                         node,
@@ -263,7 +264,7 @@ export abstract class Watcher<T, Before extends Element, After extends Element, 
                     nextCallbackMap.set(newKey, callbacks)
                     nextVirtualNodesMap.set(newKey, virtualNode)
                 } else {
-                    const callbacks = (this.useForeachFn as useForeachFnWithoutElement<T>)(node!, newKey)
+                    const callbacks = (this.useForeachFn as useForeachFnWithoutNode<T>)(node!, newKey)
                     applyUseForeachCallback(callbacks)('warn mutation')(this._warning_mutation_)
                     nextCallbackMap.set(newKey, callbacks)
                 }
@@ -281,7 +282,7 @@ export abstract class Watcher<T, Before extends Element, After extends Element, 
             .filter(([a, b]) => this.valueComparer(a, b) === false)
         for (const [oldNode, newNode, oldKey, newKey] of changedNodes) {
             const fn = this.lastCallbackMap.get(oldKey)
-            if (newNode instanceof Element) {
+            if (newNode instanceof Node) {
                 const virtualNode = this.lastVirtualNodesMap.get(oldKey)!
                 virtualNode.realCurrent = newNode
             }
@@ -333,7 +334,7 @@ export abstract class Watcher<T, Before extends Element, After extends Element, 
             }
         // For firstVirtualNode
         const first = currentIteration[0]
-        if (first instanceof Element) {
+        if (first instanceof Node) {
             this._firstVirtualNode.realCurrent = first
         } else if (first === undefined || first === null) {
             this._firstVirtualNode.realCurrent = null
@@ -377,14 +378,16 @@ export abstract class Watcher<T, Before extends Element, After extends Element, 
     protected singleModeCallback?: useForeachReturns<T>
     /** Watcher callback for single mode */
     private singleModeWatcherCallback(firstValue: T) {
-        // Simple version of watcherCallback. Improve performance.
-        if (firstValue instanceof Element) {
+        if (firstValue === undefined) {
+            this.firstVirtualNode.realCurrent = null
+        }
+        if (firstValue instanceof Node) {
             this.firstVirtualNode.realCurrent = firstValue
         }
         // ? Case: value is gone
-        if (this.singleModeHasLastValue && !firstValue) {
+        if (this.singleModeHasLastValue && isNil(firstValue)) {
             applyUseForeachCallback(this.singleModeCallback)('remove')(this.singleModeLastValue!)
-            if (this.singleModeLastValue instanceof Element) {
+            if (this.singleModeLastValue instanceof Node) {
                 this._firstVirtualNode.realCurrent = null
             }
             this.emit('onRemove', { key: undefined, value: this.singleModeLastValue! })
@@ -393,10 +396,10 @@ export abstract class Watcher<T, Before extends Element, After extends Element, 
         }
         // ? Case: value is new
         else if (!this.singleModeHasLastValue && firstValue) {
-            if (isWatcherWithElement(this, firstValue)) {
-                const val = firstValue as T & Element
+            if (isWatcherWithNode(this, firstValue)) {
+                const val = firstValue as T & Node
                 if (this.useForeachFn) {
-                    this.singleModeCallback = (this.useForeachFn as useForeachFnWithElement<T, Before, After>)(
+                    this.singleModeCallback = (this.useForeachFn as useForeachFnWithNode<T, Before, After>)(
                         this.firstVirtualNode,
                         val,
                         val,
@@ -404,10 +407,7 @@ export abstract class Watcher<T, Before extends Element, After extends Element, 
                 }
             } else {
                 if (this.useForeachFn) {
-                    this.singleModeCallback = (this.useForeachFn as useForeachFnWithoutElement<T>)(
-                        firstValue,
-                        undefined,
-                    )
+                    this.singleModeCallback = (this.useForeachFn as useForeachFnWithoutNode<T>)(firstValue, undefined)
                     applyUseForeachCallback(this.singleModeCallback)('warn mutation')(this._warning_mutation_)
                 }
             }
@@ -441,9 +441,8 @@ export abstract class Watcher<T, Before extends Element, After extends Element, 
 
         const thisNodes: readonly T[] | T | undefined = this.liveSelector.evaluateOnce()
 
-        if (this.singleMode) {
-            if (thisNodes !== undefined) return this.singleModeWatcherCallback(thisNodes as T)
-        } else return this.normalModeWatcherCallback(thisNodes as readonly T[])
+        if (this.singleMode) return this.singleModeWatcherCallback(thisNodes as T)
+        else return this.normalModeWatcherCallback(thisNodes as readonly T[])
     }
     //#endregion
     //#region LiveSelector settings
@@ -509,7 +508,7 @@ export abstract class Watcher<T, Before extends Element, After extends Element, 
      * This virtualNode always point to the first node in the LiveSelector
      */
     public get firstVirtualNode() {
-        return (this._firstVirtualNode as unknown) as T extends Element ? DomProxy<T, Before, After> : never
+        return (this._firstVirtualNode as unknown) as T extends Node ? DomProxy<T, Before, After> : never
     }
     //#endregion
     //#region Watcher settings
@@ -640,13 +639,14 @@ Or to ignore this message, call \`.enableBatchMode()\` on the watcher.\n`,
 
     private _warning_mutation_ = warning({
         fn(stack) {
-            console.warn(
-                'When watcher is watching LiveSelector<not Element>, onNodeMutation will not be ignored\n',
-                stack,
-            )
+            console.warn('When watcher is watching LiveSelector<not Node>, onNodeMutation will not be ignored\n', stack)
         },
     })
     //#endregion
+}
+
+function isNode(e: any): e is Node {
+    return !!(e instanceof Node && e.nodeType)
 }
 
 //#region Default implementations
@@ -692,26 +692,26 @@ type useForeachReturns<T> =
     | {
           onRemove?: RemoveCallback<T>
           onTargetChanged?: TargetChangedCallback<T>
-          /** This will not be called if T is not Element */
+          /** This will not be called if T is not Node */
           onNodeMutation?: MutationCallback<T>
       }
 
-type useForeachFnWithElement<T, Before extends Element, After extends Element> = {
-    (virtualNode: DomProxy<T & Element, Before, After>, key: unknown, realNode: Element): useForeachReturns<T>
+type useForeachFnWithNode<T, Before extends Element, After extends Element> = {
+    (virtualNode: DomProxy<T & Node, Before, After>, key: unknown, realNode: Node): useForeachReturns<T>
 }
-type useForeachFnWithoutElement<T> = {
+type useForeachFnWithoutNode<T> = {
     (node: T, key: unknown): useForeachReturns<T>
 }
 interface useForeachFn<T, Before extends Element, After extends Element> {
     (
-        ...args: T extends Element
-            ? Parameters<useForeachFnWithElement<T, Before, After>>
-            : Parameters<useForeachFnWithoutElement<T>>
+        ...args: T extends Node
+            ? Parameters<useForeachFnWithNode<T, Before, After>>
+            : Parameters<useForeachFnWithoutNode<T>>
     ): useForeachReturns<T>
 }
 
 function applyUseForeachCallback<T>(callback: useForeachReturns<T>) {
-    const cb = callback as useForeachReturns<Element>
+    const cb = callback as useForeachReturns<Node>
     let remove: any, change: any, mutation: any
     if (cb === undefined) {
     } else if (typeof cb === 'function') remove = cb
@@ -736,13 +736,11 @@ function applyUseForeachCallback<T>(callback: useForeachReturns<T>) {
 //#endregion
 //#region Typescript generic helper
 type ResultOf<SingleMode extends boolean, Result> = SingleMode extends true ? (Result) : (Result)[]
-function isWatcherWithElement<T>(
+function isWatcherWithNode<T>(
     watcher: Watcher<T, any, any, any>,
     node: T,
-): watcher is typeof watcher extends Watcher<infer U, infer P, infer Q, infer R>
-    ? Watcher<U & Element, P, Q, R>
-    : never {
-    return node instanceof Element
+): watcher is typeof watcher extends Watcher<infer U, infer P, infer Q, infer R> ? Watcher<U & Node, P, Q, R> : never {
+    return node instanceof Node
 }
 //#endregion
 //#region Warnings
