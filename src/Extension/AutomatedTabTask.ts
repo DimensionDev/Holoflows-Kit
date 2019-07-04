@@ -162,9 +162,6 @@ export function AutomatedTabTask<T extends Record<string, (...args: any[]) => Pr
         )
         return null
     } else if (GetContext() === 'background' || GetContext() === 'options') {
-        const key = '@holoflows/kit/AutomatedTabTask/tabs'
-        if (key in window === false) closeTabsOfPreviousSession()
-        Object.assign(window, { [key]: true })
         type tabId = number
         /** If `tab` is ready */
         const readyMap: Record<tabId, boolean> = {}
@@ -281,17 +278,5 @@ export function AutomatedTabTask<T extends Record<string, (...args: any[]) => Pr
             ) as T
     } else {
         return null
-    }
-}
-/**
- * This function can close last-time auto opened
- */
-async function closeTabsOfPreviousSession() {
-    const key = '@holoflows/kit/AutomatedTabTask/tabs'
-    const arr = ((await browser.storage.local.get())[key] || []) as number[]
-    try {
-        await browser.tabs.remove(arr)
-    } finally {
-        await browser.storage.local.set({ [key]: [] })
     }
 }

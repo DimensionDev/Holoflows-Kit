@@ -16,9 +16,9 @@ export function GetContext(): Contexts {
     if (typeof browser !== 'undefined') {
         if (location.protocol.match('-extension')) {
             if (
-                browser.extension &&
-                browser.extension.getBackgroundPage &&
-                browser.extension.getBackgroundPage().location.href === location.href
+                browser.extension && browser.extension.getBackgroundPage
+                    ? browser.extension.getBackgroundPage().location.href === location.href
+                    : ['generated', 'background', 'page', '.html'].every(x => location.pathname.match(x))
             )
                 return 'background'
             return 'options'
