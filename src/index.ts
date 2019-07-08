@@ -5,3 +5,4 @@
  */
 export * from './DOM/index.js'
 export * from './Extension/index.js'
+export * from './util/ValueRef'
