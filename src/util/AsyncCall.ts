@@ -7,7 +7,7 @@
  * - Send Notification (receive Notification is okay)
  * - Batch invocation (defined in the section 6 of the spec)
  */
-import { MessageCenter as HoloflowsMessageCenter } from './MessageCenter'
+import { MessageCenter as HoloflowsMessageCenter } from '../Extension/MessageCenter'
 
 //#region Serialization
 /**

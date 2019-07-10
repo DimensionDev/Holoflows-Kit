@@ -1,5 +1,5 @@
 import { sleep, timeout as timeoutFn } from '../util/sleep'
-import { AsyncCall } from './Async-Call'
+import { AsyncCall } from '../util/AsyncCall'
 import { GetContext } from './Context'
 import Lock from 'concurrent-lock'
 import { memorize } from 'memorize-decorator'
