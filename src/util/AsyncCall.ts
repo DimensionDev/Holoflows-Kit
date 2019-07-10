@@ -14,8 +14,8 @@ import { MessageCenter as HoloflowsMessageCenter } from '../Extension/MessageCen
  * Define how to do serialization and deserialization of remote procedure call
  */
 export interface Serialization {
-    serialization(from: any): Promise<unknown>
-    deserialization(serialized: unknown): Promise<any>
+    serialization(from: any): PromiseLike<unknown>
+    deserialization(serialized: unknown): PromiseLike<any>
 }
 /**
  * Serialization implementation that do nothing
@@ -158,7 +158,7 @@ export interface AsyncCallOptions {
  *
  */
 export function AsyncCall<OtherSideImplementedFunctions = {}>(
-    implementation: Record<string, (...args: any[]) => Promise<any>>,
+    implementation: Record<string, (...args: any[]) => PromiseLike<any>>,
     options: Partial<AsyncCallOptions> = {},
 ): OtherSideImplementedFunctions {
     const { writeToConsole, serializer, dontThrowOnNotImplemented, MessageCenter, key, strictJSONRPC } = {

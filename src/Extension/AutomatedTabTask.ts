@@ -103,7 +103,7 @@ export interface AutomatedTabTaskRuntimeOptions extends AutomatedTabTaskSharedOp
  * @param taskImplements - All tasks that background page can call.
  * @param options - Options
  */
-export function AutomatedTabTask<T extends Record<string, (...args: any[]) => Promise<any>>>(
+export function AutomatedTabTask<T extends Record<string, (...args: any[]) => PromiseLike<any>>>(
     taskImplements: T,
     options: Partial<AutomatedTabTaskDefineTimeOptions> = {},
 ) {
