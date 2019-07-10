@@ -10,7 +10,6 @@
  * - Event watcher (based on addEventListener)
  */
 import { DomProxy, DomProxyOptions } from './Proxy'
-import mitt from 'mitt'
 import { LiveSelector } from './LiveSelector'
 
 import differenceWith from 'lodash-es/differenceWith'
@@ -469,7 +468,7 @@ export abstract class Watcher<T, Before extends Element, After extends Element, 
     //#endregion
     //#region events
     /** Event emitter */
-    protected readonly eventEmitter = new mitt()
+    protected readonly eventEmitter = new EventTarget()
     private isEventsListening: Record<'onIteration' | 'onChange' | 'onRemove' | 'onAdd', boolean> = {
         onAdd: false,
         onChange: false,
@@ -482,7 +481,7 @@ export abstract class Watcher<T, Before extends Element, After extends Element, 
     addListener(event: 'onAdd', fn: EventCallback<OnAddOrRemoveEvent<T>>): this
     addListener(event: string, fn: (...args: any[]) => void): this {
         if (event === 'onIteration') this.noNeedInSingleMode('addListener("onIteration", ...)')
-        this.eventEmitter.on(event, fn)
+        this.eventEmitter.addEventListener(event, fn)
         ;(this.isEventsListening as any)[event] = true
         return this
     }
@@ -491,15 +490,15 @@ export abstract class Watcher<T, Before extends Element, After extends Element, 
     removeListener(event: 'onRemove', fn: EventCallback<OnAddOrRemoveEvent<T>>): this
     removeListener(event: 'onAdd', fn: EventCallback<OnAddOrRemoveEvent<T>>): this
     removeListener(event: string, fn: (...args: any[]) => void): this {
-        this.eventEmitter.off(event, fn)
+        this.eventEmitter.removeEventListener(event, fn)
         return this
     }
     protected emit(event: 'onIteration', data: OnIterationEvent<T>): void
     protected emit(event: 'onChange', data: OnChangeEvent<T>): void
     protected emit(event: 'onRemove', data: OnAddOrRemoveEvent<T>): void
     protected emit(event: 'onAdd', data: OnAddOrRemoveEvent<T>): void
-    protected emit(event: string, data: any) {
-        return this.eventEmitter.emit(event, { data })
+    protected emit(event: string, detail: any) {
+        this.eventEmitter.dispatchEvent(new CustomEvent(event, { detail }))
     }
     //#endregion
     //#region firstVirtualNode
