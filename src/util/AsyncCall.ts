@@ -4,7 +4,6 @@
  * https://www.jsonrpc.org/specification
  *
  * ! Not implemented:
- * - Send Notification (receive Notification is okay)
  * - Batch invocation (defined in the section 6 of the spec)
  */
 import { MessageCenter as HoloflowsMessageCenter } from '../Extension/MessageCenter'
@@ -76,12 +75,17 @@ export interface AsyncCallOptions {
     /**
      * A class that can let you transfer messages between two sides
      */
-    MessageCenter: {
-        new (): {
-            on(event: string, cb: (data: any) => void): void
-            send(event: string, data: any): void
-        }
-    }
+    MessageCenter:
+        | {
+              new (): {
+                  on(event: string, callback: (data: any) => void): void
+                  send(event: string, data: any): void
+              }
+          }
+        | {
+              on(event: string, callback: (data: any) => void): void
+              send(event: string, data: any): void
+          }
     /**
      * If this side receive messages that we didn't implemented, throw an error
      */
@@ -166,12 +170,12 @@ export function AsyncCall<OtherSideImplementedFunctions = {}>(
         dontThrowOnNotImplemented: true,
         serializer: NoSerialization,
         writeToConsole: true,
-        key: 'default',
+        key: 'default-jsonrpc',
         strictJSONRPC: false,
         ...options,
     } as Required<typeof options>
-    const message = new MessageCenter()
-    const CALL = `${key}-jsonrpc`
+    const message = typeof MessageCenter === 'function' ? new MessageCenter() : MessageCenter
+    const CALL = `${key}`
     type PromiseParam = Parameters<(ConstructorParameters<typeof Promise>)[0]>
     const map = new Map<string | number, PromiseParam>()
     async function onRequest(data: Request): Promise<Response | undefined> {
@@ -208,7 +212,7 @@ export function AsyncCall<OtherSideImplementedFunctions = {}>(
                 'color: gray',
                 '',
             )
-        if (data.id === null) return
+        if (data.id === null || data.id === undefined) return
         const [resolve, reject] = map.get(data.id) || (([null, null] as any) as PromiseParam)
         if (!resolve) return // drop this response
         map.delete(data.id)
@@ -239,7 +243,7 @@ export function AsyncCall<OtherSideImplementedFunctions = {}>(
                         await send(ErrorResponse.InvalidRequest((data as any).id || null))
                     }
                 }
-            } else if (Array.isArray(data) && data.every(isJSONRPCObject)) {
+            } else if (Array.isArray(data) && data.every(isJSONRPCObject) && data.length !== 0) {
                 await send(ErrorResponse.InternalError(null, ": Async-Call isn't implement patch jsonrpc yet."))
             } else {
                 if (strictJSONRPC) {
@@ -254,6 +258,8 @@ export function AsyncCall<OtherSideImplementedFunctions = {}>(
         }
         async function send(res?: Response) {
             if (!res) return
+            // ? This is a Notification, we MUST not return it.
+            if (res.id === undefined) return
             message.send(CALL, await serializer.serialization(res))
         }
     })
@@ -279,9 +285,10 @@ export function AsyncCall<OtherSideImplementedFunctions = {}>(
 }
 
 const jsonrpc = '2.0'
+type ID = string | number | null | undefined
 class Request {
     readonly jsonrpc = '2.0'
-    constructor(public id: string, public method: string, public params: any[]) {
+    constructor(public id: ID, public method: string, public params: any[]) {
         return { id, method, params, jsonrpc }
     }
 }
@@ -289,7 +296,7 @@ class SuccessResponse {
     readonly jsonrpc = '2.0'
     // ? This is not in the spec !
     resultIsUndefined?: boolean
-    constructor(public id: string | number | null, public result: any, strictMode: boolean) {
+    constructor(public id: ID, public result: any, strictMode: boolean) {
         const obj = { id, jsonrpc, result: result || null } as this
         if (!strictMode && result === undefined) obj.resultIsUndefined = true
         return obj
@@ -298,17 +305,18 @@ class SuccessResponse {
 class ErrorResponse {
     readonly jsonrpc = '2.0'
     error: { code: number; message: string; data: { stack: string } }
-    constructor(public id: string | number | null, code: number, message: string, stack: string) {
+    constructor(public id: ID, code: number, message: string, stack: string) {
+        if (id === undefined) id = null
+        code = Math.floor(code)
         const error = (this.error = { code, message, data: { stack } })
         return { error, id, jsonrpc }
     }
     // Pre defined error in section 5.1
     static readonly ParseError = (stack = '') => new ErrorResponse(null, -32700, 'Parse error', stack)
-    static readonly InvalidRequest = (id: string | number | null) =>
-        new ErrorResponse(id, -32600, 'Invalid Request', '')
-    static readonly MethodNotFound = (id: string | number) => new ErrorResponse(id, -32601, 'Method not found', '')
-    static readonly InvalidParams = (id: string | number) => new ErrorResponse(id, -32602, 'Invalid params', '')
-    static readonly InternalError = (id: string | number | null, message: string = '') =>
+    static readonly InvalidRequest = (id: ID) => new ErrorResponse(id, -32600, 'Invalid Request', '')
+    static readonly MethodNotFound = (id: ID) => new ErrorResponse(id, -32601, 'Method not found', '')
+    static readonly InvalidParams = (id: ID) => new ErrorResponse(id, -32602, 'Invalid params', '')
+    static readonly InternalError = (id: ID, message: string = '') =>
         new ErrorResponse(id, -32603, 'Internal error' + message, '')
 }
 type Response = SuccessResponse | ErrorResponse
