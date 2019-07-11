@@ -9,20 +9,23 @@ export function AsyncCall<OtherSideImplementedFunctions = {}>(implementation: Re
 
 // @public
 export interface AsyncCallOptions {
-    dontThrowOnNotImplemented: boolean;
     key: string;
+    log: {
+        beCalled?: boolean;
+        localError?: boolean;
+        remoteError?: boolean;
+        type?: 'basic' | 'pretty';
+    } | boolean;
     MessageCenter: {
-        new (): {
-            on(event: string, callback: (data: any) => void): void;
-            send(event: string, data: any): void;
-        };
-    } | {
         on(event: string, callback: (data: any) => void): void;
         send(event: string, data: any): void;
     };
     serializer: Serialization;
-    strictJSONRPC: boolean;
-    writeToConsole: boolean;
+    strict: {
+        methodNotFound?: boolean;
+        noUndefined?: boolean;
+        unknownMessage?: boolean;
+    } | boolean;
 }
 
 // @public

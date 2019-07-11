@@ -46,20 +46,8 @@ export const JSONSerialization = (replacer: Parameters<JSON['parse']>[1] = undef
             return JSON.parse(serialized as string, replacer)
         },
     } as Serialization)
+
 //#endregion
-/**
- * Options of {@link AsyncCall}
- * todo: Not implemented yet.
- *
- * @alpha
- */
-interface AsyncCallExecutorOptions
-    extends Partial<{
-        /**
-         * Allow this function to be memorized for `memorable` ms.
-         */
-        memorable: number
-    }> {}
 /**
  * Options for {@link AsyncCall}
  */
@@ -80,30 +68,30 @@ export interface AsyncCallOptions {
     /**
      * A class that can let you transfer messages between two sides
      */
-    MessageCenter:
+    MessageCenter: {
+        on(event: string, callback: (data: any) => void): void
+        send(event: string, data: any): void
+    }
+    /** Log what to console */
+    log:
         | {
-              new (): {
-                  on(event: string, callback: (data: any) => void): void
-                  send(event: string, data: any): void
-              }
+              beCalled?: boolean
+              localError?: boolean
+              remoteError?: boolean
+              type?: 'basic' | 'pretty'
           }
+        | boolean
+    /** Strict options */
+    strict:
         | {
-              on(event: string, callback: (data: any) => void): void
-              send(event: string, data: any): void
+              /** if method not found, return an error */
+              methodNotFound?: boolean
+              /** do not try to keep `undefined` during transfer (if true, undefined will become null) */
+              noUndefined?: boolean
+              /** send an error when receive unknown message on the channel */
+              unknownMessage?: boolean
           }
-    /**
-     * If this side receive messages that we didn't implemented, throw an error
-     */
-    dontThrowOnNotImplemented: boolean
-    /**
-     * Write all calls to console.
-     */
-    writeToConsole: boolean
-    /**
-     * Open this option, `undefined` and `null` will all becomes `null`
-     * When receive unknown message on the message channel, will response an error response
-     */
-    strictJSONRPC: boolean
+        | boolean
 }
 /**
  * Async call between different context.
@@ -170,16 +158,26 @@ export function AsyncCall<OtherSideImplementedFunctions = {}>(
     implementation: Record<string, (...args: any[]) => PromiseLike<any>>,
     options: Partial<AsyncCallOptions> = {},
 ): OtherSideImplementedFunctions {
-    const { writeToConsole, serializer, dontThrowOnNotImplemented, MessageCenter, key, strictJSONRPC } = {
-        MessageCenter: HoloflowsMessageCenter,
-        dontThrowOnNotImplemented: options.strictJSONRPC !== true,
+    const { serializer, key, strict, log } = {
         serializer: NoSerialization,
-        writeToConsole: true,
         key: 'default-jsonrpc',
-        strictJSONRPC: false,
+        strict: false,
+        log: true,
         ...options,
-    } as Required<typeof options>
-    const message = typeof MessageCenter === 'function' ? new MessageCenter() : MessageCenter
+    }
+    const message = options.MessageCenter || new HoloflowsMessageCenter()
+    const { methodNotFound: banMethodNotFound, noUndefined: noUndefinedKeeping, unknownMessage: banUnknownMessage } =
+        typeof strict === 'boolean'
+            ? strict
+                ? { methodNotFound: true, unknownMessage: true, noUndefined: true }
+                : { methodNotFound: false, noUndefined: false, unknownMessage: false }
+            : strict
+    const { beCalled: logBeCalled, localError: logLocalError, remoteError: logRemoteError, type: logType } =
+        typeof log === 'boolean'
+            ? log
+                ? ({ beCalled: true, localError: true, remoteError: true, type: 'pretty' } as const)
+                : ({ beCalled: false, localError: false, remoteError: true, type: 'basic' } as const)
+            : log
     const CALL = `${key}`
     type PromiseParam = Parameters<(ConstructorParameters<typeof Promise>)[0]>
     const map = new Map<string | number, PromiseParam>()
@@ -187,7 +185,7 @@ export function AsyncCall<OtherSideImplementedFunctions = {}>(
         try {
             const executor = implementation[data.method as keyof typeof implementation]
             if (!executor) {
-                if (dontThrowOnNotImplemented) {
+                if (banMethodNotFound) {
                     console.debug('Receive remote call, but not implemented.', key, data)
                     return
                 } else return ErrorResponse.MethodNotFound(data.id)
@@ -195,24 +193,26 @@ export function AsyncCall<OtherSideImplementedFunctions = {}>(
             const args: unknown = data.params
             if (Array.isArray(args)) {
                 const promise = executor(...args)
-                if (writeToConsole)
-                    console.log(
-                        `${key}.%c${data.method}%c(${args.map(() => '%o').join(', ')}%c)\n%o %c@${data.id}`,
-                        'color: #d2c057',
-                        '',
-                        ...args,
-                        '',
-                        promise,
-                        'color: gray; font-style: italic;',
-                    )
-                return new SuccessResponse(data.id, await promise, strictJSONRPC)
+                if (logBeCalled)
+                    logType === 'basic'
+                        ? console.log(`${key}.${data.method}(${[...args].toString()}) @${data.id}`)
+                        : console.log(
+                              `${key}.%c${data.method}%c(${args.map(() => '%o').join(', ')}%c)\n%o %c@${data.id}`,
+                              'color: #d2c057',
+                              '',
+                              ...args,
+                              '',
+                              promise,
+                              'color: gray; font-style: italic;',
+                          )
+                return new SuccessResponse(data.id, await promise, !!noUndefinedKeeping)
             } else if (typeof args === 'object' && args !== null) {
                 return new ErrorResponse(data.id, -1, 'Not implemented', '')
             } else {
                 return ErrorResponse.InvalidRequest(data.id)
             }
         } catch (e) {
-            console.error(e)
+            if (logLocalError) console.error(e)
             let name = 'Error'
             name = e.constructor.name
             if (e instanceof DOMException) name = 'DOMException:' + e.name
@@ -229,12 +229,14 @@ export function AsyncCall<OtherSideImplementedFunctions = {}>(
             errorCode = data.error.code
             errorStack = (data.error.data && data.error.data.stack) || '<stack not available>'
             errorType = (data.error.data && data.error.data.type) || 'Error'
-            if (writeToConsole)
-                console.error(
-                    `${errorType}: ${errorMessage}(${errorCode}) %c@${data.id}\n%c${errorStack}`,
-                    'color: gray',
-                    '',
-                )
+            if (logRemoteError)
+                logType === 'basic'
+                    ? console.error(`${errorType}: ${errorMessage}(${errorCode}) @${data.id}\n${errorStack}`)
+                    : console.error(
+                          `${errorType}: ${errorMessage}(${errorCode}) %c@${data.id}\n%c${errorStack}`,
+                          'color: gray',
+                          '',
+                      )
         }
         if (data.id === null || data.id === undefined) return
         const [resolve, reject] = map.get(data.id) || (([null, null] as any) as PromiseParam)
@@ -260,7 +262,7 @@ export function AsyncCall<OtherSideImplementedFunctions = {}>(
                 if (data.every(x => x === undefined)) return
                 await send(result.filter(x => x))
             } else {
-                if (strictJSONRPC) {
+                if (banUnknownMessage) {
                     await send(ErrorResponse.InvalidRequest((data as any).id || null))
                 } else {
                     // ? Ignore this message. The message channel maybe also used to transfer other message too.

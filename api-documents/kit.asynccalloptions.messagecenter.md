@@ -10,11 +10,6 @@ A class that can let you transfer messages between two sides
 
 ```typescript
 MessageCenter: {
-        new (): {
-            on(event: string, callback: (data: any) => void): void;
-            send(event: string, data: any): void;
-        };
-    } | {
         on(event: string, callback: (data: any) => void): void;
         send(event: string, data: any): void;
     };
