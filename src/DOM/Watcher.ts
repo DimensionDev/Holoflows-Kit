@@ -752,7 +752,7 @@ interface WarningOptions {
     fn: (stack: string) => void
 }
 function warning(_: Partial<WarningOptions> = {}) {
-    const { dev, once, fn } = { ..._, ...({ dev: false, once: true, fn: () => {} } as WarningOptions) }
+    const { dev, once, fn } = { ...({ dev: false, once: true, fn: () => {} } as WarningOptions), ..._ }
     if (dev) if (process.env.NODE_ENV !== 'development') return { warn(f = fn) {}, ignored: true }
     const [_0, _1, _2, ...lines] = (new Error().stack || '').split('\n')
     const stack = lines.join('\n')
