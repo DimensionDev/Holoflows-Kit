@@ -4,10 +4,8 @@
 
 ```ts
 
-import mitt from 'mitt';
-
 // @public
-export function AsyncCall<OtherSideImplementedFunctions = {}>(implementation: Record<string, (...args: any[]) => Promise<any>>, options?: Partial<AsyncCallOptions>): OtherSideImplementedFunctions;
+export function AsyncCall<OtherSideImplementedFunctions = {}>(implementation: Record<string, (...args: any[]) => PromiseLike<any>>, options?: Partial<AsyncCallOptions>): OtherSideImplementedFunctions;
 
 // @public
 export interface AsyncCallOptions {
@@ -15,9 +13,12 @@ export interface AsyncCallOptions {
     key: string;
     MessageCenter: {
         new (): {
-            on(event: string, cb: (data: any) => void): void;
+            on(event: string, callback: (data: any) => void): void;
             send(event: string, data: any): void;
         };
+    } | {
+        on(event: string, callback: (data: any) => void): void;
+        send(event: string, data: any): void;
     };
     serializer: Serialization;
     strictJSONRPC: boolean;
@@ -25,7 +26,7 @@ export interface AsyncCallOptions {
 }
 
 // @public
-export function AutomatedTabTask<T extends Record<string, (...args: any[]) => Promise<any>>>(taskImplements: T, options?: Partial<AutomatedTabTaskDefineTimeOptions>): ((url: string, options?: Partial<AutomatedTabTaskRuntimeOptions>) => T) | null;
+export function AutomatedTabTask<T extends Record<string, (...args: any[]) => PromiseLike<any>>>(taskImplements: T, options?: Partial<AutomatedTabTaskDefineTimeOptions>): ((url: string, options?: Partial<AutomatedTabTaskRuntimeOptions>) => T) | null;
 
 // @public
 export interface AutomatedTabTaskDefineTimeOptions extends AutomatedTabTaskSharedOptions {
@@ -177,9 +178,9 @@ export function OnlyRunInContext(context: Contexts | Contexts[], throws: false):
 // @public
 export interface Serialization {
     // (undocumented)
-    deserialization(serialized: unknown): Promise<any>;
+    deserialization(serialized: unknown): PromiseLike<any>;
     // (undocumented)
-    serialization(from: any): Promise<unknown>;
+    serialization(from: any): PromiseLike<unknown>;
 }
 
 // @public
@@ -227,7 +228,7 @@ export abstract class Watcher<T, Before extends Element, After extends Element, 
     abstract enableSingleMode(): Watcher<T, Before, After, true>;
     // (undocumented)
     protected _enableSingleMode(): this;
-    protected readonly eventEmitter: mitt.Emitter;
+    protected readonly eventEmitter: EventTarget;
     protected findNodeFromListByKey: (list: readonly T[], keys: readonly unknown[]) => (key: unknown) => T | null;
     readonly firstVirtualNode: T extends Node ? DomProxy<T, Before, After> : never;
     // (undocumented)

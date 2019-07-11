@@ -2,9 +2,6 @@
  * This is a light implementation of JSON RPC 2.0
  *
  * https://www.jsonrpc.org/specification
- *
- * ! Not implemented:
- * - Batch invocation (defined in the section 6 of the spec)
  */
 import { MessageCenter as HoloflowsMessageCenter } from '../Extension/MessageCenter'
 
@@ -230,21 +227,13 @@ export function AsyncCall<OtherSideImplementedFunctions = {}>(
         try {
             data = await serializer.deserialization(_)
             if (isJSONRPCObject(data)) {
-                if ('method' in data) {
-                    result = await onRequest(data)
-                    await send(result)
-                } else if ('error' in data || 'result' in data) {
-                    onResponse(data)
-                } else {
-                    if ('resultIsUndefined' in data) {
-                        ;(data as any).result = undefined
-                        onResponse(data)
-                    } else {
-                        await send(ErrorResponse.InvalidRequest((data as any).id || null))
-                    }
-                }
+                result = await handleSingleMessage(data)
+                if (result) await send(result)
             } else if (Array.isArray(data) && data.every(isJSONRPCObject) && data.length !== 0) {
-                await send(ErrorResponse.InternalError(null, ": Async-Call isn't implement patch jsonrpc yet."))
+                const result = await Promise.all(data.map(handleSingleMessage))
+                // ? Response
+                if (data.every(x => x === undefined)) return
+                await send(result.filter(x => x))
             } else {
                 if (strictJSONRPC) {
                     await send(ErrorResponse.InvalidRequest((data as any).id || null))
@@ -256,11 +245,17 @@ export function AsyncCall<OtherSideImplementedFunctions = {}>(
             console.error(e, data, result)
             send(ErrorResponse.ParseError(e.stack))
         }
-        async function send(res?: Response) {
-            if (!res) return
-            // ? This is a Notification, we MUST not return it.
-            if (res.id === undefined) return
-            message.send(CALL, await serializer.serialization(res))
+        async function send(res?: Response | (Response | undefined)[]) {
+            if (Array.isArray(res)) {
+                const reply = res.map(x => x).filter(x => x!.id !== undefined)
+                if (reply.length === 0) return
+                message.send(CALL, await serializer.serialization(reply))
+            } else {
+                if (!res) return
+                // ? This is a Notification, we MUST not return it.
+                if (res.id === undefined) return
+                message.send(CALL, await serializer.serialization(res))
+            }
         }
     })
     return new Proxy(
@@ -282,6 +277,20 @@ export function AsyncCall<OtherSideImplementedFunctions = {}>(
             },
         },
     ) as OtherSideImplementedFunctions
+
+    async function handleSingleMessage(data: SuccessResponse | ErrorResponse | Request) {
+        if ('method' in data) {
+            return onRequest(data)
+        } else if ('error' in data || 'result' in data) {
+            onResponse(data)
+        } else {
+            if ('resultIsUndefined' in data) {
+                ;(data as any).result = undefined
+                onResponse(data)
+            } else return ErrorResponse.InvalidRequest((data as any).id)
+        }
+        return undefined
+    }
 }
 
 const jsonrpc = '2.0'
