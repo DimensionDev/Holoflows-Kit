@@ -4,6 +4,8 @@
 
 ## Serialization.deserialization() method
 
+Do deserialization
+
 <b>Signature:</b>
 
 ```typescript
@@ -14,7 +16,7 @@ deserialization(serialized: unknown): PromiseLike<any>;
 
 |  Parameter | Type | Description |
 |  --- | --- | --- |
-|  serialized | <code>unknown</code> |  |
+|  serialized | <code>unknown</code> | Serialized data |
 
 <b>Returns:</b>
 

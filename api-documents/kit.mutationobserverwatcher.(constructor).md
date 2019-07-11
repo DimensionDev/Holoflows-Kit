@@ -9,7 +9,8 @@ Constructs a new instance of the `MutationObserverWatcher` class
 <b>Signature:</b>
 
 ```typescript
-constructor(liveSelector: LiveSelector<T, SingleMode>, 
+constructor(
+    liveSelector: LiveSelector<T, SingleMode>, 
     consistentWatchRoot?: Node);
 ```
 

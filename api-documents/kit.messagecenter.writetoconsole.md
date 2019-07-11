@@ -4,6 +4,8 @@
 
 ## MessageCenter.writeToConsole property
 
+Should MessageCenter prints all messages to console?
+
 <b>Signature:</b>
 
 ```typescript

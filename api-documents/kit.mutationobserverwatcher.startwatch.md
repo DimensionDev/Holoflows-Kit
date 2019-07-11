@@ -4,6 +4,8 @@
 
 ## MutationObserverWatcher.startWatch() method
 
+Let the watcher start to watching
+
 <b>Signature:</b>
 
 ```typescript

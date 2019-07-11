@@ -27,7 +27,7 @@ A toolkit for browser extension developing.
 |  [DomProxy(options)](./kit.domproxy.md) | DomProxy provide an interface that be stable even dom is changed. |
 |  [GetContext()](./kit.getcontext.md) | Get current running context. |
 |  [OnlyRunInContext(context, name)](./kit.onlyrunincontext.md) | Make sure this file only run in wanted context |
-|  [OnlyRunInContext(context, throws)](./kit.onlyrunincontext_1.md) |  |
+|  [OnlyRunInContext(context, throws)](./kit.onlyrunincontext_1.md) | Make sure this file only run in wanted context |
 
 ## Interfaces
 

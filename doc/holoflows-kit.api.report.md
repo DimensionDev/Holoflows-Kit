@@ -140,29 +140,24 @@ export class LiveSelector<T, SingleMode extends boolean = false> {
     reverse(): LiveSelector<T, SingleMode>;
     slice(start?: number, end?: number): LiveSelector<T, SingleMode>;
     sort(compareFn?: (a: T, b: T) => number): LiveSelector<T, SingleMode>;
-    // (undocumented)
-    protected readonly stack: string | undefined;
-}
+    }
 
 // @public
 export class MessageCenter<ITypedMessages> {
     constructor(instanceKey?: string);
     on<Key extends keyof ITypedMessages>(event: Key, handler: (data: ITypedMessages[Key]) => void): void;
     send<Key extends keyof ITypedMessages>(key: Key, data: ITypedMessages[Key], alsoSendToDocument?: boolean): void;
-    // (undocumented)
     writeToConsole: boolean;
 }
 
 // @public
 export class MutationObserverWatcher<T, Before extends Element = HTMLSpanElement, After extends Element = HTMLSpanElement, SingleMode extends boolean = false> extends Watcher<T, Before, After, SingleMode> {
-    constructor(liveSelector: LiveSelector<T, SingleMode>, 
+    constructor(
+    liveSelector: LiveSelector<T, SingleMode>, 
     consistentWatchRoot?: Node);
     enableSingleMode: () => MutationObserverWatcher<T, Before, After, true>;
-    // (undocumented)
     protected liveSelector: LiveSelector<T, SingleMode>;
-    // (undocumented)
     startWatch(options?: MutationObserverInit): this;
-    // (undocumented)
     stopWatch(): void;
 }
 
@@ -172,24 +167,21 @@ export const NoSerialization: Serialization;
 // @public
 export function OnlyRunInContext(context: Contexts | Contexts[], name: string): void;
 
-// @public (undocumented)
+// @public
 export function OnlyRunInContext(context: Contexts | Contexts[], throws: false): boolean;
 
 // @public
 export interface Serialization {
-    // (undocumented)
     deserialization(serialized: unknown): PromiseLike<any>;
-    // (undocumented)
     serialization(from: any): PromiseLike<unknown>;
 }
 
 // @public
 export class ValueRef<T> {
     constructor(_value: T);
-    // Warning: (ae-forgotten-export) The symbol "Fn" needs to be exported by the entry point index.d.ts
-    addListener(fn: Fn<T>): () => void;
+    addListener(fn: (newVal: T, oldVal: T) => void): () => void;
     removeAllListener(): void;
-    removeListener(fn: Fn<T>): void;
+    removeListener(fn: (newVal: T, oldVal: T) => void): void;
     value: T;
     }
 
@@ -197,7 +189,8 @@ export class ValueRef<T> {
 // 
 // @public
 export abstract class Watcher<T, Before extends Element, After extends Element, SingleMode extends boolean> implements PromiseLike<ResultOf<SingleMode, T>> {
-    constructor(liveSelector: LiveSelector<T, SingleMode>);
+    constructor(
+    liveSelector: LiveSelector<T, SingleMode>);
     // Warning: (ae-forgotten-export) The symbol "EventCallback" needs to be exported by the entry point index.d.ts
     // Warning: (ae-forgotten-export) The symbol "OnIterationEvent" needs to be exported by the entry point index.d.ts
     // 
@@ -214,7 +207,6 @@ export abstract class Watcher<T, Before extends Element, After extends Element, 
     // (undocumented)
     addListener(event: 'onAdd', fn: EventCallback<OnAddOrRemoveEvent<T>>): this;
     assignKeys<Q = unknown>(keyAssigner: (node: T, index: number, arr: readonly T[]) => Q): this;
-    // (undocumented)
     protected domProxyOption: Partial<DomProxyOptions<Before, After>>;
     // (undocumented)
     protected emit(event: 'onIteration', data: OnIterationEvent<T>): void;
@@ -231,7 +223,6 @@ export abstract class Watcher<T, Before extends Element, After extends Element, 
     protected readonly eventEmitter: EventTarget;
     protected findNodeFromListByKey: (list: readonly T[], keys: readonly unknown[]) => (key: unknown) => T | null;
     readonly firstVirtualNode: T extends Node ? DomProxy<T, Before, After> : never;
-    // (undocumented)
     protected _firstVirtualNode: DomProxy<any, Before, After>;
     getVirtualNodeByKey(key: unknown): DomProxy<any, Before, After> | null;
     protected isWatching: boolean;
@@ -240,8 +231,7 @@ export abstract class Watcher<T, Before extends Element, After extends Element, 
     protected lastKeyList: readonly unknown[];
     protected lastNodeList: readonly T[];
     protected lastVirtualNodesMap: Map<unknown, DomProxy<any, Before, After>>;
-    // (undocumented)
-    protected liveSelector: LiveSelector<T, SingleMode>;
+    protected readonly liveSelector: LiveSelector<T, SingleMode>;
     protected mapNodeToKey: (node: T, index: number, arr: readonly T[]) => unknown;
     omitWarningForRepeatedKeys(): this;
     // (undocumented)
@@ -253,16 +243,10 @@ export abstract class Watcher<T, Before extends Element, After extends Element, 
     // (undocumented)
     removeListener(event: 'onAdd', fn: EventCallback<OnAddOrRemoveEvent<T>>): this;
     // Warning: (ae-forgotten-export) The symbol "requestIdleCallback" needs to be exported by the entry point index.d.ts
-    // 
-    // (undocumented)
     protected readonly requestIdleCallback: typeof requestIdleCallback;
-    // Warning: (ae-forgotten-export) The symbol "Deadline" needs to be exported by the entry point index.d.ts
-    // 
-    // (undocumented)
-    protected scheduleWatcherCheck: (deadline?: Deadline | undefined) => void;
+    protected scheduleWatcherCheck: () => void;
     setComparer<Q = unknown>(keyComparer?: (a: Q, b: Q) => boolean, valueComparer?: (a: T, b: T) => boolean): this;
     setDomProxyOption(option: Partial<DomProxyOptions<Before, After>>): this;
-    // (undocumented)
     protected singleMode: boolean;
     protected singleModeCallback?: useForeachReturns<T>;
     protected singleModeHasLastValue: boolean;
@@ -277,7 +261,6 @@ export abstract class Watcher<T, Before extends Element, After extends Element, 
     useForeach(forEachValue: T extends Element ? never : (node: T, key: unknown) => useForeachReturns<T>): this;
     protected useForeachFn?: unknown;
     protected valueComparer: (a: T, b: T) => boolean;
-    // (undocumented)
     protected _warning_forget_watch_: {
         warn(f?: (stack: string) => void): void;
         ignored: boolean;

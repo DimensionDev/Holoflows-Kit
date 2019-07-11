@@ -1,7 +1,6 @@
 /**
  * This file is published by MIT License.
  */
-type Fn<T> = (newVal: T, oldVal: T) => void
 /**
  * A `ref` object with `addListener`
  *
@@ -34,7 +33,7 @@ export class ValueRef<T> {
         }
     }
     /** All watchers */
-    private watcher = new Map<Fn<T>, boolean>()
+    private watcher = new Map<(newVal: T, oldVal: T) => void, boolean>()
     constructor(private _value: T) {}
     /**
      * Add a listener. This will return a remover.
@@ -43,14 +42,14 @@ export class ValueRef<T> {
      * React.useEffect(() => ref.addListener(setState))
      * ```
      */
-    addListener(fn: Fn<T>) {
+    addListener(fn: (newVal: T, oldVal: T) => void) {
         this.watcher.set(fn, true)
         return () => this.removeListener(fn)
     }
     /**
      * Remove a listener
      */
-    removeListener(fn: Fn<T>) {
+    removeListener(fn: (newVal: T, oldVal: T) => void) {
         this.watcher.delete(fn)
     }
     /**

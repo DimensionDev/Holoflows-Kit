@@ -23,7 +23,12 @@ import { isNil } from 'lodash-es'
  */
 export abstract class Watcher<T, Before extends Element, After extends Element, SingleMode extends boolean>
     implements PromiseLike<ResultOf<SingleMode, T>> {
-    constructor(protected liveSelector: LiveSelector<T, SingleMode>) {}
+    constructor(
+        /**
+         * The liveSelector that this object holds.
+         */
+        protected readonly liveSelector: LiveSelector<T, SingleMode>,
+    ) {}
     //#region How to start and stop the watcher
     /** Let the watcher start to watching */
     public startWatch(...args: any[]): this {
@@ -378,12 +383,19 @@ export abstract class Watcher<T, Before extends Element, After extends Element, 
      * ```
      */
     public abstract enableSingleMode(): Watcher<T, Before, After, true>
+    /**
+     * @privateRemarks
+     * Every subclass should call this.
+     */
     protected _enableSingleMode() {
         this._warning_single_mode.ignored = true
         this.singleMode = true
         this.liveSelector.enableSingleMode()
         return this
     }
+    /**
+     * Is the single mode is on.
+     */
     protected singleMode = false
     /** Last iteration value for single mode */
     protected singleModeLastValue?: T
@@ -461,6 +473,9 @@ export abstract class Watcher<T, Before extends Element, After extends Element, 
     }
     //#endregion
     //#region LiveSelector settings
+    /**
+     * The dom proxy option used in DomProxy()
+     */
     protected domProxyOption: Partial<DomProxyOptions<Before, After>> = {}
     /**
      * Set option for DomProxy
@@ -518,6 +533,7 @@ export abstract class Watcher<T, Before extends Element, After extends Element, 
     }
     //#endregion
     //#region firstVirtualNode
+    /** The first virtual node */
     protected _firstVirtualNode = DomProxy<any, Before, After>(this.domProxyOption)
     /**
      * This virtualNode always point to the first node in the LiveSelector
@@ -584,13 +600,16 @@ export abstract class Watcher<T, Before extends Element, After extends Element, 
     //#region Schedule a watcher callback run
     private isWatcherCheckerRunning = false
     private needCheckerRunAgainAfterCurrentSchedule = false
-    protected scheduleWatcherCheck = (deadline?: Deadline | undefined) => {
+    /**
+     * Schedule a watcher check
+     */
+    protected scheduleWatcherCheck = () => {
         if (this.isWatcherCheckerRunning) {
             this.needCheckerRunAgainAfterCurrentSchedule = true
             return
         }
         this.isWatcherCheckerRunning = true
-        this.watcherChecker(deadline)
+        this.watcherChecker()
         // Now watcherChecker is sync so this path will run at most once.
         while (this.needCheckerRunAgainAfterCurrentSchedule) {
             this.watcherChecker()
@@ -612,11 +631,15 @@ export abstract class Watcher<T, Before extends Element, After extends Element, 
             null
         )
     }
+    /** window.requestIdleCallback, or polyfill. */
     protected readonly requestIdleCallback = requestIdleCallback
     /** For debug usage. Just keep it. */
     private readonly stack = new Error().stack || ''
     //#endregion
     //#region Warnings
+    /**
+     * Warning to remember if developer forget to call the startWatch.
+     */
     protected _warning_forget_watch_ = warning({
         fn: stack => console.warn('Did you forget to call `.startWatch()`?\n', stack),
     })

@@ -16,6 +16,6 @@ export interface Serialization
 
 |  Method | Description |
 |  --- | --- |
-|  [deserialization(serialized)](./kit.serialization.deserialization.md) |  |
-|  [serialization(from)](./kit.serialization.serialization.md) |  |
+|  [deserialization(serialized)](./kit.serialization.deserialization.md) | Do deserialization |
+|  [serialization(from)](./kit.serialization.serialization.md) | Do serialization |
 

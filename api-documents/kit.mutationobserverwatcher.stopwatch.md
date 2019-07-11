@@ -4,6 +4,8 @@
 
 ## MutationObserverWatcher.stopWatch() method
 
+Stop the watcher
+
 <b>Signature:</b>
 
 ```typescript

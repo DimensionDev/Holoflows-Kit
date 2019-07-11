@@ -4,6 +4,8 @@
 
 ## OnlyRunInContext() function
 
+Make sure this file only run in wanted context
+
 <b>Signature:</b>
 
 ```typescript
@@ -14,8 +16,8 @@ export declare function OnlyRunInContext(context: Contexts | Contexts[], throws:
 
 |  Parameter | Type | Description |
 |  --- | --- | --- |
-|  context | <code>Contexts &#124; Contexts[]</code> |  |
-|  throws | <code>false</code> |  |
+|  context | <code>Contexts &#124; Contexts[]</code> | Wanted context or contexts |
+|  throws | <code>false</code> | set to false, OnlyRunInContext will not throws but return a boolean |
 
 <b>Returns:</b>
 

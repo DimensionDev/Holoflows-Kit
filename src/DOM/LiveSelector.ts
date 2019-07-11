@@ -44,7 +44,10 @@ type SelectorChainTypeItem = MapOf<SelectorChainType>
  * ```
  */
 export class LiveSelector<T, SingleMode extends boolean = false> {
-    protected readonly stack = new Error().stack
+    /**
+     * Let developer knows where does this LiveSelector created.
+     */
+    private readonly stack = new Error().stack
     private singleMode = false
     /**
      * Enable single mode. Only 1 result will be emitted.

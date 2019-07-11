@@ -92,5 +92,8 @@ export class MessageCenter<ITypedMessages> {
             document.dispatchEvent(newMessage(key, data))
         }
     }
+    /**
+     * Should MessageCenter prints all messages to console?
+     */
     writeToConsole = false
 }

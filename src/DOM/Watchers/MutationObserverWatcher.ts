@@ -19,6 +19,7 @@ export class MutationObserverWatcher<
     SingleMode extends boolean = false
 > extends Watcher<T, Before, After, SingleMode> {
     constructor(
+        /** LiveSelector that this object holds */
         protected liveSelector: LiveSelector<T, SingleMode>,
         /**
          * If you know the element is always inside of a node, set this option.
@@ -34,7 +35,9 @@ export class MutationObserverWatcher<
     private observer: MutationObserver = new MutationObserver((mutations, observer) => {
         this.requestIdleCallback(this.scheduleWatcherCheck)
     })
-
+    /**
+     * {@inheritdoc Watcher.startWatch}
+     */
     startWatch(options?: MutationObserverInit) {
         super.startWatch()
         this.isWatching = true
@@ -54,6 +57,9 @@ export class MutationObserverWatcher<
         } else watch(this.consistentWatchRoot)
         return this
     }
+    /**
+     * {@inheritdoc Watcher.stopWatch}
+     */
     stopWatch() {
         super.stopWatch()
         this.observer.disconnect()

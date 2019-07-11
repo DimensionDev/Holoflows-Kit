@@ -12,12 +12,6 @@ Create a live selector that can continuously select the element you want.
 export declare class LiveSelector<T, SingleMode extends boolean = false> 
 ```
 
-## Properties
-
-|  Property | Modifiers | Type | Description |
-|  --- | --- | --- | --- |
-|  [stack](./kit.liveselector.stack.md) |  | <code>string &#124; undefined</code> |  |
-
 ## Methods
 
 |  Method | Modifiers | Description |

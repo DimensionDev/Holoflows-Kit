@@ -9,14 +9,14 @@ Add a listener. This will return a remover.
 <b>Signature:</b>
 
 ```typescript
-addListener(fn: Fn<T>): () => void;
+addListener(fn: (newVal: T, oldVal: T) => void): () => void;
 ```
 
 ## Parameters
 
 |  Parameter | Type | Description |
 |  --- | --- | --- |
-|  fn | <code>Fn&lt;T&gt;</code> |  |
+|  fn | <code>(newVal: T, oldVal: T) =&gt; void</code> |  |
 
 <b>Returns:</b>
 

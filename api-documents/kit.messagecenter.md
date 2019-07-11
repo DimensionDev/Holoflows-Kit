@@ -22,7 +22,7 @@ export declare class MessageCenter<ITypedMessages>
 
 |  Property | Modifiers | Type | Description |
 |  --- | --- | --- | --- |
-|  [writeToConsole](./kit.messagecenter.writetoconsole.md) |  | <code>boolean</code> |  |
+|  [writeToConsole](./kit.messagecenter.writetoconsole.md) |  | <code>boolean</code> | Should MessageCenter prints all messages to console? |
 
 ## Methods
 
