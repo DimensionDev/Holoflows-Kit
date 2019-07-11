@@ -1,27 +1,20 @@
-.DS_Store
-*.log*
-*.tsbuildinfo
+# config
+/.vscode
+/.circleci
+
+# use less build output
+/umd/**/*.ts
+/umd/**/*.ts.map
+
+# can be regenerated
+/api-documents
+
+# temp file
 /temp
-.rpt2_cache
-tsdoc-metadata.json
-# dependencies
-/node_modules
-/.pnp
-.pnp.js
-
-# testing
-/coverage
-
-# production
-/build
+*.tsbuildinfo
+/.rpt2_cache
 
 # misc
-.DS_Store
-.env.local
-.env.development.local
-.env.test.local
-.env.production.local
-
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*

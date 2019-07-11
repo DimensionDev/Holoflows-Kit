@@ -38,11 +38,13 @@ jobs:
                       - .rpt2_cache
                   key: build-cache
             - run: sudo apt-get install zip
-            - run: zip -r commonjs.zip dist/
             - run: zip -r esmodule.zip es/
             - store_artifacts:
-                  path: commonjs.zip
+                  path: umd/index.js
+                  destination: /index.js
+            - store_artifacts:
+                  path: umd/index.js.map
+                  destination: /index.js.map
             - store_artifacts:
                   path: esmodule.zip
-            - store_artifacts:
-                  path: dist/out.js
+                  destination: /esmodule.zip

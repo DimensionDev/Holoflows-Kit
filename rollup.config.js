@@ -6,7 +6,7 @@ import replace from 'rollup-plugin-replace'
 const config = {
     input: './src/index.ts',
     output: {
-        file: './dist/out.js',
+        file: './umd/index.js',
         format: 'umd',
         name: 'HoloflowsKit',
     },
