@@ -236,7 +236,6 @@ export abstract class Watcher<T, Before extends Element, After extends Element, 
     getVirtualNodeByKey(key: unknown): DomProxy<any, Before, After> | null;
     protected isWatching: boolean;
     protected keyComparer: (a: unknown, b: unknown) => boolean;
-    // Warning: (ae-forgotten-export) The symbol "useForeachReturns" needs to be exported by the entry point index.d.ts
     protected lastCallbackMap: Map<unknown, useForeachReturns<T>>;
     protected lastKeyList: readonly unknown[];
     protected lastNodeList: readonly T[];
@@ -273,9 +272,10 @@ export abstract class Watcher<T, Before extends Element, After extends Element, 
     then<TResult1 = ResultOf<SingleMode, T>, TResult2 = never>(onfulfilled?: ((value: ResultOf<SingleMode, T>) => TResult1 | PromiseLike<TResult1>) | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | null, options?: {
         minimalResultsRequired?: number;
     }, starter?: (this: this, self: this) => void): Promise<TResult1 | TResult2>;
-    useForeach(forEachFunction: useForeachFn<T, Before, After>): this;
-    // Warning: (ae-forgotten-export) The symbol "useForeachFn" needs to be exported by the entry point index.d.ts
-    protected useForeachFn?: useForeachFn<T, Before, After>;
+    // Warning: (ae-forgotten-export) The symbol "useForeachReturns" needs to be exported by the entry point index.d.ts
+    useForeach(forEachElement: T extends Element ? (virtualNode: DomProxy<T & Node, Before, After>, key: unknown, realNode: Node) => useForeachReturns<T> : never): this;
+    useForeach(forEachValue: T extends Element ? never : (node: T, key: unknown) => useForeachReturns<T>): this;
+    protected useForeachFn?: unknown;
     protected valueComparer: (a: T, b: T) => boolean;
     // (undocumented)
     protected _warning_forget_watch_: {

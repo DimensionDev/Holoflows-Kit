@@ -9,14 +9,14 @@ Just like React hooks. Provide callbacks for each node changes.
 <b>Signature:</b>
 
 ```typescript
-useForeach(forEachFunction: useForeachFn<T, Before, After>): this;
+useForeach(forEachElement: T extends Element ? (virtualNode: DomProxy<T & Node, Before, After>, key: unknown, realNode: Node) => useForeachReturns<T> : never): this;
 ```
 
 ## Parameters
 
 |  Parameter | Type | Description |
 |  --- | --- | --- |
-|  forEachFunction | <code>useForeachFn&lt;T, Before, After&gt;</code> | You can return a set of functions that will be called on changes. |
+|  forEachElement | <code>T extends Element ? (virtualNode: DomProxy&lt;T &amp; Node, Before, After&gt;, key: unknown, realNode: Node) =&gt; useForeachReturns&lt;T&gt; : never</code> |  |
 
 <b>Returns:</b>
 

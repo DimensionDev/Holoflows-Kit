@@ -41,7 +41,11 @@ export abstract class Watcher<T, Before extends Element, After extends Element, 
     //#endregion
     //#region useForeach
     /** Saved useForeach */
-    protected useForeachFn?: useForeachFn<T, Before, After>
+    /**
+     * its type is too complicate to analyse by TypeScript,
+     * recover its type after TypeScript can type narrow `this`
+     */
+    protected useForeachFn?: unknown
     /**
      * Just like React hooks. Provide callbacks for each node changes.
      *
@@ -96,11 +100,23 @@ export abstract class Watcher<T, Before extends Element, After extends Element, 
      *
      * ```
      */
-    public useForeach(forEachFunction: useForeachFn<T, Before, After>) {
+    public useForeach(
+        forEachElement: T extends Element
+            ? (virtualNode: DomProxy<T & Node, Before, After>, key: unknown, realNode: Node) => useForeachReturns<T>
+            : never,
+    ): this
+    /**
+     * When T is not an Element, use this overload
+     */
+    public useForeach(forEachValue: T extends Element ? never : (node: T, key: unknown) => useForeachReturns<T>): this
+    public useForeach() {
+        const forEach = arguments[0]
+        if (forEach === undefined) return this
+        if (typeof forEach !== 'function') throw new TypeError('useForeach must be a function.')
         if (this.useForeachFn) {
             console.warn("You can't chain useForeach currently. The old one will be replaced.")
         }
-        this.useForeachFn = forEachFunction
+        this.useForeachFn = forEach
         return this
     }
     //#endregion
@@ -644,10 +660,6 @@ Or to ignore this message, call \`.enableBatchMode()\` on the watcher.\n`,
     //#endregion
 }
 
-function isNode(e: any): e is Node {
-    return !!(e instanceof Node && e.nodeType)
-}
-
 //#region Default implementations
 function defaultEqualityComparer(a: unknown, b: unknown) {
     return a === b
@@ -700,13 +712,6 @@ type useForeachFnWithNode<T, Before extends Element, After extends Element> = {
 }
 type useForeachFnWithoutNode<T> = {
     (node: T, key: unknown): useForeachReturns<T>
-}
-interface useForeachFn<T, Before extends Element, After extends Element> {
-    (
-        ...args: T extends Node
-            ? Parameters<useForeachFnWithNode<T, Before, After>>
-            : Parameters<useForeachFnWithoutNode<T>>
-    ): useForeachReturns<T>
 }
 
 function applyUseForeachCallback<T>(callback: useForeachReturns<T>) {

@@ -4,10 +4,10 @@
 
 ## Watcher.useForeachFn property
 
-Saved useForeach
+its type is too complicate to analyse by TypeScript, recover its type after TypeScript can type narrow `this`
 
 <b>Signature:</b>
 
 ```typescript
-protected useForeachFn?: useForeachFn<T, Before, After>;
+protected useForeachFn?: unknown;
 ```
