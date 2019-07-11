@@ -3,7 +3,7 @@
  *
  * https://www.jsonrpc.org/specification
  */
-import { MessageCenter as HoloflowsMessageCenter } from '../Extension/MessageCenter'
+import { MessageCenter } from '../Extension/MessageCenter'
 
 //#region Serialization
 /**
@@ -35,15 +35,18 @@ export const NoSerialization: Serialization = {
 /**
  * Serialization implementation by JSON.parse/stringify
  *
- * @param replacer - Replacer of JSON.parse/stringify
+ * @param replacerAndReceiver - Replacer of JSON.parse/stringify
  */
-export const JSONSerialization = (replacer: Parameters<JSON['parse']>[1] = undefined) =>
+export const JSONSerialization = (
+    [replacer, receiver]: [Parameters<JSON['stringify']>[1], Parameters<JSON['parse']>[1]] = [undefined, undefined],
+    space?: string | number | undefined,
+) =>
     ({
         async serialization(from) {
-            return JSON.stringify(from, replacer)
+            return JSON.stringify(from, replacer, space)
         },
         async deserialization(serialized) {
-            return JSON.parse(serialized as string, replacer)
+            return JSON.parse(serialized as string, receiver)
         },
     } as Serialization)
 
@@ -68,9 +71,9 @@ export interface AsyncCallOptions {
     /**
      * A class that can let you transfer messages between two sides
      */
-    MessageCenter: {
-        on(event: string, callback: (data: any) => void): void
-        send(event: string, data: any): void
+    messageChannel: {
+        on(event: string, callback: (data: unknown) => void): void
+        send(event: string, data: unknown): void
     }
     /** Log what to console */
     log:
@@ -92,6 +95,12 @@ export interface AsyncCallOptions {
               unknownMessage?: boolean
           }
         | boolean
+    /**
+     * How parameters passed to remote
+     * @see https://www.jsonrpc.org/specification#parameter_structures
+     * @defaults "by-position"
+     */
+    parameterStructures: 'by-position' | 'by-name'
 }
 /**
  * Async call between different context.
@@ -155,17 +164,18 @@ export interface AsyncCallOptions {
  *
  */
 export function AsyncCall<OtherSideImplementedFunctions = {}>(
-    implementation: Record<string, (...args: any[]) => PromiseLike<any>>,
+    implementation: Record<string, (...args: any[]) => any> = {},
     options: Partial<AsyncCallOptions> = {},
 ): OtherSideImplementedFunctions {
-    const { serializer, key, strict, log } = {
+    const { serializer, key, strict, log, parameterStructures } = {
         serializer: NoSerialization,
         key: 'default-jsonrpc',
         strict: false,
         log: true,
+        parameterStructures: 'by-position' as const,
         ...options,
     }
-    const message = options.MessageCenter || new HoloflowsMessageCenter()
+    const message = options.messageChannel || new MessageCenter()
     const { methodNotFound: banMethodNotFound, noUndefined: noUndefinedKeeping, unknownMessage: banUnknownMessage } =
         typeof strict === 'boolean'
             ? strict
@@ -180,18 +190,21 @@ export function AsyncCall<OtherSideImplementedFunctions = {}>(
             : log
     const CALL = `${key}`
     type PromiseParam = Parameters<(ConstructorParameters<typeof Promise>)[0]>
-    const map = new Map<string | number, PromiseParam>()
+    const requestContext = new Map<string | number, { f: PromiseParam; stack: string }>()
     async function onRequest(data: Request): Promise<Response | undefined> {
+        let frameworkStack: string = ''
         try {
             const executor = implementation[data.method as keyof typeof implementation]
             if (!executor) {
                 if (banMethodNotFound) {
-                    console.debug('Receive remote call, but not implemented.', key, data)
+                    if (logLocalError) console.debug('Receive remote call, but not implemented.', key, data)
                     return
                 } else return ErrorResponse.MethodNotFound(data.id)
             }
-            const args: unknown = data.params
-            if (Array.isArray(args)) {
+            const params: unknown = data.params
+            if (Array.isArray(params) || (typeof params === 'object' && params !== null)) {
+                const args = Array.isArray(params) ? params : [params]
+                frameworkStack = removeStackHeader(new Error().stack)
                 const promise = executor(...args)
                 if (logBeCalled)
                     logType === 'basic'
@@ -206,44 +219,56 @@ export function AsyncCall<OtherSideImplementedFunctions = {}>(
                               'color: gray; font-style: italic;',
                           )
                 return new SuccessResponse(data.id, await promise, !!noUndefinedKeeping)
-            } else if (typeof args === 'object' && args !== null) {
-                return new ErrorResponse(data.id, -1, 'Not implemented', '')
             } else {
                 return ErrorResponse.InvalidRequest(data.id)
             }
         } catch (e) {
+            e.stack = frameworkStack
+                .split('\n')
+                .reduce((stack, fstack) => stack.replace(fstack + '\n', ''), e.stack || '')
+            //.replace(/\n.+\n.+$/, '')
             if (logLocalError) console.error(e)
             let name = 'Error'
             name = e.constructor.name
-            if (e instanceof DOMException) name = 'DOMException:' + e.name
+            if (typeof DOMException === 'function' && e instanceof DOMException) name = 'DOMException:' + e.name
             return new ErrorResponse(data.id, -1, e.message, e.stack, name)
         }
     }
     async function onResponse(data: Response): Promise<void> {
         let errorMessage = '',
-            errorStack = '',
+            remoteErrorStack = '',
             errorCode = 0,
             errorType = 'Error'
         if (hasKey(data, 'error')) {
             errorMessage = data.error.message
             errorCode = data.error.code
-            errorStack = (data.error.data && data.error.data.stack) || '<stack not available>'
+            remoteErrorStack = (data.error.data && data.error.data.stack) || '<remote stack not available>'
             errorType = (data.error.data && data.error.data.type) || 'Error'
             if (logRemoteError)
                 logType === 'basic'
-                    ? console.error(`${errorType}: ${errorMessage}(${errorCode}) @${data.id}\n${errorStack}`)
+                    ? console.error(`${errorType}: ${errorMessage}(${errorCode}) @${data.id}\n${remoteErrorStack}`)
                     : console.error(
-                          `${errorType}: ${errorMessage}(${errorCode}) %c@${data.id}\n%c${errorStack}`,
+                          `${errorType}: ${errorMessage}(${errorCode}) %c@${data.id}\n%c${remoteErrorStack}`,
                           'color: gray',
                           '',
                       )
         }
         if (data.id === null || data.id === undefined) return
-        const [resolve, reject] = map.get(data.id) || (([null, null] as any) as PromiseParam)
+        const {
+            f: [resolve, reject],
+            stack: localErrorStack,
+        } = requestContext.get(data.id) || { stack: '', f: ([null, null] as any) as PromiseParam }
         if (!resolve) return // drop this response
-        map.delete(data.id)
+        requestContext.delete(data.id)
         if (hasKey(data, 'error')) {
-            reject(RecoverError(errorType, errorMessage, errorCode, errorStack))
+            reject(
+                RecoverError(
+                    errorType,
+                    errorMessage,
+                    errorCode,
+                    '\n' + remoteErrorStack + '\n    at AsyncCall (async) \n' + localErrorStack,
+                ),
+            )
         } else {
             resolve(data.result)
         }
@@ -289,16 +314,23 @@ export function AsyncCall<OtherSideImplementedFunctions = {}>(
         {},
         {
             get(target, method, receiver) {
+                let stack = removeStackHeader(new Error().stack)
                 return (...params: any[]) =>
                     new Promise((resolve, reject) => {
                         if (typeof method !== 'string') return reject('Only string can be keys')
                         const id = Math.random()
                             .toString(36)
                             .slice(2)
-                        const req = new Request(id, method, params)
+                        const req =
+                            parameterStructures === 'by-name' && params.length === 1 && isObject(params[0])
+                                ? new Request(id, method, params[0])
+                                : new Request(id, method, params)
                         serializer.serialization(req).then(data => {
                             message.send(CALL, data)
-                            map.set(id, [resolve, reject])
+                            requestContext.set(id, {
+                                f: [resolve, reject],
+                                stack,
+                            })
                         }, reject)
                     })
             },
@@ -406,4 +438,7 @@ function RecoverError(type: string, message: string, code: number, stack: string
     } catch {
         return new Error(`E${code} ${type}: ${message}\n${stack}`)
     }
+}
+function removeStackHeader(stack: string = '') {
+    return stack.replace(/^.+\n.+\n/, '')
 }
