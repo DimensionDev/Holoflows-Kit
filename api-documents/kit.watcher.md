@@ -25,7 +25,7 @@ export declare abstract class Watcher<T, Before extends Element, After extends E
 |  [\_firstVirtualNode](./kit.watcher._firstvirtualnode.md) |  | <code>DomProxy&lt;any, Before, After&gt;</code> |  |
 |  [\_warning\_forget\_watch\_](./kit.watcher._warning_forget_watch_.md) |  | <code>{</code><br/><code>        warn(f?: (stack: string) =&gt; void): void;</code><br/><code>        ignored: boolean;</code><br/><code>        stack?: undefined;</code><br/><code>    } &#124; {</code><br/><code>        ignored: boolean;</code><br/><code>        stack: string;</code><br/><code>        warn(f?: (stack: string) =&gt; void): void;</code><br/><code>    }</code> |  |
 |  [domProxyOption](./kit.watcher.domproxyoption.md) |  | <code>Partial&lt;DomProxyOptions&lt;Before, After&gt;&gt;</code> |  |
-|  [eventEmitter](./kit.watcher.eventemitter.md) |  | <code>mitt.Emitter</code> | Event emitter |
+|  [eventEmitter](./kit.watcher.eventemitter.md) |  | <code>EventTarget</code> | Event emitter |
 |  [findNodeFromListByKey](./kit.watcher.findnodefromlistbykey.md) |  | <code>(list: readonly T[], keys: readonly unknown[]) =&gt; (key: unknown) =&gt; T &#124; null</code> | Find node from the given list by key |
 |  [firstVirtualNode](./kit.watcher.firstvirtualnode.md) |  | <code>T extends Node ? DomProxy&lt;T, Before, After&gt; : never</code> | This virtualNode always point to the first node in the LiveSelector |
 |  [isWatching](./kit.watcher.iswatching.md) |  | <code>boolean</code> | Is the watcher running |

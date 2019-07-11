@@ -9,7 +9,7 @@ Open a new page in the background, execute some task, then close it automaticall
 <b>Signature:</b>
 
 ```typescript
-export declare function AutomatedTabTask<T extends Record<string, (...args: any[]) => Promise<any>>>(taskImplements: T, options?: Partial<AutomatedTabTaskDefineTimeOptions>): ((url: string, options?: Partial<AutomatedTabTaskRuntimeOptions>) => T) | null;
+export declare function AutomatedTabTask<T extends Record<string, (...args: any[]) => PromiseLike<any>>>(taskImplements: T, options?: Partial<AutomatedTabTaskDefineTimeOptions>): ((url: string, options?: Partial<AutomatedTabTaskRuntimeOptions>) => T) | null;
 ```
 
 ## Parameters

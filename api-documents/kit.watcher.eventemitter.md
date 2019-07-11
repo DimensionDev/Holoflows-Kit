@@ -9,5 +9,5 @@ Event emitter
 <b>Signature:</b>
 
 ```typescript
-protected readonly eventEmitter: mitt.Emitter;
+protected readonly eventEmitter: EventTarget;
 ```
