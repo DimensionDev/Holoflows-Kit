@@ -4,8 +4,10 @@
 
 ## Watcher.scheduleWatcherCheck property
 
+Schedule a watcher check
+
 <b>Signature:</b>
 
 ```typescript
-protected scheduleWatcherCheck: (deadline?: Deadline | undefined) => void;
+protected scheduleWatcherCheck: () => void;
 ```

@@ -4,8 +4,10 @@
 
 ## Watcher.liveSelector property
 
+The liveSelector that this object holds.
+
 <b>Signature:</b>
 
 ```typescript
-protected liveSelector: LiveSelector<T, SingleMode>;
+protected readonly liveSelector: LiveSelector<T, SingleMode>;
 ```

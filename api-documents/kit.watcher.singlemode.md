@@ -4,6 +4,8 @@
 
 ## Watcher.singleMode property
 
+Is the single mode is on.
+
 <b>Signature:</b>
 
 ```typescript

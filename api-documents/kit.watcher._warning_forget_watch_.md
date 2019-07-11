@@ -4,6 +4,8 @@
 
 ## Watcher.\_warning\_forget\_watch\_ property
 
+Warning to remember if developer forget to call the startWatch.
+
 <b>Signature:</b>
 
 ```typescript

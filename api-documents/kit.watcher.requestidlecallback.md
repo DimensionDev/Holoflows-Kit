@@ -4,6 +4,8 @@
 
 ## Watcher.requestIdleCallback property
 
+window.requestIdleCallback, or polyfill.
+
 <b>Signature:</b>
 
 ```typescript

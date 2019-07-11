@@ -4,6 +4,8 @@
 
 ## Watcher.domProxyOption property
 
+The dom proxy option used in DomProxy()
+
 <b>Signature:</b>
 
 ```typescript

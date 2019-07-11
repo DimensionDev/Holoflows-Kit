@@ -4,6 +4,8 @@
 
 ## Watcher.\_firstVirtualNode property
 
+The first virtual node
+
 <b>Signature:</b>
 
 ```typescript
