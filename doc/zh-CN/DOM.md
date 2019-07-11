@@ -26,13 +26,15 @@ function EuroToUSD(x: number) {
     return x * 1.13
 }
 
-new MutationObserverWatcher(price, document.querySelector('#main')).useNodeForeach(node => {
-    const addPrice = () => (node.after.innerText = '$' + EuroToUSD(parseInt(node.current.innerText)))
-    addPrice()
-    return {
-        onNodeMutation: addPrice,
-    }
-})
+new MutationObserverWatcher(price, document.querySelector('#main'))
+    .useForeach(node => {
+        const addPrice = () => (node.after.innerText = '$' + EuroToUSD(parseInt(node.current.innerText)))
+        addPrice()
+        return {
+            onNodeMutation: addPrice,
+        }
+    })
+    .startWatch()
 ```
 
 大功告成，每当有新机票出现，就会自动在后面加上一个美元价格！不过慢点，我还没搞懂！
@@ -82,7 +84,6 @@ Watcher 有以下几种：
 -   MutationObserverWatcher (使用 [MutationObserver](https://mdn.io/MutationObserver))
 -   IntervalWatcher (使用 [setInterval](https://mdn.io/setInterval))
 -   EventWatcher (手动触发)
--   ValueRef (手动触发)
 
 所有 Watcher 的使用方法都是一样的：
 
@@ -91,14 +92,14 @@ Watcher 有以下几种：
 
 一般情况下，Watcher 关注的都是 DOM 的变化，如果你希望关注其他内容的变化，Watcher 提供了 `onAdd` `onRemove` 等的事件，具体请参阅[Watcher 的文档](#doc-watchers)。
 
-### <a id="example-watcher-usenodeforeach">`useNodeForeach`</a>
+### <a id="example-watcher-useforeach">`useForeach`</a>
 
 这是我们来关注 DOM 变化的主要办法。如果你了解 React hooks 的话，这个和那个很像。
 
-简单的说，一个完整的 `useNodeForeach` 调用是这样的
+简单的说，一个完整的 `useForeach` 调用是这样的
 
 ```ts
-.useNodeForeach((node, key, realNode) => {
+.useForeach((node, key, realNode) => {
     // 这里的代码会在 **每次** 有一个新的 元素 E 进入列表的时候调用。以下是传入的参数：
     node // 是一种叫 DomProxy 的对象
     node.before // 是一个 <span> 始终指向 E 的前面

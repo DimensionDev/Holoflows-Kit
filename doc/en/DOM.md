@@ -30,13 +30,15 @@ function EuroToUSD(x: number) {
     return x * 1.13
 }
 
-new MutationObserverWatcher(price, document.querySelector('#main')).useNodeForeach(node => {
-    const addPrice = () => (node.after.innerText = '$' + EuroToUSD(parseInt(node.current.innerText)))
-    addPrice()
-    return {
-        onNodeMutation: addPrice,
-    }
-})
+new MutationObserverWatcher(price, document.querySelector('#main'))
+    .useForeach(node => {
+        const addPrice = () => (node.after.innerText = '$' + EuroToUSD(parseInt(node.current.innerText)))
+        addPrice()
+        return {
+            onNodeMutation: addPrice,
+        }
+    })
+    .startWatch()
 ```
 
 Done! Everytime that a new ticket appears, price in US will be added after it.
@@ -87,7 +89,6 @@ There are several kinds of Watcher:
 -   MutationObserverWatcher (Using [MutationObserver](https://mdn.io/MutationObserver))
 -   IntervalWatcher (Using [setInterval](https://mdn.io/setInterval))
 -   EventWatcher (Call it manually)
--   ValueRef (Call it manually)
 
 All Watcher's usage is the same:
 
@@ -96,14 +97,14 @@ All Watcher's usage is the same:
 
 In general, Watchers watch for changes of DOM. If you want to watch anything else, that's okay, Watcher provides some events like `onAdd` `onRemove`, See [Watcher](#doc-watchers)。
 
-### <a id="example-watcher-usenodeforeach">`useNodeForeach`</a>
+### <a id="example-watcher-useforeach">`useForeach`</a>
 
 Here is how we watch dom changing. If you have used React hooks, this is just like React hooks.
 
-A complete `useNodeForeach` call is like this:
+A complete `useForeach` call is like this:
 
 ```ts
-.useNodeForeach((node, key, realNode) => {
+.useForeach((node, key, realNode) => {
     // Code here, will be called **everytime** when a new element E comes into the list. Here are parameters:
     node // A DomProxy (Yeah it's magic!)
     node.before // A <span> that always point to the before of E
