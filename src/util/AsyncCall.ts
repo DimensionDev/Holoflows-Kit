@@ -172,7 +172,7 @@ export function AsyncCall<OtherSideImplementedFunctions = {}>(
 ): OtherSideImplementedFunctions {
     const { writeToConsole, serializer, dontThrowOnNotImplemented, MessageCenter, key, strictJSONRPC } = {
         MessageCenter: HoloflowsMessageCenter,
-        dontThrowOnNotImplemented: true,
+        dontThrowOnNotImplemented: options.strictJSONRPC !== true,
         serializer: NoSerialization,
         writeToConsole: true,
         key: 'default-jsonrpc',
@@ -192,39 +192,56 @@ export function AsyncCall<OtherSideImplementedFunctions = {}>(
                     return
                 } else return ErrorResponse.MethodNotFound(data.id)
             }
-            const args: any[] = data.params
-            const promise = executor(...args)
-            if (writeToConsole)
-                console.log(
-                    `${key}.%c${data.method}%c(${args.map(() => '%o').join(', ')}%c)\n%o %c@${data.id}`,
-                    'color: #d2c057',
-                    '',
-                    ...args,
-                    '',
-                    promise,
-                    'color: gray; font-style: italic;',
-                )
-            return new SuccessResponse(data.id, await promise, strictJSONRPC)
+            const args: unknown = data.params
+            if (Array.isArray(args)) {
+                const promise = executor(...args)
+                if (writeToConsole)
+                    console.log(
+                        `${key}.%c${data.method}%c(${args.map(() => '%o').join(', ')}%c)\n%o %c@${data.id}`,
+                        'color: #d2c057',
+                        '',
+                        ...args,
+                        '',
+                        promise,
+                        'color: gray; font-style: italic;',
+                    )
+                return new SuccessResponse(data.id, await promise, strictJSONRPC)
+            } else if (typeof args === 'object' && args !== null) {
+                return new ErrorResponse(data.id, -1, 'Not implemented', '')
+            } else {
+                return ErrorResponse.InvalidRequest(data.id)
+            }
         } catch (e) {
             console.error(e)
-            return new ErrorResponse(data.id, -1, e.message, e.stack)
+            let name = 'Error'
+            name = e.constructor.name
+            if (e instanceof DOMException) name = 'DOMException:' + e.name
+            return new ErrorResponse(data.id, -1, e.message, e.stack, name)
         }
     }
     async function onResponse(data: Response): Promise<void> {
-        if ('error' in data && writeToConsole)
-            console.error(
-                `${data.error.message}(${data.error.code}) %c@${data.id}\n%c${data.error.data.stack}`,
-                'color: gray',
-                '',
-            )
+        let errorMessage = '',
+            errorStack = '',
+            errorCode = 0,
+            errorType = 'Error'
+        if (hasKey(data, 'error')) {
+            errorMessage = data.error.message
+            errorCode = data.error.code
+            errorStack = (data.error.data && data.error.data.stack) || '<stack not available>'
+            errorType = (data.error.data && data.error.data.type) || 'Error'
+            if (writeToConsole)
+                console.error(
+                    `${errorType}: ${errorMessage}(${errorCode}) %c@${data.id}\n%c${errorStack}`,
+                    'color: gray',
+                    '',
+                )
+        }
         if (data.id === null || data.id === undefined) return
         const [resolve, reject] = map.get(data.id) || (([null, null] as any) as PromiseParam)
         if (!resolve) return // drop this response
         map.delete(data.id)
-        if ('error' in data) {
-            const err = new Error(data.error.message)
-            err.stack = data.error.data.stack
-            reject(err)
+        if (hasKey(data, 'error')) {
+            reject(RecoverError(errorType, errorMessage, errorCode, errorStack))
         } else {
             resolve(data.result)
         }
@@ -287,7 +304,7 @@ export function AsyncCall<OtherSideImplementedFunctions = {}>(
     ) as OtherSideImplementedFunctions
 
     async function handleSingleMessage(data: SuccessResponse | ErrorResponse | Request) {
-        if ('method' in data) {
+        if (hasKey(data, 'method')) {
             return onRequest(data)
         } else if ('error' in data || 'result' in data) {
             onResponse(data)
@@ -305,7 +322,7 @@ const jsonrpc = '2.0'
 type ID = string | number | null | undefined
 class Request {
     readonly jsonrpc = '2.0'
-    constructor(public id: ID, public method: string, public params: any[]) {
+    constructor(public id: ID, public method: string, public params: any[] | object) {
         return { id, method, params, jsonrpc }
     }
 }
@@ -321,11 +338,11 @@ class SuccessResponse {
 }
 class ErrorResponse {
     readonly jsonrpc = '2.0'
-    error: { code: number; message: string; data: { stack: string } }
-    constructor(public id: ID, code: number, message: string, stack: string) {
+    error: { code: number; message: string; data?: { stack?: string; type?: string } }
+    constructor(public id: ID, code: number, message: string, stack: string, type: string = 'Error') {
         if (id === undefined) id = null
         code = Math.floor(code)
-        const error = (this.error = { code, message, data: { stack } })
+        const error = (this.error = { code, message, data: { stack, type } })
         return { error, id, jsonrpc }
     }
     // Pre defined error in section 5.1
@@ -338,5 +355,53 @@ class ErrorResponse {
 }
 type Response = SuccessResponse | ErrorResponse
 function isJSONRPCObject(data: any): data is Response | Request {
-    return typeof data === 'object' && data !== null && 'jsonrpc' in data && data.jsonrpc === '2.0'
+    if (!isObject(data)) return false
+    if (!hasKey(data, 'jsonrpc')) return false
+    if (data.jsonrpc !== '2.0') return false
+    if (hasKey(data, 'params')) {
+        const params = (data as Request).params
+        if (!Array.isArray(params) && !isObject(params)) return false
+    }
+    return true
+}
+function isObject(params: any) {
+    return typeof params === 'object' && params !== null
+}
+function hasKey<T, Q extends string>(obj: T, key: Q): obj is T & { [key in Q]: unknown } {
+    return key in obj
+}
+class CustomError extends Error {
+    constructor(public name: string, message: string, public code: number, public stack: string) {
+        super(message)
+    }
+}
+/** These Error is defined in ECMAScript spec */
+const errors: Record<string, typeof EvalError> = {
+    Error,
+    EvalError,
+    RangeError,
+    ReferenceError,
+    SyntaxError,
+    TypeError,
+    URIError,
+}
+/**
+ * AsyncCall support somehow transfer ECMAScript Error
+ */
+function RecoverError(type: string, message: string, code: number, stack: string) {
+    try {
+        if (type.startsWith('DOMException:')) {
+            const [_, name] = type.split('DOMException:')
+            return new DOMException(message, name)
+        } else if (type in errors) {
+            const e = new errors[type](message)
+            e.stack = stack
+            Object.assign(e, { code })
+            return e
+        } else {
+            return new CustomError(type, message, code, stack)
+        }
+    } catch {
+        return new Error(`E${code} ${type}: ${message}\n${stack}`)
+    }
 }
