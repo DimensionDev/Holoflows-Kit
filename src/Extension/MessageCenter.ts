@@ -11,8 +11,7 @@ const noop = () => {}
 /**
  * Send and receive messages in different contexts.
  */
-export class MessageCenter<ITypedMessages> {
-    private listeners: Array<{ key: Key; handler: (data: any) => void }> = []
+export class MessageCenter<ITypedMessages> extends EventTarget {
     private listener = (request: InternalMessageType | Event) => {
         let { key, data, instanceKey } = (request as CustomEvent).detail || request
         // Message is not for us
@@ -26,13 +25,14 @@ export class MessageCenter<ITypedMessages> {
                 data,
             )
         }
-        this.listeners.filter(it => it.key === key).forEach(it => it.handler(data))
+        this.dispatchEvent(new CustomEvent(key, { detail: data }))
     }
     /**
      * @param instanceKey - Use this instanceKey to distinguish your messages and others.
      * This option cannot make your message safe!
      */
     constructor(private instanceKey = '') {
+        super()
         if (typeof browser !== 'undefined' && browser.runtime && browser.runtime.onMessage) {
             // Fired when a message is sent from either an extension process (by runtime.sendMessage)
             // or a content script (by tabs.sendMessage).
@@ -48,10 +48,7 @@ export class MessageCenter<ITypedMessages> {
      * @param handler - Handler of the event
      */
     public on<Key extends keyof ITypedMessages>(event: Key, handler: (data: ITypedMessages[Key]) => void): void {
-        this.listeners.push({
-            handler: data => handler(data),
-            key: event,
-        })
+        this.addEventListener(event as string, (e: CustomEvent) => handler(e.detail))
     }
 
     /**
@@ -60,7 +57,7 @@ export class MessageCenter<ITypedMessages> {
      * @param data - Data of the message
      * @param alsoSendToDocument - ! Send message to document. This may leaks secret! Only open in localhost!
      */
-    public send<Key extends keyof ITypedMessages>(
+    public emit<Key extends keyof ITypedMessages>(
         key: Key,
         data: ITypedMessages[Key],
         alsoSendToDocument = location.hostname === 'localhost',
@@ -92,6 +89,7 @@ export class MessageCenter<ITypedMessages> {
             document.dispatchEvent(newMessage(key, data))
         }
     }
+    public send = this.emit
     /**
      * Should MessageCenter prints all messages to console?
      */

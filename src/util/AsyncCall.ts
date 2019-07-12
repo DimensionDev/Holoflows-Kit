@@ -75,7 +75,7 @@ export interface AsyncCallOptions {
      */
     messageChannel: {
         on(event: string, callback: (data: unknown) => void): void
-        send(event: string, data: unknown): void
+        emit(event: string, data: unknown): void
     }
     /** Log what to console */
     log:
@@ -99,8 +99,8 @@ export interface AsyncCallOptions {
         | boolean
     /**
      * How parameters passed to remote
-     * @see https://www.jsonrpc.org/specification#parameter_structures
-     * @defaults "by-position"
+     * https://www.jsonrpc.org/specification#parameter_structures
+     * @defaultValue "by-position"
      */
     parameterStructures: 'by-position' | 'by-name'
 }
@@ -314,12 +314,12 @@ export function AsyncCall<OtherSideImplementedFunctions = {}>(
             if (Array.isArray(res)) {
                 const reply = res.map(x => x).filter(x => x!.id !== undefined)
                 if (reply.length === 0) return
-                message.send(key, await serializer.serialization(reply))
+                message.emit(key, await serializer.serialization(reply))
             } else {
                 if (!res) return
                 // ? This is a Notification, we MUST not return it.
                 if (res.id === undefined) return
-                message.send(key, await serializer.serialization(res))
+                message.emit(key, await serializer.serialization(res))
             }
         }
     })
@@ -341,7 +341,7 @@ export function AsyncCall<OtherSideImplementedFunctions = {}>(
                                 ? new Request(id, method, params[0])
                                 : new Request(id, method, params)
                         serializer.serialization(req).then(data => {
-                            message.send(key, data)
+                            message.emit(key, data)
                             requestContext.set(id, {
                                 f: [resolve, reject],
                                 stack,

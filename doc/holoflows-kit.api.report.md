@@ -5,7 +5,7 @@
 ```ts
 
 // @public
-export function AsyncCall<OtherSideImplementedFunctions = {}>(implementation: Record<string, (...args: any[]) => PromiseLike<any>>, options?: Partial<AsyncCallOptions>): OtherSideImplementedFunctions;
+export function AsyncCall<OtherSideImplementedFunctions = {}>(implementation?: Record<string, (...args: any[]) => any>, options?: Partial<AsyncCallOptions>): OtherSideImplementedFunctions;
 
 // @public
 export interface AsyncCallOptions {
@@ -16,10 +16,11 @@ export interface AsyncCallOptions {
         remoteError?: boolean;
         type?: 'basic' | 'pretty';
     } | boolean;
-    MessageCenter: {
-        on(event: string, callback: (data: any) => void): void;
-        send(event: string, data: any): void;
+    messageChannel: {
+        on(event: string, callback: (data: unknown) => void): void;
+        emit(event: string, data: unknown): void;
     };
+    parameterStructures: 'by-position' | 'by-name';
     serializer: Serialization;
     strict: {
         methodNotFound?: boolean;
@@ -105,7 +106,7 @@ export class IntervalWatcher<T, Before extends Element = HTMLSpanElement, After 
     }
 
 // @public
-export const JSONSerialization: (replacer?: ((this: any, key: string, value: any) => any) | undefined) => Serialization;
+export const JSONSerialization: ([replacer, receiver]?: [(string | number)[] | null | undefined, ((this: any, key: string, value: any) => any) | undefined], space?: string | number | undefined) => Serialization;
 
 // @public
 export class LiveSelector<T, SingleMode extends boolean = false> {
@@ -146,10 +147,12 @@ export class LiveSelector<T, SingleMode extends boolean = false> {
     }
 
 // @public
-export class MessageCenter<ITypedMessages> {
+export class MessageCenter<ITypedMessages> extends EventTarget {
     constructor(instanceKey?: string);
+    emit<Key extends keyof ITypedMessages>(key: Key, data: ITypedMessages[Key], alsoSendToDocument?: boolean): void;
     on<Key extends keyof ITypedMessages>(event: Key, handler: (data: ITypedMessages[Key]) => void): void;
-    send<Key extends keyof ITypedMessages>(key: Key, data: ITypedMessages[Key], alsoSendToDocument?: boolean): void;
+    // (undocumented)
+    send: <Key_1 extends keyof ITypedMessages>(key: Key_1, data: ITypedMessages[Key_1], alsoSendToDocument?: boolean) => void;
     writeToConsole: boolean;
 }
 

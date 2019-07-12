@@ -9,5 +9,5 @@ Serialization implementation by JSON.parse/stringify
 <b>Signature:</b>
 
 ```typescript
-JSONSerialization: (replacer?: ((this: any, key: string, value: any) => any) | undefined) => Serialization
+JSONSerialization: ([replacer, receiver]?: [(string | number)[] | null | undefined, ((this: any, key: string, value: any) => any) | undefined], space?: string | number | undefined) => Serialization
 ```
