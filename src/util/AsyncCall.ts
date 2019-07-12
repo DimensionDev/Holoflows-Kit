@@ -1,4 +1,6 @@
 /**
+ * This file (AsyncCall) is under MIT License
+ *
  * This is a light implementation of JSON RPC 2.0
  *
  * https://www.jsonrpc.org/specification
@@ -202,7 +204,10 @@ export function AsyncCall<OtherSideImplementedFunctions = {}>(
     async function onRequest(data: Request): Promise<Response | undefined> {
         let frameworkStack: string = ''
         try {
-            const executor = implementation[data.method as keyof typeof implementation]
+            // ? We're not implementing any JSON RPC extension. So let it to be undefined.
+            const executor = data.method.startsWith('rpc.')
+                ? undefined
+                : implementation[data.method as keyof typeof implementation]
             if (!executor) {
                 if (!banMethodNotFound) {
                     if (logLocalError) console.debug('Receive remote call, but not implemented.', key, data)
@@ -326,6 +331,8 @@ export function AsyncCall<OtherSideImplementedFunctions = {}>(
                 return (...params: any[]) =>
                     new Promise((resolve, reject) => {
                         if (typeof method !== 'string') return reject('Only string can be keys')
+                        if (method.startsWith('rpc.'))
+                            return reject('You cannot call JSON RPC internal methods directly')
                         const id = Math.random()
                             .toString(36)
                             .slice(2)
