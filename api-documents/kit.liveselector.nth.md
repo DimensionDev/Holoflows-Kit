@@ -9,7 +9,7 @@ Select only nth element
 <b>Signature:</b>
 
 ```typescript
-nth(n: number): LiveSelector<T>;
+nth(n: number): LiveSelector<T, SingleMode>;
 ```
 
 ## Parameters
@@ -20,7 +20,7 @@ nth(n: number): LiveSelector<T>;
 
 <b>Returns:</b>
 
-`LiveSelector<T>`
+`LiveSelector<T, SingleMode>`
 
 ## Example
 

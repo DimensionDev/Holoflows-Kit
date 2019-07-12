@@ -9,7 +9,7 @@ Create a live selector that can continuously select the element you want.
 <b>Signature:</b>
 
 ```typescript
-export declare class LiveSelector<T> 
+export declare class LiveSelector<T, SingleMode extends boolean = false> 
 ```
 
 ## Methods
@@ -17,11 +17,12 @@ export declare class LiveSelector<T>
 |  Method | Modifiers | Description |
 |  --- | --- | --- |
 |  [clone()](./kit.liveselector.clone.md) |  | Clone this LiveSelector and return a new LiveSelector. |
-|  [closest(parentOfNth)](./kit.liveselector.closest.md) |  | Reversely select element in the parent |
-|  [closest(selectors)](./kit.liveselector.closest_1.md) |  |  |
+|  [closest(parentOfNth)](./kit.liveselector.closest.md) |  | Select the nth parent |
+|  [closest(selectors)](./kit.liveselector.closest_1.md) |  | Reversely select element in the parent |
 |  [closest(selectors)](./kit.liveselector.closest_2.md) |  |  |
 |  [closest(selectors)](./kit.liveselector.closest_3.md) |  |  |
 |  [concat(newEle)](./kit.liveselector.concat.md) |  | Combines two LiveSelector. |
+|  [enableSingleMode()](./kit.liveselector.enablesinglemode.md) |  | Enable single mode. Only 1 result will be emitted. |
 |  [evaluateOnce()](./kit.liveselector.evaluateonce.md) |  | Evaluate selector expression |
 |  [filter(f)](./kit.liveselector.filter.md) |  | Select the elements of a LiveSelector that meet the condition specified in a callback function. |
 |  [flat()](./kit.liveselector.flat.md) |  | Flat T\[\]\[\] to T\[\] |
@@ -45,4 +46,13 @@ export declare class LiveSelector<T>
 ## Remarks
 
 Call [\#evaluateOnce](./kit.liveselector.evaluateonce.md) to evaluate the element. Falsy value will be ignored.
+
+## Example
+
+
+```ts
+const ls = new LiveSelector().querySelectorAll('a').map(x => x.href)
+ls.evaluateOnce() // returns all urls at the current time.
+
+```
 

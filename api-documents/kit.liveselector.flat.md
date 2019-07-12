@@ -9,11 +9,11 @@ Flat T\[\]\[\] to T\[\]
 <b>Signature:</b>
 
 ```typescript
-flat(): LiveSelector<T extends ArrayLike<infer U> ? U : never>;
+flat(): LiveSelector<T extends ArrayLike<infer U> ? U : never, SingleMode>;
 ```
 <b>Returns:</b>
 
-`LiveSelector<T extends ArrayLike<infer U> ? U : never>`
+`LiveSelector<T extends ArrayLike<infer U> ? U : never, SingleMode>`
 
 ## Example
 

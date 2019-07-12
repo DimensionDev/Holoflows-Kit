@@ -2,25 +2,10 @@
 
 [Home](./index.md) &gt; [@holoflows/kit](./kit.md) &gt; [MessageCenter](./kit.messagecenter.md) &gt; [send](./kit.messagecenter.send.md)
 
-## MessageCenter.send() method
-
-Send message to local or other instance of extension
+## MessageCenter.send property
 
 <b>Signature:</b>
 
 ```typescript
-send<Key extends keyof ITypedMessages>(key: Key, data: ITypedMessages[Key], alsoSendToDocument?: boolean): void;
+send: <Key_1 extends keyof ITypedMessages>(key: Key_1, data: ITypedMessages[Key_1], alsoSendToDocument?: boolean) => void;
 ```
-
-## Parameters
-
-|  Parameter | Type | Description |
-|  --- | --- | --- |
-|  key | <code>Key</code> | Key of the message |
-|  data | <code>ITypedMessages[Key]</code> | Data of the message |
-|  alsoSendToDocument | <code>boolean</code> | ! Send message to document. This may leaks secret! Only open in localhost! |
-
-<b>Returns:</b>
-
-`void`
-

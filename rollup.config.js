@@ -6,7 +6,7 @@ import replace from 'rollup-plugin-replace'
 const config = {
     input: './src/index.ts',
     output: {
-        file: './dist/out.js',
+        file: './umd/index.js',
         format: 'umd',
         name: 'HoloflowsKit',
     },
@@ -14,18 +14,16 @@ const config = {
         nodeResolve({
             browser: true,
             preferBuiltins: false,
-            module: true,
-        }),
-        replace({
-            'process.env.NODE_ENV': JSON.stringify('production'),
+            mainFields: ['module', 'main'],
         }),
         typescript({ tsconfigOverride: { compilerOptions: { target: 'es6' } } }),
+        replace({
+            'process.env.NODE_ENV': JSON.stringify(process.env.NODE_ENV || 'production'),
+        }),
         commonjs({
             extensions: ['.js', '.ts', '.tsx'],
             exclude: ['node_modules/lodash-es/'],
-            namedExports: {
-                events: ['EventEmitter'],
-            },
+            namedExports: {},
         }),
     ],
 }

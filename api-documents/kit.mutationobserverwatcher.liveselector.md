@@ -4,8 +4,10 @@
 
 ## MutationObserverWatcher.liveSelector property
 
+LiveSelector that this object holds
+
 <b>Signature:</b>
 
 ```typescript
-protected liveSelector: LiveSelector<T>;
+protected liveSelector: LiveSelector<T, SingleMode>;
 ```

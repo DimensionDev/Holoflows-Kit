@@ -9,19 +9,26 @@ Send and receive messages in different contexts.
 <b>Signature:</b>
 
 ```typescript
-export declare class MessageCenter<ITypedMessages> 
+export declare class MessageCenter<ITypedMessages> extends EventTarget 
 ```
+
+## Constructors
+
+|  Constructor | Modifiers | Description |
+|  --- | --- | --- |
+|  [(constructor)(instanceKey)](./kit.messagecenter.(constructor).md) |  | Constructs a new instance of the <code>MessageCenter</code> class |
 
 ## Properties
 
 |  Property | Modifiers | Type | Description |
 |  --- | --- | --- | --- |
-|  [writeToConsole](./kit.messagecenter.writetoconsole.md) |  | <code>boolean</code> |  |
+|  [send](./kit.messagecenter.send.md) |  | <code>&lt;Key_1 extends keyof ITypedMessages&gt;(key: Key_1, data: ITypedMessages[Key_1], alsoSendToDocument?: boolean) =&gt; void</code> |  |
+|  [writeToConsole](./kit.messagecenter.writetoconsole.md) |  | <code>boolean</code> | Should MessageCenter prints all messages to console? |
 
 ## Methods
 
 |  Method | Modifiers | Description |
 |  --- | --- | --- |
+|  [emit(key, data, alsoSendToDocument)](./kit.messagecenter.emit.md) |  | Send message to local or other instance of extension |
 |  [on(event, handler)](./kit.messagecenter.on.md) |  | Listen to an event |
-|  [send(key, data, alsoSendToDocument)](./kit.messagecenter.send.md) |  | Send message to local or other instance of extension |
 

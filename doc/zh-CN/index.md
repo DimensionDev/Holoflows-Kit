@@ -13,28 +13,30 @@
 -   -   -   [MutationObserverWatcher](../../api-documents/kit.mutationobserverwatcher.md) 通过 `MutationObserver` 追踪网页中的变化
 -   -   -   [IntervalWatcher](../../api-documents/kit.intervalwatcher.md) 通过 `setInterval` 追踪网页中的变化
 -   -   -   [EventWatcher](../../api-documents/kit.eventwatcher.md) 通过事件回调追踪网页中的变化
--   -   [ValueRef](../../api-documents/kit.valueref.md) 通过 `setter` 订阅值的变化
 
 -   Extension - 一些扩展开发会使用到的实用工具
--   -   [AsyncCall](../../api-documents/kit.asynccall.md) 跨上下文的远程过程调用工具
--   -   [Context](../../api-documents/kit.context.md) 在扩展开发中检测当前的上下文
+-   -   [Context](../../api-documents/kit.contexts.md) 在扩展开发中检测当前的上下文
 -   -   [MessageCenter](../../api-documents/kit.messagecenter.md) 在插件开发的不同上下文中通信
 -   -   [AutomatedTabTask](../../api-documents/kit.automatedtabtask.md) 打开一个新的标签页，自动执行某些任务，然后回传结果
+
+-   Util
+-   -   [ValueRef](../../api-documents/kit.valueref.md) 通过 `setter` 订阅值的变化
+-   -   [AsyncCall](../../api-documents/kit.asynccall.md) 跨上下文的远程过程调用工具
 
 ## 安装
 
 使用 `yarn` 或 `npm` 安装，或直接使用 umd
 
-> https://unpkg.com/@holoflows/kit@latest/dist/out.js
+> https://unpkg.com/@holoflows/kit@latest/umd/index.js
 
 使用模块加载器时，使用 `@holoflows/kit` 导入；使用 umd 时，使用 `window.HoloflowsKit`。
 
-如果在 Chrome 中使用，需要加载 WebExtension 的 Polyfill (`webextension-polyfill`)。
+如果在 Chrome 中使用，需要加载 WebExtension 的 Polyfill [webextension-polyfill](https://github.com/mozilla/webextension-polyfill)。
 
 ### ECMAScript 版本
 
 因为本库重度依赖 [Proxy](https://mdn.io/Proxy)，所以支持 ES5 没有意义。
 
-`@holoflows/kit` 以 umd 格式 (/dist/out.js) 和 ESModule 格式 (/es/) 导出，umd 格式编译到 ES6，ESModule 格式编译到 ES2018。
+`@holoflows/kit` 以 umd 格式 (/umd/index.js) 和 ESModule 格式 (/es/) 导出，umd 格式编译到 ES6，ESModule 格式编译到 ES2018。
 
 开箱提供了完整的 Typescript 支持。

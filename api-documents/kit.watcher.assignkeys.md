@@ -11,17 +11,24 @@ If the key is changed, the same node will call through `forEachRemove` then `for
 <b>Signature:</b>
 
 ```typescript
-assignKeys<Q = unknown>(assigner: (node: T, index: number, arr: T[]) => Q, comparer?: (a: Q, b: Q) => boolean): this;
+assignKeys<Q = unknown>(keyAssigner: (node: T, index: number, arr: readonly T[]) => Q): this;
 ```
 
 ## Parameters
 
 |  Parameter | Type | Description |
 |  --- | --- | --- |
-|  assigner | <code>(node: T, index: number, arr: T[]) =&gt; Q</code> | map <code>node</code> to <code>key</code>, defaults to <code>node =&gt; node</code> |
-|  comparer | <code>(a: Q, b: Q) =&gt; boolean</code> | compare between two keys, defaults to <code>===</code> |
+|  keyAssigner | <code>(node: T, index: number, arr: readonly T[]) =&gt; Q</code> | map <code>node</code> to <code>key</code>, defaults to <code>node =&gt; node</code> |
 
 <b>Returns:</b>
 
 `this`
+
+## Example
+
+
+```ts
+watcher.assignKeys(node => node.innerText)
+
+```
 

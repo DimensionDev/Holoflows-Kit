@@ -8,8 +8,8 @@ interface SelectorChainType {
     closest: string | number
     querySelectorAll: string
     filter: (element: any, index: number, array: any[]) => boolean
-    map: (element: any) => any
-    concat: LiveSelector<any>
+    map: (element: any, index: number, array: any[]) => any
+    concat: LiveSelector<any, any>
     reverse: undefined
     slice: [number | undefined, number | undefined]
     sort: ((a: any, b: any) => number) | undefined
@@ -36,16 +36,34 @@ type SelectorChainTypeItem = MapOf<SelectorChainType>
  * Call {@link LiveSelector.evaluateOnce | #evaluateOnce} to evaluate the element. Falsy value will be ignored.
  *
  * @param T - Type of Element that LiveSelector contains
+ *
+ * @example
+ * ```ts
+ * const ls = new LiveSelector().querySelectorAll('a').map(x => x.href)
+ * ls.evaluateOnce() // returns all urls at the current time.
+ * ```
  */
-export class LiveSelector<T> {
+export class LiveSelector<T, SingleMode extends boolean = false> {
+    /**
+     * Let developer knows where does this LiveSelector created.
+     */
+    private readonly stack = new Error().stack
+    private singleMode = false
+    /**
+     * Enable single mode. Only 1 result will be emitted.
+     */
+    enableSingleMode(): LiveSelector<T, true> {
+        this.singleMode = true
+        return this as any
+    }
     /**
      * Record a method call into {@link LiveSelector.selectorChain}
      */
     private appendSelectorChain = <Key extends keyof SelectorChainType>(type: Key) => (
         param: SelectorChainType[Key],
-    ): LiveSelector<any> => {
+    ): LiveSelector<any, SingleMode> => {
         this.selectorChain.push({ type: type as any, param: param as any })
-        return this as LiveSelector<any>
+        return this as LiveSelector<any, SingleMode>
     }
     /**
      * Records of previous calls on LiveSelector
@@ -60,8 +78,9 @@ export class LiveSelector<T> {
      * ```
      */
     clone() {
-        const ls = new LiveSelector<T>()
+        const ls = new LiveSelector<T, SingleMode>()
         ls.selectorChain.push(...this.selectorChain)
+        ls.singleMode = this.singleMode
         return ls
     }
     //#region Add elements
@@ -75,10 +94,12 @@ export class LiveSelector<T> {
      * ls.querySelector('div#root')
      * ```
      */
-    querySelector<K extends keyof HTMLElementTagNameMap>(selector: K): LiveSelector<HTMLElementTagNameMap[K]>
-    querySelector<K extends keyof SVGElementTagNameMap>(selector: K): LiveSelector<SVGElementTagNameMap[K]>
-    querySelector<E extends Element = Element>(selector: string): LiveSelector<E>
-    querySelector<T>(selector: string): LiveSelector<T> {
+    querySelector<K extends keyof HTMLElementTagNameMap>(
+        selector: K,
+    ): LiveSelector<HTMLElementTagNameMap[K], SingleMode>
+    querySelector<K extends keyof SVGElementTagNameMap>(selector: K): LiveSelector<SVGElementTagNameMap[K], SingleMode>
+    querySelector<E extends Element = Element>(selector: string): LiveSelector<E, SingleMode>
+    querySelector<T>(selector: string): LiveSelector<T, SingleMode> {
         return this.appendSelectorChain('querySelector')(selector)
     }
     /**
@@ -90,10 +111,14 @@ export class LiveSelector<T> {
      * ls.querySelector('div > div')
      * ```
      */
-    querySelectorAll<K extends keyof HTMLElementTagNameMap>(selector: K): LiveSelector<HTMLElementTagNameMap[K]>
-    querySelectorAll<K extends keyof SVGElementTagNameMap>(selector: K): LiveSelector<SVGElementTagNameMap[K]>
-    querySelectorAll<E extends Element = Element>(selector: string): LiveSelector<E>
-    querySelectorAll<T>(selector: string): LiveSelector<T> {
+    querySelectorAll<K extends keyof HTMLElementTagNameMap>(
+        selector: K,
+    ): LiveSelector<HTMLElementTagNameMap[K], SingleMode>
+    querySelectorAll<K extends keyof SVGElementTagNameMap>(
+        selector: K,
+    ): LiveSelector<SVGElementTagNameMap[K], SingleMode>
+    querySelectorAll<E extends Element = Element>(selector: string): LiveSelector<E, SingleMode>
+    querySelectorAll<T>(selector: string): LiveSelector<T, SingleMode> {
         return this.appendSelectorChain('querySelectorAll')(selector)
     }
     /**
@@ -105,8 +130,8 @@ export class LiveSelector<T> {
      * ls.getElementsByClassName('a').getElementsByClassName('b')
      * ```
      */
-    getElementsByClassName<T extends Element = Element>(className: string): LiveSelector<T>
-    getElementsByClassName<T>(className: string): LiveSelector<T> {
+    getElementsByClassName<T extends Element = Element>(className: string): LiveSelector<T, SingleMode>
+    getElementsByClassName<T>(className: string): LiveSelector<T, SingleMode> {
         return this.appendSelectorChain('getElementsByClassName')(className)
     }
     /**
@@ -118,25 +143,35 @@ export class LiveSelector<T> {
      * ls.getElementsByTagName('a').getElementsByTagName('b')
      * ```
      */
-    getElementsByTagName<K extends keyof HTMLElementTagNameMap>(tag: K): LiveSelector<HTMLElementTagNameMap[K]>
-    getElementsByTagName<K extends keyof SVGElementTagNameMap>(tag: K): LiveSelector<SVGElementTagNameMap[K]>
-    getElementsByTagName<E extends Element = Element>(tag: string): LiveSelector<E>
-    getElementsByTagName<T>(tag: string): LiveSelector<T> {
+    getElementsByTagName<K extends keyof HTMLElementTagNameMap>(
+        tag: K,
+    ): LiveSelector<HTMLElementTagNameMap[K], SingleMode>
+    getElementsByTagName<K extends keyof SVGElementTagNameMap>(
+        tag: K,
+    ): LiveSelector<SVGElementTagNameMap[K], SingleMode>
+    getElementsByTagName<E extends Element = Element>(tag: string): LiveSelector<E, SingleMode>
+    getElementsByTagName<T>(tag: string): LiveSelector<T, SingleMode> {
         return this.appendSelectorChain('getElementsByTagName')(tag)
     }
+    /**
+     * Select the nth parent
+     * @example
+     * ```ts
+     * ls.closest(2) // parentElement.parentElement
+     * ```
+     */
+    closest<T>(parentOfNth: number): LiveSelector<T, SingleMode>
     /**
      * Reversely select element in the parent
      * @example
      * ```ts
      * ls.closest('div')
-     * ls.closest(2) // parentElement.parentElement
      * ```
      */
-    closest<T>(parentOfNth: number): LiveSelector<T>
-    closest<K extends keyof HTMLElementTagNameMap>(selectors: K): LiveSelector<HTMLElementTagNameMap[K]>
-    closest<K extends keyof SVGElementTagNameMap>(selectors: K): LiveSelector<SVGElementTagNameMap[K]>
-    closest<E extends Element = Element>(selectors: string): LiveSelector<E>
-    closest<T>(selectors: string | number): LiveSelector<T> {
+    closest<K extends keyof HTMLElementTagNameMap>(selectors: K): LiveSelector<HTMLElementTagNameMap[K], SingleMode>
+    closest<K extends keyof SVGElementTagNameMap>(selectors: K): LiveSelector<SVGElementTagNameMap[K], SingleMode>
+    closest<E extends Element = Element>(selectors: string): LiveSelector<E, SingleMode>
+    closest<T>(selectors: string | number): LiveSelector<T, SingleMode> {
         return this.appendSelectorChain('closest')(selectors)
     }
     //#endregion
@@ -152,8 +187,8 @@ export class LiveSelector<T> {
      * ls.filter(x => x.innerText.match('hello'))
      * ```
      */
-    filter(f: (value: T, index: number, array: T[]) => any): LiveSelector<NonNullable<T>>
-    filter<S extends T = T>(f: (value: T, index: number, array: T[]) => value is S): LiveSelector<S> {
+    filter(f: (value: T, index: number, array: T[]) => any): LiveSelector<NonNullable<T>, SingleMode>
+    filter<S extends T = T>(f: (value: T, index: number, array: T[]) => value is S): LiveSelector<S, SingleMode> {
         return this.appendSelectorChain('filter')(f)
     }
     /**
@@ -165,7 +200,9 @@ export class LiveSelector<T> {
      * ls.map(x => x.parentElement)
      * ```
      */
-    map<NextType>(callbackfn: (element: T) => NextType): LiveSelector<NonNullable<NextType>> {
+    map<NextType>(
+        callbackfn: (element: T, index: number, array: T[]) => NextType,
+    ): LiveSelector<NonNullable<NextType>, SingleMode> {
         return this.appendSelectorChain('map')(callbackfn)
     }
     /**
@@ -178,7 +215,7 @@ export class LiveSelector<T> {
      * ls.concat(new LiveSelector().querySelector('#root'))
      * ```
      */
-    concat<NextType>(newEle: LiveSelector<NextType>): LiveSelector<T | NextType> {
+    concat<NextType>(newEle: LiveSelector<NextType, SingleMode>): LiveSelector<T | NextType, SingleMode> {
         return this.appendSelectorChain('concat')(newEle)
     }
     /**
@@ -189,7 +226,7 @@ export class LiveSelector<T> {
      * ls.reverse()
      * ```
      */
-    reverse(): LiveSelector<T> {
+    reverse(): LiveSelector<T, SingleMode> {
         return this.appendSelectorChain('reverse')(undefined)
     }
     /**
@@ -202,7 +239,7 @@ export class LiveSelector<T> {
      * ls.slice(2, 4)
      * ```
      */
-    slice(start?: number, end?: number): LiveSelector<T> {
+    slice(start?: number, end?: number): LiveSelector<T, SingleMode> {
         return this.appendSelectorChain('slice')([start, end])
     }
     /**
@@ -214,7 +251,7 @@ export class LiveSelector<T> {
      * ls.sort((a, b) => a.innerText.length - b.innerText.length)
      * ```
      */
-    sort(compareFn?: (a: T, b: T) => number): LiveSelector<T> {
+    sort(compareFn?: (a: T, b: T) => number): LiveSelector<T, SingleMode> {
         return this.appendSelectorChain('sort')(compareFn)
     }
     /**
@@ -225,7 +262,7 @@ export class LiveSelector<T> {
      * ls.flat()
      * ```
      */
-    flat(): LiveSelector<T extends ArrayLike<infer U> ? U : never> {
+    flat(): LiveSelector<T extends ArrayLike<infer U> ? U : never, SingleMode> {
         return this.appendSelectorChain('flat')(undefined)
     }
     /**
@@ -237,7 +274,7 @@ export class LiveSelector<T> {
      * ls.nth(-1)
      * ```
      */
-    nth(n: number): LiveSelector<T> {
+    nth(n: number): LiveSelector<T, SingleMode> {
         return this.appendSelectorChain('nth')(n)
     }
     /**
@@ -250,7 +287,7 @@ export class LiveSelector<T> {
      *
      * @param f - returns new array.
      */
-    replace<NextType>(f: (arr: T[]) => NextType[]): LiveSelector<NextType> {
+    replace<NextType>(f: (arr: T[]) => NextType[]): LiveSelector<NextType, SingleMode> {
         return this.appendSelectorChain('replace')(f)
     }
     //#endregion
@@ -259,7 +296,7 @@ export class LiveSelector<T> {
     /**
      * Evaluate selector expression
      */
-    evaluateOnce(): T[] {
+    evaluateOnce(): SingleMode extends true ? (T | undefined) : T[] {
         let arr: (T | Element)[] = []
         function isElementArray(x: any[]): x is Element[] {
             // Do a simple check
@@ -270,6 +307,8 @@ export class LiveSelector<T> {
         }
         let previouslyNulled = false
         for (const op of this.selectorChain) {
+            // if in single mode, drop other results.
+            if (this.singleMode && arr.length > 1) arr = [arr[0]]
             switch (op.type) {
                 case 'querySelector': {
                     if (!previouslyNulled) {
@@ -289,6 +328,7 @@ export class LiveSelector<T> {
                 case 'querySelectorAll': {
                     if (!previouslyNulled) {
                         type F = (x: string) => NodeListOf<Element> | HTMLCollectionOf<Element>
+                        ;[] // Fix editor syntax highlight
                         if (arr.length === 0) {
                             const e = (document[op.type] as F)(op.param)
                             arr.push(...e)
@@ -360,7 +400,8 @@ export class LiveSelector<T> {
                     throw new TypeError('Unknown operation type')
             }
         }
-        return arr.filter(x => x) as T[]
+        if (this.singleMode) return (arr.filter(nonNull) as T[])[0] as any
+        return (arr.filter(nonNull) as T[]) as any
     }
     //#endregion
 }

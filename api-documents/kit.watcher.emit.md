@@ -7,22 +7,17 @@
 <b>Signature:</b>
 
 ```typescript
-protected emit(event: 'onChange', data: {
-        oldNode: T;
-        newNode: T;
-        oldKey: unknown;
-        newKey: unknown;
-    }[]): boolean;
+protected emit(event: 'onIteration', data: OnIterationEvent<T>): void;
 ```
 
 ## Parameters
 
 |  Parameter | Type | Description |
 |  --- | --- | --- |
-|  event | <code>'onChange'</code> |  |
-|  data | <code>{</code><br/><code>        oldNode: T;</code><br/><code>        newNode: T;</code><br/><code>        oldKey: unknown;</code><br/><code>        newKey: unknown;</code><br/><code>    }[]</code> |  |
+|  event | <code>'onIteration'</code> |  |
+|  data | <code>OnIterationEvent&lt;T&gt;</code> |  |
 
 <b>Returns:</b>
 
-`boolean`
+`void`
 

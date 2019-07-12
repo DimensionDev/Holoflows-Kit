@@ -2,26 +2,12 @@
 
 [Home](./index.md) &gt; [@holoflows/kit](./kit.md) &gt; [Watcher](./kit.watcher.md) &gt; [requestIdleCallback](./kit.watcher.requestidlecallback.md)
 
-## Watcher.requestIdleCallback() method
+## Watcher.requestIdleCallback property
 
-Is the watcher running
+window.requestIdleCallback, or polyfill.
 
 <b>Signature:</b>
 
 ```typescript
-protected requestIdleCallback(fn: (t: Deadline) => void, timeout?: {
-        timeout: number;
-    }): NodeJS.Timeout;
+protected readonly requestIdleCallback: typeof requestIdleCallback;
 ```
-
-## Parameters
-
-|  Parameter | Type | Description |
-|  --- | --- | --- |
-|  fn | <code>(t: Deadline) =&gt; void</code> |  |
-|  timeout | <code>{</code><br/><code>        timeout: number;</code><br/><code>    }</code> |  |
-
-<b>Returns:</b>
-
-`NodeJS.Timeout`
-

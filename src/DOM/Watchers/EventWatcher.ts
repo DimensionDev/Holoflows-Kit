@@ -1,38 +1,33 @@
 import { Watcher } from '../Watcher'
+import { LiveSelector } from '../LiveSelector'
 
 /**
  * A Watcher based on event handlers.
  *
  * @example
  * ```ts
- * const e = new EventWatcher(ls)
+ * const e = new EventWatcher(ls).useForeach(node => console.log(node))
  * document.addEventListener('event', e.eventListener)
  * ```
  */
 export class EventWatcher<
     T,
     Before extends Element = HTMLSpanElement,
-    After extends Element = HTMLSpanElement
-> extends Watcher<T, Before, After> {
-    /** Limit computation by rAF */
-    private rICLock = false
+    After extends Element = HTMLSpanElement,
+    SingleMode extends boolean = false
+> extends Watcher<T, Before, After, SingleMode> {
+    constructor(liveSelector: LiveSelector<T, SingleMode>) {
+        super(liveSelector)
+        this.startWatch()
+    }
     /**
      * Use this function as event listener to invoke watcher.
      */
     public eventListener = () => {
-        this.requestIdleCallback(
-            deadline => {
-                if (this.rICLock) return
-                this.rICLock = true
-                this.watcherCallback(deadline)
-                this.rICLock = false
-            },
-            { timeout: 500 },
-        )
+        this.requestIdleCallback(this.scheduleWatcherCheck, { timeout: 500 })
     }
-    protected watching = true
-    startWatch() {
-        this.watching = true
-        return this
-    }
+    /**
+     * {@inheritdoc Watcher.enableSingleMode}
+     */
+    enableSingleMode: () => EventWatcher<T, Before, After, true> = this._enableSingleMode as any
 }

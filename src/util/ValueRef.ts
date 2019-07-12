@@ -1,13 +1,26 @@
-type Fn<T> = (newVal: T, oldVal: T) => void
+/**
+ * This file is published by MIT License.
+ */
 /**
  * A `ref` object with `addListener`
+ *
+ * @example
+ * ```ts
+ * const ref = new ValueRef(64)
+ * function useRef() {
+ *     const [state, setState] = React.useState(ref.value)
+ *     React.useEffect(() => ref.addListener(setState))
+ *     return state
+ * }
+ * ref.value = 42 // useRef will receive the new value
+ * ```
  */
 export class ValueRef<T> {
-    /** Get current value of a ValueRef */
+    /** Get current value */
     get value() {
         return this._value
     }
-    /** Set current value of a ValueRef */
+    /** Set current value */
     set value(newVal: T) {
         const oldVal = this._value
         this._value = newVal
@@ -20,23 +33,23 @@ export class ValueRef<T> {
         }
     }
     /** All watchers */
-    private watcher = new Map<Fn<T>, boolean>()
+    private watcher = new Map<(newVal: T, oldVal: T) => void, boolean>()
     constructor(private _value: T) {}
     /**
      * Add a listener. This will return a remover.
      * @example
      * ```ts
-     * React.useEffect(() => ref.addListener(() => {...}))
+     * React.useEffect(() => ref.addListener(setState))
      * ```
      */
-    addListener(fn: Fn<T>) {
+    addListener(fn: (newVal: T, oldVal: T) => void) {
         this.watcher.set(fn, true)
         return () => this.removeListener(fn)
     }
     /**
      * Remove a listener
      */
-    removeListener(fn: Fn<T>) {
+    removeListener(fn: (newVal: T, oldVal: T) => void) {
         this.watcher.delete(fn)
     }
     /**

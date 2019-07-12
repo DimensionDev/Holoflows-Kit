@@ -16,7 +16,7 @@ A toolkit for browser extension developing.
 |  [MessageCenter](./kit.messagecenter.md) | Send and receive messages in different contexts. |
 |  [MutationObserverWatcher](./kit.mutationobserverwatcher.md) | A watcher based on MutationObserver |
 |  [ValueRef](./kit.valueref.md) | A <code>ref</code> object with <code>addListener</code> |
-|  [Watcher](./kit.watcher.md) | Use LiveSelector to watch dom change<!-- -->You need to implement <code>startWatch</code> |
+|  [Watcher](./kit.watcher.md) | Use LiveSelector to watch dom change |
 
 ## Functions
 
@@ -27,7 +27,7 @@ A toolkit for browser extension developing.
 |  [DomProxy(options)](./kit.domproxy.md) | DomProxy provide an interface that be stable even dom is changed. |
 |  [GetContext()](./kit.getcontext.md) | Get current running context. |
 |  [OnlyRunInContext(context, name)](./kit.onlyrunincontext.md) | Make sure this file only run in wanted context |
-|  [OnlyRunInContext(context, throws)](./kit.onlyrunincontext_1.md) |  |
+|  [OnlyRunInContext(context, throws)](./kit.onlyrunincontext_1.md) | Make sure this file only run in wanted context |
 
 ## Interfaces
 
@@ -36,6 +36,7 @@ A toolkit for browser extension developing.
 |  [AsyncCallOptions](./kit.asynccalloptions.md) | Options for [AsyncCall()](./kit.asynccall.md) |
 |  [AutomatedTabTaskDefineTimeOptions](./kit.automatedtabtaskdefinetimeoptions.md) | Define-time options for [AutomatedTabTask()](./kit.automatedtabtask.md) |
 |  [AutomatedTabTaskRuntimeOptions](./kit.automatedtabtaskruntimeoptions.md) | Runtime options for [AutomatedTabTask()](./kit.automatedtabtask.md) |
+|  [AutomatedTabTaskSharedOptions](./kit.automatedtabtasksharedoptions.md) | Shared options for AutomatedTabTask between the define-time and the runtime. |
 |  [DomProxy](./kit.domproxy.md) | A DomProxy object |
 |  [DomProxyOptions](./kit.domproxyoptions.md) | Options for DomProxy |
 |  [Serialization](./kit.serialization.md) | Define how to do serialization and deserialization of remote procedure call |

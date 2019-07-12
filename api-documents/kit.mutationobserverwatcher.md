@@ -9,19 +9,38 @@ A watcher based on MutationObserver
 <b>Signature:</b>
 
 ```typescript
-export declare class MutationObserverWatcher<T, Before extends Element = HTMLSpanElement, After extends Element = HTMLSpanElement> extends Watcher<T, Before, After> 
+export declare class MutationObserverWatcher<T, Before extends Element = HTMLSpanElement, After extends Element = HTMLSpanElement, SingleMode extends boolean = false> extends Watcher<T, Before, After, SingleMode> 
 ```
+
+## Constructors
+
+|  Constructor | Modifiers | Description |
+|  --- | --- | --- |
+|  [(constructor)(liveSelector, consistentWatchRoot)](./kit.mutationobserverwatcher.(constructor).md) |  | Constructs a new instance of the <code>MutationObserverWatcher</code> class |
 
 ## Properties
 
 |  Property | Modifiers | Type | Description |
 |  --- | --- | --- | --- |
-|  [liveSelector](./kit.mutationobserverwatcher.liveselector.md) |  | <code>LiveSelector&lt;T&gt;</code> |  |
+|  [enableSingleMode](./kit.mutationobserverwatcher.enablesinglemode.md) |  | <code>() =&gt; MutationObserverWatcher&lt;T, Before, After, true&gt;</code> | Enable single mode. |
+|  [liveSelector](./kit.mutationobserverwatcher.liveselector.md) |  | <code>LiveSelector&lt;T, SingleMode&gt;</code> | LiveSelector that this object holds |
 
 ## Methods
 
 |  Method | Modifiers | Description |
 |  --- | --- | --- |
-|  [startWatch(options)](./kit.mutationobserverwatcher.startwatch.md) |  |  |
-|  [stopWatch()](./kit.mutationobserverwatcher.stopwatch.md) |  |  |
+|  [startWatch(options)](./kit.mutationobserverwatcher.startwatch.md) |  | Let the watcher start to watching |
+|  [stopWatch()](./kit.mutationobserverwatcher.stopwatch.md) |  | Stop the watcher |
+
+## Example
+
+
+```ts
+new MutationObserverWatcher(ls)
+    .useForeach(node => {
+        console.log(node)
+    })
+    .startWatch()
+
+```
 

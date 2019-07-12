@@ -9,9 +9,9 @@ Evaluate selector expression
 <b>Signature:</b>
 
 ```typescript
-evaluateOnce(): T[];
+evaluateOnce(): SingleMode extends true ? (T | undefined) : T[];
 ```
 <b>Returns:</b>
 
-`T[]`
+`SingleMode extends true ? (T | undefined) : T[]`
 

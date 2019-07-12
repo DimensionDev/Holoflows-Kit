@@ -9,18 +9,18 @@ Calls a defined callback function on each element of a LiveSelector, and continu
 <b>Signature:</b>
 
 ```typescript
-map<NextType>(callbackfn: (element: T) => NextType): LiveSelector<NonNullable<NextType>>;
+map<NextType>(callbackfn: (element: T, index: number, array: T[]) => NextType): LiveSelector<NonNullable<NextType>, SingleMode>;
 ```
 
 ## Parameters
 
 |  Parameter | Type | Description |
 |  --- | --- | --- |
-|  callbackfn | <code>(element: T) =&gt; NextType</code> | Map function |
+|  callbackfn | <code>(element: T, index: number, array: T[]) =&gt; NextType</code> | Map function |
 
 <b>Returns:</b>
 
-`LiveSelector<NonNullable<NextType>>`
+`LiveSelector<NonNullable<NextType>, SingleMode>`
 
 ## Example
 

@@ -3,5 +3,6 @@
  *
  * @packageDocumentation
  */
-export * from './DOM'
-export * from './Extension'
+export * from './DOM/index.js'
+export * from './Extension/index.js'
+export * from './util/index.js'

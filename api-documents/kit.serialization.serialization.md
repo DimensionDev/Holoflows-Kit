@@ -4,19 +4,21 @@
 
 ## Serialization.serialization() method
 
+Do serialization
+
 <b>Signature:</b>
 
 ```typescript
-serialization(from: any): Promise<unknown>;
+serialization(from: any): PromiseLike<unknown>;
 ```
 
 ## Parameters
 
 |  Parameter | Type | Description |
 |  --- | --- | --- |
-|  from | <code>any</code> |  |
+|  from | <code>any</code> | original data |
 
 <b>Returns:</b>
 
-`Promise<unknown>`
+`PromiseLike<unknown>`
 

@@ -4,8 +4,15 @@
 
 ## AsyncCallOptions.serializer property
 
+How to serialization and deserialization parameters and return values
+
 <b>Signature:</b>
 
 ```typescript
 serializer: Serialization;
 ```
+
+## Remarks
+
+We offer some built-in serializer: - NoSerialization (Do not do any serialization) - JSONSerialization (Use JSON.parse/stringify)
+

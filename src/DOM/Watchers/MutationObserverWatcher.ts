@@ -2,35 +2,45 @@ import { Watcher } from '../Watcher'
 import { LiveSelector } from '../LiveSelector'
 /**
  * A watcher based on MutationObserver
+ *
+ * @example
+ * ```ts
+ * new MutationObserverWatcher(ls)
+ *     .useForeach(node => {
+ *         console.log(node)
+ *     })
+ *     .startWatch()
+ * ```
  */
 export class MutationObserverWatcher<
     T,
     Before extends Element = HTMLSpanElement,
-    After extends Element = HTMLSpanElement
-> extends Watcher<T, Before, After> {
+    After extends Element = HTMLSpanElement,
+    SingleMode extends boolean = false
+> extends Watcher<T, Before, After, SingleMode> {
     constructor(
-        protected liveSelector: LiveSelector<T>,
-        /** The element that won't change during the whole watching lifetime. This may improve performance. */
+        /** LiveSelector that this object holds */
+        protected liveSelector: LiveSelector<T, SingleMode>,
+        /**
+         * If you know the element is always inside of a node, set this option.
+         * This may improve performance.
+         */
         private consistentWatchRoot: Node = document.body,
     ) {
         super(liveSelector)
+        setTimeout(this._warning_forget_watch_.warn, 5000)
     }
 
     /** Observe whole document change */
     private observer: MutationObserver = new MutationObserver((mutations, observer) => {
-        this.requestIdleCallback(() => {
-            if (this.rAFLock) return
-            this.rAFLock = true
-            this.watcherCallback()
-            this.rAFLock = false
-        })
+        this.requestIdleCallback(this.scheduleWatcherCheck)
     })
-
-    /** Limit onMutation computation by rAF */
-    private rAFLock = false
+    /**
+     * {@inheritdoc Watcher.startWatch}
+     */
     startWatch(options?: MutationObserverInit) {
-        this.stopWatch()
-        this.watching = true
+        super.startWatch()
+        this.isWatching = true
         const option = {
             attributes: true,
             characterData: true,
@@ -40,15 +50,22 @@ export class MutationObserverWatcher<
         }
         const watch = (root?: Node) => {
             this.observer.observe(root || document.body, option)
-            this.watcherCallback()
+            this.scheduleWatcherCheck()
         }
         if (document.readyState !== 'complete' && this.consistentWatchRoot === null) {
             document.addEventListener('load', () => watch())
         } else watch(this.consistentWatchRoot)
         return this
     }
+    /**
+     * {@inheritdoc Watcher.stopWatch}
+     */
     stopWatch() {
         super.stopWatch()
         this.observer.disconnect()
     }
+    /**
+     * {@inheritdoc Watcher.enableSingleMode}
+     */
+    enableSingleMode: () => MutationObserverWatcher<T, Before, After, true> = this._enableSingleMode as any
 }

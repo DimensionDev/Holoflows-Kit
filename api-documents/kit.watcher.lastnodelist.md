@@ -9,5 +9,5 @@ Found Node list of last watch
 <b>Signature:</b>
 
 ```typescript
-protected lastNodeList: T[];
+protected lastNodeList: readonly T[];
 ```

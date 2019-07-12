@@ -9,14 +9,14 @@ Set option for DomProxy
 <b>Signature:</b>
 
 ```typescript
-setDomProxyOption(option: Partial<DomProxyOptions<DomProxyBefore, DomProxyAfter>>): this;
+setDomProxyOption(option: Partial<DomProxyOptions<Before, After>>): this;
 ```
 
 ## Parameters
 
 |  Parameter | Type | Description |
 |  --- | --- | --- |
-|  option | <code>Partial&lt;DomProxyOptions&lt;DomProxyBefore, DomProxyAfter&gt;&gt;</code> | DomProxy options |
+|  option | <code>Partial&lt;DomProxyOptions&lt;Before, After&gt;&gt;</code> | DomProxy options |
 
 <b>Returns:</b>
 

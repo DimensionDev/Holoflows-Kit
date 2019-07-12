@@ -4,12 +4,12 @@
 
 ## LiveSelector.closest() method
 
-Reversely select element in the parent
+Select the nth parent
 
 <b>Signature:</b>
 
 ```typescript
-closest<T>(parentOfNth: number): LiveSelector<T>;
+closest<T>(parentOfNth: number): LiveSelector<T, SingleMode>;
 ```
 
 ## Parameters
@@ -20,13 +20,12 @@ closest<T>(parentOfNth: number): LiveSelector<T>;
 
 <b>Returns:</b>
 
-`LiveSelector<T>`
+`LiveSelector<T, SingleMode>`
 
 ## Example
 
 
 ```ts
-ls.closest('div')
 ls.closest(2) // parentElement.parentElement
 
 ```

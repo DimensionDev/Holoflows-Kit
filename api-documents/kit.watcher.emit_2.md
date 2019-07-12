@@ -7,20 +7,17 @@
 <b>Signature:</b>
 
 ```typescript
-protected emit(event: 'onRemove' | 'onAdd', data: {
-        node: T;
-        key: unknown;
-    }[]): boolean;
+protected emit(event: 'onRemove', data: OnAddOrRemoveEvent<T>): void;
 ```
 
 ## Parameters
 
 |  Parameter | Type | Description |
 |  --- | --- | --- |
-|  event | <code>'onRemove' &#124; 'onAdd'</code> |  |
-|  data | <code>{</code><br/><code>        node: T;</code><br/><code>        key: unknown;</code><br/><code>    }[]</code> |  |
+|  event | <code>'onRemove'</code> |  |
+|  data | <code>OnAddOrRemoveEvent&lt;T&gt;</code> |  |
 
 <b>Returns:</b>
 
-`boolean`
+`void`
 

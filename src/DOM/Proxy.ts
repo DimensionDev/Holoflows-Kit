@@ -32,7 +32,7 @@ export interface DomProxyOptions<Before extends Element = HTMLSpanElement, After
  * - appendChild (forward, undo, move)
  */
 export function DomProxy<
-    ProxiedElement extends Element = HTMLElement,
+    ProxiedElement extends Node = HTMLElement,
     Before extends Element = HTMLSpanElement,
     After extends Element = HTMLSpanElement
 >(options: Partial<DomProxyOptions<Before, After>> = {}): DomProxy<ProxiedElement, Before, After> {
@@ -51,7 +51,8 @@ export function DomProxy<
     // Nodes
     let virtualBefore: Before | null = null
     let virtualBeforeShadow: ShadowRoot | null = null
-    let current: Element | null = document.createElement('div')
+    const defaultCurrent = document.createElement('div')
+    let current: Node = defaultCurrent
     let virtualAfter: After | null = null
     let virtualAfterShadow: ShadowRoot | null = null
     /** All changes applied on the `proxy` */
@@ -60,119 +61,93 @@ export function DomProxy<
     const readonlyTraps: ProxyHandler<any> = {
         ownKeys: () => {
             changes.push({ type: 'ownKeys', op: undefined })
-            if (current) return Object.getOwnPropertyNames(current)
-            return []
+            return Object.getOwnPropertyNames(current)
         },
         get: (t, key, r) => {
             changes.push({ type: 'get', op: key })
             const current_: any = current
-            if (current) {
-                if (typeof current_[key] === 'function')
-                    return new Proxy(current_[key], {
-                        apply: (target, thisArg, args) => {
-                            changes.push({ type: 'callMethods', op: { name: key, param: args, thisArg } })
-                            return current_[key](...args)
-                        },
-                    })
-                else if (key === 'style')
-                    return new Proxy((current as HTMLElement).style, {
-                        set: (t, styleKey, styleValue, r) => {
-                            changes.push({
-                                type: 'modifyStyle',
-                                op: { name: styleKey, value: styleValue, originalValue: current_.style[styleKey] },
-                            })
-                            current_.style[styleKey] = styleValue
-                            return true
-                        },
-                    })
-                return current_[key]
-            }
-            return undefined
+            if (typeof current_[key] === 'function')
+                return new Proxy(current_[key], {
+                    apply: (target, thisArg, args) => {
+                        changes.push({ type: 'callMethods', op: { name: key, param: args, thisArg } })
+                        return current_[key](...args)
+                    },
+                })
+            else if (key === 'style')
+                return new Proxy((current as HTMLElement).style, {
+                    set: (t, styleKey, styleValue, r) => {
+                        changes.push({
+                            type: 'modifyStyle',
+                            op: { name: styleKey, value: styleValue, originalValue: current_.style[styleKey] },
+                        })
+                        current_.style[styleKey] = styleValue
+                        return true
+                    },
+                })
+            return current_[key]
         },
         has: (t, key) => {
             changes.push({ type: 'has', op: key })
-            if (current) return key in current
-            return false
+            return key in current
         },
         getOwnPropertyDescriptor: (t, key) => {
             changes.push({ type: 'getOwnPropertyDescriptor', op: key })
-            if (current) {
-                return Reflect.getOwnPropertyDescriptor(current, key)
-            }
-            return {
-                configurable: true,
-                enumerable: false,
-                value: undefined,
-                writable: true,
-            }
+            return Reflect.getOwnPropertyDescriptor(current, key)
         },
         isExtensible: t => {
             changes.push({ type: 'isExtensible', op: undefined })
-            if (current) return Reflect.isExtensible(current)
-            return true
+            return Reflect.isExtensible(current)
         },
         getPrototypeOf: t => {
             changes.push({ type: 'getPrototypeOf', op: undefined })
-            if (current) return Reflect.getPrototypeOf(current)
-            return {}
+            return Reflect.getPrototypeOf(current)
         },
     }
     /** Write Traps */
     const modifyTraps: (record: boolean) => ProxyHandler<any> = record => ({
         deleteProperty: (t, key: keyof HTMLElement) => {
             record && changes.push({ type: 'delete', op: key })
-            if (current) {
-                return Reflect.deleteProperty(current, key)
-            }
-            return false
+            return Reflect.deleteProperty(current, key)
         },
         set: (t, key: keyof HTMLElement, value, r) => {
             record && changes.push({ type: 'set', op: [key, value] })
-            if (current) {
-                return ((current as any)[key] = value)
-            }
-            return true
+            return ((current as any)[key] = value)
         },
         defineProperty: (t, key, attributes) => {
             record && changes.push({ type: 'defineProperty', op: [key, attributes] })
-            if (current) {
-                return Reflect.defineProperty(current, key, attributes)
-            }
-            return true
+            return Reflect.defineProperty(current, key, attributes)
         },
         preventExtensions: t => {
             record && changes.push({ type: 'preventExtensions', op: undefined })
-            if (current) return Reflect.preventExtensions(current)
-            return true
+            return Reflect.preventExtensions(current)
         },
         setPrototypeOf: (t, prototype) => {
             record && changes.push({ type: 'setPrototypeOf', op: prototype })
-            if (current) return Reflect.setPrototypeOf(current, prototype)
-            return true
+            return Reflect.setPrototypeOf(current, prototype)
         },
     })
     const modifyTrapsWrite = modifyTraps(true)
     const modifyTrapsNotWrite = modifyTraps(false)
     const proxy = Proxy.revocable({}, { ...readonlyTraps, ...modifyTrapsWrite })
-    function hasStyle(e: Element): e is HTMLElement {
+    function hasStyle(e: Node): e is HTMLElement {
         return !!(e as any).style
     }
     /** Call before realCurrent change */
-    function undoEffects(nextCurrent?: Element | null) {
+    function undoEffects(nextCurrent?: Node | null) {
         for (const change of changes) {
             if (change.type === 'callMethods') {
                 const attr: keyof HTMLElement = change.op.name as any
                 if (attr === 'addEventListener') {
-                    current && current.removeEventListener(...(change.op.param as [any, any, any]))
+                    current.removeEventListener(...(change.op.param as [any, any, any]))
                 } else if (attr === 'appendChild') {
                     if (!nextCurrent) {
                         const node = (change.op.thisArg as Parameters<HTMLElement['appendChild']>)[0]
-                        current && node && current.removeChild(node)
+                        node && current.removeChild(node)
                     }
                 }
             } else if (change.type === 'modifyStyle') {
                 const { name, value, originalValue } = change.op
-                if (current && hasStyle(current)) {
+                if (hasStyle(current)) {
                     current.style[name as any] = originalValue
                 }
             }
@@ -180,7 +155,7 @@ export function DomProxy<
     }
     /** Call after realCurrent change */
     function redoEffects() {
-        if (!current) return
+        if (current === defaultCurrent) return
         const t = {}
         for (const change of changes) {
             if (change.type === 'setPrototypeOf') modifyTrapsNotWrite.setPrototypeOf!(t, change.op)
@@ -190,10 +165,14 @@ export function DomProxy<
             else if (change.type === 'set') modifyTrapsNotWrite.set!(t, change.op[0], change.op[1], t)
             else if (change.type === 'delete') modifyTrapsNotWrite.deleteProperty!(t, change.op)
             else if (change.type === 'callMethods') {
-                const replayable: (keyof Element)[] = ['appendChild', 'addEventListener', 'before', 'after']
-                const key: keyof Element = change.op.name as any
+                const replayable = ['appendChild', 'addEventListener', 'before', 'after']
+                const key: keyof Node = change.op.name as any
                 if (replayable.indexOf(key) !== -1) {
-                    ;(current[key] as any)(...change.op.param)
+                    if (current[key]) {
+                        ;(current[key] as any)(...change.op.param)
+                    } else {
+                        console.warn(current, `doesn't have method "${key}", replay failed.`)
+                    }
                 }
             } else if (change.type === 'modifyStyle') {
                 ;(current as HTMLElement).style[change.op.name as any] = change.op.value
@@ -207,7 +186,7 @@ export function DomProxy<
     let observer: MutationObserver | null = null
     function reObserve(reinit: boolean) {
         observer && observer.disconnect()
-        if (observerCallback === noop || !current) return
+        if (observerCallback === noop || current === defaultCurrent) return
         if (reinit || !observer) observer = new MutationObserver(observerCallback)
         observer.observe(current, mutationObserverInit)
     }
@@ -232,15 +211,11 @@ export function DomProxy<
                 return observer
             },
         },
-        get weakBefore() {
-            if (isDestroyed) return null
-            return virtualBefore
-        },
         get before() {
             if (isDestroyed) throw new TypeError('Try to access `before` node after VirtualNode is destroyed')
             if (!virtualBefore) {
                 virtualBefore = createBefore()
-                current && current.before(virtualBefore)
+                if (current instanceof Element) current.before(virtualBefore)
             }
             return virtualBefore
         },
@@ -252,15 +227,11 @@ export function DomProxy<
             if (isDestroyed) throw new TypeError('Try to access `current` node after VirtualNode is destroyed')
             return proxy.proxy
         },
-        get weakAfter() {
-            if (isDestroyed) return null
-            return virtualAfter
-        },
         get after(): After {
             if (isDestroyed) throw new TypeError('Try to access `after` node after VirtualNode is destroyed')
             if (!virtualAfter) {
                 virtualAfter = createAfter()
-                current && current.after(virtualAfter)
+                if (current instanceof Element) current.after(virtualAfter)
             }
             return virtualAfter
         },
@@ -268,23 +239,37 @@ export function DomProxy<
             if (!virtualAfterShadow) virtualAfterShadow = this.after.attachShadow(afterShadowRootInit)
             return virtualAfterShadow
         },
+        has(type: 'beforeShadow' | 'afterShadow' | 'before' | 'after'): any | null {
+            if (type === 'before') return virtualBefore
+            else if (type === 'after') return virtualAfter
+            else if (type === 'afterShadow') return virtualAfterShadow
+            else if (type === 'beforeShadow') return virtualBeforeShadow
+            else return null
+        },
         get realCurrent(): ProxiedElement | null {
             if (isDestroyed) return null
+            if (current === defaultCurrent) return null
             return current as any
         },
         set realCurrent(node: ProxiedElement | null) {
             if (isDestroyed) throw new TypeError('You can not set current for a destroyed proxy')
             if (node === current) return
+            if ((node === virtualAfter || node === virtualBefore) && node !== null) {
+                console.warn(
+                    "In the DomProxy, you're setting .realCurrent to this DomProxy's virtualAfter or virtualBefore. Doing this may cause bugs. If you're confused with this warning, check your rules for LiveSelector.",
+                    this,
+                )
+            }
             undoEffects(node)
             reObserve(false)
             if (node === null || node === undefined) {
-                current = document.createElement('div')
+                current = defaultCurrent
                 if (virtualBefore) virtualBefore.remove()
                 if (virtualAfter) virtualAfter.remove()
             } else {
                 current = node
-                if (virtualAfter) current.after(virtualAfter)
-                if (virtualBefore) current.before(virtualBefore)
+                if (virtualAfter && current instanceof Element) current.after(virtualAfter)
+                if (virtualBefore && current instanceof Element) current.before(virtualBefore)
                 redoEffects()
             }
         },
@@ -298,7 +283,7 @@ export function DomProxy<
             if (virtualAfter) virtualAfter.remove()
             virtualBefore = null
             virtualAfter = null
-            current = null
+            current = defaultCurrent
         },
     }
 }
@@ -306,14 +291,12 @@ export function DomProxy<
  * A DomProxy object
  */
 export interface DomProxy<
-    ProxiedElement extends Element = HTMLElement,
+    ProxiedElement extends Node = HTMLElement,
     Before extends Element = HTMLSpanElement,
     After extends Element = HTMLSpanElement
 > {
     /** Destroy the DomProxy */
     destroy(): void
-    /** Returns the `before` element without implicitly create it. */
-    readonly weakBefore: Before | null
     /** Returns the `before` element, if it doesn't exist, create it implicitly. */
     readonly before: Before
     /** Returns the `ShadowRoot` of the `before` element. */
@@ -323,12 +306,16 @@ export interface DomProxy<
      * and if `realCurrent` changes, all action will be forwarded to new `realCurrent`
      */
     readonly current: ProxiedElement
-    /** Returns the `after` element without implicitly create it. */
-    readonly weakAfter: After | null
     /** Returns the `after` element, if it doesn't exist, create it implicitly. */
     readonly after: After
     /** Returns the `ShadowRoot` of the `after` element. */
     readonly afterShadow: ShadowRoot
+    /** Get weak reference to `before` node */
+    has(type: 'before'): Before | null
+    /** Get weak reference to `after` node */
+    has(type: 'after'): After | null
+    /** Get weak reference to `beforeShadow` or `afterShadow` node */
+    has(type: 'beforeShadow' | 'afterShadow'): ShadowRoot | null
     /**
      * The real current of the `current`
      */

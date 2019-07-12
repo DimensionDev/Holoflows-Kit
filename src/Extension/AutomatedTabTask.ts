@@ -1,10 +1,13 @@
 import { sleep, timeout as timeoutFn } from '../util/sleep'
-import { AsyncCall } from './Async-Call'
+import { AsyncCall } from '../util/AsyncCall'
 import { GetContext } from './Context'
 import Lock from 'concurrent-lock'
 import { memorize } from 'memorize-decorator'
 
-interface AutomatedTabTaskSharedOptions {
+/**
+ * Shared options for AutomatedTabTask between the define-time and the runtime.
+ */
+export interface AutomatedTabTaskSharedOptions {
     /**
      * If the task is memorable.
      * - true: Memorize by url and all options
@@ -64,6 +67,16 @@ export interface AutomatedTabTaskRuntimeOptions extends AutomatedTabTaskSharedOp
      * This task is important, need to start now without queue.
      */
     important: boolean
+    /**
+     * Instead of start a new tab, run the script at the existing tab.
+     */
+    runAtTabID: number
+    /**
+     * Use with runAtTabID, tell AutomatedTabTask if you need to redirect the tab to the url provided
+     *
+     * defaults: false
+     */
+    needRedirect: boolean
 }
 /**
  * Open a new page in the background, execute some task, then close it automatically.
@@ -90,7 +103,7 @@ export interface AutomatedTabTaskRuntimeOptions extends AutomatedTabTaskSharedOp
  * @param taskImplements - All tasks that background page can call.
  * @param options - Options
  */
-export function AutomatedTabTask<T extends Record<string, (...args: any[]) => Promise<any>>>(
+export function AutomatedTabTask<T extends Record<string, (...args: any[]) => PromiseLike<any>>>(
     taskImplements: T,
     options: Partial<AutomatedTabTaskDefineTimeOptions> = {},
 ) {
@@ -172,13 +185,30 @@ export function AutomatedTabTask<T extends Record<string, (...args: any[]) => Pr
             pinned: boolean,
             autoClose: boolean,
             active: boolean,
+            runAtTabID: number | undefined,
+            needRedirect: boolean,
             args: any[],
         ) {
-            const withoutLock = important || !autoClose || active
+            /**
+             * does it need a lock to avoid too many open at the same time?
+             */
+            const withoutLock = important || autoClose === false || active || runAtTabID
             if (!withoutLock) await lock.lock(timeout)
-            // Create a new tab
-            const tab = await browser.tabs.create({ active, pinned, url })
-            const tabId = tab.id!
+
+            async function getTabOrCreate(openInCurrentTab: number | undefined) {
+                if (openInCurrentTab) {
+                    if (needRedirect) {
+                        // TODO: read the api
+                        browser.tabs.executeScript(tabId, { code: 'location.href = ' + url })
+                    }
+                    return openInCurrentTab
+                }
+                // Create a new tab
+                const tab = await browser.tabs.create({ active, pinned, url })
+                return tab.id!
+            }
+            const tabId = await getTabOrCreate(runAtTabID)
+
             // Wait for the tab register
             while (readyMap[tabId] !== true) await sleep(50)
 
@@ -189,8 +219,8 @@ export function AutomatedTabTask<T extends Record<string, (...args: any[]) => Pr
                 return await timeoutFn(task, timeout)
             } finally {
                 if (!withoutLock) lock.unlock()
-                autoClose && browser.tabs.remove(tabId)
                 delete readyMap[tabId]
+                autoClose && browser.tabs.remove(tabId)
             }
         }
         const memoRunTask = memorize(runTask, { ttl: memorizeTTL })
@@ -198,14 +228,15 @@ export function AutomatedTabTask<T extends Record<string, (...args: any[]) => Pr
             /** URL you want to execute the task ok */ url: string,
             options: Partial<AutomatedTabTaskRuntimeOptions> = {},
         ) => {
-            const { memorable, timeout, important, autoClose, pinned, active } = {
+            const { memorable, timeout, important, autoClose, pinned, active, runAtTabID, needRedirect } = {
                 ...({
                     memorable: defaultMemorable,
                     important: false,
                     timeout: defaultTimeout,
-                    autoClose: defaultAutoClose,
+                    autoClose: typeof options.runAtTabID === 'number' ? false : defaultAutoClose,
                     pinned: defaultPinned,
                     active: defaultActive,
+                    needRedirect: false,
                 } as AutomatedTabTaskRuntimeOptions),
                 ...options,
             }
@@ -220,6 +251,8 @@ export function AutomatedTabTask<T extends Record<string, (...args: any[]) => Pr
                         pinned,
                         autoClose,
                         active,
+                        runAtTabID,
+                        needRedirect,
                         args,
                     )
                 }

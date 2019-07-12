@@ -9,5 +9,5 @@ This virtualNode always point to the first node in the LiveSelector
 <b>Signature:</b>
 
 ```typescript
-readonly firstVirtualNode: RequireElement<T, DomProxy<ElementLikeT<T>, DomProxyBefore, DomProxyAfter>>;
+readonly firstVirtualNode: T extends Node ? DomProxy<T, Before, After> : never;
 ```

@@ -16,9 +16,9 @@ export function GetContext(): Contexts {
     if (typeof browser !== 'undefined') {
         if (location.protocol.match('-extension')) {
             if (
-                browser.extension &&
-                browser.extension.getBackgroundPage &&
-                browser.extension.getBackgroundPage().location.href === location.href
+                browser.extension && browser.extension.getBackgroundPage
+                    ? browser.extension.getBackgroundPage().location.href === location.href
+                    : ['generated', 'background', 'page', '.html'].every(x => location.pathname.match(x))
             )
                 return 'background'
             return 'options'
@@ -35,6 +35,11 @@ export function GetContext(): Contexts {
  * @param name - name to throw
  */
 export function OnlyRunInContext(context: Contexts | Contexts[], name: string): void
+/**
+ * Make sure this file only run in wanted context
+ * @param context - Wanted context or contexts
+ * @param throws - set to false, OnlyRunInContext will not throws but return a boolean
+ */
 export function OnlyRunInContext(context: Contexts | Contexts[], throws: false): boolean
 export function OnlyRunInContext(context: Contexts | Contexts[], name: string | false) {
     const ctx = GetContext()

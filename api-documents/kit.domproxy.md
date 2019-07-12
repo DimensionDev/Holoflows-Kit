@@ -9,7 +9,7 @@ A DomProxy object
 <b>Signature:</b>
 
 ```typescript
-export interface DomProxy<ProxiedElement extends Element = HTMLElement, Before extends Element = HTMLSpanElement, After extends Element = HTMLSpanElement> 
+export interface DomProxy<ProxiedElement extends Node = HTMLElement, Before extends Element = HTMLSpanElement, After extends Element = HTMLSpanElement> 
 ```
 
 ## Properties
@@ -23,12 +23,13 @@ export interface DomProxy<ProxiedElement extends Element = HTMLElement, Before e
 |  [current](./kit.domproxy.current.md) | <code>ProxiedElement</code> | A proxy that always point to <code>realCurrent</code>, and if <code>realCurrent</code> changes, all action will be forwarded to new <code>realCurrent</code> |
 |  [observer](./kit.domproxy.observer.md) | <code>{</code><br/><code>        readonly observer: MutationObserver &#124; null;</code><br/><code>        callback: MutationCallback &#124; undefined;</code><br/><code>        init: MutationObserverInit &#124; undefined;</code><br/><code>    }</code> | Observer for the current node. You need to set callback and init to activate it. |
 |  [realCurrent](./kit.domproxy.realcurrent.md) | <code>ProxiedElement &#124; null</code> | The real current of the <code>current</code> |
-|  [weakAfter](./kit.domproxy.weakafter.md) | <code>After &#124; null</code> | Returns the <code>after</code> element without implicitly create it. |
-|  [weakBefore](./kit.domproxy.weakbefore.md) | <code>Before &#124; null</code> | Returns the <code>before</code> element without implicitly create it. |
 
 ## Methods
 
 |  Method | Description |
 |  --- | --- |
 |  [destroy()](./kit.domproxy.destroy.md) | Destroy the DomProxy |
+|  [has(type)](./kit.domproxy.has.md) | Get weak reference to <code>before</code> node |
+|  [has(type)](./kit.domproxy.has_1.md) | Get weak reference to <code>after</code> node |
+|  [has(type)](./kit.domproxy.has_2.md) | Get weak reference to <code>beforeShadow</code> or <code>afterShadow</code> node |
 

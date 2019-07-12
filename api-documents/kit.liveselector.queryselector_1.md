@@ -7,7 +7,7 @@
 <b>Signature:</b>
 
 ```typescript
-querySelector<K extends keyof SVGElementTagNameMap>(selector: K): LiveSelector<SVGElementTagNameMap[K]>;
+querySelector<K extends keyof SVGElementTagNameMap>(selector: K): LiveSelector<SVGElementTagNameMap[K], SingleMode>;
 ```
 
 ## Parameters
@@ -18,5 +18,5 @@ querySelector<K extends keyof SVGElementTagNameMap>(selector: K): LiveSelector<S
 
 <b>Returns:</b>
 
-`LiveSelector<SVGElementTagNameMap[K]>`
+`LiveSelector<SVGElementTagNameMap[K], SingleMode>`
 

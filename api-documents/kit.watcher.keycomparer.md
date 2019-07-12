@@ -2,24 +2,12 @@
 
 [Home](./index.md) &gt; [@holoflows/kit](./kit.md) &gt; [Watcher](./kit.watcher.md) &gt; [keyComparer](./kit.watcher.keycomparer.md)
 
-## Watcher.keyComparer() method
+## Watcher.keyComparer property
 
 Compare between `key` and `key`<!-- -->, in case of you don't want the default behavior
 
 <b>Signature:</b>
 
 ```typescript
-protected keyComparer(a: unknown, b: unknown): boolean;
+protected keyComparer: (a: unknown, b: unknown) => boolean;
 ```
-
-## Parameters
-
-|  Parameter | Type | Description |
-|  --- | --- | --- |
-|  a | <code>unknown</code> |  |
-|  b | <code>unknown</code> |  |
-
-<b>Returns:</b>
-
-`boolean`
-

@@ -9,7 +9,7 @@ Replace the whole array.
 <b>Signature:</b>
 
 ```typescript
-replace<NextType>(f: (arr: T[]) => NextType[]): LiveSelector<NextType>;
+replace<NextType>(f: (arr: T[]) => NextType[]): LiveSelector<NextType, SingleMode>;
 ```
 
 ## Parameters
@@ -20,7 +20,7 @@ replace<NextType>(f: (arr: T[]) => NextType[]): LiveSelector<NextType>;
 
 <b>Returns:</b>
 
-`LiveSelector<NextType>`
+`LiveSelector<NextType, SingleMode>`
 
 ## Example
 

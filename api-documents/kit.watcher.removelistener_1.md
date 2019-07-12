@@ -7,15 +7,15 @@
 <b>Signature:</b>
 
 ```typescript
-removeListener(event: 'onChangeFull', fn: EventCallback<T[]>): this;
+removeListener(event: 'onChange', fn: EventCallback<OnChangeEvent<T>>): this;
 ```
 
 ## Parameters
 
 |  Parameter | Type | Description |
 |  --- | --- | --- |
-|  event | <code>'onChangeFull'</code> |  |
-|  fn | <code>EventCallback&lt;T[]&gt;</code> |  |
+|  event | <code>'onChange'</code> |  |
+|  fn | <code>EventCallback&lt;OnChangeEvent&lt;T&gt;&gt;</code> |  |
 
 <b>Returns:</b>
 
