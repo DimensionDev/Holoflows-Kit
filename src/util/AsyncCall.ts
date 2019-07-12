@@ -176,19 +176,27 @@ export function AsyncCall<OtherSideImplementedFunctions = {}>(
         ...options,
     }
     const message = options.messageChannel || new MessageCenter()
-    const { methodNotFound: banMethodNotFound, noUndefined: noUndefinedKeeping, unknownMessage: banUnknownMessage } =
+    const {
+        methodNotFound: banMethodNotFound = false,
+        noUndefined: noUndefinedKeeping = false,
+        unknownMessage: banUnknownMessage = false,
+    } =
         typeof strict === 'boolean'
             ? strict
                 ? { methodNotFound: true, unknownMessage: true, noUndefined: true }
-                : { methodNotFound: false, noUndefined: false, unknownMessage: false }
+                : { methodNotFound: false, unknownMessage: false, noUndefined: false }
             : strict
-    const { beCalled: logBeCalled, localError: logLocalError, remoteError: logRemoteError, type: logType } =
+    const {
+        beCalled: logBeCalled = true,
+        localError: logLocalError = true,
+        remoteError: logRemoteError = true,
+        type: logType = 'pretty',
+    } =
         typeof log === 'boolean'
             ? log
                 ? ({ beCalled: true, localError: true, remoteError: true, type: 'pretty' } as const)
-                : ({ beCalled: false, localError: false, remoteError: true, type: 'basic' } as const)
+                : ({ beCalled: false, localError: false, remoteError: false, type: 'basic' } as const)
             : log
-    const CALL = `${key}`
     type PromiseParam = Parameters<(ConstructorParameters<typeof Promise>)[0]>
     const requestContext = new Map<string | number, { f: PromiseParam; stack: string }>()
     async function onRequest(data: Request): Promise<Response | undefined> {
@@ -196,7 +204,7 @@ export function AsyncCall<OtherSideImplementedFunctions = {}>(
         try {
             const executor = implementation[data.method as keyof typeof implementation]
             if (!executor) {
-                if (banMethodNotFound) {
+                if (!banMethodNotFound) {
                     if (logLocalError) console.debug('Receive remote call, but not implemented.', key, data)
                     return
                 } else return ErrorResponse.MethodNotFound(data.id)
@@ -226,7 +234,6 @@ export function AsyncCall<OtherSideImplementedFunctions = {}>(
             e.stack = frameworkStack
                 .split('\n')
                 .reduce((stack, fstack) => stack.replace(fstack + '\n', ''), e.stack || '')
-            //.replace(/\n.+\n.+$/, '')
             if (logLocalError) console.error(e)
             let name = 'Error'
             name = e.constructor.name
@@ -266,14 +273,15 @@ export function AsyncCall<OtherSideImplementedFunctions = {}>(
                     errorType,
                     errorMessage,
                     errorCode,
-                    '\n' + remoteErrorStack + '\n    at AsyncCall (async) \n' + localErrorStack,
+                    // ? We use \u0430 which looks like "a" to prevent browser think "at AsyncCall" is a real stack
+                    remoteErrorStack + '\n    \u0430t AsyncCall (rpc) \n' + localErrorStack,
                 ),
             )
         } else {
             resolve(data.result)
         }
     }
-    message.on(CALL, async _ => {
+    message.on(key, async _ => {
         let data: unknown
         let result: Response | undefined = undefined
         try {
@@ -301,12 +309,12 @@ export function AsyncCall<OtherSideImplementedFunctions = {}>(
             if (Array.isArray(res)) {
                 const reply = res.map(x => x).filter(x => x!.id !== undefined)
                 if (reply.length === 0) return
-                message.send(CALL, await serializer.serialization(reply))
+                message.send(key, await serializer.serialization(reply))
             } else {
                 if (!res) return
                 // ? This is a Notification, we MUST not return it.
                 if (res.id === undefined) return
-                message.send(CALL, await serializer.serialization(res))
+                message.send(key, await serializer.serialization(res))
             }
         }
     })
@@ -326,7 +334,7 @@ export function AsyncCall<OtherSideImplementedFunctions = {}>(
                                 ? new Request(id, method, params[0])
                                 : new Request(id, method, params)
                         serializer.serialization(req).then(data => {
-                            message.send(CALL, data)
+                            message.send(key, data)
                             requestContext.set(id, {
                                 f: [resolve, reject],
                                 stack,
@@ -364,9 +372,9 @@ class SuccessResponse {
     readonly jsonrpc = '2.0'
     // ? This is not in the spec !
     resultIsUndefined?: boolean
-    constructor(public id: ID, public result: any, strictMode: boolean) {
+    constructor(public id: ID, public result: any, noUndefinedKeeping: boolean) {
         const obj = { id, jsonrpc, result: result || null } as this
-        if (!strictMode && result === undefined) obj.resultIsUndefined = true
+        if (!noUndefinedKeeping && result === undefined) obj.resultIsUndefined = true
         return obj
     }
 }
