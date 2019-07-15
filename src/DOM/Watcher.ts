@@ -785,16 +785,17 @@ function warning(_: Partial<WarningOptions> = {}) {
     const [_0, _1, _2, ...lines] = (new Error().stack || '').split('\n')
     const stack = lines.join('\n')
     let warned = 0
-    return {
+    const obj = {
         ignored: false,
         stack,
         warn(f = fn) {
-            if (this.ignored) return
+            if (obj.ignored) return
             if (warned && once) return
             if (typeof once === 'number' && warned <= once) return
             warned++
             f(stack)
         },
     }
+    return obj
 }
 //#endregion
