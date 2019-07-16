@@ -174,8 +174,8 @@ export abstract class Watcher<T, Before extends Element, After extends Element, 
             // Or return a promise to wait the value
             return new Promise<ResultOf<SingleMode, TResult1>>((resolve, reject) => {
                 starter.bind(this)(this)
-                const f: EventCallback<OnIterationEvent<T>> = e => {
-                    const nodes = e.detail.values.current
+                const f: EventCallback<OnIterationEvent<T>> = v => {
+                    const nodes = v.values.current
                     if (this.singleMode && nodes.length >= 1) {
                         const returns = map(nodes[0] as ResultOf<SingleMode, T>)
                         resolve(Promise.resolve(returns as any))
@@ -530,7 +530,7 @@ export abstract class Watcher<T, Before extends Element, After extends Element, 
     protected emit(event: 'onRemove', data: OnAddOrRemoveEvent<T>): void
     protected emit(event: 'onAdd', data: OnAddOrRemoveEvent<T>): void
     protected emit(event: string, data: any) {
-        return this.eventEmitter.emit(event, { data })
+        return this.eventEmitter.emit(event, data)
     }
     //#endregion
     //#region firstVirtualNode
@@ -715,7 +715,7 @@ type RemoveCallback<T> = (oldNode: T) => void
 type TargetChangedCallback<T> = (newNode: T, oldNode: T) => void
 /** Callback on  */
 type MutationCallback<T> = (node: T, mutations: MutationRecord[]) => void
-type EventCallback<T> = (fn: CustomEvent<T>) => void
+type EventCallback<T> = (fn: T) => void
 //#endregion
 //#region useForeach types and helpers
 /**
