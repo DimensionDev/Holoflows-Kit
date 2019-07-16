@@ -4,6 +4,8 @@
 
 ```ts
 
+import mitt from 'mitt';
+
 // @public
 export function AsyncCall<OtherSideImplementedFunctions = {}>(implementation?: Record<string, (...args: any[]) => any>, options?: Partial<AsyncCallOptions>): OtherSideImplementedFunctions;
 
@@ -147,7 +149,7 @@ export class LiveSelector<T, SingleMode extends boolean = false> {
     }
 
 // @public
-export class MessageCenter<ITypedMessages> extends EventTarget {
+export class MessageCenter<ITypedMessages> {
     constructor(instanceKey?: string);
     emit<Key extends keyof ITypedMessages>(key: Key, data: ITypedMessages[Key], alsoSendToDocument?: boolean): void;
     on<Key extends keyof ITypedMessages>(event: Key, handler: (data: ITypedMessages[Key]) => void): void;
@@ -226,7 +228,7 @@ export abstract class Watcher<T, Before extends Element, After extends Element, 
     abstract enableSingleMode(): Watcher<T, Before, After, true>;
     // (undocumented)
     protected _enableSingleMode(): this;
-    protected readonly eventEmitter: EventTarget;
+    protected readonly eventEmitter: mitt.Emitter;
     protected findNodeFromListByKey: (list: readonly T[], keys: readonly unknown[]) => (key: unknown) => T | null;
     readonly firstVirtualNode: T extends Node ? DomProxy<T, Before, After> : never;
     protected _firstVirtualNode: DomProxy<any, Before, After>;
@@ -270,11 +272,7 @@ export abstract class Watcher<T, Before extends Element, After extends Element, 
     protected _warning_forget_watch_: {
         warn(f?: (stack: string) => void): void;
         ignored: boolean;
-        stack?: undefined;
-    } | {
-        ignored: boolean;
         stack: string;
-        warn(f?: (stack: string) => void): void;
     };
     }
 

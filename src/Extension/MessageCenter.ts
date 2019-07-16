@@ -1,3 +1,4 @@
+import mitt from 'mitt'
 type InternalMessageType = {
     key: Key
     data: any
@@ -11,7 +12,8 @@ const noop = () => {}
 /**
  * Send and receive messages in different contexts.
  */
-export class MessageCenter<ITypedMessages> extends EventTarget {
+export class MessageCenter<ITypedMessages> {
+    private eventEmitter = new mitt()
     private listener = (request: InternalMessageType | Event) => {
         let { key, data, instanceKey } = (request as CustomEvent).detail || request
         // Message is not for us
@@ -25,14 +27,13 @@ export class MessageCenter<ITypedMessages> extends EventTarget {
                 data,
             )
         }
-        this.dispatchEvent(new CustomEvent(key, { detail: data }))
+        this.eventEmitter.emit(key, data)
     }
     /**
      * @param instanceKey - Use this instanceKey to distinguish your messages and others.
      * This option cannot make your message safe!
      */
     constructor(private instanceKey = '') {
-        super()
         if (typeof browser !== 'undefined' && browser.runtime && browser.runtime.onMessage) {
             // Fired when a message is sent from either an extension process (by runtime.sendMessage)
             // or a content script (by tabs.sendMessage).
@@ -48,7 +49,7 @@ export class MessageCenter<ITypedMessages> extends EventTarget {
      * @param handler - Handler of the event
      */
     public on<Key extends keyof ITypedMessages>(event: Key, handler: (data: ITypedMessages[Key]) => void): void {
-        this.addEventListener(event as string, (e: CustomEvent) => handler(e.detail))
+        this.eventEmitter.on(event as string, handler)
     }
 
     /**

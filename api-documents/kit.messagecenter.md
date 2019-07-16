@@ -9,7 +9,7 @@ Send and receive messages in different contexts.
 <b>Signature:</b>
 
 ```typescript
-export declare class MessageCenter<ITypedMessages> extends EventTarget 
+export declare class MessageCenter<ITypedMessages> 
 ```
 
 ## Constructors
