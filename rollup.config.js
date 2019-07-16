@@ -23,7 +23,9 @@ const config = {
         commonjs({
             extensions: ['.js', '.ts', '.tsx'],
             exclude: ['node_modules/lodash-es/'],
-            namedExports: {},
+            namedExports: {
+                events: ['EventEmitter'],
+            },
         }),
     ],
 }
