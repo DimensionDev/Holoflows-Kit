@@ -23,6 +23,7 @@ export class ValueRef<T> {
     /** Set current value */
     set value(newVal: T) {
         const oldVal = this._value
+        if (newVal === oldVal) return
         this._value = newVal
         for (const fn of this.watcher.keys()) {
             try {

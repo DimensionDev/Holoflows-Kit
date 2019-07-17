@@ -25,6 +25,7 @@ describe('ValueRef', () => {
         const ref = new ValueRef(symb)
         ref.addListener(() => done('bad call'))
         ref.value = ref.value
+        done()
     })
     it('remove the listener', done => {
         const ref = new ValueRef(symb)
