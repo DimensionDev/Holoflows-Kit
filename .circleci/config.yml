@@ -6,16 +6,8 @@ version: 2
 jobs:
     build:
         docker:
-            # specify the version you desire here
             - image: circleci/node:11.0
-
-            # Specify service dependencies here if necessary
-            # CircleCI maintains a library of pre-built images
-            # documented at https://circleci.com/docs/2.0/circleci-images/
-            # - image: circleci/mongo:3.4.4
-
         working_directory: ~/repo
-
         steps:
             # build holoflows-kit
             - checkout
@@ -24,14 +16,13 @@ jobs:
                       - build-cache
             - restore_cache:
                   keys:
-                      - v1-dependencies-{{ checksum "package.json" }}
-                      # fallback to using the latest cache if no exact match is found
+                      - v1-dependencies-{{ checksum "yarn.lock" }}
                       - v1-dependencies-
             - run: yarn install
             - save_cache:
                   paths:
                       - node_modules
-                  key: v1-dependencies-{{ checksum "package.json" }}
+                  key: v1-dependencies-{{ checksum "yarn.lock" }}
             - run: yarn build
             - save_cache:
                   paths:
@@ -48,3 +39,20 @@ jobs:
             - store_artifacts:
                   path: esmodule.zip
                   destination: /esmodule.zip
+    test:
+        docker:
+            - image: circleci/node:11.0
+        working_directory: ~/repo
+        steps:
+            - checkout
+            - restore_cache:
+                  keys:
+                      - v1-dependencies-{{ checksum "yarn.lock" }}
+                      - v1-dependencies-
+            - run: yarn test
+workflows:
+    version: 2
+    main:
+        jobs:
+            - build
+            - test
