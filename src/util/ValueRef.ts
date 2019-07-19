@@ -25,7 +25,7 @@ export class ValueRef<T> {
         const oldVal = this._value
         if (newVal === oldVal) return
         this._value = newVal
-        for (const fn of this.watcher.keys()) {
+        for (const fn of this.watcher) {
             try {
                 fn(newVal, oldVal)
             } catch (e) {
@@ -34,7 +34,7 @@ export class ValueRef<T> {
         }
     }
     /** All watchers */
-    private watcher = new Map<(newVal: T, oldVal: T) => void, boolean>()
+    private watcher = new Set<(newVal: T, oldVal: T) => void>()
     constructor(private _value: T) {}
     /**
      * Add a listener. This will return a remover.
@@ -44,7 +44,7 @@ export class ValueRef<T> {
      * ```
      */
     addListener(fn: (newVal: T, oldVal: T) => void) {
-        this.watcher.set(fn, true)
+        this.watcher.add(fn)
         return () => this.removeListener(fn)
     }
     /**
@@ -57,6 +57,6 @@ export class ValueRef<T> {
      * Remove all listeners
      */
     removeAllListener() {
-        this.watcher = new Map()
+        this.watcher = new Set()
     }
 }
