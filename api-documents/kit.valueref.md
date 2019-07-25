@@ -39,7 +39,7 @@ export declare class ValueRef<T>
 const ref = new ValueRef(64)
 function useRef() {
     const [state, setState] = React.useState(ref.value)
-    React.useEffect(() => ref.addListener(setState))
+    React.useEffect(() => ref.addListener(e => setState(e)))
     return state
 }
 ref.value = 42 // useRef will receive the new value

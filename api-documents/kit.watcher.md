@@ -42,7 +42,7 @@ export declare abstract class Watcher<T, Before extends Element, After extends E
 |  [singleModeCallback](./kit.watcher.singlemodecallback.md) |  | <code>useForeachReturns&lt;T&gt;</code> | Callback for single mode |
 |  [singleModeHasLastValue](./kit.watcher.singlemodehaslastvalue.md) |  | <code>boolean</code> | Does it has a last iteration value in single mode? |
 |  [singleModeLastValue](./kit.watcher.singlemodelastvalue.md) |  | <code>T</code> | Last iteration value for single mode |
-|  [useForeachFn](./kit.watcher.useforeachfn.md) |  | <code>unknown</code> | its type is too complicate to analyse by TypeScript, recover its type after TypeScript can type narrow <code>this</code> |
+|  [useForeachFn](./kit.watcher.useforeachfn.md) |  | <code>Parameters&lt;Watcher&lt;T, any, any, any&gt;['useForeach']&gt;[0]</code> | Saved useForeach |
 |  [valueComparer](./kit.watcher.valuecomparer.md) |  | <code>(a: T, b: T) =&gt; boolean</code> | Compare between <code>value</code> and <code>value</code>, in case of you don't want the default behavior |
 
 ## Methods
@@ -72,6 +72,5 @@ export declare abstract class Watcher<T, Before extends Element, After extends E
 |  [startWatch(args)](./kit.watcher.startwatch.md) |  | Let the watcher start to watching |
 |  [stopWatch(args)](./kit.watcher.stopwatch.md) |  | Stop the watcher |
 |  [then(onfulfilled, onrejected, options, starter)](./kit.watcher.then.md) |  | Start the watcher, once it emitted data, stop watching. |
-|  [useForeach(forEachElement)](./kit.watcher.useforeach.md) |  | Just like React hooks. Provide callbacks for each node changes. |
-|  [useForeach(forEachValue)](./kit.watcher.useforeach_1.md) |  | When T is not an Element, use this overload |
+|  [useForeach(forEach)](./kit.watcher.useforeach.md) |  | Just like React hooks. Provide callbacks for each node changes. |
 

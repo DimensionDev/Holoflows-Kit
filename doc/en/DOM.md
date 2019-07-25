@@ -31,8 +31,8 @@ function EuroToUSD(x: number) {
 }
 
 new MutationObserverWatcher(price, document.querySelector('#main'))
-    .useForeach(node => {
-        const addPrice = () => (node.after.innerText = '$' + EuroToUSD(parseInt(node.current.innerText)))
+    .useForeach((node, key, meta) => {
+        const addPrice = () => (meta.after.innerText = '$' + EuroToUSD(parseInt(node.innerText)))
         addPrice()
         return {
             onNodeMutation: addPrice,
@@ -104,16 +104,16 @@ Here is how we watch dom changing. If you have used React hooks, this is just li
 A complete `useForeach` call is like this:
 
 ```ts
-.useForeach((node, key, realNode) => {
-    // Code here, will be called **everytime** when a new element E comes into the list. Here are parameters:
-    node // A DomProxy (Yeah it's magic!)
-    node.before // A <span> that always point to the before of E
-    node.after // A <span> that always point to the after of E
-    node.current // Magic, it always points to E, even E has changed, it "reference" will be "update" (Not actually, see documentation of DomProxy)
+.useForeach((node, key, meta) => {
+    // Code here, will be called **every time** when a new element E comes into the list. Here are parameters:
+    node // A DomProxy, just like a DOM node (Yeah it's magic!)
+    meta.before // A <span> that always point to the before of E
+    meta.after // A <span> that always point to the after of E
+    meta.current // It is node(the first parameter), it always points to E, even E has changed, it "reference" will be "update" (Not actually, see documentation of DomProxy)
 
     key // Have you use React, Vue or Angular? When rendering lists, they will ask for you to provide a key to identify what is not changed.
 
-    realNode // Sometimes the magic of node.current will break. Or you really want to access the real dom. Then use it. Notice: it will not update automatically!
+    meta.realCurrent // Sometimes you want to access the real dom. Then use it.
 
     return {
         onRemove(old) {
@@ -126,7 +126,7 @@ A complete `useForeach` call is like this:
             // But here is change in the E
             // Like a new element is inserted into node.current
         },
-        onTargetChanged(oldNode, newNode) {
+        onTargetChanged(newNode, oldNode) {
             // If key is not changed, but E is changed.
             // Notice: node.current always points to the new node, so you may not need to handle this
         },

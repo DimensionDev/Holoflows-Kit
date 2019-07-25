@@ -9,14 +9,14 @@ Just like React hooks. Provide callbacks for each node changes.
 <b>Signature:</b>
 
 ```typescript
-useForeach(forEachElement: T extends Element ? (virtualNode: DomProxy<T & Node, Before, After>, key: unknown, realNode: Node) => useForeachReturns<T> : never): this;
+useForeach(forEach: (virtualNode: T, key: unknown, metadata: T extends Node ? DomProxy<T, Before, After> : unknown) => useForeachReturns<T>): this;
 ```
 
 ## Parameters
 
 |  Parameter | Type | Description |
 |  --- | --- | --- |
-|  forEachElement | <code>T extends Element ? (virtualNode: DomProxy&lt;T &amp; Node, Before, After&gt;, key: unknown, realNode: Node) =&gt; useForeachReturns&lt;T&gt; : never</code> |  |
+|  forEach | <code>(virtualNode: T, key: unknown, metadata: T extends Node ? DomProxy&lt;T, Before, After&gt; : unknown) =&gt; useForeachReturns&lt;T&gt;</code> |  |
 
 <b>Returns:</b>
 
@@ -43,7 +43,7 @@ Return value of `fn`
 
 ```
 // ? if your LiveSelector return Element
-watcher.useForeach((node, key, realNode) => {
+watcher.useForeach((node, key, meta) => {
     console.log(node.innerHTML) // when a new key is found
     return {
         onRemove() { console.log('The node is gone!') },
@@ -51,7 +51,6 @@ watcher.useForeach((node, key, realNode) => {
             console.log('Key is the same, but the node has changed!')
             console.log(node.innerHTML) // `node` is still the latest node!
             // appendChild, addEventListener will not lost too!
-            // ! But `realNode` is still the original node. Be careful with it.
         },
         onNodeMutation() {
             console.log('Key and node are both the same, but node has been mutated.')

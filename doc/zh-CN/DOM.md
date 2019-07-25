@@ -27,8 +27,8 @@ function EuroToUSD(x: number) {
 }
 
 new MutationObserverWatcher(price, document.querySelector('#main'))
-    .useForeach(node => {
-        const addPrice = () => (node.after.innerText = '$' + EuroToUSD(parseInt(node.current.innerText)))
+    .useForeach((node, key, meta) => {
+        const addPrice = () => (meta.after.innerText = '$' + EuroToUSD(parseInt(node.innerText)))
         addPrice()
         return {
             onNodeMutation: addPrice,
@@ -99,16 +99,16 @@ Watcher 有以下几种：
 简单的说，一个完整的 `useForeach` 调用是这样的
 
 ```ts
-.useForeach((node, key, realNode) => {
+.useForeach((node, key, meta) => {
     // 这里的代码会在 **每次** 有一个新的 元素 E 进入列表的时候调用。以下是传入的参数：
     node // 是一种叫 DomProxy 的对象
-    node.before // 是一个 <span> 始终指向 E 的前面
-    node.after // 是一个 <span> 始终指向 E 的后面
-    node.current // 是魔法，它始终指向 E，就算 E 换了，它的引用也会自动"更新"（事实并非如此，请参见 DomProxy 的文档）
+    meta.before // 是一个 <span> 始终指向 E 的前面
+    meta.after // 是一个 <span> 始终指向 E 的后面
+    meta.current // 它就是 node（第一个参数），它始终指向 E，就算 E 换了，它的引用也会自动"更新"（事实并非如此，请参见 DomProxy 的文档）
 
     key // 用过 React, Vue 或者 Angular 吗？在渲染列表的时候它们都会要求你提供 key 以保证复用。这就和那个差不多。
 
-    realNode // 有时候 node.current 的魔法会失灵，或者奇奇怪怪的故障，或者总之你就是想访问真实的 DOM 元素，那就用它吧。不过它不会自动更新！
+    meta.realCurrent // 有时候你就是想访问真实的 DOM 元素，那就用它吧。
 
     return {
         onRemove(old) {
@@ -121,7 +121,7 @@ Watcher 有以下几种：
             // 只是 E 内部发生了变化的话，这里会被通知到
             // 比如 node.current 里面新插入了一个元素
         },
-        onTargetChanged(oldNode, newNode) {
+        onTargetChanged(newNode, oldNode) {
             // 如果 key 没变，但是 key 指向的 E 变了的话
             // oldNode 是变化前指向的元素，newNode 是变化后指向的新元素
             // 注意，node.current 始终指向 newNode，所以很多事情你不必手动处理

@@ -197,8 +197,7 @@ export class ValueRef<T> {
 // 
 // @public
 export abstract class Watcher<T, Before extends Element, After extends Element, SingleMode extends boolean> implements PromiseLike<ResultOf<SingleMode, T>> {
-    constructor(
-    liveSelector: LiveSelector<T, SingleMode>);
+    constructor(liveSelector: LiveSelector<T, SingleMode>);
     // Warning: (ae-forgotten-export) The symbol "EventCallback" needs to be exported by the entry point index.d.ts
     // Warning: (ae-forgotten-export) The symbol "OnIterationEvent" needs to be exported by the entry point index.d.ts
     // 
@@ -265,9 +264,8 @@ export abstract class Watcher<T, Before extends Element, After extends Element, 
         minimalResultsRequired?: number;
     }, starter?: (this: this, self: this) => void): Promise<TResult1 | TResult2>;
     // Warning: (ae-forgotten-export) The symbol "useForeachReturns" needs to be exported by the entry point index.d.ts
-    useForeach(forEachElement: T extends Element ? (virtualNode: DomProxy<T & Node, Before, After>, key: unknown, realNode: Node) => useForeachReturns<T> : never): this;
-    useForeach(forEachValue: T extends Element ? never : (node: T, key: unknown) => useForeachReturns<T>): this;
-    protected useForeachFn?: unknown;
+    useForeach(forEach: (virtualNode: T, key: unknown, metadata: T extends Node ? DomProxy<T, Before, After> : unknown) => useForeachReturns<T>): this;
+    protected useForeachFn?: Parameters<Watcher<T, any, any, any>['useForeach']>[0];
     protected valueComparer: (a: T, b: T) => boolean;
     protected _warning_forget_watch_: {
         warn(f?: (stack: string) => void): void;
