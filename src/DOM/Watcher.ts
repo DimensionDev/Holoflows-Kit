@@ -24,12 +24,13 @@ import { isNil } from 'lodash-es'
  */
 export abstract class Watcher<T, Before extends Element, After extends Element, SingleMode extends boolean>
     implements PromiseLike<ResultOf<SingleMode, T>> {
-    constructor(
-        /**
-         * The liveSelector that this object holds.
-         */
-        protected readonly liveSelector: LiveSelector<T, SingleMode>,
-    ) {}
+    /**
+     * The liveSelector that this object holds.
+     */
+    protected readonly liveSelector: LiveSelector<T, SingleMode>
+    constructor(liveSelector: LiveSelector<T, SingleMode>) {
+        this.liveSelector = liveSelector.clone()
+    }
     //#region How to start and stop the watcher
     /** Let the watcher start to watching */
     public startWatch(...args: any[]): this {
