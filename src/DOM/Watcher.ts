@@ -48,11 +48,7 @@ export abstract class Watcher<T, Before extends Element, After extends Element, 
     //#endregion
     //#region useForeach
     /** Saved useForeach */
-    /**
-     * its type is too complicate to analyse by TypeScript,
-     * recover its type after TypeScript can type narrow `this`
-     */
-    protected useForeachFn?: unknown
+    protected useForeachFn?: Parameters<Watcher<T, any, any, any>['useForeach']>[0]
     /**
      * Just like React hooks. Provide callbacks for each node changes.
      *
@@ -77,7 +73,7 @@ export abstract class Watcher<T, Before extends Element, After extends Element, 
      * @example
      * ```
      * // ? if your LiveSelector return Element
-     * watcher.useForeach((node, key, realNode) => {
+     * watcher.useForeach((node, key, meta) => {
      *     console.log(node.innerHTML) // when a new key is found
      *     return {
      *         onRemove() { console.log('The node is gone!') },
@@ -85,7 +81,6 @@ export abstract class Watcher<T, Before extends Element, After extends Element, 
      *             console.log('Key is the same, but the node has changed!')
      *             console.log(node.innerHTML) // `node` is still the latest node!
      *             // appendChild, addEventListener will not lost too!
-     *             // ! But `realNode` is still the original node. Be careful with it.
      *         },
      *         onNodeMutation() {
      *             console.log('Key and node are both the same, but node has been mutated.')
@@ -108,18 +103,12 @@ export abstract class Watcher<T, Before extends Element, After extends Element, 
      * ```
      */
     public useForeach(
-        forEachElement: T extends Element
-            ? (virtualNode: DomProxy<T & Node, Before, After>, key: unknown, realNode: Node) => useForeachReturns<T>
-            : never,
-    ): this
-    /**
-     * When T is not an Element, use this overload
-     */
-    public useForeach(forEachValue: T extends Element ? never : (node: T, key: unknown) => useForeachReturns<T>): this
-    public useForeach() {
-        const forEach = arguments[0]
-        if (forEach === undefined) return this
-        if (typeof forEach !== 'function') throw new TypeError('useForeach must be a function.')
+        forEach: (
+            virtualNode: T,
+            key: unknown,
+            metadata: T extends Node ? DomProxy<T, Before, After> : unknown,
+        ) => useForeachReturns<T>,
+    ): this {
         if (this.useForeachFn) {
             console.warn("You can't chain useForeach currently. The old one will be replaced.")
         }
@@ -264,16 +253,12 @@ export abstract class Watcher<T, Before extends Element, After extends Element, 
         {
             for (const newKey of newKeys) {
                 if (!this.useForeachFn) break
-                const node = findFromNew(newKey)
-                if (node instanceof Node) {
-                    const virtualNode = DomProxy<typeof node, Before, After>(this.domProxyOption)
-                    virtualNode.realCurrent = node
+                const value = findFromNew(newKey)!
+                if (value instanceof Node) {
+                    const virtualNode = DomProxy<typeof value, Before, After>(this.domProxyOption)
+                    virtualNode.realCurrent = value
                     // This step must be sync.
-                    const callbacks = (this.useForeachFn as useForeachFnWithNode<T, Before, After>)(
-                        virtualNode,
-                        newKey,
-                        node,
-                    )
+                    const callbacks = this.useForeachFn(virtualNode.current, newKey, virtualNode as any)
                     if (callbacks && typeof callbacks !== 'function' && 'onNodeMutation' in callbacks) {
                         virtualNode.observer.init = {
                             subtree: true,
@@ -281,12 +266,12 @@ export abstract class Watcher<T, Before extends Element, After extends Element, 
                             characterData: true,
                             attributes: true,
                         }
-                        virtualNode.observer.callback = m => callbacks.onNodeMutation!(node, m)
+                        virtualNode.observer.callback = m => callbacks.onNodeMutation!(value, m)
                     }
                     nextCallbackMap.set(newKey, callbacks)
                     nextVirtualNodesMap.set(newKey, virtualNode)
                 } else {
-                    const callbacks = (this.useForeachFn as useForeachFnWithoutNode<T>)(node!, newKey)
+                    const callbacks = this.useForeachFn(value, newKey, undefined as any)
                     applyUseForeachCallback(callbacks)('warn mutation')(this._warning_mutation_)
                     nextCallbackMap.set(newKey, callbacks)
                 }
@@ -426,17 +411,16 @@ export abstract class Watcher<T, Before extends Element, After extends Element, 
         // ? Case: value is new
         else if (!this.singleModeHasLastValue && firstValue) {
             if (isWatcherWithNode(this, firstValue)) {
-                const val = firstValue as T & Node
                 if (this.useForeachFn) {
-                    this.singleModeCallback = (this.useForeachFn as useForeachFnWithNode<T, Before, After>)(
+                    this.singleModeCallback = this.useForeachFn(
+                        this.firstVirtualNode.current,
+                        undefined,
                         this.firstVirtualNode,
-                        val,
-                        val,
                     )
                 }
             } else {
                 if (this.useForeachFn) {
-                    this.singleModeCallback = (this.useForeachFn as useForeachFnWithoutNode<T>)(firstValue, undefined)
+                    this.singleModeCallback = this.useForeachFn(firstValue, undefined, undefined as any)
                     applyUseForeachCallback(this.singleModeCallback)('warn mutation')(this._warning_mutation_)
                 }
             }
@@ -733,10 +717,9 @@ type useForeachReturns<T> =
       }
 
 type useForeachFnWithNode<T, Before extends Element, After extends Element> = {
-    (virtualNode: DomProxy<T & Node, Before, After>, key: unknown, realNode: Node): useForeachReturns<T>
-}
-type useForeachFnWithoutNode<T> = {
-    (node: T, key: unknown): useForeachReturns<T>
+    (virtualNode: T, key: unknown, metadata: T extends Node ? DomProxy<T, Before, After> : unknown): useForeachReturns<
+        T
+    >
 }
 
 function applyUseForeachCallback<T>(callback: useForeachReturns<T>) {
