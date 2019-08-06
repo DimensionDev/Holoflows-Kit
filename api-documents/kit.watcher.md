@@ -62,6 +62,7 @@ export declare abstract class Watcher<T, Before extends Element, After extends E
 |  [enableBatchMode()](./kit.watcher.enablebatchmode.md) |  | Dismiss the warning that let you enable single mode but the warning is false positive. |
 |  [enableSingleMode()](./kit.watcher.enablesinglemode.md) |  | Enable single mode. |
 |  [getVirtualNodeByKey(key)](./kit.watcher.getvirtualnodebykey.md) |  | Get virtual node by key. Virtual node will be unavailable if it is deleted |
+|  [omitWarningForForgetWatch()](./kit.watcher.omitwarningforforgetwatch.md) |  | If you're expecting Watcher may not be called, call this function, this will omit the warning. |
 |  [omitWarningForRepeatedKeys()](./kit.watcher.omitwarningforrepeatedkeys.md) |  | If you're expecting repeating keys, call this function, this will omit the warning. |
 |  [removeListener(event, fn)](./kit.watcher.removelistener.md) |  |  |
 |  [removeListener(event, fn)](./kit.watcher.removelistener_1.md) |  |  |

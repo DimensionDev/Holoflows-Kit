@@ -629,6 +629,13 @@ export abstract class Watcher<T, Before extends Element, After extends Element, 
     protected _warning_forget_watch_ = warning({
         fn: stack => console.warn('Did you forget to call `.startWatch()`?\n', stack),
     })
+    /**
+     * If you're expecting Watcher may not be called, call this function, this will omit the warning.
+     */
+    public omitWarningForForgetWatch() {
+        this._warning_forget_watch_.ignored = true
+        return this
+    }
     private _warning_repeated_keys = warning({ once: true })
     /**
      * If you're expecting repeating keys, call this function, this will omit the warning.

@@ -240,6 +240,7 @@ export abstract class Watcher<T, Before extends Element, After extends Element, 
     protected lastVirtualNodesMap: Map<unknown, DomProxy<any, Before, After>>;
     protected readonly liveSelector: LiveSelector<T, SingleMode>;
     protected mapNodeToKey: (node: T, index: number, arr: readonly T[]) => unknown;
+    omitWarningForForgetWatch(): this;
     omitWarningForRepeatedKeys(): this;
     // (undocumented)
     removeListener(event: 'onIteration', fn: EventCallback<OnIterationEvent<T>>): this;
