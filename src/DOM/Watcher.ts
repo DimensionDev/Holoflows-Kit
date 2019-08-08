@@ -149,7 +149,7 @@ export abstract class Watcher<T, Before extends Element, After extends Element, 
             } as Required<typeof options>),
             ...options,
         }
-        let done: (state: boolean, val: any) => void
+        let done: (state: boolean, val: any) => void = () => {}
         const then = async () => {
             if (minimalResultsRequired < 1)
                 throw new TypeError('Invalid minimalResultsRequired, must equal to or bigger than 1')
