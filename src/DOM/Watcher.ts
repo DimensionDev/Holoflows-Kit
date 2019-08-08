@@ -18,6 +18,7 @@ import intersectionWith from 'lodash-es/intersectionWith'
 import uniqWith from 'lodash-es/uniqWith'
 import { Deadline, requestIdleCallback } from '../util/requestIdleCallback'
 import { isNil } from 'lodash-es'
+import { timeout } from '../util/sleep'
 
 /**
  * Use LiveSelector to watch dom change
@@ -137,16 +138,18 @@ export abstract class Watcher<T, Before extends Element, After extends Element, 
     public then<TResult1 = ResultOf<SingleMode, T>, TResult2 = never>(
         onfulfilled?: ((value: ResultOf<SingleMode, T>) => TResult1 | PromiseLike<TResult1>) | null,
         onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | null,
-        options: { minimalResultsRequired?: number } = {},
+        options: { minimalResultsRequired?: number; timeout?: number } = {},
         starter: (this: this, self: this) => void = watcher => watcher.startWatch(),
     ): Promise<TResult1 | TResult2> {
-        const { minimalResultsRequired } = {
+        this._warning_forget_watch_.ignored = true
+        const { minimalResultsRequired, timeout: timeoutTime } = {
             ...({
                 minimalResultsRequired: 1,
+                timeout: Infinity,
             } as Required<typeof options>),
             ...options,
         }
-        const map = onfulfilled || (x => x)
+        let done: (state: boolean, val: any) => void
         const then = async () => {
             if (minimalResultsRequired < 1)
                 throw new TypeError('Invalid minimalResultsRequired, must equal to or bigger than 1')
@@ -156,29 +159,34 @@ export abstract class Watcher<T, Before extends Element, After extends Element, 
             const result = this.liveSelector.evaluateOnce()
             if (Array.isArray(result) && result.length >= minimalResultsRequired) {
                 // If we get the value now, return it
-                return result.map(v => map(v))
+                return result
             } else if (this.singleMode) {
                 // If in single mode, return the value now
                 return result
             }
             // Or return a promise to wait the value
             return new Promise<ResultOf<SingleMode, TResult1>>((resolve, reject) => {
+                done = (state, val) => {
+                    this.stopWatch()
+                    this.removeListener('onIteration', f)
+                    if (state) resolve(val)
+                    else reject(val)
+                }
                 starter.bind(this)(this)
-                const f: EventCallback<OnIterationEvent<T>> = v => {
+                const f = (v: OnIterationEvent<any>) => {
                     const nodes = v.values.current
                     if (this.singleMode && nodes.length >= 1) {
-                        const returns = map(nodes[0] as ResultOf<SingleMode, T>)
-                        resolve(Promise.resolve(returns as any))
+                        return done(true, nodes[0])
                     }
                     if (nodes.length < minimalResultsRequired) return
-                    this.stopWatch()
-                    Promise.all(nodes.map(map as any)).then(resolve as any, reject)
-                    this.removeListener('onIteration', f)
+                    return done(true, nodes)
                 }
                 this.addListener('onIteration', f)
             })
         }
-        return then().then(onfulfilled, onrejected)
+        const withTimeout = timeout(then(), timeoutTime)
+        withTimeout.finally(() => done(false, new Error('timeout')))
+        return withTimeout.then(onfulfilled, onrejected)
     }
     //#endregion
     //#region Multiple mode
@@ -722,12 +730,6 @@ type useForeachReturns<T> =
           /** This will not be called if T is not Node */
           onNodeMutation?: MutationCallback<T>
       }
-
-type useForeachFnWithNode<T, Before extends Element, After extends Element> = {
-    (virtualNode: T, key: unknown, metadata: T extends Node ? DomProxy<T, Before, After> : unknown): useForeachReturns<
-        T
-    >
-}
 
 function applyUseForeachCallback<T>(callback: useForeachReturns<T>) {
     const cb = callback as useForeachReturns<Node>

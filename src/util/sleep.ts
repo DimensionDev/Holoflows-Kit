@@ -1,5 +1,3 @@
-import { requestIdleCallback } from './requestIdleCallback'
-
 /**
  * Return a promise that resolved after `time` ms.
  * If `time` is `Infinity`, it will never resolve.
@@ -18,10 +16,15 @@ export const sleep = (time: number) =>
  *
  * @internal
  */
-export const timeout = <T>(promise: PromiseLike<T>, time: number, rejectReason?: string) =>
-    Number.isFinite(time)
-        ? Promise.race([
-              promise,
-              new Promise<T>((r, reject) => setTimeout(() => reject(new Error(rejectReason || 'timeout')), time)),
-          ])
-        : promise
+export const timeout = <T>(promise: PromiseLike<T>, time: number, rejectReason?: string): Promise<T> => {
+    if (!Number.isFinite(time)) return (async () => promise)()
+    let timer: any
+    const race = Promise.race([
+        promise,
+        new Promise<T>((r, reject) => {
+            timer = setTimeout(() => reject(new Error(rejectReason || 'timeout')), time)
+        }),
+    ])
+    race.finally(() => clearTimeout(timer))
+    return race
+}
