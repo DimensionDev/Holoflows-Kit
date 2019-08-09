@@ -296,7 +296,7 @@ export class LiveSelector<T, SingleMode extends boolean = false> {
     /**
      * Evaluate selector expression
      */
-    evaluateOnce(): SingleMode extends true ? (T | undefined) : T[] {
+    evaluate(): SingleMode extends true ? (T | undefined) : T[] {
         let arr: (T | Element)[] = []
         function isElementArray(x: any[]): x is Element[] {
             // Do a simple check
@@ -372,7 +372,7 @@ export class LiveSelector<T, SingleMode extends boolean = false> {
                     arr = arr.map(op.param).filter(nonNull)
                     break
                 case 'concat':
-                    arr = arr.concat(op.param.evaluateOnce())
+                    arr = arr.concat(op.param.evaluate())
                     break
                 case 'reverse':
                     arr = arr.reverse()
@@ -402,6 +402,13 @@ export class LiveSelector<T, SingleMode extends boolean = false> {
         }
         if (this.singleMode) return (arr.filter(nonNull) as T[])[0] as any
         return (arr.filter(nonNull) as T[]) as any
+    }
+    /**
+     * {@inheritdoc LiveSelector.evaluate}
+     * @deprecated Use `evaluate()` instead, it's shorter
+     */
+    evaluateOnce(): SingleMode extends true ? (T | undefined) : T[] {
+        return this.evaluate()
     }
     //#endregion
 }

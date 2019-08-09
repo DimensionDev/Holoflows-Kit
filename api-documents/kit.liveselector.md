@@ -23,6 +23,7 @@ export declare class LiveSelector<T, SingleMode extends boolean = false>
 |  [closest(selectors)](./kit.liveselector.closest_3.md) |  |  |
 |  [concat(newEle)](./kit.liveselector.concat.md) |  | Combines two LiveSelector. |
 |  [enableSingleMode()](./kit.liveselector.enablesinglemode.md) |  | Enable single mode. Only 1 result will be emitted. |
+|  [evaluate()](./kit.liveselector.evaluate.md) |  | Evaluate selector expression |
 |  [evaluateOnce()](./kit.liveselector.evaluateonce.md) |  | Evaluate selector expression |
 |  [filter(f)](./kit.liveselector.filter.md) |  | Select the elements of a LiveSelector that meet the condition specified in a callback function. |
 |  [flat()](./kit.liveselector.flat.md) |  | Flat T\[\]\[\] to T\[\] |

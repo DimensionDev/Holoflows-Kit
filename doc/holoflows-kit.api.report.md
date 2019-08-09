@@ -121,6 +121,8 @@ export class LiveSelector<T, SingleMode extends boolean = false> {
     closest<E extends Element = Element>(selectors: string): LiveSelector<E, SingleMode>;
     concat<NextType>(newEle: LiveSelector<NextType, SingleMode>): LiveSelector<T | NextType, SingleMode>;
     enableSingleMode(): LiveSelector<T, true>;
+    evaluate(): SingleMode extends true ? (T | undefined) : T[];
+    // @deprecated
     evaluateOnce(): SingleMode extends true ? (T | undefined) : T[];
     filter(f: (value: T, index: number, array: T[]) => any): LiveSelector<NonNullable<T>, SingleMode>;
     flat(): LiveSelector<T extends ArrayLike<infer U> ? U : never, SingleMode>;

@@ -4,6 +4,11 @@
 
 ## LiveSelector.evaluateOnce() method
 
+> Warning: This API is now obsolete.
+> 
+> Use `evaluate()` instead, it's shorter
+> 
+
 Evaluate selector expression
 
 <b>Signature:</b>

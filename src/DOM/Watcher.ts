@@ -156,7 +156,7 @@ export abstract class Watcher<T, Before extends Element, After extends Element, 
             if (this.singleMode && minimalResultsRequired > 1) {
                 console.warn('In single mode, the watcher will ignore the option minimalResultsRequired')
             }
-            const result = this.liveSelector.evaluateOnce()
+            const result = this.liveSelector.evaluate()
             if (Array.isArray(result) && result.length >= minimalResultsRequired) {
                 // If we get the value now, return it
                 return result
@@ -460,7 +460,7 @@ export abstract class Watcher<T, Before extends Element, After extends Element, 
     private watcherChecker = (deadline?: Deadline) => {
         if (!this.isWatching) return
 
-        const thisNodes: readonly T[] | T | undefined = this.liveSelector.evaluateOnce()
+        const thisNodes: readonly T[] | T | undefined = this.liveSelector.evaluate()
 
         if (this.singleMode) return this.singleModeWatcherCallback(thisNodes as T)
         else return this.normalModeWatcherCallback(thisNodes as readonly T[])
