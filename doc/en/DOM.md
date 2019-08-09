@@ -65,9 +65,9 @@ ls.querySelectorAll('a') // Select all `a`
 ls.filter(x => x.href.startsWith('https://')) // Remove all link that not starts with https://
 ls.map(x => x.href) // map HTMLAnchorElement[] to string[]
 
-ls.evaluateOnce() // return all links on the page currently
+ls.evaluate() // return all links on the page currently
 setTimeout(() => {
-    ls.evaluateOnce() // yeah it will match all links every time so you always get the latest data!
+    ls.evaluate() // yeah it will match all links every time so you always get the latest data!
 })
 ```
 
@@ -80,7 +80,7 @@ Then what is `MutationObserverWatcher`??
 ## <a id="example-watcher">Watcher</a>
 
 <details>
-Watcher can automatically execute `LiveSelector.evaluateOnce()`, then notify you when something has changed.
+Watcher can automatically execute `LiveSelector.evaluate()`, then notify you when something has changed.
 <summary>
 In short words, it can watch the change of something.
 </summary>

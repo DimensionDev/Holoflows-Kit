@@ -60,9 +60,9 @@ ls.querySelectorAll('a') // 选择所有的 a
 ls.filter(x => x.href.startsWith('https://')) // 去掉所有不以 https:// 开头的链接
 ls.map(x => x.href) // 把 HTMLAnchorElement[] 映射成 string[]
 
-ls.evaluateOnce() // 返回当前页面上所有的链接列表
+ls.evaluate() // 返回当前页面上所有的链接列表
 setTimeout(() => {
-    ls.evaluateOnce() // 可以多次调用！每次都会返回页面上最新的符合 LiveSelector 的结果！
+    ls.evaluate() // 可以多次调用！每次都会返回页面上最新的符合 LiveSelector 的结果！
 })
 ```
 
@@ -75,7 +75,7 @@ setTimeout(() => {
 ## <a id="example-watcher">Watcher</a>
 
 <details>
-Watcher 可以根据某些特定的条件自动执行 `LiveSelector` 的 `evaluateOnce()`，然后通过比较两次列表的变化通知你 LiveSelector 发生了哪些更改。
+Watcher 可以根据某些特定的条件自动执行 `LiveSelector` 的 `evaluate()`，然后通过比较两次列表的变化通知你 LiveSelector 发生了哪些更改。
 <summary>
 简而言之，就是可以监听指定内容的变化。
 </summary>
