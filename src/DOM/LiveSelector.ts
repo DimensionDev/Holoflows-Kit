@@ -45,6 +45,12 @@ type SelectorChainTypeItem = MapOf<SelectorChainType>
  */
 export class LiveSelector<T, SingleMode extends boolean = false> {
     /**
+     * Create a new LiveSelector.
+     *
+     * @param initialElements provides initial results, equals to `.replace(() => initialElements)`
+     */
+    constructor(private readonly initialElements: T[] = []) {}
+    /**
      * Let developer knows where does this LiveSelector created.
      */
     private readonly stack = new Error().stack
@@ -297,7 +303,7 @@ export class LiveSelector<T, SingleMode extends boolean = false> {
      * Evaluate selector expression
      */
     evaluate(): SingleMode extends true ? (T | undefined) : T[] {
-        let arr: (T | Element)[] = []
+        let arr: (T | Element)[] = this.initialElements
         function isElementArray(x: any[]): x is Element[] {
             // Do a simple check
             return x[0] instanceof Element
