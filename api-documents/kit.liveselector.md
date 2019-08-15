@@ -52,14 +52,9 @@ export declare class LiveSelector<T, SingleMode extends boolean = false>
 
 ## Remarks
 
-Call [\#evaluateOnce](./kit.liveselector.evaluateonce.md) to evaluate the element. Falsy value will be ignored.
+Call [\#evaluate](./kit.liveselector.evaluate.md) to evaluate the element. Falsy value will be ignored.
 
 ## Example
 
-
-```ts
-const ls = new LiveSelector().querySelectorAll('a').map(x => x.href)
-ls.evaluateOnce() // returns all urls at the current time.
-
-```
+\`\`\`<!-- -->ts const ls = new LiveSelector().querySelectorAll('a').map(x =<!-- -->&gt; x.href) ls.evaluate() // returns all urls at the current time.
 

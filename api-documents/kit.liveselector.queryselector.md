@@ -29,4 +29,12 @@ querySelector<K extends keyof HTMLElementTagNameMap>(selector: K): LiveSelector<
 ls.querySelector('div#root')
 
 ```
+About chain on querySelector
+
+```ts
+ls.querySelector('a').querySelector('b')
+// equals to
+ls.querySelector('a b')
+
+```
 

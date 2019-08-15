@@ -33,15 +33,14 @@ type SelectorChainTypeItem = MapOf<SelectorChainType>
  * Create a live selector that can continuously select the element you want.
  *
  * @remarks
- * Call {@link LiveSelector.evaluateOnce | #evaluateOnce} to evaluate the element. Falsy value will be ignored.
+ * Call {@link LiveSelector.evaluate | #evaluate} to evaluate the element. Falsy value will be ignored.
  *
  * @param T - Type of Element that LiveSelector contains
  *
  * @example
  * ```ts
  * const ls = new LiveSelector().querySelectorAll('a').map(x => x.href)
- * ls.evaluateOnce() // returns all urls at the current time.
- * ```
+ * ls.evaluate() // returns all urls at the current time.
  */
 export class LiveSelector<T, SingleMode extends boolean = false> {
     /**
@@ -99,6 +98,12 @@ export class LiveSelector<T, SingleMode extends boolean = false> {
      * ```ts
      * ls.querySelector('div#root')
      * ```
+     * About chain on querySelector
+     * ```ts
+     * ls.querySelector('a').querySelector('b')
+     * // equals to
+     * ls.querySelector('a b')
+     * ```
      */
     querySelector<K extends keyof HTMLElementTagNameMap>(
         selector: K,
@@ -115,6 +120,13 @@ export class LiveSelector<T, SingleMode extends boolean = false> {
      * @example
      * ```ts
      * ls.querySelector('div > div')
+     * ```
+     * About chain on querySelector
+     *
+     * ```ts
+     * ls.querySelectorAll('a').querySelectorAll('b')
+     * // equals to
+     * ls.querySelectorAll('a b')
      * ```
      */
     querySelectorAll<K extends keyof HTMLElementTagNameMap>(
