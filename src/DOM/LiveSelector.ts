@@ -412,7 +412,7 @@ export class LiveSelector<T, SingleMode extends boolean = false> {
                     arr = ([] as typeof arr).concat(...arr)
                     break
                 case 'replace':
-                    arr = Array.from(arr)
+                    arr = op.param(Array.from(arr))
                     break
                 default:
                     throw new TypeError('Unknown operation type')
