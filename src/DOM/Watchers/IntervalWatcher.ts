@@ -8,7 +8,7 @@ import { Watcher } from '../Watcher'
  * .useForeach(node => {
  *     console.log(node)
  * })
- * .startWatch()
+ * .startWatch(1000)
  * ```
  */
 export class IntervalWatcher<

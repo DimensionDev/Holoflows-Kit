@@ -41,6 +41,7 @@ type SelectorChainTypeItem = MapOf<SelectorChainType>
  * ```ts
  * const ls = new LiveSelector().querySelectorAll('a').map(x => x.href)
  * ls.evaluate() // returns all urls at the current time.
+ * ```
  */
 export class LiveSelector<T, SingleMode extends boolean = false> {
     /**
