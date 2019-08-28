@@ -16,7 +16,7 @@ export declare class LiveSelector<T, SingleMode extends boolean = false>
 
 |  Constructor | Modifiers | Description |
 |  --- | --- | --- |
-|  [(constructor)(initialElements)](./kit.liveselector.(constructor).md) |  | Create a new LiveSelector. |
+|  [(constructor)(initialElements)](./kit.liveselector._constructor_.md) |  | Create a new LiveSelector. |
 
 ## Methods
 
@@ -56,5 +56,10 @@ Call [\#evaluate](./kit.liveselector.evaluate.md) to evaluate the element. Falsy
 
 ## Example
 
-\`\`\`<!-- -->ts const ls = new LiveSelector().querySelectorAll('a').map(x =<!-- -->&gt; x.href) ls.evaluate() // returns all urls at the current time.
+
+```ts
+const ls = new LiveSelector().querySelectorAll('a').map(x => x.href)
+ls.evaluate() // returns all urls at the current time.
+
+```
 

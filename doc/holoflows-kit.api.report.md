@@ -112,7 +112,7 @@ export const JSONSerialization: ([replacer, receiver]?: [(string | number)[] | n
 
 // @public
 export class LiveSelector<T, SingleMode extends boolean = false> {
-    constructor(initialElements?: T[]);
+    constructor(initialElements?: readonly T[]);
     clone(): LiveSelector<T, SingleMode>;
     closest<T>(parentOfNth: number): LiveSelector<T, SingleMode>;
     closest<K extends keyof HTMLElementTagNameMap>(selectors: K): LiveSelector<HTMLElementTagNameMap[K], SingleMode>;
