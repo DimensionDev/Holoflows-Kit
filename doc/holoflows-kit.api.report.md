@@ -32,7 +32,7 @@ export interface AsyncCallOptions {
 }
 
 // @public
-export function AutomatedTabTask<T extends Record<string, (...args: any[]) => PromiseLike<any>>>(taskImplements: T, options?: Partial<AutomatedTabTaskDefineTimeOptions>): ((url: string, options?: Partial<AutomatedTabTaskRuntimeOptions>) => T) | null;
+export function AutomatedTabTask<T extends Record<string, (...args: any[]) => PromiseLike<any>>>(taskImplements: T, options?: Partial<AutomatedTabTaskDefineTimeOptions>): ((urlOrTabID: string | number, options?: Partial<AutomatedTabTaskRuntimeOptions>) => T) | null;
 
 // @public
 export interface AutomatedTabTaskDefineTimeOptions extends AutomatedTabTaskSharedOptions {
@@ -46,6 +46,7 @@ export interface AutomatedTabTaskRuntimeOptions extends AutomatedTabTaskSharedOp
     important: boolean;
     needRedirect: boolean;
     runAtTabID: number;
+    url: string;
 }
 
 // @public

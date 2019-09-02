@@ -76,6 +76,10 @@ export interface AutomatedTabTaskRuntimeOptions extends AutomatedTabTaskSharedOp
      * @defaultValue false
      */
     needRedirect: boolean
+    /**
+     * What URL you want to run the task on
+     */
+    url: string
 }
 /**
  * Open a new page in the background, execute some task, then close it automatically.
@@ -229,10 +233,14 @@ export function AutomatedTabTask<T extends Record<string, (...args: any[]) => Pr
         }
         const memoRunTask = memorize(runTask, { ttl: memorizeTTL })
         return (
-            /** URL you want to execute the task ok */ url: string,
+            /**
+             * string: URL you want to execute the task
+             * number: task id you want to execute the task
+             */
+            urlOrTabID: string | number,
             options: Partial<AutomatedTabTaskRuntimeOptions> = {},
         ) => {
-            const { memorable, timeout, important, autoClose, pinned, active, runAtTabID, needRedirect } = {
+            const { memorable, timeout, important, autoClose, pinned, active, runAtTabID, needRedirect, url } = {
                 ...({
                     memorable: defaultMemorable,
                     important: false,
@@ -244,18 +252,20 @@ export function AutomatedTabTask<T extends Record<string, (...args: any[]) => Pr
                 } as AutomatedTabTaskRuntimeOptions),
                 ...options,
             }
+            const tabId: number | undefined = (typeof urlOrTabID === 'number' ? urlOrTabID : undefined) || runAtTabID
+            const finalUrl: string = (typeof urlOrTabID === 'string' ? urlOrTabID : '') || url || ''
             function runner(_: unknown, taskName: string | number | symbol) {
                 return (...args: any[]) => {
                     if (typeof taskName !== 'string') throw new TypeError('Key must be a string')
                     return (memorable ? memoRunTask : runTask)(
-                        url,
+                        finalUrl,
                         taskName,
                         timeout,
                         important,
                         pinned,
                         autoClose,
                         active,
-                        runAtTabID,
+                        tabId,
                         needRedirect,
                         args,
                     )
