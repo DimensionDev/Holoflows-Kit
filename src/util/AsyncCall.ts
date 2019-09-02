@@ -104,6 +104,13 @@ export interface AsyncCallOptions {
      */
     parameterStructures: 'by-position' | 'by-name'
 }
+const AsyncCallDefaultOptions = (<T extends Partial<AsyncCallOptions>>(a: T) => a)({
+    serializer: NoSerialization,
+    key: 'default-jsonrpc',
+    strict: false,
+    log: true,
+    parameterStructures: 'by-position',
+} as const)
 /**
  * Async call between different context.
  *
@@ -166,15 +173,11 @@ export interface AsyncCallOptions {
  *
  */
 export function AsyncCall<OtherSideImplementedFunctions = {}>(
-    implementation: Record<string, (...args: any[]) => any> = {},
+    implementation: Partial<Record<string, (...args: any[]) => unknown>> = {},
     options: Partial<AsyncCallOptions> = {},
 ): OtherSideImplementedFunctions {
     const { serializer, key, strict, log, parameterStructures } = {
-        serializer: NoSerialization,
-        key: 'default-jsonrpc',
-        strict: false,
-        log: true,
-        parameterStructures: 'by-position' as const,
+        ...AsyncCallDefaultOptions,
         ...options,
     }
     const message = options.messageChannel || new MessageCenter()
@@ -182,23 +185,13 @@ export function AsyncCall<OtherSideImplementedFunctions = {}>(
         methodNotFound: banMethodNotFound = false,
         noUndefined: noUndefinedKeeping = false,
         unknownMessage: banUnknownMessage = false,
-    } =
-        typeof strict === 'boolean'
-            ? strict
-                ? { methodNotFound: true, unknownMessage: true, noUndefined: true }
-                : { methodNotFound: false, unknownMessage: false, noUndefined: false }
-            : strict
+    } = calcStrictOptions(strict)
     const {
         beCalled: logBeCalled = true,
         localError: logLocalError = true,
         remoteError: logRemoteError = true,
         type: logType = 'pretty',
-    } =
-        typeof log === 'boolean'
-            ? log
-                ? ({ beCalled: true, localError: true, remoteError: true, type: 'pretty' } as const)
-                : ({ beCalled: false, localError: false, remoteError: false, type: 'basic' } as const)
-            : log
+    } = calcLogOptions(log)
     type PromiseParam = Parameters<(ConstructorParameters<typeof Promise>)[0]>
     const requestContext = new Map<string | number, { f: PromiseParam; stack: string }>()
     async function onRequest(data: Request): Promise<Response | undefined> {
@@ -326,13 +319,13 @@ export function AsyncCall<OtherSideImplementedFunctions = {}>(
     return new Proxy(
         {},
         {
-            get(target, method, receiver) {
+            get(_target, method) {
                 let stack = removeStackHeader(new Error().stack)
-                return (...params: any[]) =>
-                    new Promise((resolve, reject) => {
-                        if (typeof method !== 'string') return reject('Only string can be keys')
-                        if (method.startsWith('rpc.'))
-                            return reject('You cannot call JSON RPC internal methods directly')
+                return (...params: any[]) => {
+                    if (typeof method !== 'string') return Promise.reject('Only string can be keys')
+                    if (method.startsWith('rpc.'))
+                        return Promise.reject('You cannot call JSON RPC internal methods directly')
+                    return new Promise((resolve, reject) => {
                         const id = Math.random()
                             .toString(36)
                             .slice(2)
@@ -348,6 +341,7 @@ export function AsyncCall<OtherSideImplementedFunctions = {}>(
                             })
                         }, reject)
                     })
+                }
             },
         },
     ) as OtherSideImplementedFunctions
@@ -365,6 +359,18 @@ export function AsyncCall<OtherSideImplementedFunctions = {}>(
         }
         return undefined
     }
+}
+
+function calcLogOptions(log: AsyncCallOptions['log']): Exclude<typeof log, boolean> {
+    const logAllOn = { beCalled: true, localError: true, remoteError: true, type: 'pretty' } as const
+    const logAllOff = { beCalled: false, localError: false, remoteError: false, type: 'basic' } as const
+    return typeof log === 'boolean' ? (log ? logAllOn : logAllOff) : log
+}
+
+function calcStrictOptions(strict: AsyncCallOptions['strict']): Exclude<typeof strict, boolean> {
+    const strictAllOn = { methodNotFound: true, unknownMessage: true, noUndefined: true }
+    const strictAllOff = { methodNotFound: false, unknownMessage: false, noUndefined: false }
+    return typeof strict === 'boolean' ? (strict ? strictAllOn : strictAllOff) : strict
 }
 
 const jsonrpc = '2.0'
@@ -402,6 +408,7 @@ class ErrorResponse {
     static readonly InternalError = (id: ID, message: string = '') =>
         new ErrorResponse(id, -32603, 'Internal error' + message, '')
 }
+
 type Response = SuccessResponse | ErrorResponse
 function isJSONRPCObject(data: any): data is Response | Request {
     if (!isObject(data)) return false
