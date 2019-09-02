@@ -83,6 +83,7 @@ export interface AsyncCallOptions {
               beCalled?: boolean
               localError?: boolean
               remoteError?: boolean
+              sendLocalStack?: boolean
               type?: 'basic' | 'pretty'
           }
         | boolean
@@ -204,6 +205,7 @@ export function AsyncCall<OtherSideImplementedFunctions = {}>(
         localError: logLocalError = true,
         remoteError: logRemoteError = true,
         type: logType = 'pretty',
+        sendLocalStack = false,
     } = calcLogOptions(log)
     type PromiseParam = Parameters<(ConstructorParameters<typeof Promise>)[0]>
     const requestContext = new Map<string | number, { f: PromiseParam; stack: string }>()
@@ -224,19 +226,32 @@ export function AsyncCall<OtherSideImplementedFunctions = {}>(
             if (Array.isArray(params) || (typeof params === 'object' && params !== null)) {
                 const args = Array.isArray(params) ? params : [params]
                 frameworkStack = removeStackHeader(new Error().stack)
-                const promise = executor(...args)
-                if (logBeCalled)
-                    logType === 'basic'
-                        ? console.log(`${key}.${data.method}(${[...args].toString()}) @${data.id}`)
-                        : console.log(
-                              `${key}.%c${data.method}%c(${args.map(() => '%o').join(', ')}%c)\n%o %c@${data.id}`,
-                              'color: #d2c057',
-                              '',
-                              ...args,
-                              '',
-                              promise,
-                              'color: gray; font-style: italic;',
-                          )
+                const promise = new Promise((resolve, reject) => {
+                    try {
+                        resolve(executor(...args))
+                    } catch (e) {
+                        reject(e)
+                    }
+                })
+                if (logBeCalled) {
+                    if (logType === 'basic') console.log(`${key}.${data.method}(${[...args].toString()}) @${data.id}`)
+                    else {
+                        const logArgs = [
+                            `${key}.%c${data.method}%c(${args.map(() => '%o').join(', ')}%c)\n%o %c@${data.id}`,
+                            'color: #d2c057',
+                            '',
+                            ...args,
+                            '',
+                            promise,
+                            'color: gray; font-style: italic;',
+                        ]
+                        if (data.remoteStack) {
+                            console.groupCollapsed(...logArgs)
+                            console.log(data.remoteStack)
+                            console.groupEnd()
+                        } else console.log(...logArgs)
+                    }
+                }
                 return new SuccessResponse(data.id, await promise, !!noUndefinedKeeping)
             } else {
                 return ErrorResponse.InvalidRequest(data.id)
@@ -358,11 +373,13 @@ export function AsyncCall<OtherSideImplementedFunctions = {}>(
                             .toString(36)
                             .slice(2)
                         const param0 = params[0]
-                        const req =
+                        const sendingStack = sendLocalStack ? stack : ''
+                        const param =
                             parameterStructures === 'by-name' && params.length === 1 && isObject(param0)
-                                ? new Request(id, method, param0)
-                                : new Request(id, method, params)
-                        serializer.serialization(req).then(data => {
+                                ? param0
+                                : params
+                        const request = new Request(id, method, param, sendingStack)
+                        serializer.serialization(request).then(data => {
                             message.emit(key, data)
                             requestContext.set(id, {
                                 f: [resolve, reject],
@@ -406,8 +423,10 @@ const jsonrpc = '2.0'
 type ID = string | number | null | undefined
 class Request {
     readonly jsonrpc = '2.0'
-    constructor(public id: ID, public method: string, public params: unknown[] | object) {
-        return { id, method, params, jsonrpc }
+    constructor(public id: ID, public method: string, public params: unknown[] | object, public remoteStack: string) {
+        const request: Request = { id, method, params, jsonrpc, remoteStack }
+        if (request.remoteStack.length === 0) delete request.remoteStack
+        return request
     }
 }
 class SuccessResponse {
