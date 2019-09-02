@@ -103,6 +103,11 @@ export interface AsyncCallOptions {
      * @defaultValue "by-position"
      */
     parameterStructures: 'by-position' | 'by-name'
+    /**
+     * If `implementation` has the function required, call it directly instead of send it to remote.
+     * @defaultValue false
+     */
+    preferLocalImplementation: boolean
 }
 const AsyncCallDefaultOptions = (<T extends Partial<AsyncCallOptions>>(a: T) => a)({
     serializer: NoSerialization,
@@ -110,6 +115,7 @@ const AsyncCallDefaultOptions = (<T extends Partial<AsyncCallOptions>>(a: T) => 
     strict: false,
     log: true,
     parameterStructures: 'by-position',
+    preferLocalImplementation: false,
 } as const)
 /**
  * Async call between different context.
@@ -176,7 +182,7 @@ export function AsyncCall<OtherSideImplementedFunctions = {}>(
     implementation: Partial<Record<string, (...args: any[]) => unknown>> = {},
     options: Partial<AsyncCallOptions> = {},
 ): OtherSideImplementedFunctions {
-    const { serializer, key, strict, log, parameterStructures } = {
+    const { serializer, key, strict, log, parameterStructures, preferLocalImplementation } = {
         ...AsyncCallDefaultOptions,
         ...options,
     }
@@ -325,6 +331,18 @@ export function AsyncCall<OtherSideImplementedFunctions = {}>(
                     if (typeof method !== 'string') return Promise.reject('Only string can be keys')
                     if (method.startsWith('rpc.'))
                         return Promise.reject('You cannot call JSON RPC internal methods directly')
+                    if (preferLocalImplementation) {
+                        const localImpl = implementation[method]
+                        if (localImpl) {
+                            return new Promise((resolve, reject) => {
+                                try {
+                                    resolve(localImpl(...params))
+                                } catch (e) {
+                                    reject(e)
+                                }
+                            })
+                        }
+                    }
                     return new Promise((resolve, reject) => {
                         const id = Math.random()
                             .toString(36)

@@ -7,7 +7,7 @@
 import mitt from 'mitt';
 
 // @public
-export function AsyncCall<OtherSideImplementedFunctions = {}>(implementation?: Record<string, (...args: any[]) => any>, options?: Partial<AsyncCallOptions>): OtherSideImplementedFunctions;
+export function AsyncCall<OtherSideImplementedFunctions = {}>(implementation?: Partial<Record<string, (...args: any[]) => unknown>>, options?: Partial<AsyncCallOptions>): OtherSideImplementedFunctions;
 
 // @public
 export interface AsyncCallOptions {
@@ -23,6 +23,7 @@ export interface AsyncCallOptions {
         emit(event: string, data: unknown): void;
     };
     parameterStructures: 'by-position' | 'by-name';
+    preferLocalImplementation: boolean;
     serializer: Serialization;
     strict: {
         methodNotFound?: boolean;
