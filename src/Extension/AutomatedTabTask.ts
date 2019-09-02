@@ -81,6 +81,16 @@ export interface AutomatedTabTaskRuntimeOptions extends AutomatedTabTaskSharedOp
      */
     url: string
 }
+const AutomatedTabTaskDefineTimeOptionsDefault: Readonly<AutomatedTabTaskDefineTimeOptions> = {
+    timeout: 30 * 1000,
+    concurrent: 3,
+    memorizeTTL: 30 * 60 * 1000,
+    memorable: false,
+    autoClose: true,
+    pinned: true,
+    active: false,
+    AsyncCallOptions: {},
+}
 /**
  * Open a new page in the background, execute some task, then close it automatically.
  *
@@ -120,37 +130,14 @@ export function AutomatedTabTask<T extends Record<string, (...args: any[]) => Pr
         active: defaultActive,
         AsyncCallOptions,
     } = {
-        ...({
-            timeout: 30 * 1000,
-            concurrent: 3,
-            memorizeTTL: 30 * 60 * 1000,
-            memorable: false,
-            autoClose: true,
-            pinned: true,
-            active: false,
-            AsyncCallOptions: {},
-        } as AutomatedTabTaskDefineTimeOptions),
+        ...AutomatedTabTaskDefineTimeOptionsDefault,
         ...options,
     }
     if (AsyncCallOptions.key === undefined) {
-        const context = GetContext()
-        AsyncCallOptions.key = (() => {
-            switch (context) {
-                case 'background':
-                case 'content':
-                case 'options':
-                    return browser.runtime.getURL('@holoflows/kit:AutomatedTabTask')
-                case 'debugging':
-                    return 'debug'
-                case 'unknown':
-                default:
-                    throw new TypeError('Unknown running context')
-            }
-        })()
+        AsyncCallOptions.key = GetDefaultKey()
     }
     const AsyncCallKey = AsyncCallOptions.key
     const REGISTER = AsyncCallKey + ':ping'
-    const getTaskNameByTabId = (task: string, tabId: number) => `${task}:${tabId}`
     if (GetContext() === 'content') {
         // If run in content script
         // Register this tab
@@ -172,11 +159,11 @@ export function AutomatedTabTask<T extends Record<string, (...args: any[]) => Pr
     } else if (GetContext() === 'background' || GetContext() === 'options') {
         type tabId = number
         /** If `tab` is ready */
-        const readyMap: Record<tabId, boolean> = {}
+        const tabReadyMap: Record<tabId, boolean> = {}
         // Listen to tab REGISTER event
         browser.runtime.onMessage.addListener(((message, sender) => {
             if ((message as any).type === REGISTER) {
-                readyMap[sender.tab!.id!] = true
+                tabReadyMap[sender.tab!.id!] = true
                 // response its tab id
                 return Promise.resolve(sender)
             }
@@ -185,62 +172,25 @@ export function AutomatedTabTask<T extends Record<string, (...args: any[]) => Pr
         // Register a empty AsyncCall for runtime-generated call
         const asyncCall = AsyncCall<any>({}, AsyncCallOptions)
         const lock = new Lock(concurrent)
-        async function runTask(
-            url: string,
-            taskName: string,
-            timeout: number,
-            important: boolean,
-            pinned: boolean,
-            autoClose: boolean,
-            active: boolean,
-            runAtTabID: number | undefined,
-            needRedirect: boolean,
-            args: any[],
-        ) {
-            /**
-             * does it need a lock to avoid too many open at the same time?
-             */
-            const withoutLock = important || autoClose === false || active || runAtTabID
-            if (!withoutLock) await lock.lock(timeout)
-
-            async function getTabOrCreate(openInCurrentTab: number | undefined) {
-                if (openInCurrentTab) {
-                    if (needRedirect) {
-                        // TODO: read the api
-                        browser.tabs.executeScript(tabId, { code: 'location.href = ' + url })
-                    }
-                    return openInCurrentTab
-                }
-                // Create a new tab
-                const tab = await browser.tabs.create({ active, pinned, url })
-                return tab.id!
-            }
-            const tabId = await getTabOrCreate(runAtTabID)
-
-            // Wait for the tab register
-            while (readyMap[tabId] !== true) await sleep(50)
-
-            // Run the async call
-            const task: Promise<any> = asyncCall[getTaskNameByTabId(taskName, tabId)](...args)
-            try {
-                // ! DO NOT Remove `await`, or finally block will run before the promise resolved
-                return await timeoutFn(task, timeout)
-            } finally {
-                if (!withoutLock) lock.unlock()
-                delete readyMap[tabId]
-                autoClose && browser.tabs.remove(tabId)
-            }
-        }
-        const memoRunTask = memorize(runTask, { ttl: memorizeTTL })
-        return (
-            /**
-             * string: URL you want to execute the task
-             * number: task id you want to execute the task
-             */
-            urlOrTabID: string | number,
-            options: Partial<AutomatedTabTaskRuntimeOptions> = {},
-        ) => {
-            const { memorable, timeout, important, autoClose, pinned, active, runAtTabID, needRedirect, url } = {
+        const memoRunTask = memorize(createOrGetTheTabToExecuteTask, { ttl: memorizeTTL })
+        /**
+         * @param urlOrTabID - where to run the task
+         * string: URL you want to execute the task
+         * number: task id you want to execute the task
+         * @param options - runtime options
+         */
+        function taskStarter(urlOrTabID: string | number, options: Partial<AutomatedTabTaskRuntimeOptions> = {}) {
+            const {
+                memorable,
+                timeout,
+                important: isImportant,
+                autoClose,
+                pinned,
+                active,
+                runAtTabID,
+                needRedirect,
+                url,
+            } = {
                 ...({
                     memorable: defaultMemorable,
                     important: false,
@@ -254,25 +204,29 @@ export function AutomatedTabTask<T extends Record<string, (...args: any[]) => Pr
             }
             const tabId: number | undefined = (typeof urlOrTabID === 'number' ? urlOrTabID : undefined) || runAtTabID
             const finalUrl: string = (typeof urlOrTabID === 'string' ? urlOrTabID : '') || url || ''
-            function runner(_: unknown, taskName: string | number | symbol) {
-                return (...args: any[]) => {
+            function proxyTrap(_target: unknown, taskName: string | number | symbol) {
+                return (...taskArgs: any[]) => {
                     if (typeof taskName !== 'string') throw new TypeError('Key must be a string')
-                    return (memorable ? memoRunTask : runTask)(
-                        finalUrl,
+                    return (memorable ? memoRunTask : createOrGetTheTabToExecuteTask)({
+                        active,
                         taskName,
                         timeout,
-                        important,
+                        isImportant,
                         pinned,
                         autoClose,
-                        active,
-                        tabId,
                         needRedirect,
-                        args,
-                    )
+                        taskArgs,
+                        asyncCall,
+                        lock,
+                        tabId,
+                        tabReadyMap,
+                        url: finalUrl,
+                    })
                 }
             }
-            return new Proxy({}, { get: runner }) as T
+            return new Proxy({}, { get: proxyTrap }) as T
         }
+        return taskStarter
     } else if (GetContext() === 'debugging') {
         return (...args1: any[]) =>
             new Proxy(
@@ -292,5 +246,84 @@ export function AutomatedTabTask<T extends Record<string, (...args: any[]) => Pr
             ) as T
     } else {
         return null
+    }
+}
+
+interface createOrGetTheTabToExecuteTaskOptions {
+    url: string
+    taskName: string
+    timeout: number
+    isImportant: boolean
+    pinned: boolean
+    autoClose: boolean
+    active: boolean
+    tabId: number | undefined
+    needRedirect: boolean
+    taskArgs: any[]
+    asyncCall: any
+    tabReadyMap: Record<number, boolean>
+    lock: Lock
+}
+async function createOrGetTheTabToExecuteTask(options: createOrGetTheTabToExecuteTaskOptions) {
+    const { active, taskArgs, autoClose, isImportant, needRedirect, pinned, tabId: wantedTabID } = options
+    const { asyncCall, tabReadyMap, lock, taskName, timeout, url } = options
+    /**
+     * does it need a lock to avoid too many open at the same time?
+     */
+    const withoutLock = isImportant || autoClose === false || active || wantedTabID
+    if (!withoutLock) await lock.lock(timeout)
+
+    const tabId = await getTabOrCreate(wantedTabID, url, needRedirect, active, pinned)
+
+    // Wait for the tab register
+    while (tabReadyMap[tabId] !== true) await sleep(50)
+
+    // Run the async call
+    const task: Promise<any> = asyncCall[getTaskNameByTabId(taskName, tabId)](...taskArgs)
+    try {
+        // ! DO NOT Remove `await`, or finally block will run before the promise resolved
+        return await timeoutFn(task, timeout)
+    } finally {
+        if (!withoutLock) lock.unlock()
+        delete tabReadyMap[tabId]
+        autoClose && browser.tabs.remove(tabId)
+    }
+}
+
+async function getTabOrCreate(
+    openInCurrentTab: number | undefined,
+    url: string,
+    needRedirect: boolean,
+    active: boolean,
+    pinned: boolean,
+) {
+    if (openInCurrentTab) {
+        if (needRedirect) {
+            // TODO: read the api
+            browser.tabs.executeScript(openInCurrentTab, { code: 'location.href = ' + url })
+        }
+        return openInCurrentTab
+    }
+    // Create a new tab
+    const tab = await browser.tabs.create({ active, pinned, url })
+    return tab.id!
+}
+
+function getTaskNameByTabId(task: string, tabId: number) {
+    return `${task}:${tabId}`
+}
+
+function GetDefaultKey() {
+    const context = GetContext()
+    switch (context) {
+        case 'background':
+        case 'content':
+        case 'options':
+            return browser.runtime.getURL('@holoflows/kit:AutomatedTabTask')
+        case 'debugging':
+            return 'debug'
+        case 'unknown':
+        default:
+            throw new TypeError('Unknown running context')
     }
 }
