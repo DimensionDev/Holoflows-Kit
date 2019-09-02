@@ -4,6 +4,24 @@
  * This is a light implementation of JSON RPC 2.0
  *
  * https://www.jsonrpc.org/specification
+ *
+ * Non-standard features: (Documented here to allow other JSON RPC client/server integrate better)
+ *
+ * - Remote calling stack:
+ * Add a "remoteStack" property to the Request object,
+ * AsyncCall(server) will print it prettier.
+ *
+ * - Remote Error stack:
+ * In the Error object, add these properties:
+ * "stack": AsyncCall(client) will append it to the JavaScript Error object.
+ * "type": AsyncCall(client) will try to rebuild the given type of JavaScript Error object.
+ *      Supported Errors (Defined in ECMAScript standard):
+ *          Error, EvalError, RangeError, ReferenceError,
+ *          SyntaxError, TypeError, URIError
+ *
+ * - Undefined keeping:
+ * Add a "resultIsUndefined: true" to the Response object,
+ * AsyncCall(client) will treat result "null" in JSON as "undefined" in JavaScript
  */
 import { MessageCenter } from '../Extension/MessageCenter'
 
