@@ -36,8 +36,8 @@ export function AutomatedTabTask<T extends Record<string, (...args: any[]) => Pr
 
 // @public
 export interface AutomatedTabTaskDefineTimeOptions extends AutomatedTabTaskSharedOptions {
+    AsyncCallOptions: Partial<AsyncCallOptions>;
     concurrent: number;
-    key: string;
     memorizeTTL: number;
 }
 

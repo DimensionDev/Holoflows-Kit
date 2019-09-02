@@ -1,5 +1,5 @@
 import { sleep, timeout as timeoutFn } from '../util/sleep'
-import { AsyncCall } from '../util/AsyncCall'
+import { AsyncCall, AsyncCallOptions } from '../util/AsyncCall'
 import { GetContext } from './Context'
 import Lock from 'concurrent-lock'
 import { memorize } from 'memorize-decorator'
@@ -49,15 +49,14 @@ export interface AutomatedTabTaskDefineTimeOptions extends AutomatedTabTaskShare
      */
     concurrent: number
     /**
-     * A unique key
-     * @defaultValue `a extension specific url.`
-     */
-    key: string
-    /**
      * TTL for memorize
      * @defaultValue 30 * 60 * 1000
      */
     memorizeTTL: number
+    /**
+     * Options when creating {@link AsyncCall} ({@link AsyncCallOptions})
+     */
+    AsyncCallOptions: Partial<AsyncCallOptions>
 }
 /**
  * Runtime options for {@link AutomatedTabTask}
@@ -74,7 +73,7 @@ export interface AutomatedTabTaskRuntimeOptions extends AutomatedTabTaskSharedOp
     /**
      * Use with runAtTabID, tell AutomatedTabTask if you need to redirect the tab to the url provided
      *
-     * defaults: false
+     * @defaultValue false
      */
     needRedirect: boolean
 }
@@ -109,38 +108,43 @@ export function AutomatedTabTask<T extends Record<string, (...args: any[]) => Pr
 ) {
     const {
         timeout: defaultTimeout,
-        key: AsyncCallKey,
         concurrent,
         memorable: defaultMemorable,
         memorizeTTL,
         autoClose: defaultAutoClose,
         pinned: defaultPinned,
         active: defaultActive,
+        AsyncCallOptions,
     } = {
         ...({
             timeout: 30 * 1000,
-            key: (context => {
-                switch (context) {
-                    case 'background':
-                    case 'content':
-                    case 'options':
-                        return browser.runtime.getURL('@holoflows/kit:AutomatedTabTask')
-                    case 'debugging':
-                        return 'debug'
-                    case 'unknown':
-                    default:
-                        throw new TypeError('Unknown running context')
-                }
-            })(GetContext()),
             concurrent: 3,
             memorizeTTL: 30 * 60 * 1000,
             memorable: false,
             autoClose: true,
             pinned: true,
             active: false,
+            AsyncCallOptions: {},
         } as AutomatedTabTaskDefineTimeOptions),
         ...options,
     }
+    if (AsyncCallOptions.key === undefined) {
+        const context = GetContext()
+        AsyncCallOptions.key = (() => {
+            switch (context) {
+                case 'background':
+                case 'content':
+                case 'options':
+                    return browser.runtime.getURL('@holoflows/kit:AutomatedTabTask')
+                case 'debugging':
+                    return 'debug'
+                case 'unknown':
+                default:
+                    throw new TypeError('Unknown running context')
+            }
+        })()
+    }
+    const AsyncCallKey = AsyncCallOptions.key
     const REGISTER = AsyncCallKey + ':ping'
     const getTaskNameByTabId = (task: string, tabId: number) => `${task}:${tabId}`
     if (GetContext() === 'content') {
@@ -156,7 +160,7 @@ export function AutomatedTabTask<T extends Record<string, (...args: any[]) => Pr
                     tasksWithId[getTaskNameByTabId(taskName, tabId)] = value
                 }
                 // Register AsyncCall
-                AsyncCall(tasksWithId, { key: AsyncCallKey })
+                AsyncCall(tasksWithId, AsyncCallOptions)
             },
             () => {},
         )
@@ -175,7 +179,7 @@ export function AutomatedTabTask<T extends Record<string, (...args: any[]) => Pr
             return undefined
         }) as browser.runtime.onMessageVoid)
         // Register a empty AsyncCall for runtime-generated call
-        const asyncCall = AsyncCall<any>({}, { key: AsyncCallKey })
+        const asyncCall = AsyncCall<any>({}, AsyncCallOptions)
         const lock = new Lock(concurrent)
         async function runTask(
             url: string,
