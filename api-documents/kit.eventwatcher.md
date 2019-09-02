@@ -16,7 +16,7 @@ export declare class EventWatcher<T, Before extends Element = HTMLSpanElement, A
 
 |  Constructor | Modifiers | Description |
 |  --- | --- | --- |
-|  [(constructor)(liveSelector)](./kit.eventwatcher._constructor_.md) |  | Constructs a new instance of the <code>EventWatcher</code> class |
+|  [(constructor)(liveSelector)](./kit.eventwatcher.(constructor).md) |  | Constructs a new instance of the <code>EventWatcher</code> class |
 
 ## Properties
 

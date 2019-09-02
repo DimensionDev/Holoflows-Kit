@@ -16,7 +16,7 @@ export declare class MutationObserverWatcher<T, Before extends Element = HTMLSpa
 
 |  Constructor | Modifiers | Description |
 |  --- | --- | --- |
-|  [(constructor)(liveSelector, consistentWatchRoot)](./kit.mutationobserverwatcher._constructor_.md) |  | Constructs a new instance of the <code>MutationObserverWatcher</code> class |
+|  [(constructor)(liveSelector, consistentWatchRoot)](./kit.mutationobserverwatcher.(constructor).md) |  | Constructs a new instance of the <code>MutationObserverWatcher</code> class |
 
 ## Properties
 

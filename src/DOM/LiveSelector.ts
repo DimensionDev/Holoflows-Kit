@@ -47,7 +47,7 @@ export class LiveSelector<T, SingleMode extends boolean = false> {
     /**
      * Create a new LiveSelector.
      *
-     * @param initialElements provides initial results, equals to `.replace(() => initialElements)`
+     * @param initialElements - provides initial results, equals to `.replace(() => initialElements)`
      */
     constructor(private readonly initialElements: readonly T[] = []) {}
     /**

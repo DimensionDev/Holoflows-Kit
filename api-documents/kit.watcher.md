@@ -16,7 +16,7 @@ export declare abstract class Watcher<T, Before extends Element, After extends E
 
 |  Constructor | Modifiers | Description |
 |  --- | --- | --- |
-|  [(constructor)(liveSelector)](./kit.watcher._constructor_.md) |  | Constructs a new instance of the <code>Watcher</code> class |
+|  [(constructor)(liveSelector)](./kit.watcher.(constructor).md) |  | Constructs a new instance of the <code>Watcher</code> class |
 
 ## Properties
 
