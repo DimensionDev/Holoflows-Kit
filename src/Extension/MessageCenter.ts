@@ -47,11 +47,20 @@ export class MessageCenter<ITypedMessages> {
      * Listen to an event
      * @param event - Name of the event
      * @param handler - Handler of the event
+     * @returns a function, call it to remove this listener
      */
-    public on<Key extends keyof ITypedMessages>(event: Key, handler: (data: ITypedMessages[Key]) => void): void {
+    public on<Key extends keyof ITypedMessages>(event: Key, handler: (data: ITypedMessages[Key]) => void) {
         this.eventEmitter.on(event as string, handler)
+        return () => this.off(event, handler)
     }
-
+    /**
+     * Remove the listener of an event
+     * @param event - Name of the event
+     * @param handler - Handler of the event
+     */
+    public off<Key extends keyof ITypedMessages>(event: Key, handler: (data: ITypedMessages[Key]) => void): void {
+        this.eventEmitter.off(event as string, handler)
+    }
     /**
      * Send message to local or other instance of extension
      * @param key - Key of the message
@@ -90,7 +99,14 @@ export class MessageCenter<ITypedMessages> {
             document.dispatchEvent(newMessage(key, data))
         }
     }
-    public send = this.emit
+    /**
+     * {@inheritdoc MessageCenter.emit}
+     */
+    public send(
+        ...args: Parameters<MessageCenter<ITypedMessages>['emit']>
+    ): ReturnType<MessageCenter<ITypedMessages>['emit']> {
+        return Reflect.apply(this.emit, this, args)
+    }
     /**
      * Should MessageCenter prints all messages to console?
      */

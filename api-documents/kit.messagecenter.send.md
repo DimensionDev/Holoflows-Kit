@@ -2,10 +2,23 @@
 
 [Home](./index.md) &gt; [@holoflows/kit](./kit.md) &gt; [MessageCenter](./kit.messagecenter.md) &gt; [send](./kit.messagecenter.send.md)
 
-## MessageCenter.send property
+## MessageCenter.send() method
+
+Send message to local or other instance of extension
 
 <b>Signature:</b>
 
 ```typescript
-send: <Key_1 extends keyof ITypedMessages>(key: Key_1, data: ITypedMessages[Key_1], alsoSendToDocument?: boolean) => void;
+send(...args: Parameters<MessageCenter<ITypedMessages>['emit']>): ReturnType<MessageCenter<ITypedMessages>['emit']>;
 ```
+
+## Parameters
+
+|  Parameter | Type | Description |
+|  --- | --- | --- |
+|  args | <code>Parameters&lt;MessageCenter&lt;ITypedMessages&gt;['emit']&gt;</code> |  |
+
+<b>Returns:</b>
+
+`ReturnType<MessageCenter<ITypedMessages>['emit']>`
+

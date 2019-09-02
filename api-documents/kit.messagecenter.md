@@ -22,7 +22,6 @@ export declare class MessageCenter<ITypedMessages>
 
 |  Property | Modifiers | Type | Description |
 |  --- | --- | --- | --- |
-|  [send](./kit.messagecenter.send.md) |  | <code>&lt;Key_1 extends keyof ITypedMessages&gt;(key: Key_1, data: ITypedMessages[Key_1], alsoSendToDocument?: boolean) =&gt; void</code> |  |
 |  [writeToConsole](./kit.messagecenter.writetoconsole.md) |  | <code>boolean</code> | Should MessageCenter prints all messages to console? |
 
 ## Methods
@@ -30,5 +29,7 @@ export declare class MessageCenter<ITypedMessages>
 |  Method | Modifiers | Description |
 |  --- | --- | --- |
 |  [emit(key, data, alsoSendToDocument)](./kit.messagecenter.emit.md) |  | Send message to local or other instance of extension |
+|  [off(event, handler)](./kit.messagecenter.off.md) |  | Remove the listener of an event |
 |  [on(event, handler)](./kit.messagecenter.on.md) |  | Listen to an event |
+|  [send(args)](./kit.messagecenter.send.md) |  | Send message to local or other instance of extension |
 

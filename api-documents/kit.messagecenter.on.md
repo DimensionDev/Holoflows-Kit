@@ -9,7 +9,7 @@ Listen to an event
 <b>Signature:</b>
 
 ```typescript
-on<Key extends keyof ITypedMessages>(event: Key, handler: (data: ITypedMessages[Key]) => void): void;
+on<Key extends keyof ITypedMessages>(event: Key, handler: (data: ITypedMessages[Key]) => void): () => void;
 ```
 
 ## Parameters
@@ -21,5 +21,7 @@ on<Key extends keyof ITypedMessages>(event: Key, handler: (data: ITypedMessages[
 
 <b>Returns:</b>
 
-`void`
+`() => void`
+
+a function, call it to remove this listener
 

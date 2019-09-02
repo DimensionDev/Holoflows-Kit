@@ -155,9 +155,9 @@ export class LiveSelector<T, SingleMode extends boolean = false> {
 export class MessageCenter<ITypedMessages> {
     constructor(instanceKey?: string);
     emit<Key extends keyof ITypedMessages>(key: Key, data: ITypedMessages[Key], alsoSendToDocument?: boolean): void;
-    on<Key extends keyof ITypedMessages>(event: Key, handler: (data: ITypedMessages[Key]) => void): void;
-    // (undocumented)
-    send: <Key_1 extends keyof ITypedMessages>(key: Key_1, data: ITypedMessages[Key_1], alsoSendToDocument?: boolean) => void;
+    off<Key extends keyof ITypedMessages>(event: Key, handler: (data: ITypedMessages[Key]) => void): void;
+    on<Key extends keyof ITypedMessages>(event: Key, handler: (data: ITypedMessages[Key]) => void): () => void;
+    send(...args: Parameters<MessageCenter<ITypedMessages>['emit']>): ReturnType<MessageCenter<ITypedMessages>['emit']>;
     writeToConsole: boolean;
 }
 
