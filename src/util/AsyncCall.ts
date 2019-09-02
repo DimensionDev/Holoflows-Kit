@@ -5,23 +5,27 @@
  *
  * https://www.jsonrpc.org/specification
  *
- * Non-standard features: (Documented here to allow other JSON RPC client/server integrate better)
+ * -----------------------------------------------------------------------------
+ * Extends to the specification:
  *
- * - Remote calling stack:
- * Add a "remoteStack" property to the Request object,
- * AsyncCall(server) will print it prettier.
+ * Request object:
+ *      remoteStack?: string
+ *          This property will help server print the log better.
  *
- * - Remote Error stack:
- * In the Error object, add these properties:
- * "stack": AsyncCall(client) will append it to the JavaScript Error object.
- * "type": AsyncCall(client) will try to rebuild the given type of JavaScript Error object.
- *      Supported Errors (Defined in ECMAScript standard):
- *          Error, EvalError, RangeError, ReferenceError,
- *          SyntaxError, TypeError, URIError
+ * Error object:
+ *      data?: { stack?: string, type?: string }
+ *          This property will help client to build a better Error object.
+ *              Supported value for "type" field (Defined in ECMAScript standard):
+ *                  Error, EvalError, RangeError, ReferenceError,
+ *                  SyntaxError, TypeError, URIError
  *
- * - Undefined keeping:
- * Add a "resultIsUndefined: true" to the Response object,
- * AsyncCall(client) will treat result "null" in JSON as "undefined" in JavaScript
+ * Response object:
+ *      resultIsUndefined?: boolean
+ *          This property is a hint. If the client is run in JavaScript,
+ *          it should treat "result: null" as "result: undefined"
+ * -----------------------------------------------------------------------------
+ * Implemented JSON RPC extension (internal methods):
+ * None
  */
 import { MessageCenter } from '../Extension/MessageCenter'
 
