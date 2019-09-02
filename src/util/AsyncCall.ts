@@ -109,6 +109,13 @@ export interface AsyncCallOptions {
      */
     preferLocalImplementation: boolean
 }
+type MakeAllFunctionsAsync<T> = {
+    [key in keyof T]: T[key] extends (...args: infer Args) => infer Return
+        ? Return extends PromiseLike<infer U>
+            ? (...args: Args) => Promise<U>
+            : (...args: Args) => Promise<Return>
+        : T[key]
+}
 const AsyncCallDefaultOptions = (<T extends Partial<AsyncCallOptions>>(a: T) => a)({
     serializer: NoSerialization,
     key: 'default-jsonrpc',
@@ -179,9 +186,9 @@ const AsyncCallDefaultOptions = (<T extends Partial<AsyncCallOptions>>(a: T) => 
  *
  */
 export function AsyncCall<OtherSideImplementedFunctions = {}>(
-    implementation: Partial<Record<string, (...args: any[]) => unknown>> = {},
+    implementation: Partial<Record<string, (...args: unknown[]) => unknown>> = {},
     options: Partial<AsyncCallOptions> = {},
-): OtherSideImplementedFunctions {
+): MakeAllFunctionsAsync<OtherSideImplementedFunctions> {
     const { serializer, key, strict, log, parameterStructures, preferLocalImplementation } = {
         ...AsyncCallDefaultOptions,
         ...options,
@@ -327,10 +334,13 @@ export function AsyncCall<OtherSideImplementedFunctions = {}>(
         {
             get(_target, method) {
                 let stack = removeStackHeader(new Error().stack)
-                return (...params: any[]) => {
-                    if (typeof method !== 'string') return Promise.reject('Only string can be keys')
+                return (...params: unknown[]) => {
+                    if (typeof method !== 'string')
+                        return Promise.reject(new TypeError('[AsyncCall] Only string can be the method name'))
                     if (method.startsWith('rpc.'))
-                        return Promise.reject('You cannot call JSON RPC internal methods directly')
+                        return Promise.reject(
+                            new TypeError('[AsyncCall] You cannot call JSON RPC internal methods directly'),
+                        )
                     if (preferLocalImplementation) {
                         const localImpl = implementation[method]
                         if (localImpl) {
@@ -347,9 +357,10 @@ export function AsyncCall<OtherSideImplementedFunctions = {}>(
                         const id = Math.random()
                             .toString(36)
                             .slice(2)
+                        const param0 = params[0]
                         const req =
-                            parameterStructures === 'by-name' && params.length === 1 && isObject(params[0])
-                                ? new Request(id, method, params[0])
+                            parameterStructures === 'by-name' && params.length === 1 && isObject(param0)
+                                ? new Request(id, method, param0)
                                 : new Request(id, method, params)
                         serializer.serialization(req).then(data => {
                             message.emit(key, data)
@@ -362,7 +373,7 @@ export function AsyncCall<OtherSideImplementedFunctions = {}>(
                 }
             },
         },
-    ) as OtherSideImplementedFunctions
+    ) as MakeAllFunctionsAsync<OtherSideImplementedFunctions>
 
     async function handleSingleMessage(data: SuccessResponse | ErrorResponse | Request) {
         if (hasKey(data, 'method')) {
@@ -395,7 +406,7 @@ const jsonrpc = '2.0'
 type ID = string | number | null | undefined
 class Request {
     readonly jsonrpc = '2.0'
-    constructor(public id: ID, public method: string, public params: any[] | object) {
+    constructor(public id: ID, public method: string, public params: unknown[] | object) {
         return { id, method, params, jsonrpc }
     }
 }
@@ -438,7 +449,7 @@ function isJSONRPCObject(data: any): data is Response | Request {
     }
     return true
 }
-function isObject(params: any) {
+function isObject(params: any): params is object {
     return typeof params === 'object' && params !== null
 }
 function hasKey<T, Q extends string>(obj: T, key: Q): obj is T & { [key in Q]: unknown } {
