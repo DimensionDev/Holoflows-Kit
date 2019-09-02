@@ -159,11 +159,11 @@ export function AutomatedTabTask<T extends Record<string, (...args: any[]) => Pr
     } else if (GetContext() === 'background' || GetContext() === 'options') {
         type tabId = number
         /** If `tab` is ready */
-        const tabReadyMap: Record<tabId, boolean> = {}
+        const tabReadyMap: Set<tabId> = new Set()
         // Listen to tab REGISTER event
         browser.runtime.onMessage.addListener(((message, sender) => {
             if ((message as any).type === REGISTER) {
-                tabReadyMap[sender.tab!.id!] = true
+                tabReadyMap.add(sender.tab!.id!)
                 // response its tab id
                 return Promise.resolve(sender)
             }
@@ -261,7 +261,7 @@ interface createOrGetTheTabToExecuteTaskOptions {
     needRedirect: boolean
     taskArgs: any[]
     asyncCall: any
-    tabReadyMap: Record<number, boolean>
+    tabReadyMap: Set<number>
     lock: Lock
 }
 async function createOrGetTheTabToExecuteTask(options: createOrGetTheTabToExecuteTaskOptions) {
@@ -276,7 +276,7 @@ async function createOrGetTheTabToExecuteTask(options: createOrGetTheTabToExecut
     const tabId = await getTabOrCreate(wantedTabID, url, needRedirect, active, pinned)
 
     // Wait for the tab register
-    while (tabReadyMap[tabId] !== true) await sleep(50)
+    while (tabReadyMap.has(tabId) !== true) await sleep(50)
 
     // Run the async call
     const task: Promise<any> = asyncCall[getTaskNameByTabId(taskName, tabId)](...taskArgs)
@@ -285,7 +285,6 @@ async function createOrGetTheTabToExecuteTask(options: createOrGetTheTabToExecut
         return await timeoutFn(task, timeout)
     } finally {
         if (!withoutLock) lock.unlock()
-        delete tabReadyMap[tabId]
         autoClose && browser.tabs.remove(tabId)
     }
 }
