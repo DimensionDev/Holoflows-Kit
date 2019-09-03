@@ -7,7 +7,7 @@
 import mitt from 'mitt';
 
 // @public
-export function AsyncCall<OtherSideImplementedFunctions = {}>(implementation?: Partial<Record<string, (...args: any[]) => unknown>>, options?: Partial<AsyncCallOptions>): OtherSideImplementedFunctions;
+export function AsyncCall<OtherSideImplementedFunctions = {}>(implementation?: object, options?: Partial<AsyncCallOptions>): MakeAllFunctionsAsync<OtherSideImplementedFunctions>;
 
 // @public
 export interface AsyncCallOptions {
@@ -16,6 +16,7 @@ export interface AsyncCallOptions {
         beCalled?: boolean;
         localError?: boolean;
         remoteError?: boolean;
+        sendLocalStack?: boolean;
         type?: 'basic' | 'pretty';
     } | boolean;
     messageChannel: {
@@ -31,6 +32,9 @@ export interface AsyncCallOptions {
         unknownMessage?: boolean;
     } | boolean;
 }
+
+// @public
+export function AsyncGeneratorCall<OtherSideImplementedFunctions = {}>(implementation?: Partial<Record<string, (...args: unknown[]) => Iterator<unknown> | AsyncIterator<unknown>>>, options?: Partial<AsyncCallOptions>): MakeAllGeneratorFunctionsAsync<OtherSideImplementedFunctions>;
 
 // @public
 export function AutomatedTabTask<T extends Record<string, (...args: any[]) => PromiseLike<any>>>(taskImplements: T, options?: Partial<AutomatedTabTaskDefineTimeOptions>): ((urlOrTabID: string | number, options?: Partial<AutomatedTabTaskRuntimeOptions>) => T) | null;
@@ -152,6 +156,16 @@ export class LiveSelector<T, SingleMode extends boolean = false> {
     slice(start?: number, end?: number): LiveSelector<T, SingleMode>;
     sort(compareFn?: (a: T, b: T) => number): LiveSelector<T, SingleMode>;
     }
+
+// @public (undocumented)
+export type MakeAllFunctionsAsync<T> = {
+    [key in keyof T]: T[key] extends (...args: infer Args) => infer Return ? Return extends PromiseLike<infer U> ? (...args: Args) => Promise<U> : (...args: Args) => Promise<Return> : T[key];
+};
+
+// @public (undocumented)
+export type MakeAllGeneratorFunctionsAsync<T> = {
+    [key in keyof T]: T[key] extends (...args: infer Args) => Iterator<infer Return> | AsyncIterator<infer Return> ? (...args: Args) => AsyncIterator<Return> : T[key];
+};
 
 // @public
 export class MessageCenter<ITypedMessages> {

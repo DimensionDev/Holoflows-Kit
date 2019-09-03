@@ -132,11 +132,16 @@ export interface AsyncCallOptions {
      */
     preferLocalImplementation: boolean
 }
-type MakeAllFunctionsAsync<T> = {
+export type MakeAllFunctionsAsync<T> = {
     [key in keyof T]: T[key] extends (...args: infer Args) => infer Return
         ? Return extends PromiseLike<infer U>
             ? (...args: Args) => Promise<U>
             : (...args: Args) => Promise<Return>
+        : T[key]
+}
+export type MakeAllGeneratorFunctionsAsync<T> = {
+    [key in keyof T]: T[key] extends (...args: infer Args) => Iterator<infer Return> | AsyncIterator<infer Return>
+        ? (...args: Args) => AsyncIterator<Return>
         : T[key]
 }
 const AsyncCallDefaultOptions = (<T extends Partial<AsyncCallOptions>>(a: T) => a)({
@@ -209,7 +214,7 @@ const AsyncCallDefaultOptions = (<T extends Partial<AsyncCallOptions>>(a: T) => 
  *
  */
 export function AsyncCall<OtherSideImplementedFunctions = {}>(
-    implementation: Partial<Record<string, (...args: unknown[]) => unknown>> = {},
+    implementation: object = {},
     options: Partial<AsyncCallOptions> = {},
 ): MakeAllFunctionsAsync<OtherSideImplementedFunctions> {
     const { serializer, key, strict, log, parameterStructures, preferLocalImplementation } = {
@@ -235,10 +240,11 @@ export function AsyncCall<OtherSideImplementedFunctions = {}>(
         let frameworkStack: string = ''
         try {
             // ? We're not implementing any JSON RPC extension. So let it to be undefined.
-            const executor = data.method.startsWith('rpc.')
-                ? undefined
-                : implementation[data.method as keyof typeof implementation]
-            if (!executor) {
+            const key = (data.method.startsWith('rpc.')
+                ? getRPCSymbolFromString(data.method)
+                : data.method) as keyof typeof implementation
+            const executor: unknown = implementation[key]
+            if (!executor || typeof executor !== 'function') {
                 if (!banMethodNotFound) {
                     if (logLocalError) console.debug('Receive remote call, but not implemented.', key, data)
                     return
@@ -274,6 +280,8 @@ export function AsyncCall<OtherSideImplementedFunctions = {}>(
                         } else console.log(...logArgs)
                     }
                 }
+                const result = await promise
+                if (result === $AsyncCallIgnoreResponse) return
                 return new SuccessResponse(data.id, await promise, !!noUndefinedKeeping)
             } else {
                 return ErrorResponse.InvalidRequest(data.id)
@@ -372,15 +380,17 @@ export function AsyncCall<OtherSideImplementedFunctions = {}>(
             get(_target, method) {
                 let stack = removeStackHeader(new Error().stack)
                 return (...params: unknown[]) => {
-                    if (typeof method !== 'string')
-                        return Promise.reject(new TypeError('[AsyncCall] Only string can be the method name'))
-                    if (method.startsWith('rpc.'))
+                    if (typeof method !== 'string') {
+                        const internalMethod = getStringFromRPCSymbol(method)
+                        if (internalMethod) method = internalMethod
+                        else return Promise.reject(new TypeError('[AsyncCall] Only string can be the method name'))
+                    } else if (method.startsWith('rpc.'))
                         return Promise.reject(
                             new TypeError('[AsyncCall] You cannot call JSON RPC internal methods directly'),
                         )
-                    if (preferLocalImplementation) {
-                        const localImpl = implementation[method]
-                        if (localImpl) {
+                    if (preferLocalImplementation && typeof method === 'string') {
+                        const localImpl: unknown = implementation[method as keyof typeof implementation]
+                        if (localImpl && typeof localImpl === 'function') {
                             return new Promise((resolve, reject) => {
                                 try {
                                     resolve(localImpl(...params))
@@ -391,16 +401,14 @@ export function AsyncCall<OtherSideImplementedFunctions = {}>(
                         }
                     }
                     return new Promise((resolve, reject) => {
-                        const id = Math.random()
-                            .toString(36)
-                            .slice(2)
+                        const id = generateRandomID()
                         const param0 = params[0]
                         const sendingStack = sendLocalStack ? stack : ''
                         const param =
                             parameterStructures === 'by-name' && params.length === 1 && isObject(param0)
                                 ? param0
                                 : params
-                        const request = new Request(id, method, param, sendingStack)
+                        const request = new Request(id, method as string, param, sendingStack)
                         serializer.serialization(request).then(data => {
                             message.emit(key, data)
                             requestContext.set(id, {
@@ -427,6 +435,142 @@ export function AsyncCall<OtherSideImplementedFunctions = {}>(
         }
         return undefined
     }
+}
+
+const $AsyncCallIgnoreResponse = Symbol('This response should be ignored.')
+
+const $AsyncIteratorStartString = 'rpc.async-iterator.start'
+const $AsyncIteratorNextString = 'rpc.async-iterator.next'
+const $AsyncIteratorReturnString = 'rpc.async-iterator.return'
+const $AsyncIteratorThrowString = 'rpc.async-iterator.throw'
+const $AsyncIteratorStart = Symbol($AsyncIteratorStartString)
+const $AsyncIteratorNext = Symbol($AsyncIteratorNextString)
+const $AsyncIteratorReturn = Symbol($AsyncIteratorReturnString)
+const $AsyncIteratorThrow = Symbol($AsyncIteratorThrowString)
+const InternalMethodMap = {
+    [$AsyncIteratorStart]: $AsyncIteratorStartString,
+    [$AsyncIteratorNext]: $AsyncIteratorNextString,
+    [$AsyncIteratorReturn]: $AsyncIteratorReturnString,
+    [$AsyncIteratorThrow]: $AsyncIteratorThrowString,
+    // Reverse map
+    [$AsyncIteratorStartString]: $AsyncIteratorStart,
+    [$AsyncIteratorNextString]: $AsyncIteratorNext,
+    [$AsyncIteratorReturnString]: $AsyncIteratorReturn,
+    [$AsyncIteratorThrowString]: $AsyncIteratorThrow,
+    // empty
+    undefined: null,
+    null: undefined,
+}
+function generateRandomID() {
+    return Math.random()
+        .toString(36)
+        .slice(2)
+}
+
+function getStringFromRPCSymbol(symbol: unknown) {
+    if (typeof symbol !== 'symbol') return null
+    // @ts-ignore
+    return InternalMethodMap[symbol]
+}
+function getRPCSymbolFromString(string: string) {
+    if (typeof string !== 'string') return null
+    // @ts-ignore
+    return InternalMethodMap[string]
+}
+const $finishedSymbol = Symbol('AsyncGeneratorCall finished')
+interface AsyncGeneratorInternalMethods {
+    [$AsyncIteratorStart](method: string, params: unknown[]): Promise<string>
+    [$AsyncIteratorNext](id: string, value: unknown): Promise<IteratorResult<unknown>>
+    [$AsyncIteratorReturn](id: string, value: unknown): Promise<IteratorResult<unknown>>
+    [$AsyncIteratorThrow](id: string, value: unknown): Promise<IteratorResult<unknown>>
+    [$finishedSymbol]: boolean
+}
+
+/**
+ * This function provides the async generator version of the AsyncCall
+ */
+export function AsyncGeneratorCall<OtherSideImplementedFunctions = {}>(
+    implementation: Partial<Record<string, (...args: unknown[]) => Iterator<unknown> | AsyncIterator<unknown>>> = {},
+    options: Partial<AsyncCallOptions> = {},
+): MakeAllGeneratorFunctionsAsync<OtherSideImplementedFunctions> {
+    const iterators = new Map<string, Iterator<unknown> | AsyncIterator<unknown>>()
+    const strict = calcStrictOptions(options.strict || false)
+    function findIterator(id: string, label: string) {
+        const it = iterators.get(id)
+        if (!it) {
+            if (strict.methodNotFound) throw new Error(`Remote iterator not found while executing ${label}`)
+            else return $AsyncCallIgnoreResponse
+        }
+        return it
+    }
+    const server = {
+        [$finishedSymbol]: false,
+        [$AsyncIteratorStart](method, args) {
+            const iteratorGenerator = implementation[method]
+            if (typeof iteratorGenerator !== 'function') {
+                if (strict.methodNotFound) throw new Error(method + ' is not a function')
+                else return $AsyncCallIgnoreResponse
+            }
+            const iterator = iteratorGenerator(...args)
+            const id = generateRandomID()
+            iterators.set(id, iterator)
+            return Promise.resolve(id)
+        },
+        [$AsyncIteratorNext](id, val) {
+            const it = findIterator(id, 'next')
+            if (it !== $AsyncCallIgnoreResponse) return finishTask(() => it.next(val), server)
+            return it
+        },
+        [$AsyncIteratorReturn](id, val) {
+            const it = findIterator(id, 'return')
+            if (it !== $AsyncCallIgnoreResponse) return finishTask(() => it.return!(val), server)
+            return $AsyncCallIgnoreResponse
+        },
+        [$AsyncIteratorThrow](id, val) {
+            const it = findIterator(id, 'throw')
+            if (it !== $AsyncCallIgnoreResponse) return finishTask(() => it.throw!(val), server)
+            return $AsyncCallIgnoreResponse
+        },
+    } as AsyncGeneratorInternalMethods
+    const remote = AsyncCall<AsyncGeneratorInternalMethods>(server, options)
+    function proxyTrap(_target: unknown, key: string | number | symbol) {
+        if (typeof key !== 'string') throw new TypeError('[*AsyncCall] Only string can be the method name')
+        return function(...args: unknown[]) {
+            const stack = removeStackHeader(new Error().stack)
+            const id = remote[$AsyncIteratorStart](key, args)
+            return new (class {
+                [Symbol.asyncIterator](): AsyncIterator<unknown> {
+                    return {
+                        async return(val) {
+                            return remote[$AsyncIteratorReturn](await id, val)
+                        },
+                        async next(val) {
+                            return remote[$AsyncIteratorNext](await id, val)
+                        },
+                        async throw(val) {
+                            return remote[$AsyncIteratorThrow](await id, val)
+                        },
+                    }
+                }
+                [Symbol.toStringTag] = key
+            })()
+        }
+    }
+    return new Proxy({}, { get: proxyTrap }) as MakeAllGeneratorFunctionsAsync<OtherSideImplementedFunctions>
+}
+
+function finishTask(
+    it: () => IteratorResult<unknown> | Promise<IteratorResult<unknown>>,
+    self: { [$finishedSymbol]: boolean },
+): IteratorResult<unknown> | Promise<IteratorResult<unknown>> {
+    if (self[$finishedSymbol]) {
+        return { done: true, value: undefined }
+    }
+    const result = it()
+    Promise.resolve(result).then(x => {
+        if (x.done) self[$finishedSymbol] = true
+    })
+    return result
 }
 
 function calcLogOptions(log: AsyncCallOptions['log']): Exclude<typeof log, boolean> {

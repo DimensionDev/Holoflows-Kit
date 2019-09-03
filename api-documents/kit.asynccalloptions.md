@@ -17,7 +17,7 @@ export interface AsyncCallOptions
 |  Property | Type | Description |
 |  --- | --- | --- |
 |  [key](./kit.asynccalloptions.key.md) | <code>string</code> | A key to prevent collision with other AsyncCalls. Can be anything, but need to be the same on the both side. |
-|  [log](./kit.asynccalloptions.log.md) | <code>{</code><br/><code>        beCalled?: boolean;</code><br/><code>        localError?: boolean;</code><br/><code>        remoteError?: boolean;</code><br/><code>        type?: 'basic' &#124; 'pretty';</code><br/><code>    } &#124; boolean</code> | Log what to console |
+|  [log](./kit.asynccalloptions.log.md) | <code>{</code><br/><code>        beCalled?: boolean;</code><br/><code>        localError?: boolean;</code><br/><code>        remoteError?: boolean;</code><br/><code>        sendLocalStack?: boolean;</code><br/><code>        type?: 'basic' &#124; 'pretty';</code><br/><code>    } &#124; boolean</code> | Log what to console |
 |  [messageChannel](./kit.asynccalloptions.messagechannel.md) | <code>{</code><br/><code>        on(event: string, callback: (data: unknown) =&gt; void): void;</code><br/><code>        emit(event: string, data: unknown): void;</code><br/><code>    }</code> | A class that can let you transfer messages between two sides |
 |  [parameterStructures](./kit.asynccalloptions.parameterstructures.md) | <code>'by-position' &#124; 'by-name'</code> | How parameters passed to remote https://www.jsonrpc.org/specification\#parameter\_structures |
 |  [preferLocalImplementation](./kit.asynccalloptions.preferlocalimplementation.md) | <code>boolean</code> | If <code>implementation</code> has the function required, call it directly instead of send it to remote. |
