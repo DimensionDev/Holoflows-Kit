@@ -1,4 +1,5 @@
 import mitt from 'mitt'
+import { NoSerialization } from '../util/AsyncCall'
 type InternalMessageType = {
     key: Key
     data: any
@@ -6,16 +7,21 @@ type InternalMessageType = {
 }
 type Key = string | number | symbol
 const MessageCenterEvent = 'Holoflows-Kit MessageCenter'
-const newMessage = (key: InternalMessageType['key'], data: InternalMessageType['data']) =>
-    new CustomEvent(MessageCenterEvent, { detail: { data, key } })
 const noop = () => {}
 /**
  * Send and receive messages in different contexts.
  */
 export class MessageCenter<ITypedMessages> {
+    /**
+     * How should MessageCenter serialization the message
+     * @defaultValue NoSerialization
+     */
+    public serialization = NoSerialization
     private eventEmitter = new mitt()
-    private listener = (request: InternalMessageType | Event) => {
-        let { key, data, instanceKey } = (request as CustomEvent).detail || request
+    private listener = async (request: InternalMessageType | Event) => {
+        let { key, data, instanceKey } = await this.serialization.deserialization(
+            (request as CustomEvent).detail || request,
+        )
         // Message is not for us
         if (this.instanceKey !== (instanceKey || '')) return
         if (this.writeToConsole) {
@@ -67,11 +73,11 @@ export class MessageCenter<ITypedMessages> {
      * @param data - Data of the message
      * @param alsoSendToDocument - ! Send message to document. This may leaks secret! Only open in localhost!
      */
-    public emit<Key extends keyof ITypedMessages>(
+    public async emit<Key extends keyof ITypedMessages>(
         key: Key,
         data: ITypedMessages[Key],
         alsoSendToDocument = location.hostname === 'localhost',
-    ): void {
+    ): Promise<void> {
         if (this.writeToConsole) {
             console.log(
                 `%cSend%c %c${key.toString()}`,
@@ -82,21 +88,25 @@ export class MessageCenter<ITypedMessages> {
             )
         }
         const msg: InternalMessageType = { data, key, instanceKey: this.instanceKey || '' }
+        const serialized = await this.serialization.serialization(msg)
         if (typeof browser !== 'undefined') {
             if (browser.runtime && browser.runtime.sendMessage) {
-                browser.runtime.sendMessage(msg).catch(noop)
+                browser.runtime.sendMessage(serialized).catch(noop)
             }
             if (browser.tabs) {
                 // Send message to Content Script
                 browser.tabs.query({ discarded: false }).then(tabs => {
                     for (const tab of tabs) {
-                        if (tab.id) browser.tabs.sendMessage(tab.id, msg).catch(noop)
+                        if (tab.id) browser.tabs.sendMessage(tab.id, serialized).catch(noop)
                     }
                 })
             }
         }
         if (alsoSendToDocument && typeof document !== 'undefined' && document.dispatchEvent) {
-            document.dispatchEvent(newMessage(key, data))
+            const event = new CustomEvent(MessageCenterEvent, {
+                detail: await this.serialization.serialization({ data, key }),
+            })
+            document.dispatchEvent(event)
         }
     }
     /**

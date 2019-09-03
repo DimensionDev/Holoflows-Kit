@@ -170,10 +170,11 @@ export type MakeAllGeneratorFunctionsAsync<T> = {
 // @public
 export class MessageCenter<ITypedMessages> {
     constructor(instanceKey?: string);
-    emit<Key extends keyof ITypedMessages>(key: Key, data: ITypedMessages[Key], alsoSendToDocument?: boolean): void;
+    emit<Key extends keyof ITypedMessages>(key: Key, data: ITypedMessages[Key], alsoSendToDocument?: boolean): Promise<void>;
     off<Key extends keyof ITypedMessages>(event: Key, handler: (data: ITypedMessages[Key]) => void): void;
     on<Key extends keyof ITypedMessages>(event: Key, handler: (data: ITypedMessages[Key]) => void): () => void;
     send(...args: Parameters<MessageCenter<ITypedMessages>['emit']>): ReturnType<MessageCenter<ITypedMessages>['emit']>;
+    serialization: import("../util/AsyncCall").Serialization;
     writeToConsole: boolean;
 }
 
