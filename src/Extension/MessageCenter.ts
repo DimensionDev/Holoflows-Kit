@@ -43,7 +43,9 @@ export class MessageCenter<ITypedMessages> {
         if (typeof browser !== 'undefined' && browser.runtime && browser.runtime.onMessage) {
             // Fired when a message is sent from either an extension process (by runtime.sendMessage)
             // or a content script (by tabs.sendMessage).
-            browser.runtime.onMessage.addListener(this.listener)
+            browser.runtime.onMessage.addListener((e: InternalMessageType) => {
+                this.listener(e)
+            })
         }
         if (typeof document !== 'undefined' && document.addEventListener) {
             document.addEventListener(MessageCenterEvent, this.listener)
