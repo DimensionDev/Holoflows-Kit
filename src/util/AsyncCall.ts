@@ -139,9 +139,16 @@ export type MakeAllFunctionsAsync<T> = {
             : (...args: Args) => Promise<Return>
         : T[key]
 }
+export type UnboxPromise<T> = T extends PromiseLike<infer U> ? U : T
 export type MakeAllGeneratorFunctionsAsync<T> = {
-    [key in keyof T]: T[key] extends (...args: infer Args) => Iterator<infer Return> | AsyncIterator<infer Return>
-        ? (...args: Args) => AsyncIterator<Return>
+    [key in keyof T]: T[key] extends (
+        ...args: infer Args
+    ) => Iterator<infer Yield, infer Return, infer Next> | AsyncIterator<infer Yield, infer Return, infer Next>
+        ? (
+              ...args: Args
+          ) => AsyncIterator<UnboxPromise<Yield>, UnboxPromise<Return>, UnboxPromise<Next>> & {
+              [Symbol.asyncIterator](): AsyncIterator<UnboxPromise<Yield>, UnboxPromise<Return>, UnboxPromise<Next>>
+          }
         : T[key]
 }
 const AsyncCallDefaultOptions = (<T extends Partial<AsyncCallOptions>>(a: T) => a)({
@@ -477,20 +484,18 @@ function getRPCSymbolFromString(string: string) {
     // @ts-ignore
     return InternalMethodMap[string]
 }
-const $finishedSymbol = Symbol('AsyncGeneratorCall finished')
 interface AsyncGeneratorInternalMethods {
     [$AsyncIteratorStart](method: string, params: unknown[]): Promise<string>
     [$AsyncIteratorNext](id: string, value: unknown): Promise<IteratorResult<unknown>>
     [$AsyncIteratorReturn](id: string, value: unknown): Promise<IteratorResult<unknown>>
     [$AsyncIteratorThrow](id: string, value: unknown): Promise<IteratorResult<unknown>>
-    [$finishedSymbol]: boolean
 }
 
 /**
  * This function provides the async generator version of the AsyncCall
  */
 export function AsyncGeneratorCall<OtherSideImplementedFunctions = {}>(
-    implementation: Partial<Record<string, (...args: unknown[]) => Iterator<unknown> | AsyncIterator<unknown>>> = {},
+    implementation: object = {},
     options: Partial<AsyncCallOptions> = {},
 ): MakeAllGeneratorFunctionsAsync<OtherSideImplementedFunctions> {
     const iterators = new Map<string, Iterator<unknown> | AsyncIterator<unknown>>()
@@ -504,9 +509,8 @@ export function AsyncGeneratorCall<OtherSideImplementedFunctions = {}>(
         return it
     }
     const server = {
-        [$finishedSymbol]: false,
         [$AsyncIteratorStart](method, args) {
-            const iteratorGenerator = implementation[method]
+            const iteratorGenerator: unknown = Reflect.get(implementation, method)
             if (typeof iteratorGenerator !== 'function') {
                 if (strict.methodNotFound) throw new Error(method + ' is not a function')
                 else return $AsyncCallIgnoreResponse
@@ -518,59 +522,46 @@ export function AsyncGeneratorCall<OtherSideImplementedFunctions = {}>(
         },
         [$AsyncIteratorNext](id, val) {
             const it = findIterator(id, 'next')
-            if (it !== $AsyncCallIgnoreResponse) return finishTask(() => it.next(val), server)
+            if (it !== $AsyncCallIgnoreResponse) return it.next(val as any)
             return it
         },
         [$AsyncIteratorReturn](id, val) {
             const it = findIterator(id, 'return')
-            if (it !== $AsyncCallIgnoreResponse) return finishTask(() => it.return!(val), server)
+            if (it !== $AsyncCallIgnoreResponse) return it.return!(val)
             return $AsyncCallIgnoreResponse
         },
         [$AsyncIteratorThrow](id, val) {
             const it = findIterator(id, 'throw')
-            if (it !== $AsyncCallIgnoreResponse) return finishTask(() => it.throw!(val), server)
+            if (it !== $AsyncCallIgnoreResponse) return it.throw!(val)
             return $AsyncCallIgnoreResponse
         },
     } as AsyncGeneratorInternalMethods
     const remote = AsyncCall<AsyncGeneratorInternalMethods>(server, options)
-    function proxyTrap(_target: unknown, key: string | number | symbol) {
+    function proxyTrap(
+        _target: unknown,
+        key: string | number | symbol,
+    ): (...args: unknown[]) => AsyncIterableIterator<unknown> {
         if (typeof key !== 'string') throw new TypeError('[*AsyncCall] Only string can be the method name')
         return function(...args: unknown[]) {
-            const stack = removeStackHeader(new Error().stack)
             const id = remote[$AsyncIteratorStart](key, args)
-            return new (class {
-                [Symbol.asyncIterator](): AsyncIterator<unknown> {
-                    return {
-                        async return(val) {
-                            return remote[$AsyncIteratorReturn](await id, val)
-                        },
-                        async next(val) {
-                            return remote[$AsyncIteratorNext](await id, val)
-                        },
-                        async throw(val) {
-                            return remote[$AsyncIteratorThrow](await id, val)
-                        },
-                    }
+            return new (class implements AsyncIterableIterator<unknown>, AsyncIterator<unknown, unknown, unknown> {
+                async return(val: unknown) {
+                    return remote[$AsyncIteratorReturn](await id, val)
+                }
+                async next(val?: unknown) {
+                    return remote[$AsyncIteratorNext](await id, val)
+                }
+                async throw(val?: unknown) {
+                    return remote[$AsyncIteratorThrow](await id, val)
+                }
+                [Symbol.asyncIterator]() {
+                    return this
                 }
                 [Symbol.toStringTag] = key
             })()
         }
     }
     return new Proxy({}, { get: proxyTrap }) as MakeAllGeneratorFunctionsAsync<OtherSideImplementedFunctions>
-}
-
-function finishTask(
-    it: () => IteratorResult<unknown> | Promise<IteratorResult<unknown>>,
-    self: { [$finishedSymbol]: boolean },
-): IteratorResult<unknown> | Promise<IteratorResult<unknown>> {
-    if (self[$finishedSymbol]) {
-        return { done: true, value: undefined }
-    }
-    const result = it()
-    Promise.resolve(result).then(x => {
-        if (x.done) self[$finishedSymbol] = true
-    })
-    return result
 }
 
 function calcLogOptions(log: AsyncCallOptions['log']): Exclude<typeof log, boolean> {
