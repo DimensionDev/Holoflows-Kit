@@ -89,8 +89,11 @@ export class MessageCenter<ITypedMessages> {
                 data,
             )
         }
-        const msg: InternalMessageType = { data, key, instanceKey: this.instanceKey || '' }
-        const serialized = await this.serialization.serialization(msg)
+        const serialized = await this.serialization.serialization({
+            data,
+            key,
+            instanceKey: this.instanceKey || '',
+        } as InternalMessageType)
         if (typeof browser !== 'undefined') {
             if (browser.runtime && browser.runtime.sendMessage) {
                 browser.runtime.sendMessage(serialized).catch(noop)

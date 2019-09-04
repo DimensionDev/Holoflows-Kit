@@ -269,10 +269,11 @@ export function AsyncCall<OtherSideImplementedFunctions = {}>(
                     }
                 })
                 if (logBeCalled) {
-                    if (logType === 'basic') console.log(`${key}.${data.method}(${[...args].toString()}) @${data.id}`)
+                    if (logType === 'basic')
+                        console.log(`${options.key}.${data.method}(${[...args].toString()}) @${data.id}`)
                     else {
                         const logArgs = [
-                            `${key}.%c${data.method}%c(${args.map(() => '%o').join(', ')}%c)\n%o %c@${data.id}`,
+                            `${options.key}.%c${data.method}%c(${args.map(() => '%o').join(', ')}%c)\n%o %c@${data.id}`,
                             'color: #d2c057',
                             '',
                             ...args,
