@@ -34,7 +34,7 @@ export interface AsyncCallOptions {
 }
 
 // @public
-export function AsyncGeneratorCall<OtherSideImplementedFunctions = {}>(implementation?: Partial<Record<string, (...args: unknown[]) => Iterator<unknown> | AsyncIterator<unknown>>>, options?: Partial<AsyncCallOptions>): MakeAllGeneratorFunctionsAsync<OtherSideImplementedFunctions>;
+export function AsyncGeneratorCall<OtherSideImplementedFunctions = {}>(implementation?: object, options?: Partial<AsyncCallOptions>): MakeAllGeneratorFunctionsAsync<OtherSideImplementedFunctions>;
 
 // @public
 export function AutomatedTabTask<T extends Record<string, (...args: any[]) => PromiseLike<any>>>(taskImplements: T, options?: Partial<AutomatedTabTaskDefineTimeOptions>): ((urlOrTabID: string | number, options?: Partial<AutomatedTabTaskRuntimeOptions>) => T) | null;
@@ -164,7 +164,9 @@ export type MakeAllFunctionsAsync<T> = {
 
 // @public (undocumented)
 export type MakeAllGeneratorFunctionsAsync<T> = {
-    [key in keyof T]: T[key] extends (...args: infer Args) => Iterator<infer Return> | AsyncIterator<infer Return> ? (...args: Args) => AsyncIterator<Return> : T[key];
+    [key in keyof T]: T[key] extends (...args: infer Args) => Iterator<infer Yield, infer Return, infer Next> | AsyncIterator<infer Yield, infer Return, infer Next> ? (...args: Args) => AsyncIterator<UnboxPromise<Yield>, UnboxPromise<Return>, UnboxPromise<Next>> & {
+        [Symbol.asyncIterator](): AsyncIterator<UnboxPromise<Yield>, UnboxPromise<Return>, UnboxPromise<Next>>;
+    } : T[key];
 };
 
 // @public
@@ -203,6 +205,9 @@ export interface Serialization {
     deserialization(serialized: unknown): PromiseLike<any>;
     serialization(from: any): PromiseLike<unknown>;
 }
+
+// @public (undocumented)
+export type UnboxPromise<T> = T extends PromiseLike<infer U> ? U : T;
 
 // @public
 export class ValueRef<T> {

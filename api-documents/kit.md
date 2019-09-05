@@ -56,4 +56,5 @@ A toolkit for browser extension developing.
 |  [Contexts](./kit.contexts.md) | All context that possible in when developing a WebExtension |
 |  [MakeAllFunctionsAsync](./kit.makeallfunctionsasync.md) |  |
 |  [MakeAllGeneratorFunctionsAsync](./kit.makeallgeneratorfunctionsasync.md) |  |
+|  [UnboxPromise](./kit.unboxpromise.md) |  |
 

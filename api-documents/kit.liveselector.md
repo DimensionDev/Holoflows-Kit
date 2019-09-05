@@ -16,7 +16,7 @@ export declare class LiveSelector<T, SingleMode extends boolean = false>
 
 |  Constructor | Modifiers | Description |
 |  --- | --- | --- |
-|  [(constructor)(initialElements)](./kit.liveselector.(constructor).md) |  | Create a new LiveSelector. |
+|  [(constructor)(initialElements)](./kit.liveselector._constructor_.md) |  | Create a new LiveSelector. |
 
 ## Methods
 

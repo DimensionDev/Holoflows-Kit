@@ -8,6 +8,8 @@
 
 ```typescript
 export declare type MakeAllGeneratorFunctionsAsync<T> = {
-    [key in keyof T]: T[key] extends (...args: infer Args) => Iterator<infer Return> | AsyncIterator<infer Return> ? (...args: Args) => AsyncIterator<Return> : T[key];
+    [key in keyof T]: T[key] extends (...args: infer Args) => Iterator<infer Yield, infer Return, infer Next> | AsyncIterator<infer Yield, infer Return, infer Next> ? (...args: Args) => AsyncIterator<UnboxPromise<Yield>, UnboxPromise<Return>, UnboxPromise<Next>> & {
+        [Symbol.asyncIterator](): AsyncIterator<UnboxPromise<Yield>, UnboxPromise<Return>, UnboxPromise<Next>>;
+    } : T[key];
 };
 ```

@@ -9,14 +9,14 @@ This function provides the async generator version of the AsyncCall
 <b>Signature:</b>
 
 ```typescript
-export declare function AsyncGeneratorCall<OtherSideImplementedFunctions = {}>(implementation?: Partial<Record<string, (...args: unknown[]) => Iterator<unknown> | AsyncIterator<unknown>>>, options?: Partial<AsyncCallOptions>): MakeAllGeneratorFunctionsAsync<OtherSideImplementedFunctions>;
+export declare function AsyncGeneratorCall<OtherSideImplementedFunctions = {}>(implementation?: object, options?: Partial<AsyncCallOptions>): MakeAllGeneratorFunctionsAsync<OtherSideImplementedFunctions>;
 ```
 
 ## Parameters
 
 |  Parameter | Type | Description |
 |  --- | --- | --- |
-|  implementation | <code>Partial&lt;Record&lt;string, (...args: unknown[]) =&gt; Iterator&lt;unknown&gt; &#124; AsyncIterator&lt;unknown&gt;&gt;&gt;</code> |  |
+|  implementation | <code>object</code> |  |
 |  options | <code>Partial&lt;AsyncCallOptions&gt;</code> |  |
 
 <b>Returns:</b>

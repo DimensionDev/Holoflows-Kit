@@ -16,7 +16,7 @@ export declare class MessageCenter<ITypedMessages>
 
 |  Constructor | Modifiers | Description |
 |  --- | --- | --- |
-|  [(constructor)(instanceKey)](./kit.messagecenter.(constructor).md) |  | Constructs a new instance of the <code>MessageCenter</code> class |
+|  [(constructor)(instanceKey)](./kit.messagecenter._constructor_.md) |  | Constructs a new instance of the <code>MessageCenter</code> class |
 
 ## Properties
 
