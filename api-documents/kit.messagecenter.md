@@ -9,20 +9,20 @@ Send and receive messages in different contexts.
 <b>Signature:</b>
 
 ```typescript
-export declare class MessageCenter<ITypedMessages> extends EventTarget 
+export declare class MessageCenter<ITypedMessages> 
 ```
 
 ## Constructors
 
 |  Constructor | Modifiers | Description |
 |  --- | --- | --- |
-|  [(constructor)(instanceKey)](./kit.messagecenter.(constructor).md) |  | Constructs a new instance of the <code>MessageCenter</code> class |
+|  [(constructor)(instanceKey)](./kit.messagecenter._constructor_.md) |  | Constructs a new instance of the <code>MessageCenter</code> class |
 
 ## Properties
 
 |  Property | Modifiers | Type | Description |
 |  --- | --- | --- | --- |
-|  [send](./kit.messagecenter.send.md) |  | <code>&lt;Key_1 extends keyof ITypedMessages&gt;(key: Key_1, data: ITypedMessages[Key_1], alsoSendToDocument?: boolean) =&gt; void</code> |  |
+|  [serialization](./kit.messagecenter.serialization.md) |  | <code>import(&quot;../util/AsyncCall&quot;).Serialization</code> | How should MessageCenter serialization the message |
 |  [writeToConsole](./kit.messagecenter.writetoconsole.md) |  | <code>boolean</code> | Should MessageCenter prints all messages to console? |
 
 ## Methods
@@ -30,5 +30,7 @@ export declare class MessageCenter<ITypedMessages> extends EventTarget
 |  Method | Modifiers | Description |
 |  --- | --- | --- |
 |  [emit(key, data, alsoSendToDocument)](./kit.messagecenter.emit.md) |  | Send message to local or other instance of extension |
+|  [off(event, handler)](./kit.messagecenter.off.md) |  | Remove the listener of an event |
 |  [on(event, handler)](./kit.messagecenter.on.md) |  | Listen to an event |
+|  [send(args)](./kit.messagecenter.send.md) |  | Send message to local or other instance of extension |
 

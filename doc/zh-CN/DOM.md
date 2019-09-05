@@ -27,8 +27,8 @@ function EuroToUSD(x: number) {
 }
 
 new MutationObserverWatcher(price, document.querySelector('#main'))
-    .useForeach(node => {
-        const addPrice = () => (node.after.innerText = '$' + EuroToUSD(parseInt(node.current.innerText)))
+    .useForeach((node, key, meta) => {
+        const addPrice = () => (meta.after.innerText = '$' + EuroToUSD(parseInt(node.innerText)))
         addPrice()
         return {
             onNodeMutation: addPrice,
@@ -60,9 +60,9 @@ ls.querySelectorAll('a') // 选择所有的 a
 ls.filter(x => x.href.startsWith('https://')) // 去掉所有不以 https:// 开头的链接
 ls.map(x => x.href) // 把 HTMLAnchorElement[] 映射成 string[]
 
-ls.evaluateOnce() // 返回当前页面上所有的链接列表
+ls.evaluate() // 返回当前页面上所有的链接列表
 setTimeout(() => {
-    ls.evaluateOnce() // 可以多次调用！每次都会返回页面上最新的符合 LiveSelector 的结果！
+    ls.evaluate() // 可以多次调用！每次都会返回页面上最新的符合 LiveSelector 的结果！
 })
 ```
 
@@ -75,7 +75,7 @@ setTimeout(() => {
 ## <a id="example-watcher">Watcher</a>
 
 <details>
-Watcher 可以根据某些特定的条件自动执行 `LiveSelector` 的 `evaluateOnce()`，然后通过比较两次列表的变化通知你 LiveSelector 发生了哪些更改。
+Watcher 可以根据某些特定的条件自动执行 `LiveSelector` 的 `evaluate()`，然后通过比较两次列表的变化通知你 LiveSelector 发生了哪些更改。
 <summary>
 简而言之，就是可以监听指定内容的变化。
 </summary>
@@ -99,16 +99,16 @@ Watcher 有以下几种：
 简单的说，一个完整的 `useForeach` 调用是这样的
 
 ```ts
-.useForeach((node, key, realNode) => {
+.useForeach((node, key, meta) => {
     // 这里的代码会在 **每次** 有一个新的 元素 E 进入列表的时候调用。以下是传入的参数：
     node // 是一种叫 DomProxy 的对象
-    node.before // 是一个 <span> 始终指向 E 的前面
-    node.after // 是一个 <span> 始终指向 E 的后面
-    node.current // 是魔法，它始终指向 E，就算 E 换了，它的引用也会自动"更新"（事实并非如此，请参见 DomProxy 的文档）
+    meta.before // 是一个 <span> 始终指向 E 的前面
+    meta.after // 是一个 <span> 始终指向 E 的后面
+    meta.current // 它就是 node（第一个参数），它始终指向 E，就算 E 换了，它的引用也会自动"更新"（事实并非如此，请参见 DomProxy 的文档）
 
     key // 用过 React, Vue 或者 Angular 吗？在渲染列表的时候它们都会要求你提供 key 以保证复用。这就和那个差不多。
 
-    realNode // 有时候 node.current 的魔法会失灵，或者奇奇怪怪的故障，或者总之你就是想访问真实的 DOM 元素，那就用它吧。不过它不会自动更新！
+    meta.realCurrent // 有时候你就是想访问真实的 DOM 元素，那就用它吧。
 
     return {
         onRemove(old) {
@@ -121,7 +121,7 @@ Watcher 有以下几种：
             // 只是 E 内部发生了变化的话，这里会被通知到
             // 比如 node.current 里面新插入了一个元素
         },
-        onTargetChanged(oldNode, newNode) {
+        onTargetChanged(newNode, oldNode) {
             // 如果 key 没变，但是 key 指向的 E 变了的话
             // oldNode 是变化前指向的元素，newNode 是变化后指向的新元素
             // 注意，node.current 始终指向 newNode，所以很多事情你不必手动处理

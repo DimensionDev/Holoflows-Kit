@@ -33,7 +33,7 @@ new IntervalWatcher(ls)
 .useForeach(node => {
     console.log(node)
 })
-.startWatch()
+.startWatch(1000)
 
 ```
 

@@ -12,10 +12,6 @@ Warning to remember if developer forget to call the startWatch.
 protected _warning_forget_watch_: {
         warn(f?: (stack: string) => void): void;
         ignored: boolean;
-        stack?: undefined;
-    } | {
-        ignored: boolean;
         stack: string;
-        warn(f?: (stack: string) => void): void;
     };
 ```

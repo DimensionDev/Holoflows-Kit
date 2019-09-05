@@ -4,8 +4,10 @@
 
 ```ts
 
+import mitt from 'mitt';
+
 // @public
-export function AsyncCall<OtherSideImplementedFunctions = {}>(implementation?: Record<string, (...args: any[]) => any>, options?: Partial<AsyncCallOptions>): OtherSideImplementedFunctions;
+export function AsyncCall<OtherSideImplementedFunctions = {}>(implementation?: object, options?: Partial<AsyncCallOptions>): MakeAllFunctionsAsync<OtherSideImplementedFunctions>;
 
 // @public
 export interface AsyncCallOptions {
@@ -14,6 +16,7 @@ export interface AsyncCallOptions {
         beCalled?: boolean;
         localError?: boolean;
         remoteError?: boolean;
+        sendLocalStack?: boolean;
         type?: 'basic' | 'pretty';
     } | boolean;
     messageChannel: {
@@ -21,6 +24,7 @@ export interface AsyncCallOptions {
         emit(event: string, data: unknown): void;
     };
     parameterStructures: 'by-position' | 'by-name';
+    preferLocalImplementation: boolean;
     serializer: Serialization;
     strict: {
         methodNotFound?: boolean;
@@ -30,12 +34,15 @@ export interface AsyncCallOptions {
 }
 
 // @public
-export function AutomatedTabTask<T extends Record<string, (...args: any[]) => PromiseLike<any>>>(taskImplements: T, options?: Partial<AutomatedTabTaskDefineTimeOptions>): ((url: string, options?: Partial<AutomatedTabTaskRuntimeOptions>) => T) | null;
+export function AsyncGeneratorCall<OtherSideImplementedFunctions = {}>(implementation?: object, options?: Partial<AsyncCallOptions>): MakeAllGeneratorFunctionsAsync<OtherSideImplementedFunctions>;
+
+// @public
+export function AutomatedTabTask<T extends Record<string, (...args: any[]) => PromiseLike<any>>>(taskImplements: T, options?: Partial<AutomatedTabTaskDefineTimeOptions>): ((urlOrTabID: string | number, options?: Partial<AutomatedTabTaskRuntimeOptions>) => T) | null;
 
 // @public
 export interface AutomatedTabTaskDefineTimeOptions extends AutomatedTabTaskSharedOptions {
+    AsyncCallOptions: Partial<AsyncCallOptions>;
     concurrent: number;
-    key: string;
     memorizeTTL: number;
 }
 
@@ -44,6 +51,7 @@ export interface AutomatedTabTaskRuntimeOptions extends AutomatedTabTaskSharedOp
     important: boolean;
     needRedirect: boolean;
     runAtTabID: number;
+    url: string;
 }
 
 // @public
@@ -110,6 +118,7 @@ export const JSONSerialization: ([replacer, receiver]?: [(string | number)[] | n
 
 // @public
 export class LiveSelector<T, SingleMode extends boolean = false> {
+    constructor(initialElements?: readonly T[]);
     clone(): LiveSelector<T, SingleMode>;
     closest<T>(parentOfNth: number): LiveSelector<T, SingleMode>;
     closest<K extends keyof HTMLElementTagNameMap>(selectors: K): LiveSelector<HTMLElementTagNameMap[K], SingleMode>;
@@ -119,6 +128,8 @@ export class LiveSelector<T, SingleMode extends boolean = false> {
     closest<E extends Element = Element>(selectors: string): LiveSelector<E, SingleMode>;
     concat<NextType>(newEle: LiveSelector<NextType, SingleMode>): LiveSelector<T | NextType, SingleMode>;
     enableSingleMode(): LiveSelector<T, true>;
+    evaluate(): SingleMode extends true ? (T | undefined) : T[];
+    // @deprecated
     evaluateOnce(): SingleMode extends true ? (T | undefined) : T[];
     filter(f: (value: T, index: number, array: T[]) => any): LiveSelector<NonNullable<T>, SingleMode>;
     flat(): LiveSelector<T extends ArrayLike<infer U> ? U : never, SingleMode>;
@@ -146,13 +157,26 @@ export class LiveSelector<T, SingleMode extends boolean = false> {
     sort(compareFn?: (a: T, b: T) => number): LiveSelector<T, SingleMode>;
     }
 
+// @public (undocumented)
+export type MakeAllFunctionsAsync<T> = {
+    [key in keyof T]: T[key] extends (...args: infer Args) => infer Return ? Return extends PromiseLike<infer U> ? (...args: Args) => Promise<U> : (...args: Args) => Promise<Return> : T[key];
+};
+
+// @public (undocumented)
+export type MakeAllGeneratorFunctionsAsync<T> = {
+    [key in keyof T]: T[key] extends (...args: infer Args) => Iterator<infer Yield, infer Return, infer Next> | AsyncIterator<infer Yield, infer Return, infer Next> ? (...args: Args) => AsyncIterator<UnboxPromise<Yield>, UnboxPromise<Return>, UnboxPromise<Next>> & {
+        [Symbol.asyncIterator](): AsyncIterator<UnboxPromise<Yield>, UnboxPromise<Return>, UnboxPromise<Next>>;
+    } : T[key];
+};
+
 // @public
-export class MessageCenter<ITypedMessages> extends EventTarget {
+export class MessageCenter<ITypedMessages> {
     constructor(instanceKey?: string);
-    emit<Key extends keyof ITypedMessages>(key: Key, data: ITypedMessages[Key], alsoSendToDocument?: boolean): void;
-    on<Key extends keyof ITypedMessages>(event: Key, handler: (data: ITypedMessages[Key]) => void): void;
-    // (undocumented)
-    send: <Key_1 extends keyof ITypedMessages>(key: Key_1, data: ITypedMessages[Key_1], alsoSendToDocument?: boolean) => void;
+    emit<Key extends keyof ITypedMessages>(key: Key, data: ITypedMessages[Key], alsoSendToDocument?: boolean): Promise<void>;
+    off<Key extends keyof ITypedMessages>(event: Key, handler: (data: ITypedMessages[Key]) => void): void;
+    on<Key extends keyof ITypedMessages>(event: Key, handler: (data: ITypedMessages[Key]) => void): () => void;
+    send(...args: Parameters<MessageCenter<ITypedMessages>['emit']>): ReturnType<MessageCenter<ITypedMessages>['emit']>;
+    serialization: import("../util/AsyncCall").Serialization;
     writeToConsole: boolean;
 }
 
@@ -182,6 +206,9 @@ export interface Serialization {
     serialization(from: any): PromiseLike<unknown>;
 }
 
+// @public (undocumented)
+export type UnboxPromise<T> = T extends PromiseLike<infer U> ? U : T;
+
 // @public
 export class ValueRef<T> {
     constructor(_value: T);
@@ -195,8 +222,7 @@ export class ValueRef<T> {
 // 
 // @public
 export abstract class Watcher<T, Before extends Element, After extends Element, SingleMode extends boolean> implements PromiseLike<ResultOf<SingleMode, T>> {
-    constructor(
-    liveSelector: LiveSelector<T, SingleMode>);
+    constructor(liveSelector: LiveSelector<T, SingleMode>);
     // Warning: (ae-forgotten-export) The symbol "EventCallback" needs to be exported by the entry point index.d.ts
     // Warning: (ae-forgotten-export) The symbol "OnIterationEvent" needs to be exported by the entry point index.d.ts
     // 
@@ -226,7 +252,7 @@ export abstract class Watcher<T, Before extends Element, After extends Element, 
     abstract enableSingleMode(): Watcher<T, Before, After, true>;
     // (undocumented)
     protected _enableSingleMode(): this;
-    protected readonly eventEmitter: EventTarget;
+    protected readonly eventEmitter: mitt.Emitter;
     protected findNodeFromListByKey: (list: readonly T[], keys: readonly unknown[]) => (key: unknown) => T | null;
     readonly firstVirtualNode: T extends Node ? DomProxy<T, Before, After> : never;
     protected _firstVirtualNode: DomProxy<any, Before, After>;
@@ -239,6 +265,7 @@ export abstract class Watcher<T, Before extends Element, After extends Element, 
     protected lastVirtualNodesMap: Map<unknown, DomProxy<any, Before, After>>;
     protected readonly liveSelector: LiveSelector<T, SingleMode>;
     protected mapNodeToKey: (node: T, index: number, arr: readonly T[]) => unknown;
+    omitWarningForForgetWatch(): this;
     omitWarningForRepeatedKeys(): this;
     // (undocumented)
     removeListener(event: 'onIteration', fn: EventCallback<OnIterationEvent<T>>): this;
@@ -261,20 +288,16 @@ export abstract class Watcher<T, Before extends Element, After extends Element, 
     stopWatch(...args: any[]): void;
     then<TResult1 = ResultOf<SingleMode, T>, TResult2 = never>(onfulfilled?: ((value: ResultOf<SingleMode, T>) => TResult1 | PromiseLike<TResult1>) | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | null, options?: {
         minimalResultsRequired?: number;
+        timeout?: number;
     }, starter?: (this: this, self: this) => void): Promise<TResult1 | TResult2>;
     // Warning: (ae-forgotten-export) The symbol "useForeachReturns" needs to be exported by the entry point index.d.ts
-    useForeach(forEachElement: T extends Element ? (virtualNode: DomProxy<T & Node, Before, After>, key: unknown, realNode: Node) => useForeachReturns<T> : never): this;
-    useForeach(forEachValue: T extends Element ? never : (node: T, key: unknown) => useForeachReturns<T>): this;
-    protected useForeachFn?: unknown;
+    useForeach(forEach: (virtualNode: T, key: unknown, metadata: T extends Node ? DomProxy<T, Before, After> : unknown) => useForeachReturns<T>): this;
+    protected useForeachFn?: Parameters<Watcher<T, any, any, any>['useForeach']>[0];
     protected valueComparer: (a: T, b: T) => boolean;
     protected _warning_forget_watch_: {
         warn(f?: (stack: string) => void): void;
         ignored: boolean;
-        stack?: undefined;
-    } | {
-        ignored: boolean;
         stack: string;
-        warn(f?: (stack: string) => void): void;
     };
     }
 

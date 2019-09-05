@@ -23,6 +23,7 @@ A toolkit for browser extension developing.
 |  Function | Description |
 |  --- | --- |
 |  [AsyncCall(implementation, options)](./kit.asynccall.md) | Async call between different context. |
+|  [AsyncGeneratorCall(implementation, options)](./kit.asyncgeneratorcall.md) | This function provides the async generator version of the AsyncCall |
 |  [AutomatedTabTask(taskImplements, options)](./kit.automatedtabtask.md) | Open a new page in the background, execute some task, then close it automatically. |
 |  [DomProxy(options)](./kit.domproxy.md) | DomProxy provide an interface that be stable even dom is changed. |
 |  [GetContext()](./kit.getcontext.md) | Get current running context. |
@@ -53,4 +54,7 @@ A toolkit for browser extension developing.
 |  Type Alias | Description |
 |  --- | --- |
 |  [Contexts](./kit.contexts.md) | All context that possible in when developing a WebExtension |
+|  [MakeAllFunctionsAsync](./kit.makeallfunctionsasync.md) |  |
+|  [MakeAllGeneratorFunctionsAsync](./kit.makeallgeneratorfunctionsasync.md) |  |
+|  [UnboxPromise](./kit.unboxpromise.md) |  |
 

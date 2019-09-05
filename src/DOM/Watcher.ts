@@ -10,6 +10,7 @@
  * - Event watcher (based on addEventListener)
  */
 import { DomProxy, DomProxyOptions } from './Proxy'
+import mitt from 'mitt'
 import { LiveSelector } from './LiveSelector'
 
 import differenceWith from 'lodash-es/differenceWith'
@@ -17,18 +18,20 @@ import intersectionWith from 'lodash-es/intersectionWith'
 import uniqWith from 'lodash-es/uniqWith'
 import { Deadline, requestIdleCallback } from '../util/requestIdleCallback'
 import { isNil } from 'lodash-es'
+import { timeout } from '../util/sleep'
 
 /**
  * Use LiveSelector to watch dom change
  */
 export abstract class Watcher<T, Before extends Element, After extends Element, SingleMode extends boolean>
     implements PromiseLike<ResultOf<SingleMode, T>> {
-    constructor(
-        /**
-         * The liveSelector that this object holds.
-         */
-        protected readonly liveSelector: LiveSelector<T, SingleMode>,
-    ) {}
+    /**
+     * The liveSelector that this object holds.
+     */
+    protected readonly liveSelector: LiveSelector<T, SingleMode>
+    constructor(liveSelector: LiveSelector<T, SingleMode>) {
+        this.liveSelector = liveSelector.clone()
+    }
     //#region How to start and stop the watcher
     /** Let the watcher start to watching */
     public startWatch(...args: any[]): this {
@@ -46,11 +49,7 @@ export abstract class Watcher<T, Before extends Element, After extends Element, 
     //#endregion
     //#region useForeach
     /** Saved useForeach */
-    /**
-     * its type is too complicate to analyse by TypeScript,
-     * recover its type after TypeScript can type narrow `this`
-     */
-    protected useForeachFn?: unknown
+    protected useForeachFn?: Parameters<Watcher<T, any, any, any>['useForeach']>[0]
     /**
      * Just like React hooks. Provide callbacks for each node changes.
      *
@@ -75,7 +74,7 @@ export abstract class Watcher<T, Before extends Element, After extends Element, 
      * @example
      * ```
      * // ? if your LiveSelector return Element
-     * watcher.useForeach((node, key, realNode) => {
+     * watcher.useForeach((node, key, meta) => {
      *     console.log(node.innerHTML) // when a new key is found
      *     return {
      *         onRemove() { console.log('The node is gone!') },
@@ -83,7 +82,6 @@ export abstract class Watcher<T, Before extends Element, After extends Element, 
      *             console.log('Key is the same, but the node has changed!')
      *             console.log(node.innerHTML) // `node` is still the latest node!
      *             // appendChild, addEventListener will not lost too!
-     *             // ! But `realNode` is still the original node. Be careful with it.
      *         },
      *         onNodeMutation() {
      *             console.log('Key and node are both the same, but node has been mutated.')
@@ -106,18 +104,12 @@ export abstract class Watcher<T, Before extends Element, After extends Element, 
      * ```
      */
     public useForeach(
-        forEachElement: T extends Element
-            ? (virtualNode: DomProxy<T & Node, Before, After>, key: unknown, realNode: Node) => useForeachReturns<T>
-            : never,
-    ): this
-    /**
-     * When T is not an Element, use this overload
-     */
-    public useForeach(forEachValue: T extends Element ? never : (node: T, key: unknown) => useForeachReturns<T>): this
-    public useForeach() {
-        const forEach = arguments[0]
-        if (forEach === undefined) return this
-        if (typeof forEach !== 'function') throw new TypeError('useForeach must be a function.')
+        forEach: (
+            virtualNode: T,
+            key: unknown,
+            metadata: T extends Node ? DomProxy<T, Before, After> : unknown,
+        ) => useForeachReturns<T>,
+    ): this {
         if (this.useForeachFn) {
             console.warn("You can't chain useForeach currently. The old one will be replaced.")
         }
@@ -146,48 +138,55 @@ export abstract class Watcher<T, Before extends Element, After extends Element, 
     public then<TResult1 = ResultOf<SingleMode, T>, TResult2 = never>(
         onfulfilled?: ((value: ResultOf<SingleMode, T>) => TResult1 | PromiseLike<TResult1>) | null,
         onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | null,
-        options: { minimalResultsRequired?: number } = {},
+        options: { minimalResultsRequired?: number; timeout?: number } = {},
         starter: (this: this, self: this) => void = watcher => watcher.startWatch(),
     ): Promise<TResult1 | TResult2> {
-        const { minimalResultsRequired } = {
+        this._warning_forget_watch_.ignored = true
+        const { minimalResultsRequired, timeout: timeoutTime } = {
             ...({
                 minimalResultsRequired: 1,
+                timeout: Infinity,
             } as Required<typeof options>),
             ...options,
         }
-        const map = onfulfilled || (x => x)
+        let done: (state: boolean, val: any) => void = () => {}
         const then = async () => {
             if (minimalResultsRequired < 1)
                 throw new TypeError('Invalid minimalResultsRequired, must equal to or bigger than 1')
             if (this.singleMode && minimalResultsRequired > 1) {
                 console.warn('In single mode, the watcher will ignore the option minimalResultsRequired')
             }
-            const result = this.liveSelector.evaluateOnce()
+            const result = this.liveSelector.evaluate()
             if (Array.isArray(result) && result.length >= minimalResultsRequired) {
                 // If we get the value now, return it
-                return result.map(v => map(v))
+                return result
             } else if (this.singleMode) {
                 // If in single mode, return the value now
                 return result
             }
             // Or return a promise to wait the value
             return new Promise<ResultOf<SingleMode, TResult1>>((resolve, reject) => {
+                done = (state, val) => {
+                    this.stopWatch()
+                    this.removeListener('onIteration', f)
+                    if (state) resolve(val)
+                    else reject(val)
+                }
                 starter.bind(this)(this)
-                const f: EventCallback<OnIterationEvent<T>> = e => {
-                    const nodes = e.data.values.current
+                const f = (v: OnIterationEvent<any>) => {
+                    const nodes = v.values.current
                     if (this.singleMode && nodes.length >= 1) {
-                        const returns = map(nodes[0] as ResultOf<SingleMode, T>)
-                        resolve(Promise.resolve(returns as any))
+                        return done(true, nodes[0])
                     }
                     if (nodes.length < minimalResultsRequired) return
-                    this.stopWatch()
-                    Promise.all(nodes.map(map as any)).then(resolve as any, reject)
-                    this.removeListener('onIteration', f)
+                    return done(true, nodes)
                 }
                 this.addListener('onIteration', f)
             })
         }
-        return then().then(onfulfilled, onrejected)
+        const withTimeout = timeout(then(), timeoutTime)
+        withTimeout.finally(() => done(false, new Error('timeout')))
+        return withTimeout.then(onfulfilled, onrejected)
     }
     //#endregion
     //#region Multiple mode
@@ -262,16 +261,12 @@ export abstract class Watcher<T, Before extends Element, After extends Element, 
         {
             for (const newKey of newKeys) {
                 if (!this.useForeachFn) break
-                const node = findFromNew(newKey)
-                if (node instanceof Node) {
-                    const virtualNode = DomProxy<typeof node, Before, After>(this.domProxyOption)
-                    virtualNode.realCurrent = node
+                const value = findFromNew(newKey)!
+                if (value instanceof Node) {
+                    const virtualNode = DomProxy<typeof value, Before, After>(this.domProxyOption)
+                    virtualNode.realCurrent = value
                     // This step must be sync.
-                    const callbacks = (this.useForeachFn as useForeachFnWithNode<T, Before, After>)(
-                        virtualNode,
-                        newKey,
-                        node,
-                    )
+                    const callbacks = this.useForeachFn(virtualNode.current, newKey, virtualNode as any)
                     if (callbacks && typeof callbacks !== 'function' && 'onNodeMutation' in callbacks) {
                         virtualNode.observer.init = {
                             subtree: true,
@@ -279,12 +274,12 @@ export abstract class Watcher<T, Before extends Element, After extends Element, 
                             characterData: true,
                             attributes: true,
                         }
-                        virtualNode.observer.callback = m => callbacks.onNodeMutation!(node, m)
+                        virtualNode.observer.callback = m => callbacks.onNodeMutation!(value, m)
                     }
                     nextCallbackMap.set(newKey, callbacks)
                     nextVirtualNodesMap.set(newKey, virtualNode)
                 } else {
-                    const callbacks = (this.useForeachFn as useForeachFnWithoutNode<T>)(node!, newKey)
+                    const callbacks = this.useForeachFn(value, newKey, undefined as any)
                     applyUseForeachCallback(callbacks)('warn mutation')(this._warning_mutation_)
                     nextCallbackMap.set(newKey, callbacks)
                 }
@@ -424,17 +419,16 @@ export abstract class Watcher<T, Before extends Element, After extends Element, 
         // ? Case: value is new
         else if (!this.singleModeHasLastValue && firstValue) {
             if (isWatcherWithNode(this, firstValue)) {
-                const val = firstValue as T & Node
                 if (this.useForeachFn) {
-                    this.singleModeCallback = (this.useForeachFn as useForeachFnWithNode<T, Before, After>)(
+                    this.singleModeCallback = this.useForeachFn(
+                        this.firstVirtualNode.current,
+                        undefined,
                         this.firstVirtualNode,
-                        val,
-                        val,
                     )
                 }
             } else {
                 if (this.useForeachFn) {
-                    this.singleModeCallback = (this.useForeachFn as useForeachFnWithoutNode<T>)(firstValue, undefined)
+                    this.singleModeCallback = this.useForeachFn(firstValue, undefined, undefined as any)
                     applyUseForeachCallback(this.singleModeCallback)('warn mutation')(this._warning_mutation_)
                 }
             }
@@ -466,7 +460,7 @@ export abstract class Watcher<T, Before extends Element, After extends Element, 
     private watcherChecker = (deadline?: Deadline) => {
         if (!this.isWatching) return
 
-        const thisNodes: readonly T[] | T | undefined = this.liveSelector.evaluateOnce()
+        const thisNodes: readonly T[] | T | undefined = this.liveSelector.evaluate()
 
         if (this.singleMode) return this.singleModeWatcherCallback(thisNodes as T)
         else return this.normalModeWatcherCallback(thisNodes as readonly T[])
@@ -499,7 +493,7 @@ export abstract class Watcher<T, Before extends Element, After extends Element, 
     //#endregion
     //#region events
     /** Event emitter */
-    protected readonly eventEmitter = new EventTarget()
+    protected readonly eventEmitter = new mitt()
     private isEventsListening: Record<'onIteration' | 'onChange' | 'onRemove' | 'onAdd', boolean> = {
         onAdd: false,
         onChange: false,
@@ -512,7 +506,7 @@ export abstract class Watcher<T, Before extends Element, After extends Element, 
     addListener(event: 'onAdd', fn: EventCallback<OnAddOrRemoveEvent<T>>): this
     addListener(event: string, fn: (...args: any[]) => void): this {
         if (event === 'onIteration') this.noNeedInSingleMode('addListener("onIteration", ...)')
-        this.eventEmitter.addEventListener(event, fn)
+        this.eventEmitter.on(event, fn)
         ;(this.isEventsListening as any)[event] = true
         return this
     }
@@ -521,15 +515,15 @@ export abstract class Watcher<T, Before extends Element, After extends Element, 
     removeListener(event: 'onRemove', fn: EventCallback<OnAddOrRemoveEvent<T>>): this
     removeListener(event: 'onAdd', fn: EventCallback<OnAddOrRemoveEvent<T>>): this
     removeListener(event: string, fn: (...args: any[]) => void): this {
-        this.eventEmitter.removeEventListener(event, fn)
+        this.eventEmitter.off(event, fn)
         return this
     }
     protected emit(event: 'onIteration', data: OnIterationEvent<T>): void
     protected emit(event: 'onChange', data: OnChangeEvent<T>): void
     protected emit(event: 'onRemove', data: OnAddOrRemoveEvent<T>): void
     protected emit(event: 'onAdd', data: OnAddOrRemoveEvent<T>): void
-    protected emit(event: string, detail: any) {
-        this.eventEmitter.dispatchEvent(new CustomEvent(event, { detail }))
+    protected emit(event: string, data: any) {
+        return this.eventEmitter.emit(event, data)
     }
     //#endregion
     //#region firstVirtualNode
@@ -643,6 +637,13 @@ export abstract class Watcher<T, Before extends Element, After extends Element, 
     protected _warning_forget_watch_ = warning({
         fn: stack => console.warn('Did you forget to call `.startWatch()`?\n', stack),
     })
+    /**
+     * If you're expecting Watcher may not be called, call this function, this will omit the warning.
+     */
+    public omitWarningForForgetWatch() {
+        this._warning_forget_watch_.ignored = true
+        return this
+    }
     private _warning_repeated_keys = warning({ once: true })
     /**
      * If you're expecting repeating keys, call this function, this will omit the warning.
@@ -714,7 +715,7 @@ type RemoveCallback<T> = (oldNode: T) => void
 type TargetChangedCallback<T> = (newNode: T, oldNode: T) => void
 /** Callback on  */
 type MutationCallback<T> = (node: T, mutations: MutationRecord[]) => void
-type EventCallback<T> = (fn: Event & { data: T }) => void
+type EventCallback<T> = (fn: T) => void
 //#endregion
 //#region useForeach types and helpers
 /**
@@ -729,13 +730,6 @@ type useForeachReturns<T> =
           /** This will not be called if T is not Node */
           onNodeMutation?: MutationCallback<T>
       }
-
-type useForeachFnWithNode<T, Before extends Element, After extends Element> = {
-    (virtualNode: DomProxy<T & Node, Before, After>, key: unknown, realNode: Node): useForeachReturns<T>
-}
-type useForeachFnWithoutNode<T> = {
-    (node: T, key: unknown): useForeachReturns<T>
-}
 
 function applyUseForeachCallback<T>(callback: useForeachReturns<T>) {
     const cb = callback as useForeachReturns<Node>
@@ -781,20 +775,21 @@ interface WarningOptions {
 }
 function warning(_: Partial<WarningOptions> = {}) {
     const { dev, once, fn } = { ...({ dev: false, once: true, fn: () => {} } as WarningOptions), ..._ }
-    if (dev) if (process.env.NODE_ENV !== 'development') return { warn(f = fn) {}, ignored: true }
+    if (dev) if (process.env.NODE_ENV !== 'development') return { warn(f = fn) {}, ignored: true, stack: '' }
     const [_0, _1, _2, ...lines] = (new Error().stack || '').split('\n')
     const stack = lines.join('\n')
     let warned = 0
-    return {
+    const obj = {
         ignored: false,
         stack,
         warn(f = fn) {
-            if (this.ignored) return
+            if (obj.ignored) return
             if (warned && once) return
             if (typeof once === 'number' && warned <= once) return
             warned++
             f(stack)
         },
     }
+    return obj
 }
 //#endregion

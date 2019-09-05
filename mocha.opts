@@ -1,0 +1,5 @@
+-r ts-node/register/transpile-only
+-r source-map-support/register
+-r jsdom-global/register
+--recursive
+test/**/*.ts

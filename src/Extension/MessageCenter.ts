@@ -1,3 +1,5 @@
+import mitt from 'mitt'
+import { NoSerialization } from '../util/AsyncCall'
 type InternalMessageType = {
     key: Key
     data: any
@@ -5,15 +7,21 @@ type InternalMessageType = {
 }
 type Key = string | number | symbol
 const MessageCenterEvent = 'Holoflows-Kit MessageCenter'
-const newMessage = (key: InternalMessageType['key'], data: InternalMessageType['data']) =>
-    new CustomEvent(MessageCenterEvent, { detail: { data, key } })
 const noop = () => {}
 /**
  * Send and receive messages in different contexts.
  */
-export class MessageCenter<ITypedMessages> extends EventTarget {
-    private listener = (request: InternalMessageType | Event) => {
-        let { key, data, instanceKey } = (request as CustomEvent).detail || request
+export class MessageCenter<ITypedMessages> {
+    /**
+     * How should MessageCenter serialization the message
+     * @defaultValue NoSerialization
+     */
+    public serialization = NoSerialization
+    private eventEmitter = new mitt()
+    private listener = async (request: InternalMessageType | Event) => {
+        let { key, data, instanceKey } = await this.serialization.deserialization(
+            (request as CustomEvent).detail || request,
+        )
         // Message is not for us
         if (this.instanceKey !== (instanceKey || '')) return
         if (this.writeToConsole) {
@@ -25,18 +33,19 @@ export class MessageCenter<ITypedMessages> extends EventTarget {
                 data,
             )
         }
-        this.dispatchEvent(new CustomEvent(key, { detail: data }))
+        this.eventEmitter.emit(key, data)
     }
     /**
      * @param instanceKey - Use this instanceKey to distinguish your messages and others.
      * This option cannot make your message safe!
      */
     constructor(private instanceKey = '') {
-        super()
         if (typeof browser !== 'undefined' && browser.runtime && browser.runtime.onMessage) {
             // Fired when a message is sent from either an extension process (by runtime.sendMessage)
             // or a content script (by tabs.sendMessage).
-            browser.runtime.onMessage.addListener(this.listener)
+            browser.runtime.onMessage.addListener((e: any) => {
+                this.listener(e)
+            })
         }
         if (typeof document !== 'undefined' && document.addEventListener) {
             document.addEventListener(MessageCenterEvent, this.listener)
@@ -46,22 +55,31 @@ export class MessageCenter<ITypedMessages> extends EventTarget {
      * Listen to an event
      * @param event - Name of the event
      * @param handler - Handler of the event
+     * @returns a function, call it to remove this listener
      */
-    public on<Key extends keyof ITypedMessages>(event: Key, handler: (data: ITypedMessages[Key]) => void): void {
-        this.addEventListener(event as string, (e: CustomEvent) => handler(e.detail))
+    public on<Key extends keyof ITypedMessages>(event: Key, handler: (data: ITypedMessages[Key]) => void) {
+        this.eventEmitter.on(event as string, handler)
+        return () => this.off(event, handler)
     }
-
+    /**
+     * Remove the listener of an event
+     * @param event - Name of the event
+     * @param handler - Handler of the event
+     */
+    public off<Key extends keyof ITypedMessages>(event: Key, handler: (data: ITypedMessages[Key]) => void): void {
+        this.eventEmitter.off(event as string, handler)
+    }
     /**
      * Send message to local or other instance of extension
      * @param key - Key of the message
      * @param data - Data of the message
      * @param alsoSendToDocument - ! Send message to document. This may leaks secret! Only open in localhost!
      */
-    public emit<Key extends keyof ITypedMessages>(
+    public async emit<Key extends keyof ITypedMessages>(
         key: Key,
         data: ITypedMessages[Key],
         alsoSendToDocument = location.hostname === 'localhost',
-    ): void {
+    ): Promise<void> {
         if (this.writeToConsole) {
             console.log(
                 `%cSend%c %c${key.toString()}`,
@@ -71,25 +89,39 @@ export class MessageCenter<ITypedMessages> extends EventTarget {
                 data,
             )
         }
-        const msg: InternalMessageType = { data, key, instanceKey: this.instanceKey || '' }
+        const serialized = await this.serialization.serialization({
+            data,
+            key,
+            instanceKey: this.instanceKey || '',
+        } as InternalMessageType)
         if (typeof browser !== 'undefined') {
             if (browser.runtime && browser.runtime.sendMessage) {
-                browser.runtime.sendMessage(msg).catch(noop)
+                browser.runtime.sendMessage(serialized).catch(noop)
             }
             if (browser.tabs) {
                 // Send message to Content Script
                 browser.tabs.query({ discarded: false }).then(tabs => {
                     for (const tab of tabs) {
-                        if (tab.id) browser.tabs.sendMessage(tab.id, msg).catch(noop)
+                        if (tab.id) browser.tabs.sendMessage(tab.id, serialized).catch(noop)
                     }
                 })
             }
         }
         if (alsoSendToDocument && typeof document !== 'undefined' && document.dispatchEvent) {
-            document.dispatchEvent(newMessage(key, data))
+            const event = new CustomEvent(MessageCenterEvent, {
+                detail: await this.serialization.serialization({ data, key }),
+            })
+            document.dispatchEvent(event)
         }
     }
-    public send = this.emit
+    /**
+     * {@inheritdoc MessageCenter.emit}
+     */
+    public send(
+        ...args: Parameters<MessageCenter<ITypedMessages>['emit']>
+    ): ReturnType<MessageCenter<ITypedMessages>['emit']> {
+        return Reflect.apply(this.emit, this, args)
+    }
     /**
      * Should MessageCenter prints all messages to console?
      */

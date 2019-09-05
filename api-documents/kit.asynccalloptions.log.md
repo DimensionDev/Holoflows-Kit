@@ -13,6 +13,7 @@ log: {
         beCalled?: boolean;
         localError?: boolean;
         remoteError?: boolean;
+        sendLocalStack?: boolean;
         type?: 'basic' | 'pretty';
     } | boolean;
 ```

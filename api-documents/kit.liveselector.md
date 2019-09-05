@@ -12,6 +12,12 @@ Create a live selector that can continuously select the element you want.
 export declare class LiveSelector<T, SingleMode extends boolean = false> 
 ```
 
+## Constructors
+
+|  Constructor | Modifiers | Description |
+|  --- | --- | --- |
+|  [(constructor)(initialElements)](./kit.liveselector._constructor_.md) |  | Create a new LiveSelector. |
+
 ## Methods
 
 |  Method | Modifiers | Description |
@@ -23,6 +29,7 @@ export declare class LiveSelector<T, SingleMode extends boolean = false>
 |  [closest(selectors)](./kit.liveselector.closest_3.md) |  |  |
 |  [concat(newEle)](./kit.liveselector.concat.md) |  | Combines two LiveSelector. |
 |  [enableSingleMode()](./kit.liveselector.enablesinglemode.md) |  | Enable single mode. Only 1 result will be emitted. |
+|  [evaluate()](./kit.liveselector.evaluate.md) |  | Evaluate selector expression |
 |  [evaluateOnce()](./kit.liveselector.evaluateonce.md) |  | Evaluate selector expression |
 |  [filter(f)](./kit.liveselector.filter.md) |  | Select the elements of a LiveSelector that meet the condition specified in a callback function. |
 |  [flat()](./kit.liveselector.flat.md) |  | Flat T\[\]\[\] to T\[\] |
@@ -45,14 +52,14 @@ export declare class LiveSelector<T, SingleMode extends boolean = false>
 
 ## Remarks
 
-Call [\#evaluateOnce](./kit.liveselector.evaluateonce.md) to evaluate the element. Falsy value will be ignored.
+Call [\#evaluate](./kit.liveselector.evaluate.md) to evaluate the element. Falsy value will be ignored.
 
 ## Example
 
 
 ```ts
 const ls = new LiveSelector().querySelectorAll('a').map(x => x.href)
-ls.evaluateOnce() // returns all urls at the current time.
+ls.evaluate() // returns all urls at the current time.
 
 ```
 

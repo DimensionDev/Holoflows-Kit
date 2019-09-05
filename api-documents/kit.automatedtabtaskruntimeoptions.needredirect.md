@@ -6,8 +6,6 @@
 
 Use with runAtTabID, tell AutomatedTabTask if you need to redirect the tab to the url provided
 
-defaults: false
-
 <b>Signature:</b>
 
 ```typescript

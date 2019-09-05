@@ -9,19 +9,19 @@ Async call between different context.
 <b>Signature:</b>
 
 ```typescript
-export declare function AsyncCall<OtherSideImplementedFunctions = {}>(implementation?: Record<string, (...args: any[]) => any>, options?: Partial<AsyncCallOptions>): OtherSideImplementedFunctions;
+export declare function AsyncCall<OtherSideImplementedFunctions = {}>(implementation?: object, options?: Partial<AsyncCallOptions>): MakeAllFunctionsAsync<OtherSideImplementedFunctions>;
 ```
 
 ## Parameters
 
 |  Parameter | Type | Description |
 |  --- | --- | --- |
-|  implementation | <code>Record&lt;string, (...args: any[]) =&gt; any&gt;</code> | Implementation of this side. |
+|  implementation | <code>object</code> | Implementation of this side. |
 |  options | <code>Partial&lt;AsyncCallOptions&gt;</code> | Define your own serializer, MessageCenter or other options. |
 
 <b>Returns:</b>
 
-`OtherSideImplementedFunctions`
+`MakeAllFunctionsAsync<OtherSideImplementedFunctions>`
 
 ## Remarks
 

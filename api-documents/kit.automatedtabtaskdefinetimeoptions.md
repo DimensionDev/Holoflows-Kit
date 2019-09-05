@@ -16,7 +16,7 @@ export interface AutomatedTabTaskDefineTimeOptions extends AutomatedTabTaskShare
 
 |  Property | Type | Description |
 |  --- | --- | --- |
+|  [AsyncCallOptions](./kit.automatedtabtaskdefinetimeoptions.asynccalloptions.md) | <code>Partial&lt;AsyncCallOptions&gt;</code> | Options when creating [AsyncCall()](./kit.asynccall.md) ([AsyncCallOptions](./kit.asynccalloptions.md)<!-- -->) |
 |  [concurrent](./kit.automatedtabtaskdefinetimeoptions.concurrent.md) | <code>number</code> | At most run <code>concurrent</code> tasks. Prevents open too many tabs at the same time. |
-|  [key](./kit.automatedtabtaskdefinetimeoptions.key.md) | <code>string</code> | A unique key |
 |  [memorizeTTL](./kit.automatedtabtaskdefinetimeoptions.memorizettl.md) | <code>number</code> | TTL for memorize |
 

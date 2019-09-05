@@ -33,17 +33,23 @@ type SelectorChainTypeItem = MapOf<SelectorChainType>
  * Create a live selector that can continuously select the element you want.
  *
  * @remarks
- * Call {@link LiveSelector.evaluateOnce | #evaluateOnce} to evaluate the element. Falsy value will be ignored.
+ * Call {@link LiveSelector.evaluate | #evaluate} to evaluate the element. Falsy value will be ignored.
  *
  * @param T - Type of Element that LiveSelector contains
  *
  * @example
  * ```ts
  * const ls = new LiveSelector().querySelectorAll('a').map(x => x.href)
- * ls.evaluateOnce() // returns all urls at the current time.
+ * ls.evaluate() // returns all urls at the current time.
  * ```
  */
 export class LiveSelector<T, SingleMode extends boolean = false> {
+    /**
+     * Create a new LiveSelector.
+     *
+     * @param initialElements - provides initial results, equals to `.replace(() => initialElements)`
+     */
+    constructor(private readonly initialElements: readonly T[] = []) {}
     /**
      * Let developer knows where does this LiveSelector created.
      */
@@ -78,7 +84,7 @@ export class LiveSelector<T, SingleMode extends boolean = false> {
      * ```
      */
     clone() {
-        const ls = new LiveSelector<T, SingleMode>()
+        const ls = new LiveSelector<T, SingleMode>(this.initialElements)
         ls.selectorChain.push(...this.selectorChain)
         ls.singleMode = this.singleMode
         return ls
@@ -92,6 +98,12 @@ export class LiveSelector<T, SingleMode extends boolean = false> {
      * @example
      * ```ts
      * ls.querySelector('div#root')
+     * ```
+     * About chain on querySelector
+     * ```ts
+     * ls.querySelector('a').querySelector('b')
+     * // equals to
+     * ls.querySelector('a b')
      * ```
      */
     querySelector<K extends keyof HTMLElementTagNameMap>(
@@ -109,6 +121,13 @@ export class LiveSelector<T, SingleMode extends boolean = false> {
      * @example
      * ```ts
      * ls.querySelector('div > div')
+     * ```
+     * About chain on querySelector
+     *
+     * ```ts
+     * ls.querySelectorAll('a').querySelectorAll('b')
+     * // equals to
+     * ls.querySelectorAll('a b')
      * ```
      */
     querySelectorAll<K extends keyof HTMLElementTagNameMap>(
@@ -296,9 +315,9 @@ export class LiveSelector<T, SingleMode extends boolean = false> {
     /**
      * Evaluate selector expression
      */
-    evaluateOnce(): SingleMode extends true ? (T | undefined) : T[] {
-        let arr: (T | Element)[] = []
-        function isElementArray(x: any[]): x is Element[] {
+    evaluate(): SingleMode extends true ? (T | undefined) : T[] {
+        let arr: readonly (T | Element)[] = this.initialElements
+        function isElementArray(x: readonly any[]): x is Element[] {
             // Do a simple check
             return x[0] instanceof Element
         }
@@ -314,7 +333,7 @@ export class LiveSelector<T, SingleMode extends boolean = false> {
                     if (!previouslyNulled) {
                         if (arr.length === 0) {
                             const e = document.querySelector(op.param)
-                            if (e) arr.push(e)
+                            if (e) arr = arr.concat(e)
                             else previouslyNulled = true
                         } else if (isElementArray(arr)) {
                             arr = arr.map(e => e.querySelector(op.param)).filter(nonNull)
@@ -331,7 +350,7 @@ export class LiveSelector<T, SingleMode extends boolean = false> {
                         ;[] // Fix editor syntax highlight
                         if (arr.length === 0) {
                             const e = (document[op.type] as F)(op.param)
-                            arr.push(...e)
+                            arr = arr.concat(...e)
                             if (e.length === 0) previouslyNulled = true
                         } else if (isElementArray(arr)) {
                             let newArr: Element[] = []
@@ -372,10 +391,10 @@ export class LiveSelector<T, SingleMode extends boolean = false> {
                     arr = arr.map(op.param).filter(nonNull)
                     break
                 case 'concat':
-                    arr = arr.concat(op.param.evaluateOnce())
+                    arr = arr.concat(op.param.evaluate())
                     break
                 case 'reverse':
-                    arr = arr.reverse()
+                    arr = Array.from(arr).reverse()
                     break
                 case 'slice': {
                     const [start, end] = op.param
@@ -383,7 +402,7 @@ export class LiveSelector<T, SingleMode extends boolean = false> {
                     break
                 }
                 case 'sort':
-                    arr = arr.sort(op.param)
+                    arr = Array.from(arr).sort(op.param)
                     break
                 case 'nth': {
                     const x = op.param >= 0 ? op.param : arr.length - op.param
@@ -394,7 +413,7 @@ export class LiveSelector<T, SingleMode extends boolean = false> {
                     arr = ([] as typeof arr).concat(...arr)
                     break
                 case 'replace':
-                    arr = op.param(arr)
+                    arr = op.param(Array.from(arr))
                     break
                 default:
                     throw new TypeError('Unknown operation type')
@@ -402,6 +421,13 @@ export class LiveSelector<T, SingleMode extends boolean = false> {
         }
         if (this.singleMode) return (arr.filter(nonNull) as T[])[0] as any
         return (arr.filter(nonNull) as T[]) as any
+    }
+    /**
+     * {@inheritdoc LiveSelector.evaluate}
+     * @deprecated Use `evaluate()` instead, it's shorter
+     */
+    evaluateOnce(): SingleMode extends true ? (T | undefined) : T[] {
+        return this.evaluate()
     }
     //#endregion
 }
