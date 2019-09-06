@@ -54,12 +54,15 @@ export class LiveSelector<T, SingleMode extends boolean = false> {
      * Let developer knows where does this LiveSelector created.
      */
     private readonly stack = new Error().stack
-    private singleMode = false
+    /**
+     * Is this LiveSelector run in the SingleMode
+     */
+    public isSingleMode = false
     /**
      * Enable single mode. Only 1 result will be emitted.
      */
     enableSingleMode(): LiveSelector<T, true> {
-        this.singleMode = true
+        this.isSingleMode = true
         return this as any
     }
     /**
@@ -86,7 +89,7 @@ export class LiveSelector<T, SingleMode extends boolean = false> {
     clone() {
         const ls = new LiveSelector<T, SingleMode>(this.initialElements)
         ls.selectorChain.push(...this.selectorChain)
-        ls.singleMode = this.singleMode
+        ls.isSingleMode = this.isSingleMode
         return ls
     }
     //#region Add elements
@@ -327,7 +330,7 @@ export class LiveSelector<T, SingleMode extends boolean = false> {
         let previouslyNulled = false
         for (const op of this.selectorChain) {
             // if in single mode, drop other results.
-            if (this.singleMode && arr.length > 1) arr = [arr[0]]
+            if (this.isSingleMode && arr.length > 1) arr = [arr[0]]
             switch (op.type) {
                 case 'querySelector': {
                     if (!previouslyNulled) {
@@ -419,7 +422,7 @@ export class LiveSelector<T, SingleMode extends boolean = false> {
                     throw new TypeError('Unknown operation type')
             }
         }
-        if (this.singleMode) return (arr.filter(nonNull) as T[])[0] as any
+        if (this.isSingleMode) return (arr.filter(nonNull) as T[])[0] as any
         return (arr.filter(nonNull) as T[]) as any
     }
     /**
