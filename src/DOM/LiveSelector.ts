@@ -327,6 +327,9 @@ export class LiveSelector<T, SingleMode extends boolean = false> {
         function nonNull<T>(x: T | null | undefined): x is T {
             return x !== null && x !== undefined
         }
+        function unique<T>(x: T[]): T[] {
+            return Array.from(new Set(x))
+        }
         let previouslyNulled = false
         for (const op of this.selectorChain) {
             // if in single mode, drop other results.
@@ -336,10 +339,10 @@ export class LiveSelector<T, SingleMode extends boolean = false> {
                     if (!previouslyNulled) {
                         if (arr.length === 0) {
                             const e = document.querySelector(op.param)
-                            if (e) arr = arr.concat(e)
+                            if (e) arr = unique(arr.concat(e))
                             else previouslyNulled = true
                         } else if (isElementArray(arr)) {
-                            arr = arr.map(e => e.querySelector(op.param)).filter(nonNull)
+                            arr = unique(arr.map(e => e.querySelector(op.param)).filter(nonNull))
                             if (arr.length === 0) previouslyNulled = true
                         } else throw new TypeError('Call querySelector on non-Element item!')
                     }
@@ -353,14 +356,14 @@ export class LiveSelector<T, SingleMode extends boolean = false> {
                         ;[] // Fix editor syntax highlight
                         if (arr.length === 0) {
                             const e = (document[op.type] as F)(op.param)
-                            arr = arr.concat(...e)
+                            arr = unique(arr.concat(...e))
                             if (e.length === 0) previouslyNulled = true
                         } else if (isElementArray(arr)) {
                             let newArr: Element[] = []
                             for (const e of arr) {
                                 newArr = newArr.concat(Array.from((e[op.type] as F)(op.param)))
                             }
-                            arr = newArr.filter(nonNull)
+                            arr = unique(newArr.filter(nonNull))
                             if (arr.length === 0) previouslyNulled = true
                         } else throw new TypeError(`Call ${op.type} on non-Element item!`)
                     }
@@ -379,9 +382,9 @@ export class LiveSelector<T, SingleMode extends boolean = false> {
                             return findParent(node.parentElement, y - 1)
                         }
                         if (typeof selector === 'number') {
-                            arr = newArr.map(e => findParent(e, selector)).filter(nonNull)
+                            arr = unique(newArr.map(e => findParent(e, selector)).filter(nonNull))
                         } else {
-                            arr = newArr.map(x => x.closest(selector)).filter(nonNull)
+                            arr = unique(newArr.map(x => x.closest(selector)).filter(nonNull))
                         }
                     } else {
                         throw new TypeError('Cannot use `.closet on non-Element`')
