@@ -31,7 +31,6 @@ export abstract class Watcher<T, Before extends Element, After extends Element, 
     protected readonly liveSelector: LiveSelector<T, SingleMode>
     constructor(liveSelector: LiveSelector<T, SingleMode>) {
         this.liveSelector = liveSelector.clone()
-        if (this.liveSelector.isSingleMode) this.enableSingleMode()
     }
     //#region How to start and stop the watcher
     /** Let the watcher start to watching */
@@ -367,6 +366,8 @@ export abstract class Watcher<T, Before extends Element, After extends Element, 
     /**
      * Enable single mode.
      *
+     * @deprecated Use LiveSelector.enableSingleMode()
+     *
      * @privateRemarks
      * Subclass need to implement it to get the correct type.
      * Example to subclass implementor:
@@ -384,15 +385,20 @@ export abstract class Watcher<T, Before extends Element, After extends Element, 
      * Every subclass should call this.
      */
     protected _enableSingleMode() {
+        console.warn(
+            'You should call this method on LiveSelector instead of a Watcher. Watcher.enableSingleMode is deprecated.',
+        )
         this._warning_single_mode.ignored = true
-        this.singleMode = true
         this.liveSelector.enableSingleMode()
         return this
     }
     /**
      * Is the single mode is on.
      */
-    protected singleMode = false
+    protected get singleMode(): boolean {
+        // @ts-ignore
+        return this.liveSelector.isSingleMode
+    }
     /** Last iteration value for single mode */
     protected singleModeLastValue?: T
     /** Does it has a last iteration value in single mode? */
@@ -661,15 +667,23 @@ export abstract class Watcher<T, Before extends Element, After extends Element, 
             console.warn(
                 `Your watcher seems like only watching 1 node.
 If you can make sure there is only 1 node to watch, call \`.enableSingleMode()\` on the watcher.
-Or to ignore this message, call \`.enableBatchMode()\` on the watcher.\n`,
+Or to ignore this message, call \`.dismissSingleModeWarning()\` on the watcher.\n`,
                 stack,
             )
         },
     })
     /**
-     * Dismiss the warning that let you enable single mode but the warning is false positive.
+     * {@inheritdoc Watcher.dismissSingleModeWarning}
+     * @deprecated
      */
     public enableBatchMode(): this {
+        console.warn('This method is deprecated. Use dismissSingleModeWarning() instead.')
+        return this.dismissSingleModeWarning()
+    }
+    /**
+     * Dismiss the warning that let you enable single mode but the warning is false positive.
+     */
+    public dismissSingleModeWarning(): this {
         this._warning_single_mode.ignored = true
         return this
     }

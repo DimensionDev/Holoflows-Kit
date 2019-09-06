@@ -57,7 +57,7 @@ export class LiveSelector<T, SingleMode extends boolean = false> {
     /**
      * Is this LiveSelector run in the SingleMode
      */
-    public isSingleMode = false
+    private isSingleMode = false
     /**
      * Enable single mode. Only 1 result will be emitted.
      */

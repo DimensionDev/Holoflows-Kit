@@ -4,6 +4,10 @@
 
 ## Watcher.enableBatchMode() method
 
+> Warning: This API is now obsolete.
+> 
+> 
+
 Dismiss the warning that let you enable single mode but the warning is false positive.
 
 <b>Signature:</b>

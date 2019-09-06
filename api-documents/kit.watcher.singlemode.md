@@ -9,5 +9,5 @@ Is the single mode is on.
 <b>Signature:</b>
 
 ```typescript
-protected singleMode: boolean;
+protected readonly singleMode: boolean;
 ```

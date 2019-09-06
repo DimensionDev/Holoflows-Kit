@@ -55,6 +55,7 @@ export declare abstract class Watcher<T, Before extends Element, After extends E
 |  [addListener(event, fn)](./kit.watcher.addlistener_2.md) |  |  |
 |  [addListener(event, fn)](./kit.watcher.addlistener_3.md) |  |  |
 |  [assignKeys(keyAssigner)](./kit.watcher.assignkeys.md) |  | To help identify same nodes in different iteration, you need to implement a map function that map <code>node</code> to <code>key</code>If the key is changed, the same node will call through <code>forEachRemove</code> then <code>forEach</code> |
+|  [dismissSingleModeWarning()](./kit.watcher.dismisssinglemodewarning.md) |  | Dismiss the warning that let you enable single mode but the warning is false positive. |
 |  [emit(event, data)](./kit.watcher.emit.md) |  |  |
 |  [emit(event, data)](./kit.watcher.emit_1.md) |  |  |
 |  [emit(event, data)](./kit.watcher.emit_2.md) |  |  |

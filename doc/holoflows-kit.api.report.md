@@ -239,6 +239,7 @@ export abstract class Watcher<T, Before extends Element, After extends Element, 
     // (undocumented)
     addListener(event: 'onAdd', fn: EventCallback<OnAddOrRemoveEvent<T>>): this;
     assignKeys<Q = unknown>(keyAssigner: (node: T, index: number, arr: readonly T[]) => Q): this;
+    dismissSingleModeWarning(): this;
     protected domProxyOption: Partial<DomProxyOptions<Before, After>>;
     // (undocumented)
     protected emit(event: 'onIteration', data: OnIterationEvent<T>): void;
@@ -248,7 +249,9 @@ export abstract class Watcher<T, Before extends Element, After extends Element, 
     protected emit(event: 'onRemove', data: OnAddOrRemoveEvent<T>): void;
     // (undocumented)
     protected emit(event: 'onAdd', data: OnAddOrRemoveEvent<T>): void;
+    // @deprecated
     enableBatchMode(): this;
+    // @deprecated
     abstract enableSingleMode(): Watcher<T, Before, After, true>;
     // (undocumented)
     protected _enableSingleMode(): this;
@@ -280,7 +283,7 @@ export abstract class Watcher<T, Before extends Element, After extends Element, 
     protected scheduleWatcherCheck: () => void;
     setComparer<Q = unknown>(keyComparer?: (a: Q, b: Q) => boolean, valueComparer?: (a: T, b: T) => boolean): this;
     setDomProxyOption(option: Partial<DomProxyOptions<Before, After>>): this;
-    protected singleMode: boolean;
+    protected readonly singleMode: boolean;
     protected singleModeCallback?: useForeachReturns<T>;
     protected singleModeHasLastValue: boolean;
     protected singleModeLastValue?: T;
