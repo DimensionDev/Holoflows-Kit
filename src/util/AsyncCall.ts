@@ -27,7 +27,7 @@
  * Implemented JSON RPC extension (internal methods):
  * None
  */
-import { MessageCenter } from '../Extension/MessageCenter'
+import { MessageCenter } from '../Extension'
 
 //#region Serialization
 /**
@@ -60,6 +60,7 @@ export const NoSerialization: Serialization = {
  * Serialization implementation by JSON.parse/stringify
  *
  * @param replacerAndReceiver - Replacer of JSON.parse/stringify
+ * @param space - used to insert white space into the output JSON string for readability purposes.
  */
 export const JSONSerialization = (
     [replacer, receiver]: [Parameters<JSON['stringify']>[1], Parameters<JSON['parse']>[1]] = [undefined, undefined],
@@ -299,7 +300,7 @@ export function AsyncCall<OtherSideImplementedFunctions = {}>(
                 .split('\n')
                 .reduce((stack, fstack) => stack.replace(fstack + '\n', ''), e.stack || '')
             if (logLocalError) console.error(e)
-            let name = 'Error'
+            let name: string
             name = e.constructor.name
             if (typeof DOMException === 'function' && e instanceof DOMException) name = 'DOMException:' + e.name
             return new ErrorResponse(data.id, -1, e.message, e.stack, name)
@@ -437,7 +438,7 @@ export function AsyncCall<OtherSideImplementedFunctions = {}>(
             onResponse(data)
         } else {
             if ('resultIsUndefined' in data) {
-                ;(data as any).result = undefined
+                (data as any).result = undefined
                 onResponse(data)
             } else return ErrorResponse.InvalidRequest((data as any).id)
         }

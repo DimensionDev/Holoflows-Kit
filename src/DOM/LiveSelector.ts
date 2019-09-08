@@ -230,7 +230,7 @@ export class LiveSelector<T, SingleMode extends boolean = false> {
     /**
      * Combines two LiveSelector.
      * @param newEle - Additional LiveSelector to combine.
-     * @param NextType - Next type generic for LiveSelector
+     * @template NextType - Next type generic for LiveSelector
      *
      * @example
      * ```ts
@@ -353,7 +353,6 @@ export class LiveSelector<T, SingleMode extends boolean = false> {
                 case 'querySelectorAll': {
                     if (!previouslyNulled) {
                         type F = (x: string) => NodeListOf<Element> | HTMLCollectionOf<Element>
-                        ;[] // Fix editor syntax highlight
                         if (arr.length === 0) {
                             const e = (document[op.type] as F)(op.param)
                             arr = unique(arr.concat(...e))

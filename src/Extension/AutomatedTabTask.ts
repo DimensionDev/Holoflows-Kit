@@ -1,5 +1,5 @@
 import { sleep, timeout as timeoutFn } from '../util/sleep'
-import { AsyncCall, AsyncCallOptions } from '../util/AsyncCall'
+import { AsyncCall, AsyncCallOptions } from '../util'
 import { GetContext } from './Context'
 import Lock from 'concurrent-lock'
 import { memorize } from 'memorize-decorator'
@@ -270,13 +270,13 @@ async function createOrGetTheTabToExecuteTask(options: createOrGetTheTabToExecut
     /**
      * does it need a lock to avoid too many open at the same time?
      */
-    const withoutLock = isImportant || autoClose === false || active || wantedTabID
+    const withoutLock = isImportant || !autoClose || active || wantedTabID
     if (!withoutLock) await lock.lock(timeout)
 
     const tabId = await getTabOrCreate(wantedTabID, url, needRedirect, active, pinned)
 
     // Wait for the tab register
-    while (tabReadyMap.has(tabId) !== true) await sleep(50)
+    while (!tabReadyMap.has(tabId)) await sleep(50)
 
     // Run the async call
     const task: Promise<any> = asyncCall[getTaskNameByTabId(taskName, tabId)](...taskArgs)

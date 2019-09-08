@@ -169,13 +169,13 @@ export function DomProxy<
                 const key: keyof Node = change.op.name as any
                 if (replayable.indexOf(key) !== -1) {
                     if (current[key]) {
-                        ;(current[key] as any)(...change.op.param)
+                        (current[key] as any)(...change.op.param)
                     } else {
                         console.warn(current, `doesn't have method "${key}", replay failed.`)
                     }
                 }
             } else if (change.type === 'modifyStyle') {
-                ;(current as HTMLElement).style[change.op.name as any] = change.op.value
+                (current as HTMLElement).style[change.op.name as any] = change.op.value
             }
         }
     }

@@ -53,8 +53,7 @@ export abstract class Watcher<T, Before extends Element, After extends Element, 
     /**
      * Just like React hooks. Provide callbacks for each node changes.
      *
-     * @param forEachFunction - You can return a set of functions that will be called on changes.
-     *
+     * @param forEach - the foreach callback
      * @remarks
      *
      * Return value of `fn`
@@ -101,7 +100,6 @@ export abstract class Watcher<T, Before extends Element, After extends Element, 
      *     }
      * })
      *
-     * ```
      */
     public useForeach(
         forEach: (
@@ -120,7 +118,8 @@ export abstract class Watcher<T, Before extends Element, After extends Element, 
     //#region .then()
     /**
      * Start the watcher, once it emitted data, stop watching.
-     * @param map - Map function transform T to Result
+     * @param onFulfilled
+     * @param onRejected
      * @param options - Options for watcher
      * @param starter - How to start the watcher
      *
@@ -136,8 +135,8 @@ export abstract class Watcher<T, Before extends Element, After extends Element, 
      */
     // The PromiseLike<T> interface
     public then<TResult1 = ResultOf<SingleMode, T>, TResult2 = never>(
-        onfulfilled?: ((value: ResultOf<SingleMode, T>) => TResult1 | PromiseLike<TResult1>) | null,
-        onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | null,
+        onFulfilled?: ((value: ResultOf<SingleMode, T>) => TResult1 | PromiseLike<TResult1>) | null,
+        onRejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | null,
         options: { minimalResultsRequired?: number; timeout?: number } = {},
         starter: (this: this, self: this) => void = watcher => watcher.startWatch(),
     ): Promise<TResult1 | TResult2> {
@@ -186,7 +185,7 @@ export abstract class Watcher<T, Before extends Element, After extends Element, 
         }
         const withTimeout = timeout(then(), timeoutTime)
         withTimeout.finally(() => done(false, new Error('timeout')))
-        return withTimeout.then(onfulfilled, onrejected)
+        return withTimeout.then(onFulfilled, onRejected)
     }
     //#endregion
     //#region Multiple mode
@@ -294,7 +293,7 @@ export abstract class Watcher<T, Before extends Element, After extends Element, 
         type U = [T, T, unknown, unknown]
         const changedNodes = oldSameKeys
             .map(x => [findFromLast(x), findFromNew(x), x, newSameKeys.find(newK => this.keyComparer(newK, x))] as U)
-            .filter(([a, b]) => this.valueComparer(a, b) === false)
+            .filter(([a, b]) => !this.valueComparer(a, b))
         for (const [oldNode, newNode, oldKey, newKey] of changedNodes) {
             const fn = this.lastCallbackMap.get(oldKey)
             if (newNode instanceof Node) {

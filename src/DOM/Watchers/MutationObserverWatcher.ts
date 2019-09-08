@@ -23,8 +23,8 @@ export class MutationObserverWatcher<
         /** LiveSelector that this object holds */
         protected liveSelector: LiveSelector<T, SingleMode>,
         /**
-         * If you know the element is always inside of a node, set this option.
-         * This may improve performance.
+         * set this option if you know the element is always inside of a node.
+         * this may improve performance.
          */
         private consistentWatchRoot: Node = document.body,
     ) {
