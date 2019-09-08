@@ -17,6 +17,9 @@
 /umd
 tsdoc-metadata.json
 
+# editor
+.idea
+
 # misc
 .DS_Store
 
