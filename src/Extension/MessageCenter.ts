@@ -1,5 +1,6 @@
 import mitt from 'mitt'
 import { NoSerialization } from '../util/AsyncCall'
+
 type InternalMessageType = {
     key: Key
     data: any
@@ -115,7 +116,7 @@ export class MessageCenter<ITypedMessages> {
         }
     }
     /**
-     * {@inheritdoc MessageCenter.emit}
+     * @inheritdoc
      */
     public send(
         ...args: Parameters<MessageCenter<ITypedMessages>['emit']>

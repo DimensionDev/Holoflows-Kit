@@ -1,4 +1,5 @@
 import { Watcher } from '../Watcher'
+
 /**
  * A watcher based on time interval.
  *
@@ -25,14 +26,15 @@ export class IntervalWatcher<
         return this
     }
     /**
-     * {@inheritdoc Watcher.stopWatch}
+     * @inheritdoc
      */
     stopWatch() {
         super.stopWatch()
         if (this.timer) clearInterval(this.timer)
     }
     /**
-     * {@inheritdoc Watcher.enableSingleMode}
+     * @inheritdoc
+     * @deprecated Use LiveSelector.enableSingleMode()
      */
     enableSingleMode: () => IntervalWatcher<T, Before, After, true> = this._enableSingleMode as any
 }

@@ -673,7 +673,7 @@ Or to ignore this message, call \`.dismissSingleModeWarning()\` on the watcher.\
         },
     })
     /**
-     * {@inheritdoc Watcher.dismissSingleModeWarning}
+     * @inheritdoc
      * @deprecated
      */
     public enableBatchMode(): this {

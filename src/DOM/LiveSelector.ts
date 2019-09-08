@@ -429,7 +429,7 @@ export class LiveSelector<T, SingleMode extends boolean = false> {
         return (arr.filter(nonNull) as T[]) as any
     }
     /**
-     * {@inheritdoc LiveSelector.evaluate}
+     * @inheritdoc
      * @deprecated Use `evaluate()` instead, it's shorter
      */
     evaluateOnce(): SingleMode extends true ? (T | undefined) : T[] {

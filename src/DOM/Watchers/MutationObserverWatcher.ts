@@ -1,5 +1,6 @@
 import { Watcher } from '../Watcher'
 import { LiveSelector } from '../LiveSelector'
+
 /**
  * A watcher based on MutationObserver
  *
@@ -36,7 +37,7 @@ export class MutationObserverWatcher<
         this.requestIdleCallback(this.scheduleWatcherCheck)
     })
     /**
-     * {@inheritdoc Watcher.startWatch}
+     * @inheritdoc
      */
     startWatch(options?: MutationObserverInit) {
         super.startWatch()
@@ -58,14 +59,15 @@ export class MutationObserverWatcher<
         return this
     }
     /**
-     * {@inheritdoc Watcher.stopWatch}
+     * @inheritdoc
      */
     stopWatch() {
         super.stopWatch()
         this.observer.disconnect()
     }
     /**
-     * {@inheritdoc Watcher.enableSingleMode}
+     * @inheritdoc
+     * @deprecated Use LiveSelector.enableSingleMode()
      */
     enableSingleMode: () => MutationObserverWatcher<T, Before, After, true> = this._enableSingleMode as any
 }
