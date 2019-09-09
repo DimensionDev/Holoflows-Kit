@@ -16,7 +16,7 @@ concat<NextType>(newEle: LiveSelector<NextType, SingleMode>): LiveSelector<T | N
 
 |  Parameter | Type | Description |
 |  --- | --- | --- |
-|  newEle | <code>LiveSelector&lt;NextType, SingleMode&gt;</code> | Additional LiveSelector to combine. |
+|  newEle | <code>LiveSelector&lt;NextType, SingleMode&gt;</code> | Additional LiveSelector to combine.  NextType - Next type generic for LiveSelector |
 
 <b>Returns:</b>
 

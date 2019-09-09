@@ -99,7 +99,7 @@ export abstract class Watcher<T, Before extends Element, After extends Element, 
      *         }
      *     }
      * })
-     *
+     * ```
      */
     public useForeach(
         forEach: (
@@ -672,6 +672,7 @@ Or to ignore this message, call \`.dismissSingleModeWarning()\` on the watcher.\
         },
     })
     /**
+     * {@inheritdoc Watcher.dismissSingleModeWarning}
      * @inheritdoc
      * @deprecated
      */

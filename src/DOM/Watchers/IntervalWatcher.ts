@@ -26,6 +26,7 @@ export class IntervalWatcher<
         return this
     }
     /**
+     * {@inheritdoc Watcher.stopWatch}
      * @inheritdoc
      */
     stopWatch() {
@@ -33,6 +34,7 @@ export class IntervalWatcher<
         if (this.timer) clearInterval(this.timer)
     }
     /**
+     * {@inheritdoc Watcher.enableSingleMode}
      * @inheritdoc
      * @deprecated Use LiveSelector.enableSingleMode()
      */

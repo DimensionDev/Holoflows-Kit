@@ -4,6 +4,11 @@
 
 ## EventWatcher.enableSingleMode property
 
+> Warning: This API is now obsolete.
+> 
+> Use LiveSelector.enableSingleMode()
+> 
+
 Enable single mode.
 
 <b>Signature:</b>

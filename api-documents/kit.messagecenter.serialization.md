@@ -9,5 +9,5 @@ How should MessageCenter serialization the message
 <b>Signature:</b>
 
 ```typescript
-serialization: import("../util/AsyncCall").Serialization;
+serialization: import("../util").Serialization;
 ```

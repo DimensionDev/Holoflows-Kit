@@ -37,6 +37,7 @@ export class MutationObserverWatcher<
         this.requestIdleCallback(this.scheduleWatcherCheck)
     })
     /**
+     * {@inheritdoc Watcher.startWatch}
      * @inheritdoc
      */
     startWatch(options?: MutationObserverInit) {
@@ -59,6 +60,7 @@ export class MutationObserverWatcher<
         return this
     }
     /**
+     * {@inheritdoc Watcher.stopWatch}
      * @inheritdoc
      */
     stopWatch() {
@@ -66,6 +68,7 @@ export class MutationObserverWatcher<
         this.observer.disconnect()
     }
     /**
+     * {@inheritdoc Watcher.enableSingleMode}
      * @inheritdoc
      * @deprecated Use LiveSelector.enableSingleMode()
      */

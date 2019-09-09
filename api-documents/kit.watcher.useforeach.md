@@ -16,7 +16,7 @@ useForeach(forEach: (virtualNode: T, key: unknown, metadata: T extends Node ? Do
 
 |  Parameter | Type | Description |
 |  --- | --- | --- |
-|  forEach | <code>(virtualNode: T, key: unknown, metadata: T extends Node ? DomProxy&lt;T, Before, After&gt; : unknown) =&gt; useForeachReturns&lt;T&gt;</code> |  |
+|  forEach | <code>(virtualNode: T, key: unknown, metadata: T extends Node ? DomProxy&lt;T, Before, After&gt; : unknown) =&gt; useForeachReturns&lt;T&gt;</code> | the foreach callback |
 
 <b>Returns:</b>
 
@@ -69,7 +69,6 @@ watcher.useForeach((value, key) => {
         }
     }
 })
-
 
 ```
 

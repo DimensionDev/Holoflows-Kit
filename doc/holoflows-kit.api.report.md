@@ -99,6 +99,7 @@ export interface DomProxyOptions<Before extends Element = HTMLSpanElement, After
 // @public
 export class EventWatcher<T, Before extends Element = HTMLSpanElement, After extends Element = HTMLSpanElement, SingleMode extends boolean = false> extends Watcher<T, Before, After, SingleMode> {
     constructor(liveSelector: LiveSelector<T, SingleMode>);
+    // @deprecated
     enableSingleMode: () => EventWatcher<T, Before, After, true>;
     eventListener: () => void;
 }
@@ -108,6 +109,7 @@ export function GetContext(): Contexts;
 
 // @public
 export class IntervalWatcher<T, Before extends Element = HTMLSpanElement, After extends Element = HTMLSpanElement, SingleMode extends boolean = false> extends Watcher<T, Before, After, SingleMode> {
+    // @deprecated
     enableSingleMode: () => IntervalWatcher<T, Before, After, true>;
     startWatch(interval: number): this;
     stopWatch(): void;
@@ -176,7 +178,7 @@ export class MessageCenter<ITypedMessages> {
     off<Key extends keyof ITypedMessages>(event: Key, handler: (data: ITypedMessages[Key]) => void): void;
     on<Key extends keyof ITypedMessages>(event: Key, handler: (data: ITypedMessages[Key]) => void): () => void;
     send(...args: Parameters<MessageCenter<ITypedMessages>['emit']>): ReturnType<MessageCenter<ITypedMessages>['emit']>;
-    serialization: import("../util/AsyncCall").Serialization;
+    serialization: import("../util").Serialization;
     writeToConsole: boolean;
 }
 
@@ -185,6 +187,7 @@ export class MutationObserverWatcher<T, Before extends Element = HTMLSpanElement
     constructor(
     liveSelector: LiveSelector<T, SingleMode>, 
     consistentWatchRoot?: Node);
+    // @deprecated
     enableSingleMode: () => MutationObserverWatcher<T, Before, After, true>;
     protected liveSelector: LiveSelector<T, SingleMode>;
     startWatch(options?: MutationObserverInit): this;
@@ -289,7 +292,7 @@ export abstract class Watcher<T, Before extends Element, After extends Element, 
     protected singleModeLastValue?: T;
     startWatch(...args: any[]): this;
     stopWatch(...args: any[]): void;
-    then<TResult1 = ResultOf<SingleMode, T>, TResult2 = never>(onfulfilled?: ((value: ResultOf<SingleMode, T>) => TResult1 | PromiseLike<TResult1>) | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | null, options?: {
+    then<TResult1 = ResultOf<SingleMode, T>, TResult2 = never>(onFulfilled?: ((value: ResultOf<SingleMode, T>) => TResult1 | PromiseLike<TResult1>) | null, onRejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | null, options?: {
         minimalResultsRequired?: number;
         timeout?: number;
     }, starter?: (this: this, self: this) => void): Promise<TResult1 | TResult2>;

@@ -73,6 +73,6 @@ export declare abstract class Watcher<T, Before extends Element, After extends E
 |  [setDomProxyOption(option)](./kit.watcher.setdomproxyoption.md) |  | Set option for DomProxy |
 |  [startWatch(args)](./kit.watcher.startwatch.md) |  | Let the watcher start to watching |
 |  [stopWatch(args)](./kit.watcher.stopwatch.md) |  | Stop the watcher |
-|  [then(onfulfilled, onrejected, options, starter)](./kit.watcher.then.md) |  | Start the watcher, once it emitted data, stop watching. |
+|  [then(onFulfilled, onRejected, options, starter)](./kit.watcher.then.md) |  | Start the watcher, once it emitted data, stop watching. |
 |  [useForeach(forEach)](./kit.watcher.useforeach.md) |  | Just like React hooks. Provide callbacks for each node changes. |
 

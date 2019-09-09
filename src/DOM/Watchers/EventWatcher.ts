@@ -27,6 +27,7 @@ export class EventWatcher<
         this.requestIdleCallback(this.scheduleWatcherCheck, { timeout: 500 })
     }
     /**
+     * {@inheritdoc Watcher.enableSingleMode}
      * @inheritdoc
      * @deprecated Use LiveSelector.enableSingleMode()
      */

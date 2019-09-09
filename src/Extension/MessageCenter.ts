@@ -116,6 +116,7 @@ export class MessageCenter<ITypedMessages> {
         }
     }
     /**
+     * {@inheritdoc MessageCenter.emit}
      * @inheritdoc
      */
     public send(

@@ -9,7 +9,7 @@ Start the watcher, once it emitted data, stop watching.
 <b>Signature:</b>
 
 ```typescript
-then<TResult1 = ResultOf<SingleMode, T>, TResult2 = never>(onfulfilled?: ((value: ResultOf<SingleMode, T>) => TResult1 | PromiseLike<TResult1>) | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | null, options?: {
+then<TResult1 = ResultOf<SingleMode, T>, TResult2 = never>(onFulfilled?: ((value: ResultOf<SingleMode, T>) => TResult1 | PromiseLike<TResult1>) | null, onRejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | null, options?: {
         minimalResultsRequired?: number;
         timeout?: number;
     }, starter?: (this: this, self: this) => void): Promise<TResult1 | TResult2>;
@@ -19,8 +19,8 @@ then<TResult1 = ResultOf<SingleMode, T>, TResult2 = never>(onfulfilled?: ((value
 
 |  Parameter | Type | Description |
 |  --- | --- | --- |
-|  onfulfilled | <code>((value: ResultOf&lt;SingleMode, T&gt;) =&gt; TResult1 &#124; PromiseLike&lt;TResult1&gt;) &#124; null</code> |  |
-|  onrejected | <code>((reason: any) =&gt; TResult2 &#124; PromiseLike&lt;TResult2&gt;) &#124; null</code> |  |
+|  onFulfilled | <code>((value: ResultOf&lt;SingleMode, T&gt;) =&gt; TResult1 &#124; PromiseLike&lt;TResult1&gt;) &#124; null</code> |  |
+|  onRejected | <code>((reason: any) =&gt; TResult2 &#124; PromiseLike&lt;TResult2&gt;) &#124; null</code> |  |
 |  options | <code>{</code><br/><code>        minimalResultsRequired?: number;</code><br/><code>        timeout?: number;</code><br/><code>    }</code> | Options for watcher |
 |  starter | <code>(this: this, self: this) =&gt; void</code> | How to start the watcher |
 
