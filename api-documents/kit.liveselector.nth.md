@@ -9,14 +9,14 @@ Select only nth element
 <b>Signature:</b>
 
 ```typescript
-nth(n: number): LiveSelector<T, SingleMode>;
+nth(n: SingleMode extends true ? 'LiveSelector.nth() is not available in SingleMode' : number): LiveSelector<T, SingleMode>;
 ```
 
 ## Parameters
 
 |  Parameter | Type | Description |
 |  --- | --- | --- |
-|  n | <code>number</code> | Select only nth element, allow negative number. |
+|  n | <code>SingleMode extends true ? 'LiveSelector.nth() is not available in SingleMode' : number</code> | Select only nth element, allow negative number. |
 
 <b>Returns:</b>
 

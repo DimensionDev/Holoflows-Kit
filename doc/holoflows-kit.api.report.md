@@ -121,11 +121,11 @@ export class LiveSelector<T, SingleMode extends boolean = false> {
     constructor(initialElements?: readonly T[]);
     clone(): LiveSelector<T, SingleMode>;
     closest<T>(parentOfNth: number): LiveSelector<T, SingleMode>;
-    closest<K extends keyof HTMLElementTagNameMap>(selectors: K): LiveSelector<HTMLElementTagNameMap[K], SingleMode>;
-    // (undocumented)
-    closest<K extends keyof SVGElementTagNameMap>(selectors: K): LiveSelector<SVGElementTagNameMap[K], SingleMode>;
     // (undocumented)
     closest<E extends Element = Element>(selectors: string): LiveSelector<E, SingleMode>;
+    // (undocumented)
+    closest<K extends keyof SVGElementTagNameMap>(selectors: K): LiveSelector<SVGElementTagNameMap[K], SingleMode>;
+    closest<K extends keyof HTMLElementTagNameMap>(selectors: K): LiveSelector<HTMLElementTagNameMap[K], SingleMode>;
     concat<NextType>(newEle: LiveSelector<NextType, SingleMode>): LiveSelector<T | NextType, SingleMode>;
     enableSingleMode(): LiveSelector<T, true>;
     evaluate(): SingleMode extends true ? (T | undefined) : T[];
@@ -134,23 +134,23 @@ export class LiveSelector<T, SingleMode extends boolean = false> {
     filter(f: (value: T, index: number, array: T[]) => any): LiveSelector<NonNullable<T>, SingleMode>;
     flat(): LiveSelector<T extends ArrayLike<infer U> ? U : never, SingleMode>;
     getElementsByClassName<T extends Element = Element>(className: string): LiveSelector<T, SingleMode>;
-    getElementsByTagName<K extends keyof HTMLElementTagNameMap>(tag: K): LiveSelector<HTMLElementTagNameMap[K], SingleMode>;
     // (undocumented)
     getElementsByTagName<K extends keyof SVGElementTagNameMap>(tag: K): LiveSelector<SVGElementTagNameMap[K], SingleMode>;
+    getElementsByTagName<K extends keyof HTMLElementTagNameMap>(tag: K): LiveSelector<HTMLElementTagNameMap[K], SingleMode>;
     // (undocumented)
     getElementsByTagName<E extends Element = Element>(tag: string): LiveSelector<E, SingleMode>;
     map<NextType>(callbackfn: (element: T, index: number, array: T[]) => NextType): LiveSelector<NonNullable<NextType>, SingleMode>;
-    nth(n: number): LiveSelector<T, SingleMode>;
-    querySelector<K extends keyof HTMLElementTagNameMap>(selector: K): LiveSelector<HTMLElementTagNameMap[K], SingleMode>;
-    // (undocumented)
-    querySelector<K extends keyof SVGElementTagNameMap>(selector: K): LiveSelector<SVGElementTagNameMap[K], SingleMode>;
+    nth(n: SingleMode extends true ? 'LiveSelector.nth() is not available in SingleMode' : number): LiveSelector<T, SingleMode>;
     // (undocumented)
     querySelector<E extends Element = Element>(selector: string): LiveSelector<E, SingleMode>;
-    querySelectorAll<K extends keyof HTMLElementTagNameMap>(selector: K): LiveSelector<HTMLElementTagNameMap[K], SingleMode>;
     // (undocumented)
-    querySelectorAll<K extends keyof SVGElementTagNameMap>(selector: K): LiveSelector<SVGElementTagNameMap[K], SingleMode>;
+    querySelector<K extends keyof SVGElementTagNameMap>(selector: K): LiveSelector<SVGElementTagNameMap[K], SingleMode>;
+    querySelector<K extends keyof HTMLElementTagNameMap>(selector: K): LiveSelector<HTMLElementTagNameMap[K], SingleMode>;
     // (undocumented)
     querySelectorAll<E extends Element = Element>(selector: string): LiveSelector<E, SingleMode>;
+    // (undocumented)
+    querySelectorAll<K extends keyof SVGElementTagNameMap>(selector: K): LiveSelector<SVGElementTagNameMap[K], SingleMode>;
+    querySelectorAll<K extends keyof HTMLElementTagNameMap>(selector: K): LiveSelector<HTMLElementTagNameMap[K], SingleMode>;
     replace<NextType>(f: (arr: T[]) => NextType[]): LiveSelector<NextType, SingleMode>;
     reverse(): LiveSelector<T, SingleMode>;
     slice(start?: number, end?: number): LiveSelector<T, SingleMode>;
@@ -223,6 +223,10 @@ export class ValueRef<T> {
 // @public
 export abstract class Watcher<T, Before extends Element, After extends Element, SingleMode extends boolean> implements PromiseLike<ResultOf<SingleMode, T>> {
     constructor(liveSelector: LiveSelector<T, SingleMode>);
+    // Warning: (ae-forgotten-export) The symbol "OnAddOrRemoveEvent" needs to be exported by the entry point index.d.ts
+    // 
+    // (undocumented)
+    addListener(event: 'onRemove', fn: EventCallback<OnAddOrRemoveEvent<T>>): this;
     // Warning: (ae-forgotten-export) The symbol "EventCallback" needs to be exported by the entry point index.d.ts
     // Warning: (ae-forgotten-export) The symbol "OnIterationEvent" needs to be exported by the entry point index.d.ts
     // 
@@ -232,10 +236,6 @@ export abstract class Watcher<T, Before extends Element, After extends Element, 
     // 
     // (undocumented)
     addListener(event: 'onChange', fn: EventCallback<OnChangeEvent<T>>): this;
-    // Warning: (ae-forgotten-export) The symbol "OnAddOrRemoveEvent" needs to be exported by the entry point index.d.ts
-    // 
-    // (undocumented)
-    addListener(event: 'onRemove', fn: EventCallback<OnAddOrRemoveEvent<T>>): this;
     // (undocumented)
     addListener(event: 'onAdd', fn: EventCallback<OnAddOrRemoveEvent<T>>): this;
     assignKeys<Q = unknown>(keyAssigner: (node: T, index: number, arr: readonly T[]) => Q): this;
@@ -246,9 +246,9 @@ export abstract class Watcher<T, Before extends Element, After extends Element, 
     // (undocumented)
     protected emit(event: 'onChange', data: OnChangeEvent<T>): void;
     // (undocumented)
-    protected emit(event: 'onRemove', data: OnAddOrRemoveEvent<T>): void;
-    // (undocumented)
     protected emit(event: 'onAdd', data: OnAddOrRemoveEvent<T>): void;
+    // (undocumented)
+    protected emit(event: 'onRemove', data: OnAddOrRemoveEvent<T>): void;
     // @deprecated
     enableBatchMode(): this;
     // @deprecated
@@ -271,13 +271,13 @@ export abstract class Watcher<T, Before extends Element, After extends Element, 
     omitWarningForForgetWatch(): this;
     omitWarningForRepeatedKeys(): this;
     // (undocumented)
-    removeListener(event: 'onIteration', fn: EventCallback<OnIterationEvent<T>>): this;
-    // (undocumented)
     removeListener(event: 'onChange', fn: EventCallback<OnChangeEvent<T>>): this;
     // (undocumented)
     removeListener(event: 'onRemove', fn: EventCallback<OnAddOrRemoveEvent<T>>): this;
     // (undocumented)
     removeListener(event: 'onAdd', fn: EventCallback<OnAddOrRemoveEvent<T>>): this;
+    // (undocumented)
+    removeListener(event: 'onIteration', fn: EventCallback<OnIterationEvent<T>>): this;
     // Warning: (ae-forgotten-export) The symbol "requestIdleCallback" needs to be exported by the entry point index.d.ts
     protected readonly requestIdleCallback: typeof requestIdleCallback;
     protected scheduleWatcherCheck: () => void;

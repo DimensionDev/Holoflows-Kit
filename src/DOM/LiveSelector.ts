@@ -296,7 +296,10 @@ export class LiveSelector<T, SingleMode extends boolean = false> {
      * ls.nth(-1)
      * ```
      */
-    nth(n: number): LiveSelector<T, SingleMode> {
+    nth(
+        n: SingleMode extends true ? 'LiveSelector.nth() is not available in SingleMode' : number,
+    ): LiveSelector<T, SingleMode> {
+        if (typeof n !== 'number') throw new Error('n must be a number')
         return this.appendSelectorChain('nth')(n)
     }
     /**
