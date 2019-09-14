@@ -9,7 +9,7 @@
  * - Interval watcher (based on time interval)
  * - Event watcher (based on addEventListener)
  */
-import { DomProxy, DomProxyOptions } from './Proxy'
+import { DOMProxy, DOMProxyOptions } from './Proxy'
 import mitt from 'mitt'
 import { LiveSelector } from './LiveSelector'
 
@@ -107,7 +107,7 @@ export abstract class Watcher<T, Before extends Element, After extends Element, 
         forEach: (
             virtualNode: T,
             key: unknown,
-            metadata: T extends Node ? DomProxy<T, Before, After> : unknown,
+            metadata: T extends Node ? DOMProxy<T, Before, After> : unknown,
         ) => useForeachReturns<T>,
     ): this {
         if (this.useForeachFn) {
@@ -197,7 +197,7 @@ export abstract class Watcher<T, Before extends Element, After extends Element, 
     /** Saved callback map of last watch */
     protected lastCallbackMap = new Map<unknown, useForeachReturns<T>>()
     /** Saved virtual node of last watch */
-    protected lastVirtualNodesMap = new Map<unknown, DomProxy<any, Before, After>>()
+    protected lastVirtualNodesMap = new Map<unknown, DOMProxy<any, Before, After>>()
     /** Find node from the given list by key */
     protected findNodeFromListByKey = (list: readonly T[], keys: readonly unknown[]) => (key: unknown) => {
         const i = keys.findIndex(x => this.keyComparer(x, key))
@@ -231,7 +231,7 @@ export abstract class Watcher<T, Before extends Element, After extends Element, 
         /** Next generation Callback map */
         const nextCallbackMap = new Map<unknown, useForeachReturns<T>>()
         /** Next generation VirtualNode map */
-        const nextVirtualNodesMap = new Map<unknown, DomProxy<any, Before, After>>()
+        const nextVirtualNodesMap = new Map<unknown, DOMProxy<any, Before, After>>()
 
         //#region Key is gone
         // Do: Delete node
@@ -263,7 +263,7 @@ export abstract class Watcher<T, Before extends Element, After extends Element, 
                 if (!this.useForeachFn) break
                 const value = findFromNew(newKey)!
                 if (value instanceof Node) {
-                    const virtualNode = DomProxy<typeof value, Before, After>(this.domProxyOption)
+                    const virtualNode = DOMProxy<typeof value, Before, After>(this.domProxyOption)
                     virtualNode.realCurrent = value
                     // This step must be sync.
                     const callbacks = this.useForeachFn(virtualNode.current, newKey, virtualNode as any)
@@ -366,7 +366,7 @@ export abstract class Watcher<T, Before extends Element, After extends Element, 
     /**
      * Enable single mode.
      *
-     * @deprecated Use LiveSelector.enableSingleMode()
+     * @deprecated Use LiveSelector.enableSingleMode(), will removed in 0.7.0
      *
      * @privateRemarks
      * Subclass need to implement it to get the correct type.
@@ -475,14 +475,14 @@ export abstract class Watcher<T, Before extends Element, After extends Element, 
     //#endregion
     //#region LiveSelector settings
     /**
-     * The dom proxy option used in DomProxy()
+     * The dom proxy option used in DOMProxy()
      */
-    protected domProxyOption: Partial<DomProxyOptions<Before, After>> = {}
+    protected domProxyOption: Partial<DOMProxyOptions<Before, After>> = {}
     /**
-     * Set option for DomProxy
-     * @param option - DomProxy options
+     * Set option for DOMProxy
+     * @param option - DOMProxy options
      */
-    setDomProxyOption(option: Partial<DomProxyOptions<Before, After>>): this {
+    setDOMProxyOption(option: Partial<DOMProxyOptions<Before, After>>): this {
         this.domProxyOption = option
         const oldProxy = this._firstVirtualNode
         if (
@@ -492,9 +492,9 @@ export abstract class Watcher<T, Before extends Element, After extends Element, 
             oldProxy.has('beforeShadow') ||
             oldProxy.realCurrent
         ) {
-            console.warn("Don't set DomProxy before using it.")
+            console.warn("Don't set DOMProxy before using it.")
         }
-        this._firstVirtualNode = DomProxy(option)
+        this._firstVirtualNode = DOMProxy(option)
         return this
     }
     //#endregion
@@ -535,12 +535,12 @@ export abstract class Watcher<T, Before extends Element, After extends Element, 
     //#endregion
     //#region firstVirtualNode
     /** The first virtual node */
-    protected _firstVirtualNode = DomProxy<any, Before, After>(this.domProxyOption)
+    protected _firstVirtualNode = DOMProxy<any, Before, After>(this.domProxyOption)
     /**
      * This virtualNode always point to the first node in the LiveSelector
      */
     public get firstVirtualNode() {
-        return (this._firstVirtualNode as unknown) as T extends Node ? DomProxy<T, Before, After> : never
+        return (this._firstVirtualNode as unknown) as T extends Node ? DOMProxy<T, Before, After> : never
     }
     //#endregion
     //#region Watcher settings
@@ -623,7 +623,7 @@ export abstract class Watcher<T, Before extends Element, After extends Element, 
     /**
      * Get virtual node by key.
      * Virtual node will be unavailable if it is deleted
-     * @param key - Key used to find DomProxy
+     * @param key - Key used to find DOMProxy
      */
     public getVirtualNodeByKey(key: unknown) {
         this.noNeedInSingleMode(this.getVirtualNodeByKey.name)
@@ -674,7 +674,7 @@ Or to ignore this message, call \`.dismissSingleModeWarning()\` on the watcher.\
     })
     /**
      * {@inheritdoc Watcher.dismissSingleModeWarning}
-     * @deprecated
+     * @deprecated will removed in 0.7.0
      */
     public enableBatchMode(): this {
         console.warn('This method is deprecated. Use dismissSingleModeWarning() instead.')

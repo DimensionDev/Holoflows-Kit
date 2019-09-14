@@ -101,10 +101,10 @@ Watcher 有以下几种：
 ```ts
 .useForeach((node, key, meta) => {
     // 这里的代码会在 **每次** 有一个新的 元素 E 进入列表的时候调用。以下是传入的参数：
-    node // 是一种叫 DomProxy 的对象
+    node // 是一种叫 DOMProxy 的对象
     meta.before // 是一个 <span> 始终指向 E 的前面
     meta.after // 是一个 <span> 始终指向 E 的后面
-    meta.current // 它就是 node（第一个参数），它始终指向 E，就算 E 换了，它的引用也会自动"更新"（事实并非如此，请参见 DomProxy 的文档）
+    meta.current // 它就是 node（第一个参数），它始终指向 E，就算 E 换了，它的引用也会自动"更新"（事实并非如此，请参见 DOMProxy 的文档）
 
     key // 用过 React, Vue 或者 Angular 吗？在渲染列表的时候它们都会要求你提供 key 以保证复用。这就和那个差不多。
 
@@ -130,7 +130,7 @@ Watcher 有以下几种：
 })
 ```
 
-> Tips: 如果你始终只关心 `LiveSelector` 选中的第一个元素的话，这里有个捷径！`Watcher#firstVirtualNode` 是一个始终指向第一个元素的 `DomProxy`！
+> Tips: 如果你始终只关心 `LiveSelector` 选中的第一个元素的话，这里有个捷径！`Watcher#firstVirtualNode` 是一个始终指向第一个元素的 `DOMProxy`！
 
 [Watcher 的文档](#doc-watchers)
 

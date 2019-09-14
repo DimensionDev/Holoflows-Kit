@@ -4,10 +4,10 @@
 
 ## Watcher.domProxyOption property
 
-The dom proxy option used in DomProxy()
+The dom proxy option used in DOMProxy()
 
 <b>Signature:</b>
 
 ```typescript
-protected domProxyOption: Partial<DomProxyOptions<Before, After>>;
+protected domProxyOption: Partial<DOMProxyOptions<Before, After>>;
 ```

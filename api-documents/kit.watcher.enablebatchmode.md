@@ -6,6 +6,7 @@
 
 > Warning: This API is now obsolete.
 > 
+> will removed in 0.7.0
 > 
 
 Dismiss the warning that let you enable single mode but the warning is false positive.

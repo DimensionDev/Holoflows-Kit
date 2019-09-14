@@ -7,7 +7,7 @@
 @holoflows/kit 由以下部分组成
 
 -   [DOM 相关的工具的教程](./DOM.md) - 帮助扩展开发者追踪被注入网页中的内容变化
--   -   [DomProxy](../../api-documents/kit.domproxy.md) 用于持续追踪网页变化而不丢失引用和副作用
+-   -   [DOMProxy](../../api-documents/kit.domproxy.md) 用于持续追踪网页变化而不丢失引用和副作用
 -   -   [LiveSelector](../../api-documents/kit.liveselector.md) 用于持续选择网页中的元素。
 -   -   `abstract` [Watcher](../../api-documents/kit.watcher.md)
 -   -   -   [MutationObserverWatcher](../../api-documents/kit.mutationobserverwatcher.md) 通过 `MutationObserver` 追踪网页中的变化

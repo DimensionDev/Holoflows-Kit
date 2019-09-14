@@ -9,16 +9,16 @@ Get virtual node by key. Virtual node will be unavailable if it is deleted
 <b>Signature:</b>
 
 ```typescript
-getVirtualNodeByKey(key: unknown): DomProxy<any, Before, After> | null;
+getVirtualNodeByKey(key: unknown): DOMProxy<any, Before, After> | null;
 ```
 
 ## Parameters
 
 |  Parameter | Type | Description |
 |  --- | --- | --- |
-|  key | <code>unknown</code> | Key used to find DomProxy |
+|  key | <code>unknown</code> | Key used to find DOMProxy |
 
 <b>Returns:</b>
 
-`DomProxy<any, Before, After> | null`
+`DOMProxy<any, Before, After> | null`
 

@@ -22,18 +22,18 @@ export declare abstract class Watcher<T, Before extends Element, After extends E
 
 |  Property | Modifiers | Type | Description |
 |  --- | --- | --- | --- |
-|  [\_firstVirtualNode](./kit.watcher._firstvirtualnode.md) |  | <code>DomProxy&lt;any, Before, After&gt;</code> | The first virtual node |
+|  [\_firstVirtualNode](./kit.watcher._firstvirtualnode.md) |  | <code>DOMProxy&lt;any, Before, After&gt;</code> | The first virtual node |
 |  [\_warning\_forget\_watch\_](./kit.watcher._warning_forget_watch_.md) |  | <code>{</code><br/><code>        warn(f?: (stack: string) =&gt; void): void;</code><br/><code>        ignored: boolean;</code><br/><code>        stack: string;</code><br/><code>    }</code> | Warning to remember if developer forget to call the startWatch. |
-|  [domProxyOption](./kit.watcher.domproxyoption.md) |  | <code>Partial&lt;DomProxyOptions&lt;Before, After&gt;&gt;</code> | The dom proxy option used in DomProxy() |
+|  [domProxyOption](./kit.watcher.domproxyoption.md) |  | <code>Partial&lt;DOMProxyOptions&lt;Before, After&gt;&gt;</code> | The dom proxy option used in DOMProxy() |
 |  [eventEmitter](./kit.watcher.eventemitter.md) |  | <code>mitt.Emitter</code> | Event emitter |
 |  [findNodeFromListByKey](./kit.watcher.findnodefromlistbykey.md) |  | <code>(list: readonly T[], keys: readonly unknown[]) =&gt; (key: unknown) =&gt; T &#124; null</code> | Find node from the given list by key |
-|  [firstVirtualNode](./kit.watcher.firstvirtualnode.md) |  | <code>T extends Node ? DomProxy&lt;T, Before, After&gt; : never</code> | This virtualNode always point to the first node in the LiveSelector |
+|  [firstVirtualNode](./kit.watcher.firstvirtualnode.md) |  | <code>T extends Node ? DOMProxy&lt;T, Before, After&gt; : never</code> | This virtualNode always point to the first node in the LiveSelector |
 |  [isWatching](./kit.watcher.iswatching.md) |  | <code>boolean</code> | Is the watcher running |
 |  [keyComparer](./kit.watcher.keycomparer.md) |  | <code>(a: unknown, b: unknown) =&gt; boolean</code> | Compare between <code>key</code> and <code>key</code>, in case of you don't want the default behavior |
 |  [lastCallbackMap](./kit.watcher.lastcallbackmap.md) |  | <code>Map&lt;unknown, useForeachReturns&lt;T&gt;&gt;</code> | Saved callback map of last watch |
 |  [lastKeyList](./kit.watcher.lastkeylist.md) |  | <code>readonly unknown[]</code> | Found key list of last watch |
 |  [lastNodeList](./kit.watcher.lastnodelist.md) |  | <code>readonly T[]</code> | Found Node list of last watch |
-|  [lastVirtualNodesMap](./kit.watcher.lastvirtualnodesmap.md) |  | <code>Map&lt;unknown, DomProxy&lt;any, Before, After&gt;&gt;</code> | Saved virtual node of last watch |
+|  [lastVirtualNodesMap](./kit.watcher.lastvirtualnodesmap.md) |  | <code>Map&lt;unknown, DOMProxy&lt;any, Before, After&gt;&gt;</code> | Saved virtual node of last watch |
 |  [liveSelector](./kit.watcher.liveselector.md) |  | <code>LiveSelector&lt;T, SingleMode&gt;</code> | The liveSelector that this object holds. |
 |  [mapNodeToKey](./kit.watcher.mapnodetokey.md) |  | <code>(node: T, index: number, arr: readonly T[]) =&gt; unknown</code> | Map <code>Node -&gt; Key</code>, in case of you don't want the default behavior |
 |  [requestIdleCallback](./kit.watcher.requestidlecallback.md) |  | <code>typeof requestIdleCallback</code> | window.requestIdleCallback, or polyfill. |
@@ -70,7 +70,7 @@ export declare abstract class Watcher<T, Before extends Element, After extends E
 |  [removeListener(event, fn)](./kit.watcher.removelistener_2.md) |  |  |
 |  [removeListener(event, fn)](./kit.watcher.removelistener_3.md) |  |  |
 |  [setComparer(keyComparer, valueComparer)](./kit.watcher.setcomparer.md) |  | To help identify same nodes in different iteration, you need to implement a map function to compare <code>node</code> and <code>key</code>You probably don't need this. |
-|  [setDomProxyOption(option)](./kit.watcher.setdomproxyoption.md) |  | Set option for DomProxy |
+|  [setDOMProxyOption(option)](./kit.watcher.setdomproxyoption.md) |  | Set option for DOMProxy |
 |  [startWatch(args)](./kit.watcher.startwatch.md) |  | Let the watcher start to watching |
 |  [stopWatch(args)](./kit.watcher.stopwatch.md) |  | Stop the watcher |
 |  [then(onfulfilled, onrejected, options, starter)](./kit.watcher.then.md) |  | Start the watcher, once it emitted data, stop watching. |

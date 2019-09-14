@@ -67,10 +67,10 @@ export interface AutomatedTabTaskSharedOptions {
 export type Contexts = 'background' | 'content' | 'webpage' | 'unknown' | 'options' | 'debugging';
 
 // @public
-export function DomProxy<ProxiedElement extends Node = HTMLElement, Before extends Element = HTMLSpanElement, After extends Element = HTMLSpanElement>(options?: Partial<DomProxyOptions<Before, After>>): DomProxy<ProxiedElement, Before, After>;
+export function DOMProxy<ProxiedElement extends Node = HTMLElement, Before extends Element = HTMLSpanElement, After extends Element = HTMLSpanElement>(options?: Partial<DOMProxyOptions<Before, After>>): DOMProxy<ProxiedElement, Before, After>;
 
 // @public
-export interface DomProxy<ProxiedElement extends Node = HTMLElement, Before extends Element = HTMLSpanElement, After extends Element = HTMLSpanElement> {
+export interface DOMProxy<ProxiedElement extends Node = HTMLElement, Before extends Element = HTMLSpanElement, After extends Element = HTMLSpanElement> {
     readonly after: After;
     readonly afterShadow: ShadowRoot;
     readonly before: Before;
@@ -88,12 +88,27 @@ export interface DomProxy<ProxiedElement extends Node = HTMLElement, Before exte
     realCurrent: ProxiedElement | null;
 }
 
+// Warning: (ae-unresolved-inheritdoc-reference) The @inheritDoc reference could not be resolved: The reference is ambiguous because "DOMProxy" has more than one declaration; you need to add a TSDoc member reference selector
+// 
+// @public @deprecated (undocumented)
+export interface DomProxy<ProxiedElement extends Node = HTMLElement, Before extends Element = HTMLSpanElement, After extends Element = HTMLSpanElement> extends DOMProxy<ProxiedElement, Before, After> {
+}
+
+// Warning: (ae-unresolved-inheritdoc-reference) The @inheritDoc reference could not be resolved: The reference is ambiguous because "DOMProxy" has more than one declaration; you need to add a TSDoc member reference selector
+// 
+// @public @deprecated (undocumented)
+export const DomProxy: typeof DOMProxy;
+
 // @public
-export interface DomProxyOptions<Before extends Element = HTMLSpanElement, After extends Element = HTMLSpanElement> {
+export interface DOMProxyOptions<Before extends Element = HTMLSpanElement, After extends Element = HTMLSpanElement> {
     afterShadowRootInit: ShadowRootInit;
     beforeShadowRootInit: ShadowRootInit;
     createAfter(): After;
     createBefore(): Before;
+}
+
+// @public @deprecated
+export interface DomProxyOptions<Before extends Element = HTMLSpanElement, After extends Element = HTMLSpanElement> extends DOMProxyOptions<Before, After> {
 }
 
 // @public
@@ -240,7 +255,7 @@ export abstract class Watcher<T, Before extends Element, After extends Element, 
     addListener(event: 'onAdd', fn: EventCallback<OnAddOrRemoveEvent<T>>): this;
     assignKeys<Q = unknown>(keyAssigner: (node: T, index: number, arr: readonly T[]) => Q): this;
     dismissSingleModeWarning(): this;
-    protected domProxyOption: Partial<DomProxyOptions<Before, After>>;
+    protected domProxyOption: Partial<DOMProxyOptions<Before, After>>;
     // (undocumented)
     protected emit(event: 'onIteration', data: OnIterationEvent<T>): void;
     // (undocumented)
@@ -257,15 +272,15 @@ export abstract class Watcher<T, Before extends Element, After extends Element, 
     protected _enableSingleMode(): this;
     protected readonly eventEmitter: mitt.Emitter;
     protected findNodeFromListByKey: (list: readonly T[], keys: readonly unknown[]) => (key: unknown) => T | null;
-    readonly firstVirtualNode: T extends Node ? DomProxy<T, Before, After> : never;
-    protected _firstVirtualNode: DomProxy<any, Before, After>;
-    getVirtualNodeByKey(key: unknown): DomProxy<any, Before, After> | null;
+    readonly firstVirtualNode: T extends Node ? DOMProxy<T, Before, After> : never;
+    protected _firstVirtualNode: DOMProxy<any, Before, After>;
+    getVirtualNodeByKey(key: unknown): DOMProxy<any, Before, After> | null;
     protected isWatching: boolean;
     protected keyComparer: (a: unknown, b: unknown) => boolean;
     protected lastCallbackMap: Map<unknown, useForeachReturns<T>>;
     protected lastKeyList: readonly unknown[];
     protected lastNodeList: readonly T[];
-    protected lastVirtualNodesMap: Map<unknown, DomProxy<any, Before, After>>;
+    protected lastVirtualNodesMap: Map<unknown, DOMProxy<any, Before, After>>;
     protected readonly liveSelector: LiveSelector<T, SingleMode>;
     protected mapNodeToKey: (node: T, index: number, arr: readonly T[]) => unknown;
     omitWarningForForgetWatch(): this;
@@ -282,7 +297,7 @@ export abstract class Watcher<T, Before extends Element, After extends Element, 
     protected readonly requestIdleCallback: typeof requestIdleCallback;
     protected scheduleWatcherCheck: () => void;
     setComparer<Q = unknown>(keyComparer?: (a: Q, b: Q) => boolean, valueComparer?: (a: T, b: T) => boolean): this;
-    setDomProxyOption(option: Partial<DomProxyOptions<Before, After>>): this;
+    setDOMProxyOption(option: Partial<DOMProxyOptions<Before, After>>): this;
     protected readonly singleMode: boolean;
     protected singleModeCallback?: useForeachReturns<T>;
     protected singleModeHasLastValue: boolean;
@@ -294,7 +309,7 @@ export abstract class Watcher<T, Before extends Element, After extends Element, 
         timeout?: number;
     }, starter?: (this: this, self: this) => void): Promise<TResult1 | TResult2>;
     // Warning: (ae-forgotten-export) The symbol "useForeachReturns" needs to be exported by the entry point index.d.ts
-    useForeach(forEach: (virtualNode: T, key: unknown, metadata: T extends Node ? DomProxy<T, Before, After> : unknown) => useForeachReturns<T>): this;
+    useForeach(forEach: (virtualNode: T, key: unknown, metadata: T extends Node ? DOMProxy<T, Before, After> : unknown) => useForeachReturns<T>): this;
     protected useForeachFn?: Parameters<Watcher<T, any, any, any>['useForeach']>[0];
     protected valueComparer: (a: T, b: T) => boolean;
     protected _warning_forget_watch_: {

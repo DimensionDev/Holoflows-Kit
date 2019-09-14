@@ -6,7 +6,7 @@
 
 > Warning: This API is now obsolete.
 > 
-> Use LiveSelector.enableSingleMode()
+> Use LiveSelector.enableSingleMode(), will removed in 0.7.0
 > 
 
 Enable single mode.

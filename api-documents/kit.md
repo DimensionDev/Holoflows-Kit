@@ -25,7 +25,7 @@ A toolkit for browser extension developing.
 |  [AsyncCall(implementation, options)](./kit.asynccall.md) | Async call between different context. |
 |  [AsyncGeneratorCall(implementation, options)](./kit.asyncgeneratorcall.md) | This function provides the async generator version of the AsyncCall |
 |  [AutomatedTabTask(taskImplements, options)](./kit.automatedtabtask.md) | Open a new page in the background, execute some task, then close it automatically. |
-|  [DomProxy(options)](./kit.domproxy.md) | DomProxy provide an interface that be stable even dom is changed. |
+|  [DOMProxy(options)](./kit.domproxy.md) | DOMProxy provide an interface that be stable even dom is changed. |
 |  [GetContext()](./kit.getcontext.md) | Get current running context. |
 |  [OnlyRunInContext(context, name)](./kit.onlyrunincontext.md) | Make sure this file only run in wanted context |
 |  [OnlyRunInContext(context, throws)](./kit.onlyrunincontext_1.md) | Make sure this file only run in wanted context |
@@ -38,14 +38,17 @@ A toolkit for browser extension developing.
 |  [AutomatedTabTaskDefineTimeOptions](./kit.automatedtabtaskdefinetimeoptions.md) | Define-time options for [AutomatedTabTask()](./kit.automatedtabtask.md) |
 |  [AutomatedTabTaskRuntimeOptions](./kit.automatedtabtaskruntimeoptions.md) | Runtime options for [AutomatedTabTask()](./kit.automatedtabtask.md) |
 |  [AutomatedTabTaskSharedOptions](./kit.automatedtabtasksharedoptions.md) | Shared options for AutomatedTabTask between the define-time and the runtime. |
-|  [DomProxy](./kit.domproxy.md) | A DomProxy object |
-|  [DomProxyOptions](./kit.domproxyoptions.md) | Options for DomProxy |
+|  [DomProxy](./kit.domproxy.md) |  |
+|  [DOMProxy](./kit.domproxy.md) | A DOMProxy object |
+|  [DomProxyOptions](./kit.domproxyoptions.md) | Options for DOMProxy |
+|  [DOMProxyOptions](./kit.domproxyoptions.md) | Options for DOMProxy |
 |  [Serialization](./kit.serialization.md) | Define how to do serialization and deserialization of remote procedure call |
 
 ## Variables
 
 |  Variable | Description |
 |  --- | --- |
+|  [DomProxy](./kit.domproxy.md) |  |
 |  [JSONSerialization](./kit.jsonserialization.md) | Serialization implementation by JSON.parse/stringify |
 |  [NoSerialization](./kit.noserialization.md) | Serialization implementation that do nothing |
 

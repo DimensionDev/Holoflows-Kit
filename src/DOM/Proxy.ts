@@ -1,19 +1,24 @@
 /**
- * Options for DomProxy
+ * Options for DOMProxy
  */
-export interface DomProxyOptions<Before extends Element = HTMLSpanElement, After extends Element = HTMLSpanElement> {
-    /** Create the `before` node of the DomProxy */ createBefore(): Before
-    /** Create the `after` node of the DomProxy */ createAfter(): After
+export interface DOMProxyOptions<Before extends Element = HTMLSpanElement, After extends Element = HTMLSpanElement> {
+    /** Create the `before` node of the DOMProxy */ createBefore(): Before
+    /** Create the `after` node of the DOMProxy */ createAfter(): After
     /** ShadowRootInit for creating the shadow of `before` */ beforeShadowRootInit: ShadowRootInit
     /** ShadowRootInit for creating the shadow of `after` */ afterShadowRootInit: ShadowRootInit
 }
-
 /**
- * DomProxy provide an interface that be stable even dom is changed.
+ * {@inheritdoc DOMProxyOptions}
+ * @deprecated use DOMProxyOptions instead, will removed in 0.7.0
+ */
+export interface DomProxyOptions<Before extends Element = HTMLSpanElement, After extends Element = HTMLSpanElement>
+    extends DOMProxyOptions<Before, After> {}
+/**
+ * DOMProxy provide an interface that be stable even dom is changed.
  *
  * @remarks
  *
- * DomProxy provide 3 nodes. `before`, `current` and `after`.
+ * DOMProxy provide 3 nodes. `before`, `current` and `after`.
  * `current` is a fake dom node powered by Proxy,
  * it will forward all your operations to the `realCurrent`.
  *
@@ -31,11 +36,11 @@ export interface DomProxyOptions<Before extends Element = HTMLSpanElement, After
  * - addEventListener (forward, undo, move)
  * - appendChild (forward, undo, move)
  */
-export function DomProxy<
+export function DOMProxy<
     ProxiedElement extends Node = HTMLElement,
     Before extends Element = HTMLSpanElement,
     After extends Element = HTMLSpanElement
->(options: Partial<DomProxyOptions<Before, After>> = {}): DomProxy<ProxiedElement, Before, After> {
+>(options: Partial<DOMProxyOptions<Before, After>> = {}): DOMProxy<ProxiedElement, Before, After> {
     // Options
     const { createAfter, createBefore, afterShadowRootInit, beforeShadowRootInit } = {
         ...({
@@ -43,9 +48,9 @@ export function DomProxy<
             createBefore: () => document.createElement('span'),
             afterShadowRootInit: { mode: 'open' },
             beforeShadowRootInit: { mode: 'open' },
-        } as DomProxyOptions),
+        } as DOMProxyOptions),
         ...options,
-    } as DomProxyOptions<Before, After>
+    } as DOMProxyOptions<Before, After>
     //
     let isDestroyed = false
     // Nodes
@@ -256,7 +261,7 @@ export function DomProxy<
             if (node === current) return
             if ((node === virtualAfter || node === virtualBefore) && node !== null) {
                 console.warn(
-                    "In the DomProxy, you're setting .realCurrent to this DomProxy's virtualAfter or virtualBefore. Doing this may cause bugs. If you're confused with this warning, check your rules for LiveSelector.",
+                    "In the DOMProxy, you're setting .realCurrent to this DOMProxy's virtualAfter or virtualBefore. Doing this may cause bugs. If you're confused with this warning, check your rules for LiveSelector.",
                     this,
                 )
             }
@@ -288,14 +293,14 @@ export function DomProxy<
     }
 }
 /**
- * A DomProxy object
+ * A DOMProxy object
  */
-export interface DomProxy<
+export interface DOMProxy<
     ProxiedElement extends Node = HTMLElement,
     Before extends Element = HTMLSpanElement,
     After extends Element = HTMLSpanElement
 > {
-    /** Destroy the DomProxy */
+    /** Destroy the DOMProxy */
     destroy(): void
     /** Returns the `before` element, if it doesn't exist, create it implicitly. */
     readonly before: Before
@@ -330,7 +335,20 @@ export interface DomProxy<
         init: MutationObserverInit | undefined
     }
 }
-
+/**
+ * {@inheritdoc DOMProxy}
+ * @deprecated use DOMProxy instead, will removed in 0.7.0
+ */
+export interface DomProxy<
+    ProxiedElement extends Node = HTMLElement,
+    Before extends Element = HTMLSpanElement,
+    After extends Element = HTMLSpanElement
+> extends DOMProxy<ProxiedElement, Before, After> {}
+/**
+ * {@inheritdoc DOMProxy}
+ * @deprecated use DOMProxy instead, will removed in 0.7.0
+ */
+export const DomProxy = DOMProxy
 type Keys = string | number | symbol
 type ActionRecord<T extends string, F> = { type: T; op: F }
 interface ActionTypes {

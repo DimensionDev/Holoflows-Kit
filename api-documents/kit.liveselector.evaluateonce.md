@@ -6,7 +6,7 @@
 
 > Warning: This API is now obsolete.
 > 
-> Use `evaluate()` instead, it's shorter
+> Use `evaluate()` instead, it's shorter. Will removed at 0.6.0
 > 
 
 Evaluate selector expression

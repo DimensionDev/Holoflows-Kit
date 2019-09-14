@@ -106,10 +106,10 @@ A complete `useForeach` call is like this:
 ```ts
 .useForeach((node, key, meta) => {
     // Code here, will be called **every time** when a new element E comes into the list. Here are parameters:
-    node // A DomProxy, just like a DOM node (Yeah it's magic!)
+    node // A DOMProxy, just like a DOM node (Yeah it's magic!)
     meta.before // A <span> that always point to the before of E
     meta.after // A <span> that always point to the after of E
-    meta.current // It is node(the first parameter), it always points to E, even E has changed, it "reference" will be "update" (Not actually, see documentation of DomProxy)
+    meta.current // It is node(the first parameter), it always points to E, even E has changed, it "reference" will be "update" (Not actually, see documentation of DOMProxy)
 
     key // Have you use React, Vue or Angular? When rendering lists, they will ask for you to provide a key to identify what is not changed.
 
@@ -134,7 +134,7 @@ A complete `useForeach` call is like this:
 })
 ```
 
-> Tips: If you only care about the first element in the `LiveSelector`, here is a shortcut! `Watcher#firstVirtualNode` is a `DomProxy` and it will always points to the first element in the list！
+> Tips: If you only care about the first element in the `LiveSelector`, here is a shortcut! `Watcher#firstVirtualNode` is a `DOMProxy` and it will always points to the first element in the list！
 
 [Documentation of Watcher](#doc-watchers)
 

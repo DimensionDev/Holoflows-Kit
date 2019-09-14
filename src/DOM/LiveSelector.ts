@@ -433,7 +433,7 @@ export class LiveSelector<T, SingleMode extends boolean = false> {
     }
     /**
      * {@inheritdoc LiveSelector.evaluate}
-     * @deprecated Use `evaluate()` instead, it's shorter
+     * @deprecated Use `evaluate()` instead, it's shorter. Will removed at 0.6.0
      */
     evaluateOnce(): SingleMode extends true ? (T | undefined) : T[] {
         return this.evaluate()

@@ -9,5 +9,5 @@ The first virtual node
 <b>Signature:</b>
 
 ```typescript
-protected _firstVirtualNode: DomProxy<any, Before, After>;
+protected _firstVirtualNode: DOMProxy<any, Before, After>;
 ```
