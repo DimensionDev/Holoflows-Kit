@@ -128,7 +128,7 @@ export function DomProxy<
     })
     const modifyTrapsWrite = modifyTraps(true)
     const modifyTrapsNotWrite = modifyTraps(false)
-    const proxy = Proxy.revocable({}, { ...readonlyTraps, ...modifyTrapsWrite })
+    const proxy = Proxy.revocable(defaultCurrent, { ...readonlyTraps, ...modifyTrapsWrite })
     function hasStyle(e: Node): e is HTMLElement {
         return !!(e as any).style
     }
