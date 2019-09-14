@@ -88,16 +88,12 @@ export interface DOMProxy<ProxiedElement extends Node = HTMLElement, Before exte
     realCurrent: ProxiedElement | null;
 }
 
-// Warning: (ae-unresolved-inheritdoc-reference) The @inheritDoc reference could not be resolved: The reference is ambiguous because "DOMProxy" has more than one declaration; you need to add a TSDoc member reference selector
-// 
-// @public @deprecated (undocumented)
+// @public @deprecated
+export function DomProxy(...args: Parameters<typeof DOMProxy>): ReturnType<typeof DOMProxy>;
+
+// @public @deprecated
 export interface DomProxy<ProxiedElement extends Node = HTMLElement, Before extends Element = HTMLSpanElement, After extends Element = HTMLSpanElement> extends DOMProxy<ProxiedElement, Before, After> {
 }
-
-// Warning: (ae-unresolved-inheritdoc-reference) The @inheritDoc reference could not be resolved: The reference is ambiguous because "DOMProxy" has more than one declaration; you need to add a TSDoc member reference selector
-// 
-// @public @deprecated (undocumented)
-export const DomProxy: typeof DOMProxy;
 
 // @public
 export interface DOMProxyOptions<Before extends Element = HTMLSpanElement, After extends Element = HTMLSpanElement> {
@@ -172,12 +168,12 @@ export class LiveSelector<T, SingleMode extends boolean = false> {
     sort(compareFn?: (a: T, b: T) => number): LiveSelector<T, SingleMode>;
     }
 
-// @public (undocumented)
+// @public
 export type MakeAllFunctionsAsync<T> = {
     [key in keyof T]: T[key] extends (...args: infer Args) => infer Return ? Return extends PromiseLike<infer U> ? (...args: Args) => Promise<U> : (...args: Args) => Promise<Return> : T[key];
 };
 
-// @public (undocumented)
+// @public
 export type MakeAllGeneratorFunctionsAsync<T> = {
     [key in keyof T]: T[key] extends (...args: infer Args) => Iterator<infer Yield, infer Return, infer Next> | AsyncIterator<infer Yield, infer Return, infer Next> ? (...args: Args) => AsyncIterator<UnboxPromise<Yield>, UnboxPromise<Return>, UnboxPromise<Next>> & {
         [Symbol.asyncIterator](): AsyncIterator<UnboxPromise<Yield>, UnboxPromise<Return>, UnboxPromise<Next>>;
@@ -221,7 +217,7 @@ export interface Serialization {
     serialization(from: any): PromiseLike<unknown>;
 }
 
-// @public (undocumented)
+// @public
 export type UnboxPromise<T> = T extends PromiseLike<infer U> ? U : T;
 
 // @public

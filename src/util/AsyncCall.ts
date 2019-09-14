@@ -132,6 +132,9 @@ export interface AsyncCallOptions {
      */
     preferLocalImplementation: boolean
 }
+/**
+ * Make all function in the type T Async
+ */
 export type MakeAllFunctionsAsync<T> = {
     [key in keyof T]: T[key] extends (...args: infer Args) => infer Return
         ? Return extends PromiseLike<infer U>
@@ -139,7 +142,13 @@ export type MakeAllFunctionsAsync<T> = {
             : (...args: Args) => Promise<Return>
         : T[key]
 }
+/**
+ * Unbox the Promise<T> into T if possible
+ */
 export type UnboxPromise<T> = T extends PromiseLike<infer U> ? U : T
+/**
+ * Make all generator in the type T becomes AsyncGenerator
+ */
 export type MakeAllGeneratorFunctionsAsync<T> = {
     [key in keyof T]: T[key] extends (
         ...args: infer Args

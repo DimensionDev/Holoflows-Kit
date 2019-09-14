@@ -4,6 +4,8 @@
 
 ## MakeAllFunctionsAsync type
 
+Make all function in the type T Async
+
 <b>Signature:</b>
 
 ```typescript

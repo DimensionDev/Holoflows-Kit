@@ -4,6 +4,8 @@
 
 ## UnboxPromise type
 
+Unbox the Promise<T> into T if possible
+
 <b>Signature:</b>
 
 ```typescript

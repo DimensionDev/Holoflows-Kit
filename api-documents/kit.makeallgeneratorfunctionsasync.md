@@ -4,6 +4,8 @@
 
 ## MakeAllGeneratorFunctionsAsync type
 
+Make all generator in the type T becomes AsyncGenerator
+
 <b>Signature:</b>
 
 ```typescript

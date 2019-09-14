@@ -1,4 +1,26 @@
 /**
+ * {@inheritdoc (DOMProxy:interface)}
+ * @deprecated use DOMProxy instead, will removed in 0.7.0
+ */
+export interface DomProxy<
+    ProxiedElement extends Node = HTMLElement,
+    Before extends Element = HTMLSpanElement,
+    After extends Element = HTMLSpanElement
+> extends DOMProxy<ProxiedElement, Before, After> {}
+/**
+ * {@inheritdoc (DOMProxy:function)}
+ * @deprecated use DOMProxy instead, will removed in 0.7.0
+ */
+export function DomProxy(...args: Parameters<typeof DOMProxy>): ReturnType<typeof DOMProxy> {
+    return DOMProxy(...args)
+}
+/**
+ * {@inheritdoc DOMProxyOptions}
+ * @deprecated use DOMProxyOptions instead, will removed in 0.7.0
+ */
+export interface DomProxyOptions<Before extends Element = HTMLSpanElement, After extends Element = HTMLSpanElement>
+    extends DOMProxyOptions<Before, After> {}
+/**
  * Options for DOMProxy
  */
 export interface DOMProxyOptions<Before extends Element = HTMLSpanElement, After extends Element = HTMLSpanElement> {
@@ -7,12 +29,6 @@ export interface DOMProxyOptions<Before extends Element = HTMLSpanElement, After
     /** ShadowRootInit for creating the shadow of `before` */ beforeShadowRootInit: ShadowRootInit
     /** ShadowRootInit for creating the shadow of `after` */ afterShadowRootInit: ShadowRootInit
 }
-/**
- * {@inheritdoc DOMProxyOptions}
- * @deprecated use DOMProxyOptions instead, will removed in 0.7.0
- */
-export interface DomProxyOptions<Before extends Element = HTMLSpanElement, After extends Element = HTMLSpanElement>
-    extends DOMProxyOptions<Before, After> {}
 /**
  * DOMProxy provide an interface that be stable even dom is changed.
  *
@@ -335,20 +351,7 @@ export interface DOMProxy<
         init: MutationObserverInit | undefined
     }
 }
-/**
- * {@inheritdoc DOMProxy}
- * @deprecated use DOMProxy instead, will removed in 0.7.0
- */
-export interface DomProxy<
-    ProxiedElement extends Node = HTMLElement,
-    Before extends Element = HTMLSpanElement,
-    After extends Element = HTMLSpanElement
-> extends DOMProxy<ProxiedElement, Before, After> {}
-/**
- * {@inheritdoc DOMProxy}
- * @deprecated use DOMProxy instead, will removed in 0.7.0
- */
-export const DomProxy = DOMProxy
+
 type Keys = string | number | symbol
 type ActionRecord<T extends string, F> = { type: T; op: F }
 interface ActionTypes {
