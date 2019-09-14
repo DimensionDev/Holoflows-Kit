@@ -4,7 +4,7 @@
 
 ## DOMProxy interface
 
-A DOMProxy object
+DOMProxy provide an interface that be stable even dom is changed.
 
 <b>Signature:</b>
 
@@ -32,4 +32,20 @@ export interface DOMProxy<ProxiedElement extends Node = HTMLElement, Before exte
 |  [has(type)](./kit.domproxy.has.md) | Get weak reference to <code>before</code> node |
 |  [has(type)](./kit.domproxy.has_1.md) | Get weak reference to <code>after</code> node |
 |  [has(type)](./kit.domproxy.has_2.md) | Get weak reference to <code>beforeShadow</code> or <code>afterShadow</code> node |
+
+## Remarks
+
+DOMProxy provide 3 nodes. `before`<!-- -->, `current` and `after`<!-- -->. `current` is a fake dom node powered by Proxy, it will forward all your operations to the `realCurrent`<!-- -->.
+
+`before` and `after` is a true `span` that always point to before and after of `realCurrent`
+
+Special Handlers:
+
+\*forward\*: forward to current `realCurrent`
+
+\*undo\*: undo effect when `realCurrent` changes
+
+\*move\*: move effect to new `realCurrent`
+
+- style (forward, undo, move) - addEventListener (forward, undo, move) - appendChild (forward, undo, move)
 

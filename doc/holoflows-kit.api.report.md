@@ -220,7 +220,7 @@ export interface Serialization {
 // @public
 export type UnboxPromise<T> = T extends PromiseLike<infer U> ? U : T;
 
-// @public
+// @public @eventProperty
 export class ValueRef<T> {
     constructor(_value: T);
     addListener(fn: (newVal: T, oldVal: T) => void): () => void;

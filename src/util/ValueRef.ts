@@ -14,6 +14,7 @@
  * }
  * ref.value = 42 // useRef will receive the new value
  * ```
+ * @eventProperty
  */
 export class ValueRef<T> {
     /** Get current value */

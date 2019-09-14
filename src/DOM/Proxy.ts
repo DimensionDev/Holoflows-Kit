@@ -309,7 +309,7 @@ export function DOMProxy<
     }
 }
 /**
- * A DOMProxy object
+ * {@inheritdoc (DOMProxy:function)}
  */
 export interface DOMProxy<
     ProxiedElement extends Node = HTMLElement,
