@@ -4,7 +4,12 @@
 
 ## Watcher.firstVirtualNode property
 
-This virtualNode always point to the first node in the LiveSelector
+> Warning: This API is now obsolete.
+> 
+> use firstDOMProxy instead. will remove in 0.7.0
+> 
+
+This DOMProxy always point to the first node in the LiveSelector
 
 <b>Signature:</b>
 

@@ -217,7 +217,7 @@ export function DOMProxy<
             },
         },
         get before() {
-            if (isDestroyed) throw new TypeError('Try to access `before` node after VirtualNode is destroyed')
+            if (isDestroyed) throw new TypeError('Try to access `before` node after DOMProxy is destroyed')
             if (!virtualBefore) {
                 virtualBefore = createBefore()
                 if (current instanceof Element) current.before(virtualBefore)
@@ -229,11 +229,11 @@ export function DOMProxy<
             return virtualBeforeShadow
         },
         get current(): ProxiedElement {
-            if (isDestroyed) throw new TypeError('Try to access `current` node after VirtualNode is destroyed')
+            if (isDestroyed) throw new TypeError('Try to access `current` node after DOMProxy is destroyed')
             return proxy.proxy
         },
         get after(): After {
-            if (isDestroyed) throw new TypeError('Try to access `after` node after VirtualNode is destroyed')
+            if (isDestroyed) throw new TypeError('Try to access `after` node after DOMProxy is destroyed')
             if (!virtualAfter) {
                 virtualAfter = createAfter()
                 if (current instanceof Element) current.after(virtualAfter)

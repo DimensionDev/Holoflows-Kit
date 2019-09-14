@@ -238,32 +238,32 @@ export class ValueRef<T> {
 // @public
 export abstract class Watcher<T, Before extends Element, After extends Element, SingleMode extends boolean> implements PromiseLike<ResultOf<SingleMode, T>> {
     constructor(liveSelector: LiveSelector<T, SingleMode>);
-    // Warning: (ae-forgotten-export) The symbol "OnAddOrRemoveEvent" needs to be exported by the entry point index.d.ts
+    // (undocumented)
+    addListener(event: 'onAdd', fn: EventCallback<OnAddOrRemoveEvent<T>>): this;
+    // Warning: (ae-forgotten-export) The symbol "OnChangeEvent" needs to be exported by the entry point index.d.ts
     // 
     // (undocumented)
-    addListener(event: 'onRemove', fn: EventCallback<OnAddOrRemoveEvent<T>>): this;
+    addListener(event: 'onChange', fn: EventCallback<OnChangeEvent<T>>): this;
     // Warning: (ae-forgotten-export) The symbol "EventCallback" needs to be exported by the entry point index.d.ts
     // Warning: (ae-forgotten-export) The symbol "OnIterationEvent" needs to be exported by the entry point index.d.ts
     // 
     // (undocumented)
     addListener(event: 'onIteration', fn: EventCallback<OnIterationEvent<T>>): this;
-    // Warning: (ae-forgotten-export) The symbol "OnChangeEvent" needs to be exported by the entry point index.d.ts
+    // Warning: (ae-forgotten-export) The symbol "OnAddOrRemoveEvent" needs to be exported by the entry point index.d.ts
     // 
     // (undocumented)
-    addListener(event: 'onChange', fn: EventCallback<OnChangeEvent<T>>): this;
-    // (undocumented)
-    addListener(event: 'onAdd', fn: EventCallback<OnAddOrRemoveEvent<T>>): this;
+    addListener(event: 'onRemove', fn: EventCallback<OnAddOrRemoveEvent<T>>): this;
     assignKeys<Q = unknown>(keyAssigner: (node: T, index: number, arr: readonly T[]) => Q): this;
     dismissSingleModeWarning(): this;
     protected domProxyOption: Partial<DOMProxyOptions<Before, After>>;
     // (undocumented)
-    protected emit(event: 'onIteration', data: OnIterationEvent<T>): void;
+    protected emit(event: 'onRemove', data: OnAddOrRemoveEvent<T>): void;
     // (undocumented)
     protected emit(event: 'onChange', data: OnChangeEvent<T>): void;
     // (undocumented)
     protected emit(event: 'onAdd', data: OnAddOrRemoveEvent<T>): void;
     // (undocumented)
-    protected emit(event: 'onRemove', data: OnAddOrRemoveEvent<T>): void;
+    protected emit(event: 'onIteration', data: OnIterationEvent<T>): void;
     // @deprecated
     enableBatchMode(): this;
     // @deprecated
@@ -272,27 +272,31 @@ export abstract class Watcher<T, Before extends Element, After extends Element, 
     protected _enableSingleMode(): this;
     protected readonly eventEmitter: mitt.Emitter;
     protected findNodeFromListByKey: (list: readonly T[], keys: readonly unknown[]) => (key: unknown) => T | null;
+    readonly firstDOMProxy: T extends Node ? DOMProxy<T, Before, After> : never;
+    protected _firstDOMProxy: DOMProxy<any, Before, After>;
+    // @deprecated
     readonly firstVirtualNode: T extends Node ? DOMProxy<T, Before, After> : never;
-    protected _firstVirtualNode: DOMProxy<any, Before, After>;
+    getDOMProxyByKey(key: unknown): DOMProxy<any, Before, After> | null;
+    // @deprecated
     getVirtualNodeByKey(key: unknown): DOMProxy<any, Before, After> | null;
     protected isWatching: boolean;
     protected keyComparer: (a: unknown, b: unknown) => boolean;
     protected lastCallbackMap: Map<unknown, useForeachReturns<T>>;
+    protected lastDOMProxyMap: Map<unknown, DOMProxy<any, Before, After>>;
     protected lastKeyList: readonly unknown[];
     protected lastNodeList: readonly T[];
-    protected lastVirtualNodesMap: Map<unknown, DOMProxy<any, Before, After>>;
     protected readonly liveSelector: LiveSelector<T, SingleMode>;
     protected mapNodeToKey: (node: T, index: number, arr: readonly T[]) => unknown;
     omitWarningForForgetWatch(): this;
     omitWarningForRepeatedKeys(): this;
     // (undocumented)
-    removeListener(event: 'onChange', fn: EventCallback<OnChangeEvent<T>>): this;
-    // (undocumented)
-    removeListener(event: 'onRemove', fn: EventCallback<OnAddOrRemoveEvent<T>>): this;
-    // (undocumented)
     removeListener(event: 'onAdd', fn: EventCallback<OnAddOrRemoveEvent<T>>): this;
     // (undocumented)
     removeListener(event: 'onIteration', fn: EventCallback<OnIterationEvent<T>>): this;
+    // (undocumented)
+    removeListener(event: 'onChange', fn: EventCallback<OnChangeEvent<T>>): this;
+    // (undocumented)
+    removeListener(event: 'onRemove', fn: EventCallback<OnAddOrRemoveEvent<T>>): this;
     // Warning: (ae-forgotten-export) The symbol "requestIdleCallback" needs to be exported by the entry point index.d.ts
     protected readonly requestIdleCallback: typeof requestIdleCallback;
     protected scheduleWatcherCheck: () => void;
@@ -309,7 +313,7 @@ export abstract class Watcher<T, Before extends Element, After extends Element, 
         timeout?: number;
     }, starter?: (this: this, self: this) => void): Promise<TResult1 | TResult2>;
     // Warning: (ae-forgotten-export) The symbol "useForeachReturns" needs to be exported by the entry point index.d.ts
-    useForeach(forEach: (virtualNode: T, key: unknown, metadata: T extends Node ? DOMProxy<T, Before, After> : unknown) => useForeachReturns<T>): this;
+    useForeach(forEach: (element: T, key: unknown, metadata: T extends Node ? DOMProxy<T, Before, After> : unknown) => useForeachReturns<T>): this;
     protected useForeachFn?: Parameters<Watcher<T, any, any, any>['useForeach']>[0];
     protected valueComparer: (a: T, b: T) => boolean;
     protected _warning_forget_watch_: {

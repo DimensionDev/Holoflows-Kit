@@ -134,7 +134,7 @@ A complete `useForeach` call is like this:
 })
 ```
 
-> Tips: If you only care about the first element in the `LiveSelector`, here is a shortcut! `Watcher#firstVirtualNode` is a `DOMProxy` and it will always points to the first element in the list！
+> Tips: If you only care about the first element in the `LiveSelector`, here is a shortcut! `Watcher#firstDOMProxy` is a `DOMProxy` and it will always points to the first element in the list！
 
 [Documentation of Watcher](#doc-watchers)
 

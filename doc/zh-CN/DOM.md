@@ -130,7 +130,7 @@ Watcher 有以下几种：
 })
 ```
 
-> Tips: 如果你始终只关心 `LiveSelector` 选中的第一个元素的话，这里有个捷径！`Watcher#firstVirtualNode` 是一个始终指向第一个元素的 `DOMProxy`！
+> Tips: 如果你始终只关心 `LiveSelector` 选中的第一个元素的话，这里有个捷径！`Watcher#firstDOMProxy` 是一个始终指向第一个元素的 `DOMProxy`！
 
 [Watcher 的文档](#doc-watchers)
 

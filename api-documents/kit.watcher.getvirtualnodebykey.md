@@ -4,7 +4,12 @@
 
 ## Watcher.getVirtualNodeByKey() method
 
-Get virtual node by key. Virtual node will be unavailable if it is deleted
+> Warning: This API is now obsolete.
+> 
+> use getDOMProxyByKey instead. will removed in 0.7.0
+> 
+
+Get DOMProxy by key. DOMProxy will be unavailable if it is deleted
 
 <b>Signature:</b>
 

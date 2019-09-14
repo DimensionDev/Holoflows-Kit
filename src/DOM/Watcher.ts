@@ -105,7 +105,7 @@ export abstract class Watcher<T, Before extends Element, After extends Element, 
      */
     public useForeach(
         forEach: (
-            virtualNode: T,
+            element: T,
             key: unknown,
             metadata: T extends Node ? DOMProxy<T, Before, After> : unknown,
         ) => useForeachReturns<T>,
@@ -196,8 +196,8 @@ export abstract class Watcher<T, Before extends Element, After extends Element, 
     protected lastNodeList: readonly T[] = []
     /** Saved callback map of last watch */
     protected lastCallbackMap = new Map<unknown, useForeachReturns<T>>()
-    /** Saved virtual node of last watch */
-    protected lastVirtualNodesMap = new Map<unknown, DOMProxy<any, Before, After>>()
+    /** Saved DOMProxy of last watch */
+    protected lastDOMProxyMap = new Map<unknown, DOMProxy<any, Before, After>>()
     /** Find node from the given list by key */
     protected findNodeFromListByKey = (list: readonly T[], keys: readonly unknown[]) => (key: unknown) => {
         const i = keys.findIndex(x => this.keyComparer(x, key))
@@ -230,8 +230,8 @@ export abstract class Watcher<T, Before extends Element, After extends Element, 
         // New maps for the next generation
         /** Next generation Callback map */
         const nextCallbackMap = new Map<unknown, useForeachReturns<T>>()
-        /** Next generation VirtualNode map */
-        const nextVirtualNodesMap = new Map<unknown, DOMProxy<any, Before, After>>()
+        /** Next generation DOMProxy map */
+        const nextDOMProxyMap = new Map<unknown, DOMProxy<any, Before, After>>()
 
         //#region Key is gone
         // Do: Delete node
@@ -239,13 +239,13 @@ export abstract class Watcher<T, Before extends Element, After extends Element, 
         const goneKeys = differenceWith(this.lastKeyList, thisKeyList, this.keyComparer)
         {
             for (const oldKey of goneKeys) {
-                const virtualNode = this.lastVirtualNodesMap.get(oldKey)
+                const proxy = this.lastDOMProxyMap.get(oldKey)
                 const callbacks = this.lastCallbackMap.get(oldKey)
                 const node = findFromLast(oldKey)!
                 this.requestIdleCallback(
                     () => {
                         applyUseForeachCallback(callbacks)('remove')(node)
-                        if (virtualNode) virtualNode.destroy()
+                        if (proxy) proxy.destroy()
                     },
                     // Delete node don't need a short timeout.
                     { timeout: 2000 },
@@ -263,21 +263,21 @@ export abstract class Watcher<T, Before extends Element, After extends Element, 
                 if (!this.useForeachFn) break
                 const value = findFromNew(newKey)!
                 if (value instanceof Node) {
-                    const virtualNode = DOMProxy<typeof value, Before, After>(this.domProxyOption)
-                    virtualNode.realCurrent = value
+                    const proxy = DOMProxy<typeof value, Before, After>(this.domProxyOption)
+                    proxy.realCurrent = value
                     // This step must be sync.
-                    const callbacks = this.useForeachFn(virtualNode.current, newKey, virtualNode as any)
+                    const callbacks = this.useForeachFn(proxy.current, newKey, proxy as any)
                     if (callbacks && typeof callbacks !== 'function' && 'onNodeMutation' in callbacks) {
-                        virtualNode.observer.init = {
+                        proxy.observer.init = {
                             subtree: true,
                             childList: true,
                             characterData: true,
                             attributes: true,
                         }
-                        virtualNode.observer.callback = m => callbacks.onNodeMutation!(value, m)
+                        proxy.observer.callback = m => callbacks.onNodeMutation!(value, m)
                     }
                     nextCallbackMap.set(newKey, callbacks)
-                    nextVirtualNodesMap.set(newKey, virtualNode)
+                    nextDOMProxyMap.set(newKey, proxy)
                 } else {
                     const callbacks = this.useForeachFn(value, newKey, undefined as any)
                     applyUseForeachCallback(callbacks)('warn mutation')(this._warning_mutation_)
@@ -298,8 +298,8 @@ export abstract class Watcher<T, Before extends Element, After extends Element, 
         for (const [oldNode, newNode, oldKey, newKey] of changedNodes) {
             const fn = this.lastCallbackMap.get(oldKey)
             if (newNode instanceof Node) {
-                const virtualNode = this.lastVirtualNodesMap.get(oldKey)!
-                virtualNode.realCurrent = newNode
+                const proxy = this.lastDOMProxyMap.get(oldKey)!
+                proxy.realCurrent = newNode
             }
             // This should be ordered. So keep it sync now.
             applyUseForeachCallback(fn)('target change')(newNode, oldNode)
@@ -313,10 +313,10 @@ export abstract class Watcher<T, Before extends Element, After extends Element, 
         for (const newKey of newSameKeys) {
             const oldKey = oldSameKeys.find(oldKey => this.keyComparer(newKey, oldKey))
             nextCallbackMap.set(newKey, this.lastCallbackMap.get(oldKey))
-            nextVirtualNodesMap.set(newKey, this.lastVirtualNodesMap.get(oldKey)!)
+            nextDOMProxyMap.set(newKey, this.lastDOMProxyMap.get(oldKey)!)
         }
         this.lastCallbackMap = nextCallbackMap
-        this.lastVirtualNodesMap = nextVirtualNodesMap
+        this.lastDOMProxyMap = nextDOMProxyMap
         this.lastKeyList = thisKeyList
         this.lastNodeList = currentIteration
 
@@ -347,12 +347,12 @@ export abstract class Watcher<T, Before extends Element, After extends Element, 
             for (const key of newKeys) {
                 this.emit('onAdd', { key, value: findFromNew(key)! })
             }
-        // For firstVirtualNode
+        // For firstDOMProxy
         const first = currentIteration[0]
         if (first instanceof Node) {
-            this._firstVirtualNode.realCurrent = first
+            this._firstDOMProxy.realCurrent = first
         } else if (first === undefined || first === null) {
-            this._firstVirtualNode.realCurrent = null
+            this._firstDOMProxy.realCurrent = null
         }
         //#endregion
 
@@ -408,16 +408,16 @@ export abstract class Watcher<T, Before extends Element, After extends Element, 
     /** Watcher callback for single mode */
     private singleModeWatcherCallback(firstValue: T) {
         if (firstValue === undefined) {
-            this.firstVirtualNode.realCurrent = null
+            this.firstDOMProxy.realCurrent = null
         }
         if (firstValue instanceof Node) {
-            this.firstVirtualNode.realCurrent = firstValue
+            this.firstDOMProxy.realCurrent = firstValue
         }
         // ? Case: value is gone
         if (this.singleModeHasLastValue && isNil(firstValue)) {
             applyUseForeachCallback(this.singleModeCallback)('remove')(this.singleModeLastValue!)
             if (this.singleModeLastValue instanceof Node) {
-                this._firstVirtualNode.realCurrent = null
+                this._firstDOMProxy.realCurrent = null
             }
             this.emit('onRemove', { key: undefined, value: this.singleModeLastValue! })
             this.singleModeLastValue = undefined
@@ -428,9 +428,9 @@ export abstract class Watcher<T, Before extends Element, After extends Element, 
             if (isWatcherWithNode(this, firstValue)) {
                 if (this.useForeachFn) {
                     this.singleModeCallback = this.useForeachFn(
-                        this.firstVirtualNode.current,
+                        this.firstDOMProxy.current,
                         undefined,
-                        this.firstVirtualNode,
+                        this.firstDOMProxy,
                     )
                 }
             } else {
@@ -484,7 +484,7 @@ export abstract class Watcher<T, Before extends Element, After extends Element, 
      */
     setDOMProxyOption(option: Partial<DOMProxyOptions<Before, After>>): this {
         this.domProxyOption = option
-        const oldProxy = this._firstVirtualNode
+        const oldProxy = this._firstDOMProxy
         if (
             oldProxy.has('after') ||
             oldProxy.has('before') ||
@@ -494,7 +494,7 @@ export abstract class Watcher<T, Before extends Element, After extends Element, 
         ) {
             console.warn("Don't set DOMProxy before using it.")
         }
-        this._firstVirtualNode = DOMProxy(option)
+        this._firstDOMProxy = DOMProxy(option)
         return this
     }
     //#endregion
@@ -533,14 +533,22 @@ export abstract class Watcher<T, Before extends Element, After extends Element, 
         return this.eventEmitter.emit(event, data)
     }
     //#endregion
-    //#region firstVirtualNode
-    /** The first virtual node */
-    protected _firstVirtualNode = DOMProxy<any, Before, After>(this.domProxyOption)
+    //#region firstDOMProxy
+    /** The first DOMProxy */
+    protected _firstDOMProxy = DOMProxy<any, Before, After>(this.domProxyOption)
     /**
-     * This virtualNode always point to the first node in the LiveSelector
+     * This DOMProxy always point to the first node in the LiveSelector
+     */
+    public get firstDOMProxy() {
+        return (this._firstDOMProxy as unknown) as T extends Node ? DOMProxy<T, Before, After> : never
+    }
+    /**
+     * {@inheritdoc Watcher.firstDOMProxy}
+     * @deprecated use firstDOMProxy instead. will remove in 0.7.0
      */
     public get firstVirtualNode() {
-        return (this._firstVirtualNode as unknown) as T extends Node ? DOMProxy<T, Before, After> : never
+        console.warn('firstVirtualNode is deprecated, use firstDOMProxy instead')
+        return this.firstDOMProxy
     }
     //#endregion
     //#region Watcher settings
@@ -621,16 +629,21 @@ export abstract class Watcher<T, Before extends Element, After extends Element, 
     //#endregion
     //#region Utils
     /**
-     * Get virtual node by key.
-     * Virtual node will be unavailable if it is deleted
+     * Get DOMProxy by key.
+     * DOMProxy will be unavailable if it is deleted
      * @param key - Key used to find DOMProxy
      */
+    public getDOMProxyByKey(key: unknown) {
+        this.noNeedInSingleMode(this.getDOMProxyByKey.name)
+        return this.lastDOMProxyMap.get([...this.lastDOMProxyMap.keys()].find(_ => this.keyComparer(_, key))) || null
+    }
+    /**
+     * {@inheritdoc Watcher.getDOMProxyByKey}
+     * @deprecated use getDOMProxyByKey instead. will removed in 0.7.0
+     */
     public getVirtualNodeByKey(key: unknown) {
-        this.noNeedInSingleMode(this.getVirtualNodeByKey.name)
-        return (
-            this.lastVirtualNodesMap.get([...this.lastVirtualNodesMap.keys()].find(_ => this.keyComparer(_, key))) ||
-            null
-        )
+        console.warn('getVirtualNodeByKey is deprecated, use getDOMProxyByKey instead')
+        return this.getDOMProxyByKey(key)
     }
     /** window.requestIdleCallback, or polyfill. */
     protected readonly requestIdleCallback = requestIdleCallback
