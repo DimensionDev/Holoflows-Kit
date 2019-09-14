@@ -300,6 +300,7 @@ export class LiveSelector<T, SingleMode extends boolean = false> {
         n: SingleMode extends true ? 'LiveSelector.nth() is not available in SingleMode' : number,
     ): LiveSelector<T, SingleMode> {
         if (typeof n !== 'number') throw new Error('n must be a number')
+        if (this.isSingleMode) throw new Error('LiveSelector.nth() is not available in SingleMode')
         return this.appendSelectorChain('nth')(n)
     }
     /**
