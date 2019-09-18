@@ -150,7 +150,7 @@ export abstract class Watcher<T, Before extends Element, After extends Element, 
             ...options,
         }
         let done: (state: boolean, val: any) => void = () => {}
-        const then = async () => {
+        const then = async (): Promise<any> => {
             if (minimalResultsRequired < 1)
                 throw new TypeError('Invalid minimalResultsRequired, must equal to or bigger than 1')
             if (this.singleMode && minimalResultsRequired > 1) {
@@ -425,16 +425,14 @@ export abstract class Watcher<T, Before extends Element, After extends Element, 
         }
         // ? Case: value is new
         else if (!this.singleModeHasLastValue && firstValue) {
-            if (isWatcherWithNode(this, firstValue)) {
-                if (this.useForeachFn) {
+            if (this.useForeachFn) {
+                if (firstValue instanceof Node) {
                     this.singleModeCallback = this.useForeachFn(
                         this.firstDOMProxy.current,
                         undefined,
                         this.firstDOMProxy,
                     )
-                }
-            } else {
-                if (this.useForeachFn) {
+                } else {
                     this.singleModeCallback = this.useForeachFn(firstValue, undefined, undefined as any)
                     applyUseForeachCallback(this.singleModeCallback)('warn mutation')(this._warning_mutation_)
                 }
@@ -599,7 +597,7 @@ export abstract class Watcher<T, Before extends Element, After extends Element, 
      * )
      * ```
      */
-    public setComparer<Q = unknown>(keyComparer?: (a: Q, b: Q) => boolean, valueComparer?: (a: T, b: T) => boolean) {
+    public setComparer(keyComparer?: (a: unknown, b: unknown) => boolean, valueComparer?: (a: T, b: T) => boolean) {
         if (keyComparer) this.noNeedInSingleMode(this.setComparer.name)
         if (keyComparer) this.keyComparer = keyComparer
         if (valueComparer) this.valueComparer = valueComparer
@@ -785,12 +783,6 @@ function applyUseForeachCallback<T>(callback: useForeachReturns<T>) {
 //#endregion
 //#region Typescript generic helper
 type ResultOf<SingleMode extends boolean, Result> = SingleMode extends true ? (Result) : (Result)[]
-function isWatcherWithNode<T>(
-    watcher: Watcher<T, any, any, any>,
-    node: T,
-): watcher is typeof watcher extends Watcher<infer U, infer P, infer Q, infer R> ? Watcher<U & Node, P, Q, R> : never {
-    return node instanceof Node
-}
 //#endregion
 //#region Warnings
 interface WarningOptions {

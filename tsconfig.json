@@ -13,12 +13,16 @@
     "noImplicitReturns": true,
     "strictNullChecks": true,
     "strictPropertyInitialization": true,
+    "strictBindCallApply": true,
+    "strictFunctionTypes": true,
+    "strict": true,
     "sourceMap": true,
     "pretty": true,
     "target": "es2018",
     "outDir": "./es/",
     "incremental": true,
-    "typeRoots": ["node_modules/@types", "node_modules/web-ext-types", "src/types"]
+    "typeRoots": ["node_modules/@types", "node_modules/web-ext-types", "src/types"],
+    "jsx": "react"
   },
   "include": ["./src/**/*"]
 }

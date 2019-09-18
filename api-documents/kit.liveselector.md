@@ -29,6 +29,7 @@ export declare class LiveSelector<T, SingleMode extends boolean = false>
 |  [closest(selectors)](./kit.liveselector.closest_3.md) |  |  |
 |  [concat(newEle)](./kit.liveselector.concat.md) |  | Combines two LiveSelector. |
 |  [enableSingleMode()](./kit.liveselector.enablesinglemode.md) |  | Enable single mode. Only 1 result will be emitted. |
+|  [enhanceDebugger()](./kit.liveselector.enhancedebugger.md) | <code>static</code> | Call this function to enhance the debug experience in the Chrome DevTools<!-- -->You need to open "Enable custom formatters" in your DevTools settings. |
 |  [evaluate()](./kit.liveselector.evaluate.md) |  | Evaluate selector expression |
 |  [evaluateOnce()](./kit.liveselector.evaluateonce.md) |  | Evaluate selector expression |
 |  [filter(f)](./kit.liveselector.filter.md) |  | Select the elements of a LiveSelector that meet the condition specified in a callback function. |

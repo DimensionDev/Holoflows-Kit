@@ -1,3 +1,5 @@
+import { DevToolsEnhancer } from '../util/DevToolsEnhancer'
+
 /**
  * Define all possible recordable operations.
  */
@@ -395,10 +397,10 @@ export class LiveSelector<T, SingleMode extends boolean = false> {
                     }
                     break
                 case 'filter':
-                    arr = arr.filter(op.param).filter(nonNull)
+                    arr = arr.filter((e, i, a) => op.param(e, i, [...a])).filter(nonNull)
                     break
                 case 'map':
-                    arr = arr.map(op.param).filter(nonNull)
+                    arr = arr.map((e, i, a) => op.param(e, i, [...a])).filter(nonNull)
                     break
                 case 'concat':
                     arr = arr.concat(op.param.evaluate())
@@ -440,4 +442,116 @@ export class LiveSelector<T, SingleMode extends boolean = false> {
         return this.evaluate()
     }
     //#endregion
+    /**
+     * Call this function to enhance the debug experience in the Chrome DevTools
+     *
+     * You need to open "Enable custom formatters" in your DevTools settings.
+     */
+    static enhanceDebugger() {
+        DevToolsEnhancer.register(new LiveSelectorDevtoolsEnhancer())
+        this.enhanceDebugger = () => {}
+    }
+}
+
+import * as React from 'jsx-jsonml-devtools-renderer'
+class LiveSelectorDevtoolsEnhancer extends DevToolsEnhancer {
+    hasBody(obj: unknown) {
+        if (this.body(obj)) return true
+        else return false
+    }
+    body(obj: unknown) {
+        if (obj instanceof LiveSelector) return this.bodyLiveSelector(obj)
+        return null
+    }
+    bodyLiveSelector(obj: LiveSelector<any, any>) {
+        const priv = this.getPrivateItems(obj)
+        return (
+            <div>
+                {this.displayInitialElements(obj)}
+                {this.displayCallChains(obj)}
+                <div>
+                    Display call stack:
+                    {{ stack: priv.stack }}
+                </div>
+            </div>
+        )
+    }
+    header(obj: unknown) {
+        if (!(obj instanceof LiveSelector)) return null
+        return (
+            <div>
+                LiveSelector
+                <span style="margin-left: 0.5em; opacity: 0.7; font-style: italic;">
+                    {this.getPrivateItems(obj).single ? '(SingleMode)' : null}
+                </span>
+            </div>
+        )
+    }
+    displayInitialElements(obj: LiveSelector<unknown, boolean>) {
+        const maxDisplayItems = 7
+        const priv = this.getPrivateItems(obj)
+        const jsx: JSX.Element[] = []
+        for (const i in priv.initialElements) {
+            const index = parseInt(i)
+            const _ = priv.initialElements[i]
+            if (index === maxDisplayItems && priv.initialElements.length > maxDisplayItems) {
+                jsx.push(<span style="opacity: 0.7;">and {priv.initialElements.length - maxDisplayItems} more</span>)
+                break
+            }
+            jsx.push(
+                <span>
+                    <object object={_} />
+                    {index === priv.initialElements.length - 1 ? '' : <span style="opacity: 0.7;">, </span>}
+                </span>,
+            )
+        }
+        return (
+            <span>
+                <span>[</span>
+                {jsx}
+                <span>]</span>
+                <span style="margin-left: 0.5em; opacity: 0.7; font-style: italic;">
+                    (initial elements
+                    {priv.initialElements.length > maxDisplayItems ? <object object={priv.initialElements} /> : ''})
+                </span>
+            </span>
+        )
+    }
+    displayCallChains(obj: LiveSelector<any, any>) {
+        const priv = this.getPrivateItems(obj)
+        return (
+            <table>
+                {priv.selectorChain.map(chain => (
+                    <tr>
+                        <td style='font-family: "Sarasa Mono SC"; font-feature-settings: "liga" on,"calt" on;'> |> </td>
+                        <td style="color: rgb(210, 192, 87);">{chain.type}</td>
+                        <td>
+                            {Array.isArray(chain.param) ? (
+                                chain.param.map((paramI, index, params) => (
+                                    <span>
+                                        <object object={paramI} />
+                                        {index === params.length - 1 ? '' : <span style="opacity: 0.7;">, </span>}
+                                    </span>
+                                ))
+                            ) : (
+                                <object object={chain.param} />
+                            )}
+                        </td>
+                    </tr>
+                ))}
+            </table>
+        )
+    }
+    getPrivateItems(obj: LiveSelector<any, any>) {
+        return {
+            // @ts-ignore
+            single: obj.isSingleMode,
+            // @ts-ignore
+            initialElements: obj.initialElements,
+            // @ts-ignore
+            stack: obj.stack || '',
+            // @ts-ignore
+            selectorChain: obj.selectorChain,
+        }
+    }
 }

@@ -990,6 +990,11 @@ jsprim@^1.2.2:
     json-schema "0.2.3"
     verror "1.10.0"
 
+jsx-jsonml-devtools-renderer@^1.1.0:
+  version "1.1.0"
+  resolved "https://registry.yarnpkg.com/jsx-jsonml-devtools-renderer/-/jsx-jsonml-devtools-renderer-1.1.0.tgz#4fada8a972b6b29f57e8267d8728696c7daf89bd"
+  integrity sha512-j0ymJVmsgelutO0x/rOayJzKh9Yj9yQj2/k3EwiRLlINPvMgYos96rBY4NIfu+DBsdRRTS+PcVe0AQBwsg4upw==
+
 lcid@^2.0.0:
   version "2.0.0"
   resolved "https://registry.yarnpkg.com/lcid/-/lcid-2.0.0.tgz#6ef5d2df60e52f82eb228a4c373e8d1f397253cf"

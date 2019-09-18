@@ -11,14 +11,14 @@ You probably don't need this.
 <b>Signature:</b>
 
 ```typescript
-setComparer<Q = unknown>(keyComparer?: (a: Q, b: Q) => boolean, valueComparer?: (a: T, b: T) => boolean): this;
+setComparer(keyComparer?: (a: unknown, b: unknown) => boolean, valueComparer?: (a: T, b: T) => boolean): this;
 ```
 
 ## Parameters
 
 |  Parameter | Type | Description |
 |  --- | --- | --- |
-|  keyComparer | <code>(a: Q, b: Q) =&gt; boolean</code> | compare between two keys, defaults to <code>===</code> |
+|  keyComparer | <code>(a: unknown, b: unknown) =&gt; boolean</code> | compare between two keys, defaults to <code>===</code> |
 |  valueComparer | <code>(a: T, b: T) =&gt; boolean</code> | compare between two value, defaults to <code>===</code> |
 
 <b>Returns:</b>

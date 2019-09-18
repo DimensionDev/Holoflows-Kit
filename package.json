@@ -12,6 +12,7 @@
   "dependencies": {
     "@types/lodash-es": "^4.1.4",
     "concurrent-lock": "^1.0.7",
+    "jsx-jsonml-devtools-renderer": "^1.1.0",
     "lodash-es": "^4.17.15",
     "memorize-decorator": "^0.2.2",
     "mitt": "^1.1.3",
