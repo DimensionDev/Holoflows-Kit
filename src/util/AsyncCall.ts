@@ -601,7 +601,7 @@ class SuccessResponse {
     // ? This is not in the spec !
     resultIsUndefined?: boolean
     constructor(public id: ID, public result: any, noUndefinedKeeping: boolean) {
-        const obj = { id, jsonrpc, result: result || null } as this
+        const obj = { id, jsonrpc, result: result === undefined ? null : result } as this
         if (!noUndefinedKeeping && result === undefined) obj.resultIsUndefined = true
         return obj
     }
