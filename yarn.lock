@@ -404,6 +404,11 @@ cssstyle@^1.2.2:
   dependencies:
     cssom "0.3.x"
 
+csstype@^2.6.6:
+  version "2.6.6"
+  resolved "https://registry.yarnpkg.com/csstype/-/csstype-2.6.6.tgz#c34f8226a94bbb10c32cc0d714afdf942291fc41"
+  integrity sha512-RpFbQGUE74iyPgvr46U9t1xoQBM8T4BL8SxrN66Le2xYAPSaDJJKeztV3awugusb3g3G9iL8StmkBBXhcbbXhg==
+
 dashdash@^1.12.0:
   version "1.14.1"
   resolved "https://registry.yarnpkg.com/dashdash/-/dashdash-1.14.1.tgz#853cfa0f7cbe2fed5de20326b8dd581035f6e2f0"
@@ -990,10 +995,12 @@ jsprim@^1.2.2:
     json-schema "0.2.3"
     verror "1.10.0"
 
-jsx-jsonml-devtools-renderer@^1.1.0:
-  version "1.1.0"
-  resolved "https://registry.yarnpkg.com/jsx-jsonml-devtools-renderer/-/jsx-jsonml-devtools-renderer-1.1.0.tgz#4fada8a972b6b29f57e8267d8728696c7daf89bd"
-  integrity sha512-j0ymJVmsgelutO0x/rOayJzKh9Yj9yQj2/k3EwiRLlINPvMgYos96rBY4NIfu+DBsdRRTS+PcVe0AQBwsg4upw==
+jsx-jsonml-devtools-renderer@^1.2.0:
+  version "1.2.0"
+  resolved "https://registry.yarnpkg.com/jsx-jsonml-devtools-renderer/-/jsx-jsonml-devtools-renderer-1.2.0.tgz#2162e017a45f29e45c074fb2cae314246d81561e"
+  integrity sha512-rZopQUTH7SnZJ84j3FK96fUczxTKQTXdrGpYavlIeKcXLCEN0vxnS8QDMVqefvIFLWsJA/8kRIjjdiPQrYqkjQ==
+  dependencies:
+    csstype "^2.6.6"
 
 lcid@^2.0.0:
   version "2.0.0"

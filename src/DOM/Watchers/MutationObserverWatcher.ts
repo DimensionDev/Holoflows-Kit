@@ -53,7 +53,7 @@ export class MutationObserverWatcher<
             this.scheduleWatcherCheck()
         }
         if (document.readyState !== 'complete' && this.consistentWatchRoot === null) {
-            document.addEventListener('load', () => watch())
+            document.addEventListener('readystatechange', () => document.readyState !== 'complete' && watch())
         } else watch(this.consistentWatchRoot)
         return this
     }

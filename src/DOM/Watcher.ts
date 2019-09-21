@@ -19,6 +19,8 @@ import uniqWith from 'lodash-es/uniqWith'
 import { Deadline, requestIdleCallback } from '../util/requestIdleCallback'
 import { isNil } from 'lodash-es'
 import { timeout } from '../util/sleep'
+import { WatcherDevtoolsEnhancer } from '../Debuggers/WatcherDevtoolsEnhancer'
+import { installCustomObjectFormatter } from 'jsx-jsonml-devtools-renderer'
 
 /**
  * Use LiveSelector to watch dom change
@@ -322,6 +324,9 @@ export abstract class Watcher<T, Before extends Element, After extends Element, 
 
         if (this.isEventsListening.onIteration && changedNodes.length + goneKeys.length + newKeys.length) {
             // Make a copy to prevent modifications
+            const newMap = new Map<unknown, T>(newKeys.map(key => [key, findFromNew(key)!]))
+            const removedMap = new Map<unknown, T>(goneKeys.map(key => [key, findFromLast(key)!]))
+            const currentMap = new Map<unknown, T>(thisKeyList.map(key => [key, findFromNew(key)!]))
             this.emit('onIteration', {
                 keys: {
                     current: thisKeyList,
@@ -333,6 +338,9 @@ export abstract class Watcher<T, Before extends Element, After extends Element, 
                     new: newKeys.map(findFromNew),
                     removed: goneKeys.map(findFromLast),
                 },
+                new: newMap,
+                removed: removedMap,
+                current: currentMap,
             } as OnIterationEvent<T>)
         }
         if (this.isEventsListening.onChange)
@@ -464,11 +472,11 @@ export abstract class Watcher<T, Before extends Element, After extends Element, 
     /** Should be called every watch */
     private watcherChecker = (deadline?: Deadline) => {
         if (!this.isWatching) return
-
-        const thisNodes: readonly T[] | T | undefined = this.liveSelector.evaluate()
-
-        if (this.singleMode) return this.singleModeWatcherCallback(thisNodes as T)
-        else return this.normalModeWatcherCallback(thisNodes as readonly T[])
+        setTimeout(() => {
+            const thisNodes: readonly T[] | T | undefined = this.liveSelector.evaluate()
+            if (this.singleMode) return this.singleModeWatcherCallback(thisNodes as T)
+            else return this.normalModeWatcherCallback(thisNodes as readonly T[])
+        }, 0)
     }
     //#endregion
     //#region LiveSelector settings
@@ -708,6 +716,15 @@ Or to ignore this message, call \`.dismissSingleModeWarning()\` on the watcher.\
         },
     })
     //#endregion
+    /**
+     * Call this function to enhance the debug experience in the Chrome DevTools
+     *
+     * You need to open "Enable custom formatters" in your DevTools settings.
+     */
+    static enhanceDebugger() {
+        installCustomObjectFormatter(new WatcherDevtoolsEnhancer())
+        this.enhanceDebugger = () => {}
+    }
 }
 
 //#region Default implementations
@@ -731,8 +748,13 @@ type OnAddOrRemoveEvent<T> = {
     value: T
 }
 type OnIterationEvent<T> = {
+    /** @deprecated will remove in 0.7.0 */
     keys: Record<'removed' | 'new' | 'current', unknown[]>
+    /** @deprecated will remove in 0.7.0 */
     values: Record<'removed' | 'new' | 'current', T[]>
+    new: Map<unknown, T>
+    removed: Map<unknown, T>
+    current: Map<unknown, T>
 }
 // ? Event callbacks
 /** Callback on Remove */
