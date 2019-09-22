@@ -1,3 +1,6 @@
+import { DOMProxyDevtoolsEnhancer } from '../Debuggers/DOMProxyDevtoolsEnhancer'
+import { installCustomObjectFormatter } from 'jsx-jsonml-devtools-renderer'
+
 /**
  * {@inheritdoc (DOMProxy:interface)}
  * @deprecated use DOMProxy instead, will removed in 0.7.0
@@ -211,7 +214,7 @@ export function DOMProxy<
         if (reinit || !observer) observer = new MutationObserver(observerCallback)
         observer.observe(current, mutationObserverInit)
     }
-    return {
+    const DOMProxyObject = {
         observer: {
             set callback(v) {
                 if (v === undefined) v = noop
@@ -231,6 +234,9 @@ export function DOMProxy<
             get observer() {
                 return observer
             },
+        },
+        get destroyed() {
+            return isDestroyed
         },
         get before() {
             if (isDestroyed) throw new TypeError('Try to access `before` node after DOMProxy is destroyed')
@@ -306,6 +312,14 @@ export function DOMProxy<
             virtualAfter = null
             current = defaultCurrent
         },
+    } as DOMProxy<ProxiedElement, Before, After>
+    DOMProxyDevtoolsEnhancer.allDOMProxy.set(DOMProxyObject, changes)
+    return DOMProxyObject
+}
+export namespace DOMProxy {
+    export function enhanceDebugger() {
+        installCustomObjectFormatter(new DOMProxyDevtoolsEnhancer())
+        DOMProxy.enhanceDebugger = () => {}
     }
 }
 /**
@@ -318,6 +332,7 @@ export interface DOMProxy<
 > {
     /** Destroy the DOMProxy */
     destroy(): void
+    readonly destroyed: boolean
     /** Returns the `before` element, if it doesn't exist, create it implicitly. */
     readonly before: Before
     /** Returns the `ShadowRoot` of the `before` element. */
