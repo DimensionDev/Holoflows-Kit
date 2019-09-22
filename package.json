@@ -11,8 +11,9 @@
   "readme": "https://github.com/project-holoflows/holoflows-kit/blob/master/README.md",
   "dependencies": {
     "@types/lodash-es": "^4.1.4",
+    "async-call-rpc": "^1.0.0",
     "concurrent-lock": "^1.0.7",
-    "jsx-jsonml-devtools-renderer": "^1.2.0",
+    "jsx-jsonml-devtools-renderer": "^1.3.0",
     "lodash-es": "^4.17.15",
     "memorize-decorator": "^0.2.2",
     "mitt": "^1.1.3",

@@ -54,7 +54,7 @@ export interface AutomatedTabTaskDefineTimeOptions extends AutomatedTabTaskShare
      */
     memorizeTTL: number
     /**
-     * Options when creating {@link AsyncCall} ({@link AsyncCallOptions})
+     * Options when creating AsyncCall
      */
     AsyncCallOptions: Partial<AsyncCallOptions>
 }

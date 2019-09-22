@@ -230,6 +230,11 @@ assert-plus@1.0.0, assert-plus@^1.0.0:
   resolved "https://registry.yarnpkg.com/assert-plus/-/assert-plus-1.0.0.tgz#f12e0f3c5d77b0b1cdd9146942e4e96c1e4dd525"
   integrity sha1-8S4PPF13sLHN2RRpQuTpbB5N1SU=
 
+async-call-rpc@^1.0.0:
+  version "1.0.0"
+  resolved "https://registry.yarnpkg.com/async-call-rpc/-/async-call-rpc-1.0.0.tgz#a2dd6a192b353b717fdf0881da9c805c58e3cb44"
+  integrity sha512-J2bj2HfUPKJCf7i/Lgxjj51+L0xg5xzENK1zkH3xZhsg2PFj2rxwwIRhqSKvGW6z3d6ukjcQWHg/0UbtsuFD2g==
+
 async-limiter@^1.0.0:
   version "1.0.1"
   resolved "https://registry.yarnpkg.com/async-limiter/-/async-limiter-1.0.1.tgz#dd379e94f0db8310b08291f9d64c3209766617fd"
@@ -995,10 +1000,10 @@ jsprim@^1.2.2:
     json-schema "0.2.3"
     verror "1.10.0"
 
-jsx-jsonml-devtools-renderer@^1.2.0:
-  version "1.2.0"
-  resolved "https://registry.yarnpkg.com/jsx-jsonml-devtools-renderer/-/jsx-jsonml-devtools-renderer-1.2.0.tgz#2162e017a45f29e45c074fb2cae314246d81561e"
-  integrity sha512-rZopQUTH7SnZJ84j3FK96fUczxTKQTXdrGpYavlIeKcXLCEN0vxnS8QDMVqefvIFLWsJA/8kRIjjdiPQrYqkjQ==
+jsx-jsonml-devtools-renderer@^1.3.0:
+  version "1.3.0"
+  resolved "https://registry.yarnpkg.com/jsx-jsonml-devtools-renderer/-/jsx-jsonml-devtools-renderer-1.3.0.tgz#1af53802a49898db3bd2f9070a5f6e56d8c2ef13"
+  integrity sha512-DjsZ+XvwkInWB5Cr3xfibfE5+PmIibGk/MCLR5QBRttgUWX0Uzr0g+IpPi4Rb0U0U9D+BkhbvrE9gSSm08M8Nw==
   dependencies:
     csstype "^2.6.6"
 
