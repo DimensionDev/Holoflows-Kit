@@ -12,12 +12,12 @@ import mitt from 'mitt';
 import { NoSerialization } from 'async-call-rpc';
 import { Serialization } from 'async-call-rpc';
 
-// @public (undocumented)
+// @public @deprecated (undocumented)
 export function AsyncCall<OtherSideImplementedFunctions = {}>(implementation: object | undefined, options?: Partial<AsyncCallOptions>): MakeAllFunctionsAsync<OtherSideImplementedFunctions>;
 
 export { AsyncCallOptions }
 
-// @public (undocumented)
+// @public @deprecated (undocumented)
 export function AsyncGeneratorCall<OtherSideImplementedFunctions = {}>(implementation: object | undefined, options: Partial<AsyncCallOptions>): MakeAllGeneratorFunctionsAsync<OtherSideImplementedFunctions>;
 
 // @public
@@ -53,6 +53,12 @@ export type Contexts = 'background' | 'content' | 'webpage' | 'unknown' | 'optio
 // @public
 export function DOMProxy<ProxiedElement extends Node = HTMLElement, Before extends Element = HTMLSpanElement, After extends Element = HTMLSpanElement>(options?: Partial<DOMProxyOptions<Before, After>>): DOMProxy<ProxiedElement, Before, After>;
 
+// @public (undocumented)
+export namespace DOMProxy {
+    // (undocumented)
+    export function enhanceDebugger(): void;
+}
+
 // @public
 export interface DOMProxy<ProxiedElement extends Node = HTMLElement, Before extends Element = HTMLSpanElement, After extends Element = HTMLSpanElement> {
     readonly after: After;
@@ -61,6 +67,8 @@ export interface DOMProxy<ProxiedElement extends Node = HTMLElement, Before exte
     readonly beforeShadow: ShadowRoot;
     readonly current: ProxiedElement;
     destroy(): void;
+    // (undocumented)
+    readonly destroyed: boolean;
     has(type: 'before'): Before | null;
     has(type: 'after'): After | null;
     has(type: 'beforeShadow' | 'afterShadow'): ShadowRoot | null;

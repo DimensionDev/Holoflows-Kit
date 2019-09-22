@@ -43,6 +43,12 @@ A toolkit for browser extension developing.
 |  [DomProxyOptions](./kit.domproxyoptions.md) | Options for DOMProxy |
 |  [DOMProxyOptions](./kit.domproxyoptions.md) | Options for DOMProxy |
 
+## Namespaces
+
+|  Namespace | Description |
+|  --- | --- |
+|  [DOMProxy](./kit.domproxy.md) |  |
+
 ## Type Aliases
 
 |  Type Alias | Description |

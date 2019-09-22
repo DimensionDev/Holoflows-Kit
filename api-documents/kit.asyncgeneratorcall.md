@@ -4,6 +4,11 @@
 
 ## AsyncGeneratorCall() function
 
+> Warning: This API is now obsolete.
+> 
+> use the async-call-rpc package. will remove in 0.7.0
+> 
+
 <b>Signature:</b>
 
 ```typescript
