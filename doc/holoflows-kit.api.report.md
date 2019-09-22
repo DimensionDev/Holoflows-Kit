@@ -4,37 +4,21 @@
 
 ```ts
 
+import { AsyncCallOptions } from 'async-call-rpc';
+import { JSONSerialization } from 'async-call-rpc';
+import { MakeAllFunctionsAsync } from 'async-call-rpc';
+import { MakeAllGeneratorFunctionsAsync } from 'async-call-rpc';
 import mitt from 'mitt';
+import { NoSerialization } from 'async-call-rpc';
+import { Serialization } from 'async-call-rpc';
 
-// @public
-export function AsyncCall<OtherSideImplementedFunctions = {}>(implementation?: object, options?: Partial<AsyncCallOptions>): MakeAllFunctionsAsync<OtherSideImplementedFunctions>;
+// @public (undocumented)
+export function AsyncCall<OtherSideImplementedFunctions = {}>(implementation: object | undefined, options?: Partial<AsyncCallOptions>): MakeAllFunctionsAsync<OtherSideImplementedFunctions>;
 
-// @public
-export interface AsyncCallOptions {
-    key: string;
-    log: {
-        beCalled?: boolean;
-        localError?: boolean;
-        remoteError?: boolean;
-        sendLocalStack?: boolean;
-        type?: 'basic' | 'pretty';
-    } | boolean;
-    messageChannel: {
-        on(event: string, callback: (data: unknown) => void): void;
-        emit(event: string, data: unknown): void;
-    };
-    parameterStructures: 'by-position' | 'by-name';
-    preferLocalImplementation: boolean;
-    serializer: Serialization;
-    strict: {
-        methodNotFound?: boolean;
-        noUndefined?: boolean;
-        unknownMessage?: boolean;
-    } | boolean;
-}
+export { AsyncCallOptions }
 
-// @public
-export function AsyncGeneratorCall<OtherSideImplementedFunctions = {}>(implementation?: object, options?: Partial<AsyncCallOptions>): MakeAllGeneratorFunctionsAsync<OtherSideImplementedFunctions>;
+// @public (undocumented)
+export function AsyncGeneratorCall<OtherSideImplementedFunctions = {}>(implementation: object | undefined, options: Partial<AsyncCallOptions>): MakeAllGeneratorFunctionsAsync<OtherSideImplementedFunctions>;
 
 // @public
 export function AutomatedTabTask<T extends Record<string, (...args: any[]) => PromiseLike<any>>>(taskImplements: T, options?: Partial<AutomatedTabTaskDefineTimeOptions>): ((urlOrTabID: string | number, options?: Partial<AutomatedTabTaskRuntimeOptions>) => T) | null;
@@ -124,8 +108,7 @@ export class IntervalWatcher<T, Before extends Element = HTMLSpanElement, After 
     stopWatch(): void;
     }
 
-// @public
-export const JSONSerialization: ([replacer, receiver]?: [(string | number)[] | null | undefined, ((this: any, key: string, value: any) => any) | undefined], space?: string | number | undefined) => Serialization;
+export { JSONSerialization }
 
 // @public
 export class LiveSelector<T, SingleMode extends boolean = false> {
@@ -170,25 +153,13 @@ export class LiveSelector<T, SingleMode extends boolean = false> {
     }
 
 // @public
-export type MakeAllFunctionsAsync<T> = {
-    [key in keyof T]: T[key] extends (...args: infer Args) => infer Return ? Return extends PromiseLike<infer U> ? (...args: Args) => Promise<U> : (...args: Args) => Promise<Return> : T[key];
-};
-
-// @public
-export type MakeAllGeneratorFunctionsAsync<T> = {
-    [key in keyof T]: T[key] extends (...args: infer Args) => Iterator<infer Yield, infer Return, infer Next> | AsyncIterator<infer Yield, infer Return, infer Next> ? (...args: Args) => AsyncIterator<UnboxPromise<Yield>, UnboxPromise<Return>, UnboxPromise<Next>> & {
-        [Symbol.asyncIterator](): AsyncIterator<UnboxPromise<Yield>, UnboxPromise<Return>, UnboxPromise<Next>>;
-    } : T[key];
-};
-
-// @public
 export class MessageCenter<ITypedMessages> {
     constructor(instanceKey?: string);
     emit<Key extends keyof ITypedMessages>(key: Key, data: ITypedMessages[Key], alsoSendToDocument?: boolean): Promise<void>;
     off<Key extends keyof ITypedMessages>(event: Key, handler: (data: ITypedMessages[Key]) => void): void;
     on<Key extends keyof ITypedMessages>(event: Key, handler: (data: ITypedMessages[Key]) => void): () => void;
     send(...args: Parameters<MessageCenter<ITypedMessages>['emit']>): ReturnType<MessageCenter<ITypedMessages>['emit']>;
-    serialization: import("../util/AsyncCall").Serialization;
+    serialization: import("async-call-rpc/out/Async-Call").Serialization;
     writeToConsole: boolean;
 }
 
@@ -203,8 +174,7 @@ export class MutationObserverWatcher<T, Before extends Element = HTMLSpanElement
     stopWatch(): void;
 }
 
-// @public
-export const NoSerialization: Serialization;
+export { NoSerialization }
 
 // @public
 export function OnlyRunInContext(context: Contexts | Contexts[], name: string): void;
@@ -212,14 +182,7 @@ export function OnlyRunInContext(context: Contexts | Contexts[], name: string): 
 // @public
 export function OnlyRunInContext(context: Contexts | Contexts[], throws: false): boolean;
 
-// @public
-export interface Serialization {
-    deserialization(serialized: unknown): PromiseLike<any>;
-    serialization(from: any): PromiseLike<unknown>;
-}
-
-// @public
-export type UnboxPromise<T> = T extends PromiseLike<infer U> ? U : T;
+export { Serialization }
 
 // @public @eventProperty
 export class ValueRef<T> {
@@ -267,6 +230,7 @@ export abstract class Watcher<T, Before extends Element, After extends Element, 
     abstract enableSingleMode(): Watcher<T, Before, After, true>;
     // (undocumented)
     protected _enableSingleMode(): this;
+    static enhanceDebugger(): void;
     protected readonly eventEmitter: mitt.Emitter;
     protected findNodeFromListByKey: (list: readonly T[], keys: readonly unknown[]) => (key: unknown) => T | null;
     readonly firstDOMProxy: T extends Node ? DOMProxy<T, Before, After> : never;

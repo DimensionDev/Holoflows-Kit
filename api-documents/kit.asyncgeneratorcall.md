@@ -4,19 +4,17 @@
 
 ## AsyncGeneratorCall() function
 
-This function provides the async generator version of the AsyncCall
-
 <b>Signature:</b>
 
 ```typescript
-export declare function AsyncGeneratorCall<OtherSideImplementedFunctions = {}>(implementation?: object, options?: Partial<AsyncCallOptions>): MakeAllGeneratorFunctionsAsync<OtherSideImplementedFunctions>;
+export declare function AsyncGeneratorCall<OtherSideImplementedFunctions = {}>(implementation: object | undefined, options: Partial<AsyncCallOptions>): MakeAllGeneratorFunctionsAsync<OtherSideImplementedFunctions>;
 ```
 
 ## Parameters
 
 |  Parameter | Type | Description |
 |  --- | --- | --- |
-|  implementation | <code>object</code> |  |
+|  implementation | <code>object &#124; undefined</code> |  |
 |  options | <code>Partial&lt;AsyncCallOptions&gt;</code> |  |
 
 <b>Returns:</b>

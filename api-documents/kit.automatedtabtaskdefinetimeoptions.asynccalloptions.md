@@ -4,7 +4,7 @@
 
 ## AutomatedTabTaskDefineTimeOptions.AsyncCallOptions property
 
-Options when creating [AsyncCall()](./kit.asynccall.md) ([AsyncCallOptions](./kit.asynccalloptions.md)<!-- -->)
+Options when creating AsyncCall
 
 <b>Signature:</b>
 

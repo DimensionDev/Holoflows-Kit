@@ -22,8 +22,8 @@ A toolkit for browser extension developing.
 
 |  Function | Description |
 |  --- | --- |
-|  [AsyncCall(implementation, options)](./kit.asynccall.md) | Async call between different context. |
-|  [AsyncGeneratorCall(implementation, options)](./kit.asyncgeneratorcall.md) | This function provides the async generator version of the AsyncCall |
+|  [AsyncCall(implementation, options)](./kit.asynccall.md) |  |
+|  [AsyncGeneratorCall(implementation, options)](./kit.asyncgeneratorcall.md) |  |
 |  [AutomatedTabTask(taskImplements, options)](./kit.automatedtabtask.md) | Open a new page in the background, execute some task, then close it automatically. |
 |  [DomProxy(args)](./kit.domproxy.md) | DOMProxy provide an interface that be stable even dom is changed. |
 |  [DOMProxy(options)](./kit.domproxy.md) | DOMProxy provide an interface that be stable even dom is changed. |
@@ -35,7 +35,6 @@ A toolkit for browser extension developing.
 
 |  Interface | Description |
 |  --- | --- |
-|  [AsyncCallOptions](./kit.asynccalloptions.md) | Options for [AsyncCall()](./kit.asynccall.md) |
 |  [AutomatedTabTaskDefineTimeOptions](./kit.automatedtabtaskdefinetimeoptions.md) | Define-time options for [AutomatedTabTask()](./kit.automatedtabtask.md) |
 |  [AutomatedTabTaskRuntimeOptions](./kit.automatedtabtaskruntimeoptions.md) | Runtime options for [AutomatedTabTask()](./kit.automatedtabtask.md) |
 |  [AutomatedTabTaskSharedOptions](./kit.automatedtabtasksharedoptions.md) | Shared options for AutomatedTabTask between the define-time and the runtime. |
@@ -43,21 +42,10 @@ A toolkit for browser extension developing.
 |  [DOMProxy](./kit.domproxy.md) | DOMProxy provide an interface that be stable even dom is changed. |
 |  [DomProxyOptions](./kit.domproxyoptions.md) | Options for DOMProxy |
 |  [DOMProxyOptions](./kit.domproxyoptions.md) | Options for DOMProxy |
-|  [Serialization](./kit.serialization.md) | Define how to do serialization and deserialization of remote procedure call |
-
-## Variables
-
-|  Variable | Description |
-|  --- | --- |
-|  [JSONSerialization](./kit.jsonserialization.md) | Serialization implementation by JSON.parse/stringify |
-|  [NoSerialization](./kit.noserialization.md) | Serialization implementation that do nothing |
 
 ## Type Aliases
 
 |  Type Alias | Description |
 |  --- | --- |
 |  [Contexts](./kit.contexts.md) | All context that possible in when developing a WebExtension |
-|  [MakeAllFunctionsAsync](./kit.makeallfunctionsasync.md) | Make all function in the type T Async |
-|  [MakeAllGeneratorFunctionsAsync](./kit.makeallgeneratorfunctionsasync.md) | Make all generator in the type T becomes AsyncGenerator |
-|  [UnboxPromise](./kit.unboxpromise.md) | Unbox the Promise<T> into T if possible |
 
