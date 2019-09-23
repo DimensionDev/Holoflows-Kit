@@ -35,7 +35,7 @@
     "test": "cross-env TS_NODE_COMPILER_OPTIONS='{ \"module\": \"commonjs\" }' mocha -r ts-node/register/transpile-only -r source-map-support/register -r jsdom-global/register --recursive src/**/*.spec.ts"
   },
   "devDependencies": {
-    "@microsoft/api-documenter": "^7.4.4",
+    "@microsoft/api-documenter": "^7.4.5",
     "@microsoft/api-extractor": "^7.4.2",
     "@types/mocha": "^5.2.7",
     "cross-env": "^6.0.0",
