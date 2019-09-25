@@ -175,12 +175,13 @@ export class MessageCenter<ITypedMessages> {
 export class MutationObserverWatcher<T, Before extends Element = HTMLSpanElement, After extends Element = HTMLSpanElement, SingleMode extends boolean = false> extends Watcher<T, Before, After, SingleMode> {
     constructor(
     liveSelector: LiveSelector<T, SingleMode>, 
-    consistentWatchRoot?: Node);
+    consistentWatchRoot?: Node, 
+    stopWatchOnDisconnected?: boolean);
     enableSingleMode: () => MutationObserverWatcher<T, Before, After, true>;
     protected liveSelector: LiveSelector<T, SingleMode>;
-    startWatch(options?: MutationObserverInit): this;
+    startWatch(options: MutationObserverInit): this;
     stopWatch(): void;
-}
+    }
 
 export { NoSerialization }
 

@@ -16,7 +16,7 @@ export declare class MutationObserverWatcher<T, Before extends Element = HTMLSpa
 
 |  Constructor | Modifiers | Description |
 |  --- | --- | --- |
-|  [(constructor)(liveSelector, consistentWatchRoot)](./kit.mutationobserverwatcher._constructor_.md) |  | Constructs a new instance of the <code>MutationObserverWatcher</code> class |
+|  [(constructor)(liveSelector, consistentWatchRoot, stopWatchOnDisconnected)](./kit.mutationobserverwatcher._constructor_.md) |  | Constructs a new instance of the <code>MutationObserverWatcher</code> class |
 
 ## Properties
 
@@ -29,7 +29,7 @@ export declare class MutationObserverWatcher<T, Before extends Element = HTMLSpa
 
 |  Method | Modifiers | Description |
 |  --- | --- | --- |
-|  [startWatch(options)](./kit.mutationobserverwatcher.startwatch.md) |  | Let the watcher start to watching |
+|  [startWatch(options)](./kit.mutationobserverwatcher.startwatch.md) |  | Start an MutationObserverWatcher.<!-- -->You must provide a reasonable MutationObserverInit to reduce dom events.<!-- -->https://mdn.io/MutationObserverInit |
 |  [stopWatch()](./kit.mutationobserverwatcher.stopwatch.md) |  | Stop the watcher |
 
 ## Example

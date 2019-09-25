@@ -119,7 +119,7 @@ const AutomatedTabTaskDefineTimeOptionsDefault: Readonly<AutomatedTabTaskDefineT
 export function AutomatedTabTask<T extends Record<string, (...args: any[]) => PromiseLike<any>>>(
     taskImplements: T,
     options: Partial<AutomatedTabTaskDefineTimeOptions> = {},
-) {
+): ((urlOrTabID: string | number, options?: Partial<AutomatedTabTaskRuntimeOptions>) => T) | null {
     const {
         timeout: defaultTimeout,
         concurrent,

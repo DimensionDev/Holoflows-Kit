@@ -4,12 +4,16 @@
 
 ## MutationObserverWatcher.startWatch() method
 
-Let the watcher start to watching
+Start an MutationObserverWatcher.
+
+You must provide a reasonable MutationObserverInit to reduce dom events.
+
+https://mdn.io/MutationObserverInit
 
 <b>Signature:</b>
 
 ```typescript
-startWatch(options?: MutationObserverInit): this;
+startWatch(options: MutationObserverInit): this;
 ```
 
 ## Parameters

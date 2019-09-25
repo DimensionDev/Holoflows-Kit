@@ -11,7 +11,8 @@ Constructs a new instance of the `MutationObserverWatcher` class
 ```typescript
 constructor(
     liveSelector: LiveSelector<T, SingleMode>, 
-    consistentWatchRoot?: Node);
+    consistentWatchRoot?: Node, 
+    stopWatchOnDisconnected?: boolean);
 ```
 
 ## Parameters
@@ -20,4 +21,5 @@ constructor(
 |  --- | --- | --- |
 |  liveSelector | <code>LiveSelector&lt;T, SingleMode&gt;</code> |  |
 |  consistentWatchRoot | <code>Node</code> |  |
+|  stopWatchOnDisconnected | <code>boolean</code> |  |
 

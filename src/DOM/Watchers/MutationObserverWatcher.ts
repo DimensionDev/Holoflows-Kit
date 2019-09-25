@@ -26,6 +26,10 @@ export class MutationObserverWatcher<
          * This may improve performance.
          */
         private consistentWatchRoot: Node = document.body,
+        /**
+         * Call stopWatch() when the consistentWatchRoot disconnected.
+         */
+        private stopWatchOnDisconnected = false,
     ) {
         super(liveSelector)
         setTimeout(this._warning_forget_watch_.warn, 5000)
@@ -33,23 +37,24 @@ export class MutationObserverWatcher<
 
     /** Observe whole document change */
     private observer: MutationObserver = new MutationObserver((mutations, observer) => {
+        if (this.consistentWatchRoot.isConnected === false && this.stopWatchOnDisconnected === true) {
+            return this.stopWatch()
+        }
         this.requestIdleCallback(this.scheduleWatcherCheck)
     })
     /**
-     * {@inheritdoc Watcher.startWatch}
+     * Start an MutationObserverWatcher.
+     *
+     * @remarks
+     * You must provide a reasonable MutationObserverInit to reduce dom events.
+     *
+     * https://mdn.io/MutationObserverInit
      */
-    startWatch(options?: MutationObserverInit) {
+    startWatch(options: MutationObserverInit) {
         super.startWatch()
         this.isWatching = true
-        const option = {
-            attributes: true,
-            characterData: true,
-            childList: true,
-            subtree: true,
-            ...options,
-        }
         const watch = (root?: Node) => {
-            this.observer.observe(root || document.body, option)
+            this.observer.observe(root || document.body, options)
             this.scheduleWatcherCheck()
         }
         if (document.readyState !== 'complete' && this.consistentWatchRoot === null) {
