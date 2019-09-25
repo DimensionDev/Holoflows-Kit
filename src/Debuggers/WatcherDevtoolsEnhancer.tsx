@@ -108,6 +108,7 @@ export class WatcherDevtoolsEnhancer implements React.CustomObjectFormatter {
                     {this.optionsRow('ValueComparer', priv.valueComparer, x => x(test, test))}
                     {this.optionsRow('MapNodeToKey', priv.mapNodeToKey, x => x(test, 0, []) === test)}
                     {this.optionsRow('FirstDOMProxy', obj.firstDOMProxy, x => true)}
+                    {this.optionsRow('stopWatchOnDisconnected', priv.stopWatchOnDisconnected, x => !x)}
                 </table>
                 <br />
                 <div variant={['bigint']}>Actions:</div>
@@ -186,6 +187,8 @@ export class WatcherDevtoolsEnhancer implements React.CustomObjectFormatter {
             stack: obj.stack,
             // @ts-ignore
             findNodeFromListByKey: obj.findNodeFromListByKey,
+            // @ts-ignore
+            stopWatchOnDisconnected: obj.stopWatchOnDisconnected,
         }
     }
 }
