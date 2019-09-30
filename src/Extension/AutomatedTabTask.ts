@@ -202,8 +202,13 @@ export function AutomatedTabTask<T extends Record<string, (...args: any[]) => Pr
                 } as AutomatedTabTaskRuntimeOptions),
                 ...options,
             }
-            const tabId: number | undefined = (typeof urlOrTabID === 'number' ? urlOrTabID : undefined) || runAtTabID
-            const finalUrl: string = (typeof urlOrTabID === 'string' ? urlOrTabID : '') || url || ''
+            let tabID: number | undefined
+            if (typeof urlOrTabID === 'number') tabID = urlOrTabID
+            else tabID = runAtTabID
+
+            let finalURL: string
+            if (typeof urlOrTabID === 'string') finalURL = urlOrTabID
+            else finalURL = url || ''
             function proxyTrap(_target: unknown, taskName: string | number | symbol) {
                 return (...taskArgs: any[]) => {
                     if (typeof taskName !== 'string') throw new TypeError('Key must be a string')
@@ -218,9 +223,9 @@ export function AutomatedTabTask<T extends Record<string, (...args: any[]) => Pr
                         taskArgs,
                         asyncCall,
                         lock,
-                        tabId,
+                        tabID,
                         tabReadyMap,
-                        url: finalUrl,
+                        url: finalURL,
                     })
                 }
             }
@@ -257,7 +262,7 @@ interface createOrGetTheTabToExecuteTaskOptions {
     pinned: boolean
     autoClose: boolean
     active: boolean
-    tabId: number | undefined
+    tabID: number | undefined
     needRedirect: boolean
     taskArgs: any[]
     asyncCall: any
@@ -265,7 +270,7 @@ interface createOrGetTheTabToExecuteTaskOptions {
     lock: Lock
 }
 async function createOrGetTheTabToExecuteTask(options: createOrGetTheTabToExecuteTaskOptions) {
-    const { active, taskArgs, autoClose, isImportant, needRedirect, pinned, tabId: wantedTabID } = options
+    const { active, taskArgs, autoClose, isImportant, needRedirect, pinned, tabID: wantedTabID } = options
     const { asyncCall, tabReadyMap, lock, taskName, timeout, url } = options
     /**
      * does it need a lock to avoid too many open at the same time?
