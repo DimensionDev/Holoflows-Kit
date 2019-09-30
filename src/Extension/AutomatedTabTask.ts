@@ -144,7 +144,7 @@ export function AutomatedTabTask<T extends Record<string, (...args: any[]) => Pr
         browser.runtime.sendMessage({ type: REGISTER }).then(
             (sender: browser.runtime.MessageSender) => {
                 const tabId = sender.tab!.id!
-                if (!tabId) return
+                if (typeof tabId !== 'number') return
                 // Transform `methodA` to `methodA:233` (if tabId = 233)
                 const tasksWithId: any = {}
                 for (const [taskName, value] of Object.entries(taskImplements)) {
@@ -275,7 +275,7 @@ async function createOrGetTheTabToExecuteTask(options: createOrGetTheTabToExecut
     /**
      * does it need a lock to avoid too many open at the same time?
      */
-    const withoutLock = isImportant || autoClose === false || active || wantedTabID
+    const withoutLock = Boolean(isImportant || autoClose === false || active || typeof wantedTabID !== 'number')
     if (!withoutLock) await lock.lock(timeout)
 
     const tabId = await getTabOrCreate(wantedTabID, url, needRedirect, active, pinned)
@@ -301,7 +301,7 @@ async function getTabOrCreate(
     active: boolean,
     pinned: boolean,
 ) {
-    if (openInCurrentTab) {
+    if (typeof openInCurrentTab === 'number') {
         if (needRedirect) {
             // TODO: read the api
             browser.tabs.executeScript(openInCurrentTab, { code: 'location.href = ' + url })
