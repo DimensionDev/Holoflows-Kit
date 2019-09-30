@@ -48,7 +48,7 @@
     "rollup-plugin-commonjs": "^10.1.0",
     "rollup-plugin-node-resolve": "^5.2.0",
     "rollup-plugin-replace": "^2.2.0",
-    "rollup-plugin-typescript2": "^0.24.2",
+    "rollup-plugin-typescript2": "^0.24.3",
     "source-map-support": "^0.5.13",
     "ts-node": "^8.4.1",
     "typescript": "^3.6.3"
