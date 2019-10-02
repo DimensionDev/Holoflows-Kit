@@ -29,5 +29,7 @@ export class EventWatcher<
     /**
      * {@inheritdoc Watcher.enableSingleMode}
      */
-    enableSingleMode: () => EventWatcher<T, Before, After, true> = this._enableSingleMode as any
+    enableSingleMode(): EventWatcher<T, Before, After, true> {
+        return this._enableSingleMode() as any
+    }
 }

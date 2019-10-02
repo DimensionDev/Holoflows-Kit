@@ -20,10 +20,10 @@ export class MessageCenter<ITypedMessages> {
     private eventEmitter = new mitt()
     private listener = async (request: InternalMessageType | Event) => {
         let { key, data, instanceKey } = await this.serialization.deserialization(
-            (request as CustomEvent).detail || request,
+            (request as CustomEvent).detail ?? request,
         )
         // Message is not for us
-        if (this.instanceKey !== (instanceKey || '')) return
+        if (this.instanceKey !== (instanceKey ?? '')) return
         if (this.writeToConsole) {
             console.log(
                 `%cReceive%c %c${key.toString()}`,
@@ -40,15 +40,15 @@ export class MessageCenter<ITypedMessages> {
      * This option cannot make your message safe!
      */
     constructor(private instanceKey = '') {
-        if (typeof browser !== 'undefined' && browser.runtime && browser.runtime.onMessage) {
+        if (typeof browser === 'object') {
             // Fired when a message is sent from either an extension process (by runtime.sendMessage)
             // or a content script (by tabs.sendMessage).
-            browser.runtime.onMessage.addListener((e: any) => {
+            browser?.runtime?.onMessage?.addListener?.((e: any) => {
                 this.listener(e)
             })
         }
-        if (typeof document !== 'undefined' && document.addEventListener) {
-            document.addEventListener(MessageCenterEvent, this.listener)
+        if (typeof document !== 'undefined') {
+            document?.addEventListener?.(MessageCenterEvent, this.listener)
         }
     }
     /**
@@ -95,23 +95,19 @@ export class MessageCenter<ITypedMessages> {
             instanceKey: this.instanceKey || '',
         } as InternalMessageType)
         if (typeof browser !== 'undefined') {
-            if (browser.runtime && browser.runtime.sendMessage) {
-                browser.runtime.sendMessage(serialized).catch(noop)
-            }
-            if (browser.tabs) {
-                // Send message to Content Script
-                browser.tabs.query({ discarded: false }).then(tabs => {
-                    for (const tab of tabs) {
-                        if (tab.id) browser.tabs.sendMessage(tab.id, serialized).catch(noop)
-                    }
-                })
-            }
+            browser?.runtime?.sendMessage?.(serialized)?.catch?.(noop)
+            // Send message to Content Script
+            browser?.tabs?.query?.({ discarded: false })?.then?.(tabs => {
+                for (const tab of tabs) {
+                    if (tab.id) browser.tabs.sendMessage(tab.id, serialized).catch(noop)
+                }
+            })
         }
-        if (alsoSendToDocument && typeof document !== 'undefined' && document.dispatchEvent) {
+        if (alsoSendToDocument && typeof document !== 'undefined') {
             const event = new CustomEvent(MessageCenterEvent, {
                 detail: await this.serialization.serialization({ data, key }),
             })
-            document.dispatchEvent(event)
+            document?.dispatchEvent?.(event)
         }
     }
     /**

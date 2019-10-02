@@ -56,7 +56,7 @@ export class LiveSelector<T, SingleMode extends boolean = false> {
     /**
      * Let developer knows where does this LiveSelector created.
      */
-    private readonly stack = new Error().stack
+    private readonly stack = new Error().stack ?? ''
     /**
      * Is this LiveSelector run in the SingleMode
      */
@@ -331,7 +331,7 @@ export class LiveSelector<T, SingleMode extends boolean = false> {
             // Do a simple check
             return x[0] instanceof Element
         }
-        function nonNull<T>(x: T | null | undefined): x is T {
+        function nonNull<T>(x: T | null | undefined): x is NonNullable<T> {
             return x !== null && x !== undefined
         }
         function unique<T>(x: T[]): T[] {

@@ -133,17 +133,14 @@ export function AutomatedTabTask<T extends Record<string, (...args: any[]) => Pr
         ...AutomatedTabTaskDefineTimeOptionsDefault,
         ...options,
     }
-    if (AsyncCallOptions.key === undefined) {
-        AsyncCallOptions.key = GetDefaultKey()
-    }
-    const AsyncCallKey = AsyncCallOptions.key
+    const AsyncCallKey = AsyncCallOptions.key ?? GetDefaultKey()
     const REGISTER = AsyncCallKey + ':ping'
     if (GetContext() === 'content') {
         // If run in content script
         // Register this tab
         browser.runtime.sendMessage({ type: REGISTER }).then(
             (sender: browser.runtime.MessageSender) => {
-                const tabId = sender.tab!.id!
+                const tabId = sender.tab?.id
                 if (typeof tabId !== 'number') return
                 // Transform `methodA` to `methodA:233` (if tabId = 233)
                 const tasksWithId: any = {}
@@ -163,7 +160,7 @@ export function AutomatedTabTask<T extends Record<string, (...args: any[]) => Pr
         // Listen to tab REGISTER event
         browser.runtime.onMessage.addListener(((message, sender) => {
             if ((message as any).type === REGISTER) {
-                tabReadyMap.add(sender.tab!.id!)
+                tabReadyMap.add(sender.tab?.id!)
                 // response its tab id
                 return Promise.resolve(sender)
             }
@@ -195,7 +192,7 @@ export function AutomatedTabTask<T extends Record<string, (...args: any[]) => Pr
                     memorable: defaultMemorable,
                     important: false,
                     timeout: defaultTimeout,
-                    autoClose: typeof urlOrTabID === 'number' || options.runAtTabID ? false : defaultAutoClose,
+                    autoClose: typeof (urlOrTabID ?? options.runAtTabID) === 'number' ? false : defaultAutoClose,
                     pinned: defaultPinned,
                     active: defaultActive,
                     needRedirect: false,
@@ -208,7 +205,7 @@ export function AutomatedTabTask<T extends Record<string, (...args: any[]) => Pr
 
             let finalURL: string
             if (typeof urlOrTabID === 'string') finalURL = urlOrTabID
-            else finalURL = url || ''
+            else finalURL = url ?? ''
             function proxyTrap(_target: unknown, taskName: string | number | symbol) {
                 return (...taskArgs: any[]) => {
                     if (typeof taskName !== 'string') throw new TypeError('Key must be a string')

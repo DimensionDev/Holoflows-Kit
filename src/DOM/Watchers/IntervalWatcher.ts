@@ -34,5 +34,7 @@ export class IntervalWatcher<
     /**
      * {@inheritdoc Watcher.enableSingleMode}
      */
-    enableSingleMode: () => IntervalWatcher<T, Before, After, true> = this._enableSingleMode as any
+    enableSingleMode(): IntervalWatcher<T, Before, After, true> {
+        return this._enableSingleMode() as any
+    }
 }

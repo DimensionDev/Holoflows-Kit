@@ -22,7 +22,7 @@ export const timeout = <T>(promise: PromiseLike<T>, time: number, rejectReason?:
     const race = Promise.race([
         promise,
         new Promise<T>((r, reject) => {
-            timer = setTimeout(() => reject(new Error(rejectReason || 'timeout')), time)
+            timer = setTimeout(() => reject(new Error(rejectReason ?? 'timeout')), time)
         }),
     ])
     race.finally(() => clearTimeout(timer))

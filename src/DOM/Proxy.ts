@@ -217,7 +217,7 @@ export function DOMProxy<
     const DOMProxyObject = {
         observer: {
             set callback(v) {
-                if (v === undefined) v = noop
+                v = v ?? noop
                 observerCallback = v
                 reObserve(true)
             },

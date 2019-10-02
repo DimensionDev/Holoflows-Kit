@@ -654,7 +654,7 @@ export abstract class Watcher<T, Before extends Element, After extends Element, 
     /** window.requestIdleCallback, or polyfill. */
     protected readonly requestIdleCallback = requestIdleCallback
     /** For debug usage. Just keep it. */
-    private readonly stack = new Error().stack || ''
+    private readonly stack = new Error().stack ?? ''
     //#endregion
     //#region Warnings
     /**

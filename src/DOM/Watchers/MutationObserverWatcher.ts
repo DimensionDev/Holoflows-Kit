@@ -72,5 +72,7 @@ export class MutationObserverWatcher<
     /**
      * {@inheritdoc Watcher.enableSingleMode}
      */
-    enableSingleMode: () => MutationObserverWatcher<T, Before, After, true> = this._enableSingleMode as any
+    enableSingleMode(): MutationObserverWatcher<T, Before, After, true> {
+        return this._enableSingleMode as any
+    }
 }

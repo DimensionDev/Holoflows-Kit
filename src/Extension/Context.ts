@@ -15,17 +15,20 @@ export function GetContext(): Contexts {
     if (typeof location === 'undefined') return 'unknown'
     if (typeof browser !== 'undefined') {
         if (location.protocol.match('-extension')) {
-            if (
-                browser.extension && browser.extension.getBackgroundPage
-                    ? browser.extension.getBackgroundPage().location.href === location.href
-                    : ['generated', 'background', 'page', '.html'].every(x => location.pathname.match(x))
+            const backgroundPage = browser?.extension?.getBackgroundPage?.()
+            // @ts-ignore
+            const isSameWindow = backgroundPage === globalThis || backgroundPage === window
+            const isSameLocation = backgroundPage?.location.href === location.href
+            const isSameManifestURL = location.pathname.match(
+                browser?.runtime?.getManifest() ?.background?.page ?? '/_generated_background_page.html'
             )
+            if (isSameWindow || isSameLocation || isSameManifestURL) {
                 return 'background'
+            }
             return 'options'
         }
-        if (browser.runtime && browser.runtime.getManifest) return 'content'
+        if (typeof browser?.runtime?.getManifest === 'function') return 'content'
     }
-    // What about rollup?
     if (location.hostname === 'localhost') return 'debugging'
     return 'webpage'
 }
