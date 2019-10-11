@@ -12,6 +12,18 @@ A watcher based on MutationObserver
 export declare class MutationObserverWatcher<T, Before extends Element = HTMLSpanElement, After extends Element = HTMLSpanElement, SingleMode extends boolean = false> extends Watcher<T, Before, After, SingleMode> 
 ```
 
+## Example
+
+
+```ts
+new MutationObserverWatcher(ls)
+    .useForeach(node => {
+        console.log(node)
+    })
+    .startWatch()
+
+```
+
 ## Constructors
 
 |  Constructor | Modifiers | Description |
@@ -29,18 +41,6 @@ export declare class MutationObserverWatcher<T, Before extends Element = HTMLSpa
 
 |  Method | Modifiers | Description |
 |  --- | --- | --- |
-|  [startWatch(options)](./kit.mutationobserverwatcher.startwatch.md) |  | Start an MutationObserverWatcher.<!-- -->You must provide a reasonable MutationObserverInit to reduce dom events.<!-- -->https://mdn.io/MutationObserverInit |
+|  [startWatch(options)](./kit.mutationobserverwatcher.startwatch.md) |  | Start an MutationObserverWatcher. |
 |  [stopWatch()](./kit.mutationobserverwatcher.stopwatch.md) |  | Stop the watcher |
-
-## Example
-
-
-```ts
-new MutationObserverWatcher(ls)
-    .useForeach(node => {
-        console.log(node)
-    })
-    .startWatch()
-
-```
 

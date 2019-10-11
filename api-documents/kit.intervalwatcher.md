@@ -12,6 +12,18 @@ A watcher based on time interval.
 export declare class IntervalWatcher<T, Before extends Element = HTMLSpanElement, After extends Element = HTMLSpanElement, SingleMode extends boolean = false> extends Watcher<T, Before, After, SingleMode> 
 ```
 
+## Example
+
+
+```ts
+new IntervalWatcher(ls)
+.useForeach(node => {
+    console.log(node)
+})
+.startWatch(1000)
+
+```
+
 ## Properties
 
 |  Property | Modifiers | Type | Description |
@@ -24,16 +36,4 @@ export declare class IntervalWatcher<T, Before extends Element = HTMLSpanElement
 |  --- | --- | --- |
 |  [startWatch(interval)](./kit.intervalwatcher.startwatch.md) |  | Start to watch the LiveSelector at a interval(ms). |
 |  [stopWatch()](./kit.intervalwatcher.stopwatch.md) |  | Stop the watcher |
-
-## Example
-
-
-```ts
-new IntervalWatcher(ls)
-.useForeach(node => {
-    console.log(node)
-})
-.startWatch(1000)
-
-```
 

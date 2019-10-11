@@ -12,6 +12,20 @@ A `ref` object with `addListener`
 export declare class ValueRef<T> 
 ```
 
+## Example
+
+
+```ts
+const ref = new ValueRef(64)
+function useRef() {
+    const [state, setState] = React.useState(ref.value)
+    React.useEffect(() => ref.addListener(e => setState(e)))
+    return state
+}
+ref.value = 42 // useRef will receive the new value
+
+```
+
 ## Constructors
 
 |  Constructor | Modifiers | Description |
@@ -31,18 +45,4 @@ export declare class ValueRef<T>
 |  [addListener(fn)](./kit.valueref.addlistener.md) |  | Add a listener. This will return a remover. |
 |  [removeAllListener()](./kit.valueref.removealllistener.md) |  | Remove all listeners |
 |  [removeListener(fn)](./kit.valueref.removelistener.md) |  | Remove a listener |
-
-## Example
-
-
-```ts
-const ref = new ValueRef(64)
-function useRef() {
-    const [state, setState] = React.useState(ref.value)
-    React.useEffect(() => ref.addListener(e => setState(e)))
-    return state
-}
-ref.value = 42 // useRef will receive the new value
-
-```
 

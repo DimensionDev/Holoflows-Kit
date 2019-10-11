@@ -12,6 +12,19 @@ Create a live selector that can continuously select the element you want.
 export declare class LiveSelector<T, SingleMode extends boolean = false> 
 ```
 
+## Remarks
+
+Call [\#evaluate](./kit.liveselector.evaluate.md) to evaluate the element. Falsy value will be ignored.
+
+## Example
+
+
+```ts
+const ls = new LiveSelector().querySelectorAll('a').map(x => x.href)
+ls.evaluate() // returns all urls at the current time.
+
+```
+
 ## Constructors
 
 |  Constructor | Modifiers | Description |
@@ -50,17 +63,4 @@ export declare class LiveSelector<T, SingleMode extends boolean = false>
 |  [reverse()](./kit.liveselector.reverse.md) |  | Reverses the elements in an Array. |
 |  [slice(start, end)](./kit.liveselector.slice.md) |  | Returns a section of an array. |
 |  [sort(compareFn)](./kit.liveselector.sort.md) |  | Sorts an array. |
-
-## Remarks
-
-Call [\#evaluate](./kit.liveselector.evaluate.md) to evaluate the element. Falsy value will be ignored.
-
-## Example
-
-
-```ts
-const ls = new LiveSelector().querySelectorAll('a').map(x => x.href)
-ls.evaluate() // returns all urls at the current time.
-
-```
 

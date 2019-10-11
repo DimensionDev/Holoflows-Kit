@@ -12,6 +12,15 @@ A Watcher based on event handlers.
 export declare class EventWatcher<T, Before extends Element = HTMLSpanElement, After extends Element = HTMLSpanElement, SingleMode extends boolean = false> extends Watcher<T, Before, After, SingleMode> 
 ```
 
+## Example
+
+
+```ts
+const e = new EventWatcher(ls).useForeach(node => console.log(node))
+document.addEventListener('event', e.eventListener)
+
+```
+
 ## Constructors
 
 |  Constructor | Modifiers | Description |
@@ -24,13 +33,4 @@ export declare class EventWatcher<T, Before extends Element = HTMLSpanElement, A
 |  --- | --- | --- | --- |
 |  [enableSingleMode](./kit.eventwatcher.enablesinglemode.md) |  | <code>() =&gt; EventWatcher&lt;T, Before, After, true&gt;</code> | Enable single mode. |
 |  [eventListener](./kit.eventwatcher.eventlistener.md) |  | <code>() =&gt; void</code> | Use this function as event listener to invoke watcher. |
-
-## Example
-
-
-```ts
-const e = new EventWatcher(ls).useForeach(node => console.log(node))
-document.addEventListener('event', e.eventListener)
-
-```
 

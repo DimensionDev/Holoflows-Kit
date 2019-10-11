@@ -6,10 +6,6 @@
 
 Start an MutationObserverWatcher.
 
-You must provide a reasonable MutationObserverInit to reduce dom events.
-
-https://mdn.io/MutationObserverInit
-
 <b>Signature:</b>
 
 ```typescript
@@ -25,4 +21,10 @@ startWatch(options: MutationObserverInit): this;
 <b>Returns:</b>
 
 `this`
+
+## Remarks
+
+You must provide a reasonable MutationObserverInit to reduce dom events.
+
+https://mdn.io/MutationObserverInit
 
