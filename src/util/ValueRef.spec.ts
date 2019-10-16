@@ -27,6 +27,12 @@ describe('ValueRef', () => {
         ref.value = ref.value
         done()
     })
+    it('isEqual should work', done => {
+        const ref = new ValueRef({ a: 1 }, (a, b) => JSON.stringify(a) === JSON.stringify(b))
+        ref.addListener(() => done('bad call'))
+        ref.value = { a: 1 }
+        done()
+    })
     it('remove the listener', done => {
         const ref = new ValueRef(symb)
         const f = () => done('bad call')
