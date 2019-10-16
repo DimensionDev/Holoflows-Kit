@@ -24,7 +24,7 @@ export class ValueRef<T> {
     /** Set current value */
     set value(newVal: T) {
         const oldVal = this._value
-        if (newVal === oldVal) return
+        if (this.isEqual(newVal, oldVal)) return
         this._value = newVal
         for (const fn of this.watcher) {
             try {
@@ -36,7 +36,7 @@ export class ValueRef<T> {
     }
     /** All watchers */
     private watcher = new Set<(newVal: T, oldVal: T) => void>()
-    constructor(private _value: T) {}
+    constructor(private _value: T, private isEqual: (a: T, b: T) => boolean = (a, b) => a === b) {}
     /**
      * Add a listener. This will return a remover.
      * @example

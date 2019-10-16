@@ -435,13 +435,6 @@ export class LiveSelector<T, SingleMode extends boolean = false> {
         if (this.isSingleMode) return (arr.filter(nonNull) as T[])[0] as any
         return (arr.filter(nonNull) as T[]) as any
     }
-    /**
-     * {@inheritdoc LiveSelector.evaluate}
-     * @deprecated Use `evaluate()` instead, it's shorter. Will removed at 0.6.0
-     */
-    evaluateOnce(): SingleMode extends true ? (T | undefined) : T[] {
-        return this.evaluate()
-    }
     //#endregion
     /**
      * Call this function to enhance the debug experience in the Chrome DevTools
