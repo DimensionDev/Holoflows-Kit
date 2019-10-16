@@ -30,12 +30,13 @@ ref.value = 42 // useRef will receive the new value
 
 |  Constructor | Modifiers | Description |
 |  --- | --- | --- |
-|  [(constructor)(\_value)](./kit.valueref._constructor_.md) |  | Constructs a new instance of the <code>ValueRef</code> class |
+|  [(constructor)(\_value, isEqual)](./kit.valueref._constructor_.md) |  | Constructs a new instance of the <code>ValueRef</code> class |
 
 ## Properties
 
 |  Property | Modifiers | Type | Description |
 |  --- | --- | --- | --- |
+|  [isEqual](./kit.valueref.isequal.md) |  | <code>(a: T, b: T) =&gt; boolean</code> |  |
 |  [value](./kit.valueref.value.md) |  | <code>T</code> | Set current value |
 
 ## Methods

@@ -9,7 +9,7 @@ Constructs a new instance of the `ValueRef` class
 <b>Signature:</b>
 
 ```typescript
-constructor(_value: T);
+constructor(_value: T, isEqual?: (a: T, b: T) => boolean);
 ```
 
 ## Parameters
@@ -17,4 +17,5 @@ constructor(_value: T);
 |  Parameter | Type | Description |
 |  --- | --- | --- |
 |  \_value | <code>T</code> |  |
+|  isEqual | <code>(a: T, b: T) =&gt; boolean</code> |  |
 

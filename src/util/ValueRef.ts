@@ -36,6 +36,11 @@ export class ValueRef<T> {
     }
     /** All watchers */
     private watcher = new Set<(newVal: T, oldVal: T) => void>()
+    /**
+     *
+     * @param _value The internal value
+     * @param isEqual The comparer function
+     */
     constructor(private _value: T, public isEqual: (a: T, b: T) => boolean = (a, b) => a === b) {}
     /**
      * Add a listener. This will return a remover.

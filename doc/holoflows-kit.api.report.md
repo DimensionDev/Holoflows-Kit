@@ -132,8 +132,6 @@ export class LiveSelector<T, SingleMode extends boolean = false> {
     enableSingleMode(): LiveSelector<T, true>;
     static enhanceDebugger(): void;
     evaluate(): SingleMode extends true ? (T | undefined) : T[];
-    // @deprecated
-    evaluateOnce(): SingleMode extends true ? (T | undefined) : T[];
     filter(f: (value: T, index: number, array: T[]) => any): LiveSelector<NonNullable<T>, SingleMode>;
     flat(): LiveSelector<T extends ArrayLike<infer U> ? U : never, SingleMode>;
     getElementsByClassName<T extends Element = Element>(className: string): LiveSelector<T, SingleMode>;
@@ -195,8 +193,10 @@ export { Serialization }
 
 // @public @eventProperty
 export class ValueRef<T> {
-    constructor(_value: T);
+    constructor(_value: T, isEqual?: (a: T, b: T) => boolean);
     addListener(fn: (newVal: T, oldVal: T) => void): () => void;
+    // (undocumented)
+    isEqual: (a: T, b: T) => boolean;
     removeAllListener(): void;
     removeListener(fn: (newVal: T, oldVal: T) => void): void;
     value: T;
