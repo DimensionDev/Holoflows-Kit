@@ -109,7 +109,7 @@ export class MessageCenter<ITypedMessages> {
         }
         if (alsoSendToDocument && typeof document !== 'undefined' && document.dispatchEvent) {
             const event = new CustomEvent(MessageCenterEvent, {
-                detail: await this.serialization.serialization({ data, key }),
+                detail: serialized,
             })
             document.dispatchEvent(event)
         }
