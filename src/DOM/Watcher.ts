@@ -506,7 +506,7 @@ export abstract class Watcher<T, Before extends Element, After extends Element, 
     //#endregion
     //#region events
     /** Event emitter */
-    protected readonly eventEmitter = new mitt()
+    protected readonly eventEmitter = mitt()
     private isEventsListening: Record<'onIteration' | 'onChange' | 'onRemove' | 'onAdd', boolean> = {
         onAdd: false,
         onChange: false,

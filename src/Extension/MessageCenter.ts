@@ -17,7 +17,7 @@ export class MessageCenter<ITypedMessages> {
      * @defaultValue NoSerialization
      */
     public serialization = NoSerialization
-    private eventEmitter = new mitt()
+    private eventEmitter = mitt()
     private listener = async (request: InternalMessageType | Event) => {
         let { key, data, instanceKey } = await this.serialization.deserialization(
             (request as CustomEvent).detail || request,
