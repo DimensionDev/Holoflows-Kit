@@ -21,10 +21,10 @@
   },
   "sideEffects": false,
   "scripts": {
-    "start": "cross-env NODE_ENV=development npm-run-all --parallel start:tsc start:rollup",
+    "start": "cross-env NODE_ENV=development npm-run-all --parallel \"start:tsc -- {@}\" start:rollup",
     "start:tsc": "tsc --watch",
     "start:rollup": "rollup -c -w",
-    "build": "cross-env NODE_ENV=production npm-run-all --parallel clean build:tsc build:rollup",
+    "build": "cross-env NODE_ENV=production npm-run-all --parallel clean \"build:tsc -- {@}\" build:rollup",
     "build:tsc": "tsc",
     "build:rollup": "rollup -c -m",
     "clean": "rimraf ./es ./umd",

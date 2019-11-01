@@ -15,8 +15,11 @@ const config = {
             browser: true,
             preferBuiltins: false,
             mainFields: ['module', 'main'],
+            customResolveOptions: {
+                moduleDirectory: process.env.MODULE_DIR || 'node_modules',
+            }
         }),
-        typescript({ tsconfigOverride: { compilerOptions: { target: 'es6' } } }),
+        typescript({ tsconfigOverride: { compilerOptions: { target: 'es6', ...JSON.parse(process.env.TS_OPTS) } } }),
         replace({
             'process.env.NODE_ENV': JSON.stringify(process.env.NODE_ENV || 'production'),
         }),
