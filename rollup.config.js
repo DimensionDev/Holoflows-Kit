@@ -3,6 +3,10 @@ import commonjs from 'rollup-plugin-commonjs'
 import nodeResolve from 'rollup-plugin-node-resolve'
 import replace from 'rollup-plugin-replace'
 
+function parseMaybe(s) {
+    return typeof s === 'string' ? JSON.parse(s) : {}
+}
+
 const config = {
     input: './src/index.ts',
     output: {
@@ -19,7 +23,7 @@ const config = {
                 moduleDirectory: process.env.MODULE_DIR || 'node_modules',
             }
         }),
-        typescript({ tsconfigOverride: { compilerOptions: { target: 'es6', ...JSON.parse(process.env.TS_OPTS) } } }),
+        typescript({ tsconfigOverride: { compilerOptions: { target: 'es6', ...parseMaybe(process.env.TS_OPTS) } } }),
         replace({
             'process.env.NODE_ENV': JSON.stringify(process.env.NODE_ENV || 'production'),
         }),
