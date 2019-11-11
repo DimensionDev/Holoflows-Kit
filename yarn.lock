@@ -92,13 +92,12 @@
   integrity sha512-518yewjSga1jLdiLrcmpMFlaba5P+50b0TWNFUpC+SL9Yzf0kMi57qw+bMl+rQ08cGqH1vLx4eg9YFUbZXgZ0Q==
 
 "@rollup/plugin-replace@^2.2.0":
-  version "2.2.0"
-  resolved "https://registry.yarnpkg.com/@rollup/plugin-replace/-/plugin-replace-2.2.0.tgz#e3b11881fb1ab1be7570e1ccd175b8249e448c52"
-  integrity sha512-DnALjyAdfAyQ4i6tJdi4v6rJwx5tzV9/+M7G8qA3cHpPOYQOgM4U8bU4lSM24h9hFIbycxRTHtE+TkENLqRlEA==
+  version "2.2.1"
+  resolved "https://registry.yarnpkg.com/@rollup/plugin-replace/-/plugin-replace-2.2.1.tgz#94af20cb3d70cccdcec991d1f97dd373936ec544"
+  integrity sha512-dgq5ijT8fK18KTb1inenZ61ivTayV7pvbz2+ivT+VN20BOgJVM1fqoBETqGHKgFVm/J9BhR82mQyAtxfpPv1lQ==
   dependencies:
     magic-string "^0.25.2"
     rollup-pluginutils "^2.6.0"
-    typescript "^3.4.3"
 
 "@types/argparse@1.0.33":
   version "1.0.33"
@@ -1799,7 +1798,7 @@ type-check@~0.3.2:
   dependencies:
     prelude-ls "~1.1.2"
 
-typescript@^3.4.3, typescript@^3.6.4, typescript@~3.7.2:
+typescript@^3.6.4, typescript@~3.7.2:
   version "3.7.2"
   resolved "https://registry.yarnpkg.com/typescript/-/typescript-3.7.2.tgz#27e489b95fa5909445e9fef5ee48d81697ad18fb"
   integrity sha512-ml7V7JfiN2Xwvcer+XAf2csGO1bPBdRbFCkYBczNZggrBZ9c7G3riSUeJmqEU5uOtXNPMhE3n+R4FA/3YOAWOQ==
