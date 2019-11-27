@@ -195,11 +195,12 @@ export { Serialization }
 export class ValueRef<T> {
     constructor(_value: T, isEqual?: (a: T, b: T) => boolean);
     addListener(fn: (newVal: T, oldVal: T) => void): () => void;
+    get value(): T;
+    set value(newVal: T);
     // (undocumented)
     isEqual: (a: T, b: T) => boolean;
     removeAllListener(): void;
     removeListener(fn: (newVal: T, oldVal: T) => void): void;
-    value: T;
     }
 
 // Warning: (ae-forgotten-export) The symbol "ResultOf" needs to be exported by the entry point index.d.ts
@@ -240,12 +241,10 @@ export abstract class Watcher<T, Before extends Element, After extends Element, 
     // (undocumented)
     protected _enableSingleMode(): this;
     static enhanceDebugger(): void;
+    protected get singleMode(): boolean;
     protected readonly eventEmitter: mitt.Emitter;
     protected findNodeFromListByKey: (list: readonly T[], keys: readonly unknown[]) => (key: unknown) => T | null;
-    readonly firstDOMProxy: T extends Node ? DOMProxy<T, Before, After> : never;
     protected _firstDOMProxy: DOMProxy<any, Before, After>;
-    // @deprecated
-    readonly firstVirtualNode: T extends Node ? DOMProxy<T, Before, After> : never;
     getDOMProxyByKey(key: unknown): DOMProxy<any, Before, After> | null;
     // @deprecated
     getVirtualNodeByKey(key: unknown): DOMProxy<any, Before, After> | null;
@@ -263,6 +262,8 @@ export abstract class Watcher<T, Before extends Element, After extends Element, 
     removeListener(event: 'onIteration', fn: EventCallback<OnIterationEvent<T>>): this;
     // (undocumented)
     removeListener(event: 'onChange', fn: EventCallback<OnChangeEvent<T>>): this;
+    get firstDOMProxy(): T extends Node ? DOMProxy<T, Before, After> : never;
+    get firstVirtualNode(): T extends Node ? DOMProxy<T, Before, After> : never;
     // (undocumented)
     removeListener(event: 'onRemove', fn: EventCallback<OnAddOrRemoveEvent<T>>): this;
     // (undocumented)
@@ -272,7 +273,6 @@ export abstract class Watcher<T, Before extends Element, After extends Element, 
     protected scheduleWatcherCheck: () => void;
     setComparer(keyComparer?: (a: unknown, b: unknown) => boolean, valueComparer?: (a: T, b: T) => boolean): this;
     setDOMProxyOption(option: Partial<DOMProxyOptions<Before, After>>): this;
-    protected readonly singleMode: boolean;
     protected singleModeCallback?: useForeachReturns<T>;
     protected singleModeHasLastValue: boolean;
     protected singleModeLastValue?: T;
@@ -281,7 +281,7 @@ export abstract class Watcher<T, Before extends Element, After extends Element, 
     then<TResult1 = ResultOf<SingleMode, T>, TResult2 = never>(onfulfilled?: ((value: ResultOf<SingleMode, T>) => TResult1 | PromiseLike<TResult1>) | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | null, options?: {
         minimalResultsRequired?: number;
         timeout?: number;
-    }, starter?: (this: this, self: this) => void): Promise<TResult1 | TResult2>;
+    }): Promise<TResult1 | TResult2>;
     // Warning: (ae-forgotten-export) The symbol "useForeachReturns" needs to be exported by the entry point index.d.ts
     useForeach(forEach: (element: T, key: unknown, metadata: T extends Node ? DOMProxy<T, Before, After> : unknown) => useForeachReturns<T>): this;
     protected useForeachFn?: Parameters<Watcher<T, any, any, any>['useForeach']>[0];

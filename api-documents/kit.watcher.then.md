@@ -12,7 +12,7 @@ Start the watcher, once it emitted data, stop watching.
 then<TResult1 = ResultOf<SingleMode, T>, TResult2 = never>(onfulfilled?: ((value: ResultOf<SingleMode, T>) => TResult1 | PromiseLike<TResult1>) | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | null, options?: {
         minimalResultsRequired?: number;
         timeout?: number;
-    }, starter?: (this: this, self: this) => void): Promise<TResult1 | TResult2>;
+    }): Promise<TResult1 | TResult2>;
 ```
 
 ## Parameters
@@ -22,7 +22,6 @@ then<TResult1 = ResultOf<SingleMode, T>, TResult2 = never>(onfulfilled?: ((value
 |  onfulfilled | <code>((value: ResultOf&lt;SingleMode, T&gt;) =&gt; TResult1 &#124; PromiseLike&lt;TResult1&gt;) &#124; null</code> |  |
 |  onrejected | <code>((reason: any) =&gt; TResult2 &#124; PromiseLike&lt;TResult2&gt;) &#124; null</code> |  |
 |  options | <code>{</code><br/><code>        minimalResultsRequired?: number;</code><br/><code>        timeout?: number;</code><br/><code>    }</code> | Options for watcher |
-|  starter | <code>(this: this, self: this) =&gt; void</code> | How to start the watcher |
 
 <b>Returns:</b>
 
@@ -38,8 +37,6 @@ This is an implementation of `PromiseLike`
 ```ts
 const value = await watcher
 const value2 = await watcher(undefined, undefined, { minimalResultsRequired: 5 })
-// If your watcher need parameters for startWatch
-const value3 = await watcher(undefined, undefined, {}, s => s.startWatch(...))
 
 ```
 

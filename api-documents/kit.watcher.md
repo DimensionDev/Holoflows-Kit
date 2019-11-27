@@ -27,8 +27,6 @@ export declare abstract class Watcher<T, Before extends Element, After extends E
 |  [domProxyOption](./kit.watcher.domproxyoption.md) |  | <code>Partial&lt;DOMProxyOptions&lt;Before, After&gt;&gt;</code> | The dom proxy option used in DOMProxy() |
 |  [eventEmitter](./kit.watcher.eventemitter.md) |  | <code>mitt.Emitter</code> | Event emitter |
 |  [findNodeFromListByKey](./kit.watcher.findnodefromlistbykey.md) |  | <code>(list: readonly T[], keys: readonly unknown[]) =&gt; (key: unknown) =&gt; T &#124; null</code> | Find node from the given list by key |
-|  [firstDOMProxy](./kit.watcher.firstdomproxy.md) |  | <code>T extends Node ? DOMProxy&lt;T, Before, After&gt; : never</code> | This DOMProxy always point to the first node in the LiveSelector |
-|  [firstVirtualNode](./kit.watcher.firstvirtualnode.md) |  | <code>T extends Node ? DOMProxy&lt;T, Before, After&gt; : never</code> | This DOMProxy always point to the first node in the LiveSelector |
 |  [isWatching](./kit.watcher.iswatching.md) |  | <code>boolean</code> | Is the watcher running |
 |  [keyComparer](./kit.watcher.keycomparer.md) |  | <code>(a: unknown, b: unknown) =&gt; boolean</code> | Compare between <code>key</code> and <code>key</code>, in case of you don't want the default behavior |
 |  [lastCallbackMap](./kit.watcher.lastcallbackmap.md) |  | <code>Map&lt;unknown, useForeachReturns&lt;T&gt;&gt;</code> | Saved callback map of last watch |
@@ -39,7 +37,6 @@ export declare abstract class Watcher<T, Before extends Element, After extends E
 |  [mapNodeToKey](./kit.watcher.mapnodetokey.md) |  | <code>(node: T, index: number, arr: readonly T[]) =&gt; unknown</code> | Map <code>Node -&gt; Key</code>, in case of you don't want the default behavior |
 |  [requestIdleCallback](./kit.watcher.requestidlecallback.md) |  | <code>typeof requestIdleCallback</code> | window.requestIdleCallback, or polyfill. |
 |  [scheduleWatcherCheck](./kit.watcher.schedulewatchercheck.md) |  | <code>() =&gt; void</code> | Schedule a watcher check |
-|  [singleMode](./kit.watcher.singlemode.md) |  | <code>boolean</code> | Is the single mode is on. |
 |  [singleModeCallback](./kit.watcher.singlemodecallback.md) |  | <code>useForeachReturns&lt;T&gt;</code> | Callback for single mode |
 |  [singleModeHasLastValue](./kit.watcher.singlemodehaslastvalue.md) |  | <code>boolean</code> | Does it has a last iteration value in single mode? |
 |  [singleModeLastValue](./kit.watcher.singlemodelastvalue.md) |  | <code>T</code> | Last iteration value for single mode |
@@ -76,6 +73,6 @@ export declare abstract class Watcher<T, Before extends Element, After extends E
 |  [setDOMProxyOption(option)](./kit.watcher.setdomproxyoption.md) |  | Set option for DOMProxy |
 |  [startWatch(args)](./kit.watcher.startwatch.md) |  | Let the watcher start to watching |
 |  [stopWatch(args)](./kit.watcher.stopwatch.md) |  | Stop the watcher |
-|  [then(onfulfilled, onrejected, options, starter)](./kit.watcher.then.md) |  | Start the watcher, once it emitted data, stop watching. |
+|  [then(onfulfilled, onrejected, options)](./kit.watcher.then.md) |  | Start the watcher, once it emitted data, stop watching. |
 |  [useForeach(forEach)](./kit.watcher.useforeach.md) |  | Just like React hooks. Provide callbacks for each node changes. |
 
