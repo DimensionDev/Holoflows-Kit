@@ -124,7 +124,6 @@ export abstract class Watcher<T, Before extends Element, After extends Element, 
      * Start the watcher, once it emitted data, stop watching.
      * @param map - Map function transform T to Result
      * @param options - Options for watcher
-     * @param starter - How to start the watcher
      *
      * @remarks This is an implementation of `PromiseLike`
      *
@@ -132,8 +131,6 @@ export abstract class Watcher<T, Before extends Element, After extends Element, 
      * ```ts
      * const value = await watcher
      * const value2 = await watcher(undefined, undefined, { minimalResultsRequired: 5 })
-     * // If your watcher need parameters for startWatch
-     * const value3 = await watcher(undefined, undefined, {}, s => s.startWatch(...))
      * ```
      */
     // The PromiseLike<T> interface
@@ -141,9 +138,7 @@ export abstract class Watcher<T, Before extends Element, After extends Element, 
         onfulfilled?: ((value: ResultOf<SingleMode, T>) => TResult1 | PromiseLike<TResult1>) | null,
         onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | null,
         options: { minimalResultsRequired?: number; timeout?: number } = {},
-        starter: (this: this, self: this) => void = watcher => watcher.startWatch(),
     ): Promise<TResult1 | TResult2> {
-        this._warning_forget_watch_.ignored = true
         const { minimalResultsRequired, timeout: timeoutTime } = {
             ...({
                 minimalResultsRequired: 1,
@@ -174,7 +169,6 @@ export abstract class Watcher<T, Before extends Element, After extends Element, 
                     if (state) resolve(val)
                     else reject(val)
                 }
-                starter.bind(this)(this)
                 const f = (v: OnIterationEvent<any>) => {
                     const nodes = v.values.current
                     if (this.singleMode && nodes.length >= 1) {
@@ -804,7 +798,7 @@ function applyUseForeachCallback<T>(callback: useForeachReturns<T>) {
 }
 //#endregion
 //#region Typescript generic helper
-type ResultOf<SingleMode extends boolean, Result> = SingleMode extends true ? (Result) : (Result)[]
+type ResultOf<SingleMode extends boolean, Result> = SingleMode extends true ? Result : Result[]
 //#endregion
 //#region Warnings
 interface WarningOptions {
