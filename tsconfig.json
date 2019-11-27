@@ -22,8 +22,7 @@
     "outDir": "./es/",
     "incremental": true,
     "typeRoots": ["node_modules/@types", "node_modules/web-ext-types", "src/types"],
-    "jsx": "react",
-    "useDefineForClassFields": true
+    "jsx": "react"
   },
   "include": ["./src/**/*"]
 }
