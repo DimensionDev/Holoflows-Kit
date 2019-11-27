@@ -10,13 +10,13 @@
     regenerator-runtime "^0.13.2"
 
 "@microsoft/api-documenter@^7.5.0":
-  version "7.5.7"
-  resolved "https://registry.yarnpkg.com/@microsoft/api-documenter/-/api-documenter-7.5.7.tgz#dcc3fa0b20966c314e6d96e0c950b8f07466c04a"
-  integrity sha512-/uiElWIy3uiqA3f/GSE0yjTejIrmmmiHR9LA6yC6/pTt4sFm3aSPQ9tpyFTADnTSaCi21sxbCZmB1O6Nm/Lhpw==
+  version "7.7.0"
+  resolved "https://registry.yarnpkg.com/@microsoft/api-documenter/-/api-documenter-7.7.0.tgz#79ec968de74bf4cbbbc89fba07b2b2b0b48164eb"
+  integrity sha512-iSrwXku3/65Qo+DvfGpS0sBbi0g0gHxjucWLjBIEXpfK3qucV2al/mcj0RR6kTHRf9LOJrnRmvOoXgjzj85OAQ==
   dependencies:
-    "@microsoft/api-extractor-model" "7.5.4"
-    "@microsoft/node-core-library" "3.17.0"
-    "@microsoft/ts-command-line" "4.3.4"
+    "@microsoft/api-extractor-model" "7.6.0"
+    "@microsoft/node-core-library" "3.18.0"
+    "@microsoft/ts-command-line" "4.3.5"
     "@microsoft/tsdoc" "0.12.14"
     colors "~1.2.1"
     js-yaml "~3.13.1"
