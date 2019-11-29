@@ -62,6 +62,9 @@ export class MutationObserverWatcher<
         } else watch(this.consistentWatchRoot)
         return this
     }
+    protected defaultStarterForThen() {
+        if (!this.isWatching) this.startWatch({ subtree: true, childList: true, characterData: true })
+    }
     /**
      * {@inheritdoc Watcher.stopWatch}
      */

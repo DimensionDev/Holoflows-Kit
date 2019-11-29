@@ -120,6 +120,9 @@ export abstract class Watcher<T, Before extends Element, After extends Element, 
     }
     //#endregion
     //#region .then()
+    protected defaultStarterForThen() {
+        this.startWatch()
+    }
     /**
      * Start the watcher, once it emitted data, stop watching.
      * @param map - Map function transform T to Result
@@ -139,6 +142,7 @@ export abstract class Watcher<T, Before extends Element, After extends Element, 
         onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | null,
         options: { minimalResultsRequired?: number; timeout?: number } = {},
     ): Promise<TResult1 | TResult2> {
+        this.defaultStarterForThen()
         const { minimalResultsRequired, timeout: timeoutTime } = {
             ...({
                 minimalResultsRequired: 1,
