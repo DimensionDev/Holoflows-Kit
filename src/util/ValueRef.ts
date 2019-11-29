@@ -38,8 +38,8 @@ export class ValueRef<T> {
     private watcher = new Set<(newVal: T, oldVal: T) => void>()
     /**
      *
-     * @param _value The internal value
-     * @param isEqual The comparer function
+     * @param _value - The internal value
+     * @param isEqual - The comparer function
      */
     constructor(private _value: T, public isEqual: (a: T, b: T) => boolean = (a, b) => a === b) {}
     /**

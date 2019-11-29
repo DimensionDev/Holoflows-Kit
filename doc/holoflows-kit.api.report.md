@@ -172,9 +172,11 @@ export class MessageCenter<ITypedMessages> {
 // @public
 export class MutationObserverWatcher<T, Before extends Element = HTMLSpanElement, After extends Element = HTMLSpanElement, SingleMode extends boolean = false> extends Watcher<T, Before, After, SingleMode> {
     constructor(
-    liveSelector: LiveSelector<T, SingleMode>, 
-    consistentWatchRoot?: Node, 
+    liveSelector: LiveSelector<T, SingleMode>,
+    consistentWatchRoot?: Node,
     stopWatchOnDisconnected?: boolean);
+    // (undocumented)
+    protected defaultStarterForThen(): void;
     enableSingleMode: () => MutationObserverWatcher<T, Before, After, true>;
     protected liveSelector: LiveSelector<T, SingleMode>;
     startWatch(options: MutationObserverInit): this;
@@ -204,26 +206,28 @@ export class ValueRef<T> {
     }
 
 // Warning: (ae-forgotten-export) The symbol "ResultOf" needs to be exported by the entry point index.d.ts
-// 
+//
 // @public
 export abstract class Watcher<T, Before extends Element, After extends Element, SingleMode extends boolean> implements PromiseLike<ResultOf<SingleMode, T>> {
     constructor(liveSelector: LiveSelector<T, SingleMode>);
     // Warning: (ae-forgotten-export) The symbol "EventCallback" needs to be exported by the entry point index.d.ts
     // Warning: (ae-forgotten-export) The symbol "OnIterationEvent" needs to be exported by the entry point index.d.ts
-    // 
+    //
     // (undocumented)
     addListener(event: 'onIteration', fn: EventCallback<OnIterationEvent<T>>): this;
     // Warning: (ae-forgotten-export) The symbol "OnChangeEvent" needs to be exported by the entry point index.d.ts
-    // 
+    //
     // (undocumented)
     addListener(event: 'onChange', fn: EventCallback<OnChangeEvent<T>>): this;
     // Warning: (ae-forgotten-export) The symbol "OnAddOrRemoveEvent" needs to be exported by the entry point index.d.ts
-    // 
+    //
     // (undocumented)
     addListener(event: 'onRemove', fn: EventCallback<OnAddOrRemoveEvent<T>>): this;
     // (undocumented)
     addListener(event: 'onAdd', fn: EventCallback<OnAddOrRemoveEvent<T>>): this;
     assignKeys<Q = unknown>(keyAssigner: (node: T, index: number, arr: readonly T[]) => Q): this;
+    // (undocumented)
+    protected defaultStarterForThen(): void;
     dismissSingleModeWarning(): this;
     protected domProxyOption: Partial<DOMProxyOptions<Before, After>>;
     // (undocumented)
