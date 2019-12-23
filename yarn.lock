@@ -214,9 +214,9 @@ assert-plus@1.0.0, assert-plus@^1.0.0:
   integrity sha1-8S4PPF13sLHN2RRpQuTpbB5N1SU=
 
 async-call-rpc@^1.0.0:
-  version "1.0.0"
-  resolved "https://registry.yarnpkg.com/async-call-rpc/-/async-call-rpc-1.0.0.tgz#a2dd6a192b353b717fdf0881da9c805c58e3cb44"
-  integrity sha512-J2bj2HfUPKJCf7i/Lgxjj51+L0xg5xzENK1zkH3xZhsg2PFj2rxwwIRhqSKvGW6z3d6ukjcQWHg/0UbtsuFD2g==
+  version "1.0.4"
+  resolved "https://registry.yarnpkg.com/async-call-rpc/-/async-call-rpc-1.0.4.tgz#ded3ef0fac75d0ae90e0ac574adda1ffae4a5cc9"
+  integrity sha512-dsLSfuF+n1GmgsL5Y+uGCkd+/wYZtHObKPxUncEoJ05bb1Lk3wUlU4ppTXL5sBsRuIXPEUxEdb6w86d0u59udg==
 
 async-limiter@^1.0.0:
   version "1.0.1"
