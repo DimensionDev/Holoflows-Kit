@@ -34,7 +34,6 @@ new MutationObserverWatcher(ls)
 
 |  Property | Modifiers | Type | Description |
 |  --- | --- | --- | --- |
-|  [enableSingleMode](./kit.mutationobserverwatcher.enablesinglemode.md) |  | <code>() =&gt; MutationObserverWatcher&lt;T, Before, After, true&gt;</code> | Enable single mode. |
 |  [liveSelector](./kit.mutationobserverwatcher.liveselector.md) |  | <code>LiveSelector&lt;T, SingleMode&gt;</code> | LiveSelector that this object holds |
 
 ## Methods

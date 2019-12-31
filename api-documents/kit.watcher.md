@@ -47,7 +47,6 @@ export declare abstract class Watcher<T, Before extends Element, After extends E
 
 |  Method | Modifiers | Description |
 |  --- | --- | --- |
-|  [\_enableSingleMode()](./kit.watcher._enablesinglemode.md) |  |  |
 |  [addListener(event, fn)](./kit.watcher.addlistener.md) |  |  |
 |  [addListener(event, fn)](./kit.watcher.addlistener_1.md) |  |  |
 |  [addListener(event, fn)](./kit.watcher.addlistener_2.md) |  |  |
@@ -59,11 +58,8 @@ export declare abstract class Watcher<T, Before extends Element, After extends E
 |  [emit(event, data)](./kit.watcher.emit_1.md) |  |  |
 |  [emit(event, data)](./kit.watcher.emit_2.md) |  |  |
 |  [emit(event, data)](./kit.watcher.emit_3.md) |  |  |
-|  [enableBatchMode()](./kit.watcher.enablebatchmode.md) |  | Dismiss the warning that let you enable single mode but the warning is false positive. |
-|  [enableSingleMode()](./kit.watcher.enablesinglemode.md) |  | Enable single mode. |
 |  [enhanceDebugger()](./kit.watcher.enhancedebugger.md) | <code>static</code> | Call this function to enhance the debug experience in the Chrome DevTools<!-- -->You need to open "Enable custom formatters" in your DevTools settings. |
 |  [getDOMProxyByKey(key)](./kit.watcher.getdomproxybykey.md) |  | Get DOMProxy by key. DOMProxy will be unavailable if it is deleted |
-|  [getVirtualNodeByKey(key)](./kit.watcher.getvirtualnodebykey.md) |  | Get DOMProxy by key. DOMProxy will be unavailable if it is deleted |
 |  [omitWarningForForgetWatch()](./kit.watcher.omitwarningforforgetwatch.md) |  | If you're expecting Watcher may not be called, call this function, this will omit the warning. |
 |  [omitWarningForRepeatedKeys()](./kit.watcher.omitwarningforrepeatedkeys.md) |  | If you're expecting repeating keys, call this function, this will omit the warning. |
 |  [removeListener(event, fn)](./kit.watcher.removelistener.md) |  |  |

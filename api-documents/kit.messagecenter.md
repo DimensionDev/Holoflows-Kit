@@ -22,7 +22,7 @@ export declare class MessageCenter<ITypedMessages>
 
 |  Property | Modifiers | Type | Description |
 |  --- | --- | --- | --- |
-|  [serialization](./kit.messagecenter.serialization.md) |  | <code>import(&quot;async-call-rpc/out/Async-Call&quot;).Serialization</code> | How should MessageCenter serialization the message |
+|  [serialization](./kit.messagecenter.serialization.md) |  | <code>import(&quot;async-call-rpc&quot;).Serialization</code> | How should MessageCenter serialization the message |
 |  [writeToConsole](./kit.messagecenter.writetoconsole.md) |  | <code>boolean</code> | Should MessageCenter prints all messages to console? |
 
 ## Methods

@@ -24,12 +24,6 @@ new IntervalWatcher(ls)
 
 ```
 
-## Properties
-
-|  Property | Modifiers | Type | Description |
-|  --- | --- | --- | --- |
-|  [enableSingleMode](./kit.intervalwatcher.enablesinglemode.md) |  | <code>() =&gt; IntervalWatcher&lt;T, Before, After, true&gt;</code> | Enable single mode. |
-
 ## Methods
 
 |  Method | Modifiers | Description |

@@ -5,20 +5,7 @@
 ```ts
 
 import { AsyncCallOptions } from 'async-call-rpc';
-import { JSONSerialization } from 'async-call-rpc';
-import { MakeAllFunctionsAsync } from 'async-call-rpc';
-import { MakeAllGeneratorFunctionsAsync } from 'async-call-rpc';
 import mitt from 'mitt';
-import { NoSerialization } from 'async-call-rpc';
-import { Serialization } from 'async-call-rpc';
-
-// @public @deprecated (undocumented)
-export function AsyncCall<OtherSideImplementedFunctions = {}>(implementation: object | undefined, options?: Partial<AsyncCallOptions>): MakeAllFunctionsAsync<OtherSideImplementedFunctions>;
-
-export { AsyncCallOptions }
-
-// @public @deprecated (undocumented)
-export function AsyncGeneratorCall<OtherSideImplementedFunctions = {}>(implementation: object | undefined, options: Partial<AsyncCallOptions>): MakeAllGeneratorFunctionsAsync<OtherSideImplementedFunctions>;
 
 // @public
 export function AutomatedTabTask<T extends Record<string, (...args: any[]) => PromiseLike<any>>>(taskImplements: T, options?: Partial<AutomatedTabTaskDefineTimeOptions>): ((urlOrTabID: string | number, options?: Partial<AutomatedTabTaskRuntimeOptions>) => T) | null;
@@ -80,13 +67,6 @@ export interface DOMProxy<ProxiedElement extends Node = HTMLElement, Before exte
     realCurrent: ProxiedElement | null;
 }
 
-// @public @deprecated
-export function DomProxy(...args: Parameters<typeof DOMProxy>): ReturnType<typeof DOMProxy>;
-
-// @public @deprecated
-export interface DomProxy<ProxiedElement extends Node = HTMLElement, Before extends Element = HTMLSpanElement, After extends Element = HTMLSpanElement> extends DOMProxy<ProxiedElement, Before, After> {
-}
-
 // @public
 export interface DOMProxyOptions<Before extends Element = HTMLSpanElement, After extends Element = HTMLSpanElement> {
     afterShadowRootInit: ShadowRootInit;
@@ -95,14 +75,9 @@ export interface DOMProxyOptions<Before extends Element = HTMLSpanElement, After
     createBefore(): Before;
 }
 
-// @public @deprecated
-export interface DomProxyOptions<Before extends Element = HTMLSpanElement, After extends Element = HTMLSpanElement> extends DOMProxyOptions<Before, After> {
-}
-
 // @public
 export class EventWatcher<T, Before extends Element = HTMLSpanElement, After extends Element = HTMLSpanElement, SingleMode extends boolean = false> extends Watcher<T, Before, After, SingleMode> {
     constructor(liveSelector: LiveSelector<T, SingleMode>);
-    enableSingleMode: () => EventWatcher<T, Before, After, true>;
     eventListener: () => void;
 }
 
@@ -111,12 +86,9 @@ export function GetContext(): Contexts;
 
 // @public
 export class IntervalWatcher<T, Before extends Element = HTMLSpanElement, After extends Element = HTMLSpanElement, SingleMode extends boolean = false> extends Watcher<T, Before, After, SingleMode> {
-    enableSingleMode: () => IntervalWatcher<T, Before, After, true>;
     startWatch(interval: number): this;
     stopWatch(): void;
     }
-
-export { JSONSerialization }
 
 // @public
 export class LiveSelector<T, SingleMode extends boolean = false> {
@@ -165,7 +137,7 @@ export class MessageCenter<ITypedMessages> {
     off<Key extends keyof ITypedMessages>(event: Key, handler: (data: ITypedMessages[Key]) => void): void;
     on<Key extends keyof ITypedMessages>(event: Key, handler: (data: ITypedMessages[Key]) => void): () => void;
     send(...args: Parameters<MessageCenter<ITypedMessages>['emit']>): ReturnType<MessageCenter<ITypedMessages>['emit']>;
-    serialization: import("async-call-rpc/out/Async-Call").Serialization;
+    serialization: import("async-call-rpc").Serialization;
     writeToConsole: boolean;
 }
 
@@ -177,21 +149,16 @@ export class MutationObserverWatcher<T, Before extends Element = HTMLSpanElement
     stopWatchOnDisconnected?: boolean);
     // (undocumented)
     protected defaultStarterForThen(): void;
-    enableSingleMode: () => MutationObserverWatcher<T, Before, After, true>;
     protected liveSelector: LiveSelector<T, SingleMode>;
     startWatch(options: MutationObserverInit): this;
     stopWatch(): void;
     }
-
-export { NoSerialization }
 
 // @public
 export function OnlyRunInContext(context: Contexts | Contexts[], name: string): void;
 
 // @public
 export function OnlyRunInContext(context: Contexts | Contexts[], throws: false): boolean;
-
-export { Serialization }
 
 // @public @eventProperty
 export class ValueRef<T> {
@@ -238,20 +205,12 @@ export abstract class Watcher<T, Before extends Element, After extends Element, 
     protected emit(event: 'onRemove', data: OnAddOrRemoveEvent<T>): void;
     // (undocumented)
     protected emit(event: 'onAdd', data: OnAddOrRemoveEvent<T>): void;
-    // @deprecated
-    enableBatchMode(): this;
-    // @deprecated
-    abstract enableSingleMode(): Watcher<T, Before, After, true>;
-    // (undocumented)
-    protected _enableSingleMode(): this;
     static enhanceDebugger(): void;
-    protected get singleMode(): boolean;
     protected readonly eventEmitter: mitt.Emitter;
+    protected get singleMode(): boolean;
     protected findNodeFromListByKey: (list: readonly T[], keys: readonly unknown[]) => (key: unknown) => T | null;
     protected _firstDOMProxy: DOMProxy<any, Before, After>;
     getDOMProxyByKey(key: unknown): DOMProxy<any, Before, After> | null;
-    // @deprecated
-    getVirtualNodeByKey(key: unknown): DOMProxy<any, Before, After> | null;
     protected isWatching: boolean;
     protected keyComparer: (a: unknown, b: unknown) => boolean;
     protected lastCallbackMap: Map<unknown, useForeachReturns<T>>;
@@ -266,12 +225,11 @@ export abstract class Watcher<T, Before extends Element, After extends Element, 
     removeListener(event: 'onIteration', fn: EventCallback<OnIterationEvent<T>>): this;
     // (undocumented)
     removeListener(event: 'onChange', fn: EventCallback<OnChangeEvent<T>>): this;
-    get firstDOMProxy(): T extends Node ? DOMProxy<T, Before, After> : never;
-    get firstVirtualNode(): T extends Node ? DOMProxy<T, Before, After> : never;
     // (undocumented)
     removeListener(event: 'onRemove', fn: EventCallback<OnAddOrRemoveEvent<T>>): this;
     // (undocumented)
     removeListener(event: 'onAdd', fn: EventCallback<OnAddOrRemoveEvent<T>>): this;
+    get firstDOMProxy(): T extends Node ? DOMProxy<T, Before, After> : never;
     // Warning: (ae-forgotten-export) The symbol "requestIdleCallback" needs to be exported by the entry point index.d.ts
     protected readonly requestIdleCallback: typeof requestIdleCallback;
     protected scheduleWatcherCheck: () => void;
