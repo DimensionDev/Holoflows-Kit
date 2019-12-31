@@ -1,5 +1,5 @@
 import mitt from 'mitt'
-import { NoSerialization } from '../util/AsyncCall'
+import { NoSerialization } from 'async-call-rpc'
 type InternalMessageType = {
     key: Key
     data: any

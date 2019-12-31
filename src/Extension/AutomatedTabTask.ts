@@ -1,8 +1,9 @@
 import { sleep, timeout as timeoutFn } from '../util/sleep'
-import { AsyncCall, AsyncCallOptions } from '../util/AsyncCall'
+import { AsyncCall, AsyncCallOptions } from 'async-call-rpc'
 import { GetContext } from './Context'
 import Lock from 'concurrent-lock'
 import { memorize } from 'memorize-decorator'
+import { MessageCenter } from './MessageCenter'
 
 /**
  * Shared options for AutomatedTabTask between the define-time and the runtime.
@@ -138,6 +139,7 @@ export function AutomatedTabTask<T extends Record<string, (...args: any[]) => Pr
     }
     const AsyncCallKey = AsyncCallOptions.key
     const REGISTER = AsyncCallKey + ':ping'
+    const finalAsyncCallOptions = { messageChannel: new MessageCenter(), ...AsyncCallOptions }
     if (GetContext() === 'content') {
         // If run in content script
         // Register this tab
@@ -151,7 +153,7 @@ export function AutomatedTabTask<T extends Record<string, (...args: any[]) => Pr
                     tasksWithId[getTaskNameByTabId(taskName, tabId)] = value
                 }
                 // Register AsyncCall
-                AsyncCall(tasksWithId, AsyncCallOptions)
+                AsyncCall(tasksWithId, finalAsyncCallOptions)
             },
             () => {},
         )
@@ -170,7 +172,7 @@ export function AutomatedTabTask<T extends Record<string, (...args: any[]) => Pr
             return undefined
         }) as browser.runtime.onMessageVoid)
         // Register a empty AsyncCall for runtime-generated call
-        const asyncCall = AsyncCall<any>({}, AsyncCallOptions)
+        const asyncCall = AsyncCall<any>({}, finalAsyncCallOptions)
         const lock = new Lock(concurrent)
         const memoRunTask = memorize(createOrGetTheTabToExecuteTask, { ttl: memorizeTTL })
         /**

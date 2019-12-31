@@ -2,28 +2,6 @@ import { DOMProxyDevtoolsEnhancer } from '../Debuggers/DOMProxyDevtoolsEnhancer'
 import { installCustomObjectFormatter } from 'jsx-jsonml-devtools-renderer'
 
 /**
- * {@inheritdoc (DOMProxy:interface)}
- * @deprecated use DOMProxy instead, will removed in 0.7.0
- */
-export interface DomProxy<
-    ProxiedElement extends Node = HTMLElement,
-    Before extends Element = HTMLSpanElement,
-    After extends Element = HTMLSpanElement
-> extends DOMProxy<ProxiedElement, Before, After> {}
-/**
- * {@inheritdoc (DOMProxy:function)}
- * @deprecated use DOMProxy instead, will removed in 0.7.0
- */
-export function DomProxy(...args: Parameters<typeof DOMProxy>): ReturnType<typeof DOMProxy> {
-    return DOMProxy(...args)
-}
-/**
- * {@inheritdoc DOMProxyOptions}
- * @deprecated use DOMProxyOptions instead, will removed in 0.7.0
- */
-export interface DomProxyOptions<Before extends Element = HTMLSpanElement, After extends Element = HTMLSpanElement>
-    extends DOMProxyOptions<Before, After> {}
-/**
  * Options for DOMProxy
  */
 export interface DOMProxyOptions<Before extends Element = HTMLSpanElement, After extends Element = HTMLSpanElement> {
@@ -80,7 +58,7 @@ export function DOMProxy<
     let virtualAfter: After | null = null
     let virtualAfterShadow: ShadowRoot | null = null
     /** All changes applied on the `proxy` */
-    let changes: (ActionTypes[keyof ActionTypes])[] = []
+    let changes: ActionTypes[keyof ActionTypes][] = []
     /** Read Traps */
     const readonlyTraps: ProxyHandler<any> = {
         ownKeys: () => {

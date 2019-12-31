@@ -174,7 +174,7 @@ export abstract class Watcher<T, Before extends Element, After extends Element, 
                     else reject(val)
                 }
                 const f = (v: OnIterationEvent<any>) => {
-                    const nodes = v.values.current
+                    const nodes = Array.from(v.current.values())
                     if (this.singleMode && nodes.length >= 1) {
                         return done(true, nodes[0])
                     }
@@ -370,35 +370,6 @@ export abstract class Watcher<T, Before extends Element, After extends Element, 
     //#endregion
     //#region Single mode
     /**
-     * Enable single mode.
-     *
-     * @deprecated Use LiveSelector.enableSingleMode(), will removed in 0.7.0
-     *
-     * @privateRemarks
-     * Subclass need to implement it to get the correct type.
-     * Example to subclass implementor:
-     *
-     * ```ts
-     * class MyWatcher<T, Before extends Element, After extends Element, SingleMode extends boolean>
-     * extends Watcher<T, Before, After, SingleMode> {
-     *      public enableSingleMode: MyWatcher<T, Before, After, true> = this._enableSingleMode as any
-     * }
-     * ```
-     */
-    public abstract enableSingleMode(): Watcher<T, Before, After, true>
-    /**
-     * @privateRemarks
-     * Every subclass should call this.
-     */
-    protected _enableSingleMode() {
-        console.warn(
-            'You should call this method on LiveSelector instead of a Watcher. Watcher.enableSingleMode is deprecated.',
-        )
-        this._warning_single_mode.ignored = true
-        this.liveSelector.enableSingleMode()
-        return this
-    }
-    /**
      * Is the single mode is on.
      */
     protected get singleMode(): boolean {
@@ -546,14 +517,6 @@ export abstract class Watcher<T, Before extends Element, After extends Element, 
     public get firstDOMProxy() {
         return (this._firstDOMProxy as unknown) as T extends Node ? DOMProxy<T, Before, After> : never
     }
-    /**
-     * {@inheritdoc Watcher.firstDOMProxy}
-     * @deprecated use firstDOMProxy instead. will remove in 0.7.0
-     */
-    public get firstVirtualNode() {
-        console.warn('firstVirtualNode is deprecated, use firstDOMProxy instead')
-        return this.firstDOMProxy
-    }
     //#endregion
     //#region Watcher settings
     /**
@@ -641,14 +604,6 @@ export abstract class Watcher<T, Before extends Element, After extends Element, 
         this.noNeedInSingleMode(this.getDOMProxyByKey.name)
         return this.lastDOMProxyMap.get([...this.lastDOMProxyMap.keys()].find(_ => this.keyComparer(_, key))) || null
     }
-    /**
-     * {@inheritdoc Watcher.getDOMProxyByKey}
-     * @deprecated use getDOMProxyByKey instead. will removed in 0.7.0
-     */
-    public getVirtualNodeByKey(key: unknown) {
-        console.warn('getVirtualNodeByKey is deprecated, use getDOMProxyByKey instead')
-        return this.getDOMProxyByKey(key)
-    }
     /** window.requestIdleCallback, or polyfill. */
     protected readonly requestIdleCallback = requestIdleCallback
     /** For debug usage. Just keep it. */
@@ -689,14 +644,6 @@ Or to ignore this message, call \`.dismissSingleModeWarning()\` on the watcher.\
             )
         },
     })
-    /**
-     * {@inheritdoc Watcher.dismissSingleModeWarning}
-     * @deprecated will removed in 0.7.0
-     */
-    public enableBatchMode(): this {
-        console.warn('This method is deprecated. Use dismissSingleModeWarning() instead.')
-        return this.dismissSingleModeWarning()
-    }
     /**
      * Dismiss the warning that let you enable single mode but the warning is false positive.
      */
@@ -746,10 +693,6 @@ type OnAddOrRemoveEvent<T> = {
     value: T
 }
 type OnIterationEvent<T> = {
-    /** @deprecated will remove in 0.7.0 */
-    keys: Record<'removed' | 'new' | 'current', unknown[]>
-    /** @deprecated will remove in 0.7.0 */
-    values: Record<'removed' | 'new' | 'current', T[]>
     new: Map<unknown, T>
     removed: Map<unknown, T>
     current: Map<unknown, T>

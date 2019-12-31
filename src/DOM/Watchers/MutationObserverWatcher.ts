@@ -72,8 +72,4 @@ export class MutationObserverWatcher<
         super.stopWatch()
         this.observer.disconnect()
     }
-    /**
-     * {@inheritdoc Watcher.enableSingleMode}
-     */
-    enableSingleMode: () => MutationObserverWatcher<T, Before, After, true> = this._enableSingleMode as any
 }
