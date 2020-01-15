@@ -8,7 +8,7 @@
  * ```ts
  * const ref = new ValueRef(64)
  * function useValueRef<T>(ref: ValueRef<T>) {
- *   const { useState, useEffect } = safeReact()
+ *   const { useState, useEffect } = React
  *
  *   const [value, setValue] = useState<T>(ref.value)
  *   useEffect(() => {
