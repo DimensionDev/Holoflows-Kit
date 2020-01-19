@@ -170,12 +170,12 @@ export interface Serialization {
 export class ValueRef<T> {
     constructor(_value: T, isEqual?: (a: T, b: T) => boolean);
     addListener(fn: (newVal: T, oldVal: T) => void): () => void;
-    get value(): T;
-    set value(newVal: T);
     // (undocumented)
     isEqual: (a: T, b: T) => boolean;
     removeAllListener(): void;
     removeListener(fn: (newVal: T, oldVal: T) => void): void;
+    get value(): T;
+    set value(newVal: T);
     }
 
 // Warning: (ae-forgotten-export) The symbol "ResultOf" needs to be exported by the entry point index.d.ts
@@ -213,8 +213,8 @@ export abstract class Watcher<T, Before extends Element, After extends Element, 
     protected emit(event: 'onAdd', data: OnAddOrRemoveEvent<T>): void;
     static enhanceDebugger(): void;
     protected readonly eventEmitter: mitt.Emitter;
-    protected get singleMode(): boolean;
     protected findNodeFromListByKey: (list: readonly T[], keys: readonly unknown[]) => (key: unknown) => T | null;
+    get firstDOMProxy(): T extends Node ? DOMProxy<T, Before, After> : never;
     protected _firstDOMProxy: DOMProxy<any, Before, After>;
     getDOMProxyByKey(key: unknown): DOMProxy<any, Before, After> | null;
     protected isWatching: boolean;
@@ -235,12 +235,12 @@ export abstract class Watcher<T, Before extends Element, After extends Element, 
     removeListener(event: 'onRemove', fn: EventCallback<OnAddOrRemoveEvent<T>>): this;
     // (undocumented)
     removeListener(event: 'onAdd', fn: EventCallback<OnAddOrRemoveEvent<T>>): this;
-    get firstDOMProxy(): T extends Node ? DOMProxy<T, Before, After> : never;
     // Warning: (ae-forgotten-export) The symbol "requestIdleCallback" needs to be exported by the entry point index.d.ts
     protected readonly requestIdleCallback: typeof requestIdleCallback;
     protected scheduleWatcherCheck: () => void;
     setComparer(keyComparer?: (a: unknown, b: unknown) => boolean, valueComparer?: (a: T, b: T) => boolean): this;
     setDOMProxyOption(option: Partial<DOMProxyOptions<Before, After>>): this;
+    protected get singleMode(): boolean;
     protected singleModeCallback?: useForeachReturns<T>;
     protected singleModeHasLastValue: boolean;
     protected singleModeLastValue?: T;
