@@ -277,7 +277,7 @@ async function createOrGetTheTabToExecuteTask(options: createOrGetTheTabToExecut
     /**
      * does it need a lock to avoid too many open at the same time?
      */
-    const withoutLock = Boolean(isImportant || autoClose === false || active || typeof wantedTabID !== 'number')
+    const withoutLock = Boolean(isImportant || autoClose === false || active || !(typeof wantedTabID === 'number'))
     if (!withoutLock) await lock.lock(timeout)
 
     const tabId = await getTabOrCreate(wantedTabID, url, needRedirect, active, pinned)
