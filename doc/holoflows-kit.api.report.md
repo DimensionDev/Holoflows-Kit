@@ -137,7 +137,7 @@ export class MessageCenter<ITypedMessages> {
     off<Key extends keyof ITypedMessages>(event: Key, handler: (data: ITypedMessages[Key]) => void): void;
     on<Key extends keyof ITypedMessages>(event: Key, handler: (data: ITypedMessages[Key]) => void): () => void;
     send(...args: Parameters<MessageCenter<ITypedMessages>['emit']>): ReturnType<MessageCenter<ITypedMessages>['emit']>;
-    serialization: import("async-call-rpc").Serialization;
+    serialization: Serialization;
     writeToConsole: boolean;
 }
 
@@ -159,6 +159,12 @@ export function OnlyRunInContext(context: Contexts | Contexts[], name: string): 
 
 // @public
 export function OnlyRunInContext(context: Contexts | Contexts[], throws: false): boolean;
+
+// @public
+export interface Serialization {
+    deserialization(serialized: unknown): PromiseLike<any>;
+    serialization(from: any): PromiseLike<unknown>;
+}
 
 // @public @eventProperty
 export class ValueRef<T> {

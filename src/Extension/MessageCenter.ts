@@ -1,5 +1,20 @@
 import mitt from 'mitt'
 import { NoSerialization } from 'async-call-rpc'
+/**
+ * Define how to do serialization and deserialization of remote procedure call
+ */
+export interface Serialization {
+    /**
+     * Do serialization
+     * @param from - original data
+     */
+    serialization(from: any): PromiseLike<unknown>
+    /**
+     * Do deserialization
+     * @param serialized - Serialized data
+     */
+    deserialization(serialized: unknown): PromiseLike<any>
+}
 type InternalMessageType = {
     key: Key
     data: any
@@ -16,7 +31,7 @@ export class MessageCenter<ITypedMessages> {
      * How should MessageCenter serialization the message
      * @defaultValue NoSerialization
      */
-    public serialization = NoSerialization
+    public serialization: Serialization = NoSerialization
     private eventEmitter = mitt()
     private listener = async (request: InternalMessageType | Event) => {
         let { key, data, instanceKey } = await this.serialization.deserialization(
