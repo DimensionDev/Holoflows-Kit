@@ -204,11 +204,6 @@ argparse@^1.0.7, argparse@~1.0.9:
   dependencies:
     sprintf-js "~1.0.2"
 
-array-equal@^1.0.0:
-  version "1.0.0"
-  resolved "https://registry.yarnpkg.com/array-equal/-/array-equal-1.0.0.tgz#8c2a5ef2472fd9ea742b04c77a75093ba2757c93"
-  integrity sha1-jCpe8kcv2ep0KwTHenUJO6J1fJM=
-
 asn1@~0.2.3:
   version "0.2.4"
   resolved "https://registry.yarnpkg.com/asn1/-/asn1-0.2.4.tgz#8d2475dfab553bb33e77b54e59e880bb8ce23136"
@@ -948,14 +943,13 @@ jsdom-global@^3.0.2:
   integrity sha1-a9KZwTsMRiay2iwDk81DhdYGrLk=
 
 jsdom@^16.0.0:
-  version "16.0.0"
-  resolved "https://registry.yarnpkg.com/jsdom/-/jsdom-16.0.0.tgz#da67380ffd869ff5832558da7e60a32058079e01"
-  integrity sha512-zYGVgSyf/Y/e3fOJICIyEgtTMV3lyYlsokXa7U0GWMzYKT2kN6iyBQLGbuLD+0/OLC2bnGGB4DuWtZSG2o7Gqw==
+  version "16.0.1"
+  resolved "https://registry.yarnpkg.com/jsdom/-/jsdom-16.0.1.tgz#5a5214cf69609531bf6fa5b6322fdd90ceed5bf7"
+  integrity sha512-wKJe/APzq+ak9i+2ybWE20lDIhF9AkGKSZf8UsjPN39acatFB6oA7K397kQvHVikds0yQono2h6J7UjbPtPOWw==
   dependencies:
     abab "^2.0.3"
     acorn "^7.1.0"
     acorn-globals "^4.3.2"
-    array-equal "^1.0.0"
     cssom "^0.4.4"
     cssstyle "^2.0.0"
     data-urls "^2.0.0"
@@ -965,7 +959,6 @@ jsdom@^16.0.0:
     html-encoding-sniffer "^2.0.0"
     nwsapi "^2.2.0"
     parse5 "5.1.1"
-    pn "^1.1.0"
     request "^2.88.0"
     request-promise-native "^1.0.8"
     saxes "^4.0.2"
@@ -1410,11 +1403,6 @@ pkg-dir@^4.1.0:
   integrity sha512-HRDzbaKjC+AOWVXxAU/x54COGeIv9eb+6CkDSQoNTt4XyWoIJvuPsXizxu/Fr23EiekbtZwmh1IcIG/l/a10GQ==
   dependencies:
     find-up "^4.0.0"
-
-pn@^1.1.0:
-  version "1.1.0"
-  resolved "https://registry.yarnpkg.com/pn/-/pn-1.1.0.tgz#e2f4cef0e219f463c179ab37463e4e1ecdccbafb"
-  integrity sha512-2qHaIQr2VLRFoxe2nASzsV6ef4yOOH+Fi9FBOVH6cqeSgUnoyySPZkxzLuzd+RYOQTRpROA0ztTMqxROKSb/nA==
 
 prelude-ls@~1.1.2:
   version "1.1.2"
