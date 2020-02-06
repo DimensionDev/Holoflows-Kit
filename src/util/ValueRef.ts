@@ -43,13 +43,17 @@ export class ValueRef<T> {
         }
     }
     /** All watchers */
-    private watcher = new Set<(newVal: T, oldVal: T) => void>()
+    private watcher = new Set<(newVal: any, oldVal: any) => void>()
+    // To keep the variant rule.
+    public isEqual: (a: unknown, b: unknown) => boolean
     /**
      *
      * @param _value - The internal value
      * @param isEqual - The comparer function
      */
-    constructor(private _value: T, public isEqual: (a: T, b: T) => boolean = (a, b) => a === b) {}
+    constructor(private _value: T, isEqual: (a: T, b: T) => boolean = (a, b) => a === b) {
+        this.isEqual = isEqual as any
+    }
     /**
      * Add a listener. This will return a remover.
      * @example

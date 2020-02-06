@@ -170,7 +170,7 @@ export class ValueRef<T> {
     constructor(_value: T, isEqual?: (a: T, b: T) => boolean);
     addListener(fn: (newVal: T, oldVal: T) => void): () => void;
     // (undocumented)
-    isEqual: (a: T, b: T) => boolean;
+    isEqual: (a: unknown, b: unknown) => boolean;
     removeAllListener(): void;
     removeListener(fn: (newVal: T, oldVal: T) => void): void;
     get value(): T;

@@ -7,5 +7,5 @@
 <b>Signature:</b>
 
 ```typescript
-isEqual: (a: T, b: T) => boolean;
+isEqual: (a: unknown, b: unknown) => boolean;
 ```
