@@ -9,12 +9,13 @@ Constructs a new instance of the `MessageCenter` class
 <b>Signature:</b>
 
 ```typescript
-constructor(instanceKey?: string);
+constructor(sendToSelf: boolean, instanceKey?: string);
 ```
 
 ## Parameters
 
 |  Parameter | Type | Description |
 |  --- | --- | --- |
+|  sendToSelf | <code>boolean</code> | If this MessageCenter will send message to this instance itself |
 |  instanceKey | <code>string</code> | Use this instanceKey to distinguish your messages and others. This option cannot make your message safe! |
 

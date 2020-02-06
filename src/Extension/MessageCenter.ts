@@ -16,12 +16,10 @@ export interface Serialization {
     deserialization(serialized: unknown): PromiseLike<any>
 }
 type InternalMessageType = {
-    key: Key
+    key: string
     data: any
     instanceKey: string
 }
-type Key = string | number | symbol
-const MessageCenterEvent = 'Holoflows-Kit MessageCenter'
 const noop = () => {}
 /**
  * Send and receive messages in different contexts.
@@ -33,13 +31,12 @@ export class MessageCenter<ITypedMessages> {
      */
     public serialization: Serialization = NoSerialization
     private eventEmitter = mitt()
-    private listener = async (request: InternalMessageType | Event) => {
-        let { key, data, instanceKey } = await this.serialization.deserialization(
-            (request as CustomEvent).detail || request,
-        )
+    private listener = async (request: unknown) => {
+        let { key, data, instanceKey } = (await this.serialization.deserialization(request)) as InternalMessageType
         // Message is not for us
         if (this.instanceKey !== (instanceKey || '')) return
-        if (this.writeToConsole) {
+        if (!key || !data) return
+        if (this.log) {
             console.log(
                 `%cReceive%c %c${key.toString()}`,
                 'background: rgba(0, 255, 255, 0.6); color: black; padding: 0px 6px; border-radius: 4px;',
@@ -51,19 +48,17 @@ export class MessageCenter<ITypedMessages> {
         this.eventEmitter.emit(key, data)
     }
     /**
+     * @param sendToSelf - If this MessageCenter will send message to this instance itself
      * @param instanceKey - Use this instanceKey to distinguish your messages and others.
      * This option cannot make your message safe!
      */
-    constructor(private instanceKey = '') {
-        if (typeof browser !== 'undefined' && browser.runtime && browser.runtime.onMessage) {
+    constructor(private sendToSelf: boolean, private instanceKey = '') {
+        if (typeof browser !== 'undefined' && browser?.runtime?.onMessage) {
             // Fired when a message is sent from either an extension process (by runtime.sendMessage)
             // or a content script (by tabs.sendMessage).
             browser.runtime.onMessage.addListener((e: any) => {
                 this.listener(e)
             })
-        }
-        if (typeof document !== 'undefined' && document.addEventListener) {
-            document.addEventListener(MessageCenterEvent, this.listener)
         }
     }
     /**
@@ -88,14 +83,9 @@ export class MessageCenter<ITypedMessages> {
      * Send message to local or other instance of extension
      * @param key - Key of the message
      * @param data - Data of the message
-     * @param alsoSendToDocument - ! Send message to document. This may leaks secret! Only open in localhost!
      */
-    public async emit<Key extends keyof ITypedMessages>(
-        key: Key,
-        data: ITypedMessages[Key],
-        alsoSendToDocument = location.hostname === 'localhost',
-    ): Promise<void> {
-        if (this.writeToConsole) {
+    public async emit<Key extends keyof ITypedMessages>(key: Key, data: ITypedMessages[Key]): Promise<void> {
+        if (this.log) {
             console.log(
                 `%cSend%c %c${key.toString()}`,
                 'background: rgba(0, 255, 255, 0.6); color: black; padding: 0px 6px; border-radius: 4px;',
@@ -110,35 +100,24 @@ export class MessageCenter<ITypedMessages> {
             instanceKey: this.instanceKey || '',
         } as InternalMessageType)
         if (typeof browser !== 'undefined') {
-            if (browser.runtime && browser.runtime.sendMessage) {
-                browser.runtime.sendMessage(serialized).catch(noop)
-            }
-            if (browser.tabs) {
-                // Send message to Content Script
-                browser.tabs.query({ discarded: false }).then(tabs => {
-                    for (const tab of tabs) {
-                        if (tab.id) browser.tabs.sendMessage(tab.id, serialized).catch(noop)
-                    }
-                })
-            }
-        }
-        if (alsoSendToDocument && typeof document !== 'undefined' && document.dispatchEvent) {
-            const event = new CustomEvent(MessageCenterEvent, {
-                detail: serialized,
+            browser.runtime?.sendMessage?.(serialized).catch(noop)
+            // Send message to Content Script
+            browser.tabs?.query({ discarded: false }).then(tabs => {
+                for (const tab of tabs) {
+                    if (tab.id) browser.tabs.sendMessage(tab.id, serialized).catch(noop)
+                }
             })
-            document.dispatchEvent(event)
+        }
+        if (this.sendToSelf) {
+            this.listener(serialized as InternalMessageType)
         }
     }
-    /**
-     * {@inheritdoc MessageCenter.emit}
-     */
-    public send(
-        ...args: Parameters<MessageCenter<ITypedMessages>['emit']>
-    ): ReturnType<MessageCenter<ITypedMessages>['emit']> {
-        return Reflect.apply(this.emit, this, args)
-    }
+    private log = false
     /**
      * Should MessageCenter prints all messages to console?
      */
-    writeToConsole = false
+    writeToConsole(on: boolean) {
+        this.log = on
+        return this
+    }
 }

@@ -139,7 +139,7 @@ export function AutomatedTabTask<T extends Record<string, (...args: any[]) => Pr
     }
     const AsyncCallKey = AsyncCallOptions.key
     const REGISTER = AsyncCallKey + ':ping'
-    const finalAsyncCallOptions = { messageChannel: new MessageCenter(), ...AsyncCallOptions }
+    const finalAsyncCallOptions = { messageChannel: new MessageCenter(false), ...AsyncCallOptions }
     if (GetContext() === 'content') {
         // If run in content script
         // Register this tab

@@ -2,12 +2,23 @@
 
 [Home](./index.md) &gt; [@holoflows/kit](./kit.md) &gt; [MessageCenter](./kit.messagecenter.md) &gt; [writeToConsole](./kit.messagecenter.writetoconsole.md)
 
-## MessageCenter.writeToConsole property
+## MessageCenter.writeToConsole() method
 
 Should MessageCenter prints all messages to console?
 
 <b>Signature:</b>
 
 ```typescript
-writeToConsole: boolean;
+writeToConsole(on: boolean): this;
 ```
+
+## Parameters
+
+|  Parameter | Type | Description |
+|  --- | --- | --- |
+|  on | <code>boolean</code> |  |
+
+<b>Returns:</b>
+
+`this`
+
