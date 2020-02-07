@@ -607,7 +607,7 @@ export abstract class Watcher<T, Before extends Element, After extends Element, 
     /** window.requestIdleCallback, or polyfill. */
     protected readonly requestIdleCallback = requestIdleCallback
     /** For debug usage. Just keep it. */
-    private readonly stack = new Error().stack || ''
+    private readonly stack = new Error().stack ?? ''
     //#endregion
     //#region Warnings
     /**
@@ -722,10 +722,10 @@ type useForeachReturns<T> =
 
 function applyUseForeachCallback<T>(callback: useForeachReturns<T>) {
     const cb = callback as useForeachReturns<Node>
-    let remove: any, change: any, mutation: any
-    if (cb === undefined) {
-    } else if (typeof cb === 'function') remove = cb
-    else if (cb) {
+    type f = undefined | ((...args: any[]) => any)
+    let remove: f, change: f, mutation: f
+    if (typeof cb === 'function') remove = cb
+    else if (cb !== undefined) {
         const { onNodeMutation, onRemove, onTargetChanged } = cb
         ;[remove, change, mutation] = [onRemove, onTargetChanged, onNodeMutation]
     }
@@ -759,7 +759,7 @@ interface WarningOptions {
 function warning(_: Partial<WarningOptions> = {}) {
     const { dev, once, fn } = { ...({ dev: false, once: true, fn: () => {} } as WarningOptions), ..._ }
     if (dev) if (process.env.NODE_ENV !== 'development') return { warn(f = fn) {}, ignored: true, stack: '' }
-    const [_0, _1, _2, ...lines] = (new Error().stack || '').split('\n')
+    const [_0, _1, _2, ...lines] = (new Error().stack ?? '').split('\n')
     const stack = lines.join('\n')
     let warned = 0
     const obj = {
@@ -767,9 +767,9 @@ function warning(_: Partial<WarningOptions> = {}) {
         stack,
         warn(f = fn) {
             if (obj.ignored) return
-            if (warned && once) return
+            if (warned > 0 && once) return
             if (typeof once === 'number' && warned <= once) return
-            warned++
+            warned = warned + 1
             f(stack)
         },
     }

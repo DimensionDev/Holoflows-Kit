@@ -13,17 +13,18 @@ export type Contexts = 'background' | 'content' | 'webpage' | 'unknown' | 'optio
  */
 export function GetContext(): Contexts {
     if (typeof location === 'undefined') return 'unknown'
-    if (typeof browser !== 'undefined') {
-        if (location.protocol.match('-extension')) {
+    if (typeof browser !== 'undefined' && browser !== null) {
+        const scheme = location.protocol.match('-extension')
+        const backgroundURL = browser.extension?.getBackgroundPage()?.location?.href
+        if (scheme || location.hostname === 'localhost') {
             if (
-                browser.extension && browser.extension.getBackgroundPage
-                    ? browser.extension.getBackgroundPage().location.href === location.href
-                    : ['generated', 'background', 'page', '.html'].every(x => location.pathname.match(x))
+                backgroundURL === location.href ||
+                ['generated', 'background', 'page', '.html'].every(x => location.pathname.match(x))
             )
                 return 'background'
-            return 'options'
         }
-        if (browser.runtime && browser.runtime.getManifest) return 'content'
+        if (scheme) return 'options'
+        if (browser.runtime?.getManifest !== undefined) return 'content'
     }
     // What about rollup?
     if (location.hostname === 'localhost') return 'debugging'

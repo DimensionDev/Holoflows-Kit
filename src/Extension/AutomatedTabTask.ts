@@ -210,7 +210,7 @@ export function AutomatedTabTask<T extends Record<string, (...args: any[]) => Pr
 
             let finalURL: string
             if (typeof urlOrTabID === 'string') finalURL = urlOrTabID
-            else finalURL = url || ''
+            else finalURL = url ?? ''
             function proxyTrap(_target: unknown, taskName: string | number | symbol) {
                 return (...taskArgs: any[]) => {
                     if (typeof taskName !== 'string') throw new TypeError('Key must be a string')

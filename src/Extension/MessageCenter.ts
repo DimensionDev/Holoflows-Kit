@@ -32,10 +32,10 @@ export class MessageCenter<ITypedMessages> {
     public serialization: Serialization = NoSerialization
     private eventEmitter = mitt()
     private listener = async (request: unknown) => {
-        let { key, data, instanceKey } = (await this.serialization.deserialization(request)) as InternalMessageType
+        const { key, data, instanceKey } = (await this.serialization.deserialization(request)) as InternalMessageType
         // Message is not for us
-        if (this.instanceKey !== (instanceKey || '')) return
-        if (!key || !data) return
+        if (this.instanceKey !== (instanceKey ?? '')) return
+        if (key === undefined) return
         if (this.log) {
             console.log(
                 `%cReceive%c %c${key.toString()}`,
@@ -97,14 +97,14 @@ export class MessageCenter<ITypedMessages> {
         const serialized = await this.serialization.serialization({
             data,
             key,
-            instanceKey: this.instanceKey || '',
+            instanceKey: this.instanceKey ?? '',
         } as InternalMessageType)
         if (typeof browser !== 'undefined') {
             browser.runtime?.sendMessage?.(serialized).catch(noop)
             // Send message to Content Script
             browser.tabs?.query({ discarded: false }).then(tabs => {
                 for (const tab of tabs) {
-                    if (tab.id) browser.tabs.sendMessage(tab.id, serialized).catch(noop)
+                    if (tab.id !== undefined) browser.tabs.sendMessage(tab.id, serialized).catch(noop)
                 }
             })
         }

@@ -98,7 +98,7 @@ export class LiveSelectorDevtoolsEnhancer implements React.CustomObjectFormatter
             // @ts-ignore
             initialElements: obj.initialElements,
             // @ts-ignore
-            stack: obj.stack || '',
+            stack: obj.stack ?? '',
             // @ts-ignore
             selectorChain: obj.selectorChain,
         }

@@ -23,6 +23,7 @@ jobs:
                   paths:
                       - node_modules
                   key: v1-dependencies-{{ checksum "yarn.lock" }}
+            - run: yarn eslint
             - run: yarn build
             - save_cache:
                   paths:

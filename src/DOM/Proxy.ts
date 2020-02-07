@@ -58,7 +58,7 @@ export function DOMProxy<
     let virtualAfter: After | null = null
     let virtualAfterShadow: ShadowRoot | null = null
     /** All changes applied on the `proxy` */
-    let changes: ActionTypes[keyof ActionTypes][] = []
+    const changes: ActionTypes[keyof ActionTypes][] = []
     /** Read Traps */
     const readonlyTraps: ProxyHandler<any> = {
         ownKeys: () => {
@@ -132,7 +132,7 @@ export function DOMProxy<
     const modifyTrapsNotWrite = modifyTraps(false)
     const proxy = Proxy.revocable(defaultCurrent, { ...readonlyTraps, ...modifyTrapsWrite })
     function hasStyle(e: Node): e is HTMLElement {
-        return !!(e as any).style
+        return 'style' in e
     }
     /** Call before realCurrent change */
     function undoEffects(nextCurrent?: Node | null) {
@@ -144,7 +144,7 @@ export function DOMProxy<
                 } else if (attr === 'appendChild') {
                     if (!nextCurrent) {
                         const node = (change.op.thisArg as Parameters<HTMLElement['appendChild']>)[0]
-                        node && current.removeChild(node)
+                        if (node !== undefined) current.removeChild(node)
                     }
                 }
             } else if (change.type === 'modifyStyle') {
@@ -170,7 +170,7 @@ export function DOMProxy<
                 const replayable = ['appendChild', 'addEventListener', 'before', 'after']
                 const key: keyof Node = change.op.name as any
                 if (replayable.indexOf(key) !== -1) {
-                    if (current[key]) {
+                    if (current[key] !== undefined) {
                         ;(current[key] as any)(...change.op.param)
                     } else {
                         console.warn(current, `doesn't have method "${key}", replay failed.`)
@@ -294,6 +294,7 @@ export function DOMProxy<
     DOMProxyDevtoolsEnhancer.allDOMProxy.set(DOMProxyObject, changes)
     return DOMProxyObject
 }
+// eslint-disable-next-line no-redeclare
 export namespace DOMProxy {
     export function enhanceDebugger() {
         installCustomObjectFormatter(new DOMProxyDevtoolsEnhancer())
