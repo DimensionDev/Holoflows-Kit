@@ -15,7 +15,7 @@ export function GetContext(): Contexts {
     if (typeof location === 'undefined') return 'unknown'
     if (typeof browser !== 'undefined' && browser !== null) {
         const scheme = location.protocol.match('-extension')
-        const backgroundURL = browser.extension?.getBackgroundPage()?.location?.href
+        const backgroundURL = browser.extension?.getBackgroundPage?.()?.location?.href
         if (scheme || location.hostname === 'localhost') {
             if (
                 backgroundURL === location.href ||
