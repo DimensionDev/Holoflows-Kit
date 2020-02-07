@@ -6,7 +6,7 @@ version: 2
 jobs:
     build:
         docker:
-            - image: circleci/node:11.0
+            - image: circleci/node:13.0
         working_directory: ~/repo
         steps:
             # build holoflows-kit
@@ -42,7 +42,7 @@ jobs:
                   destination: /esmodule.zip
     test:
         docker:
-            - image: circleci/node:11.0
+            - image: circleci/node:13.0
         working_directory: ~/repo
         steps:
             - checkout
