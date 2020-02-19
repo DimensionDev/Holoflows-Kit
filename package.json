@@ -18,10 +18,10 @@
   },
   "sideEffects": false,
   "scripts": {
-    "start": "cross-env NODE_ENV=development npm-run-all --parallel \"start:tsc -- {@}\" start:rollup",
+    "start": "env-cmd -e development npm-run-all --parallel \"start:tsc -- {@}\" start:rollup",
     "start:tsc": "tsc --watch",
     "start:rollup": "rollup -c -w",
-    "build": "cross-env NODE_ENV=production npm-run-all --parallel clean \"build:tsc -- {@}\" build:rollup",
+    "build": "env-cmd -e production npm-run-all --parallel clean \"build:tsc -- {@}\" build:rollup",
     "build:tsc": "tsc",
     "build:rollup": "rollup -c -m",
     "eslint": "eslint . --ext .ts,.tsx",
@@ -31,7 +31,7 @@
     "doc": "npm-run-all --serial build:tsc doc:api doc:md",
     "doc:api": "api-extractor run --local --verbose",
     "doc:md": "api-documenter markdown -i temp -o api-documents",
-    "test": "cross-env TS_NODE_COMPILER_OPTIONS='{ \"module\": \"commonjs\" }' mocha -r ts-node/register/transpile-only -r source-map-support/register -r jsdom-global/register --recursive src/**/*.spec.ts"
+    "test": "env-cmd -e test mocha -r ts-node/register/transpile-only -r source-map-support/register -r jsdom-global/register --recursive src/**/*.spec.ts"
   },
   "devDependencies": {
     "@microsoft/api-documenter": "^7.7.12",
@@ -41,7 +41,7 @@
     "@types/mocha": "^7.0.1",
     "@typescript-eslint/eslint-plugin": "^2.19.0",
     "@typescript-eslint/parser": "^2.19.0",
-    "cross-env": "^7.0.0",
+    "env-cmd": "^10.1.0",
     "eslint": "^6.8.0",
     "eslint-watch": "^6.0.1",
     "jsdom": "^16.1.0",
