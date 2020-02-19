@@ -4,11 +4,10 @@
   "module": "./es/index.js",
   "main": "./umd/index.js",
   "typings": "./es/",
-  "homepage": "https://github.com/project-holoflows/holoflows-kit",
+  "repository": "https://github.com/DimensionDev/Holoflows-Kit",
   "bugs": {
-    "url": "https://github.com/project-holoflows/holoflows-kit/issues"
+    "url": "https://github.com/DimensionDev/Holoflows-Kit/issues"
   },
-  "readme": "https://github.com/project-holoflows/holoflows-kit/blob/master/README.md",
   "dependencies": {
     "async-call-rpc": "^1.0.4",
     "concurrent-lock": "^1.0.7",
