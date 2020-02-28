@@ -304,10 +304,7 @@ async function getTabOrCreate(
     pinned: boolean,
 ) {
     if (typeof openInCurrentTab === 'number') {
-        if (needRedirect) {
-            // TODO: read the api
-            browser.tabs.executeScript(openInCurrentTab, { code: 'location.href = ' + url })
-        }
+        await browser.tabs.update(openInCurrentTab, { url: needRedirect ? url : undefined, active, pinned })
         return openInCurrentTab
     }
     // Create a new tab
