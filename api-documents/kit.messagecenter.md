@@ -16,21 +16,20 @@ export declare class MessageCenter<ITypedMessages>
 
 |  Constructor | Modifiers | Description |
 |  --- | --- | --- |
-|  [(constructor)(instanceKey)](./kit.messagecenter._constructor_.md) |  | Constructs a new instance of the <code>MessageCenter</code> class |
+|  [(constructor)(sendToSelf, instanceKey)](./kit.messagecenter._constructor_.md) |  | Constructs a new instance of the <code>MessageCenter</code> class |
 
 ## Properties
 
 |  Property | Modifiers | Type | Description |
 |  --- | --- | --- | --- |
-|  [serialization](./kit.messagecenter.serialization.md) |  | <code>import(&quot;async-call-rpc/out/Async-Call&quot;).Serialization</code> | How should MessageCenter serialization the message |
-|  [writeToConsole](./kit.messagecenter.writetoconsole.md) |  | <code>boolean</code> | Should MessageCenter prints all messages to console? |
+|  [serialization](./kit.messagecenter.serialization.md) |  | <code>Serialization</code> | How should MessageCenter serialization the message |
 
 ## Methods
 
 |  Method | Modifiers | Description |
 |  --- | --- | --- |
-|  [emit(key, data, alsoSendToDocument)](./kit.messagecenter.emit.md) |  | Send message to local or other instance of extension |
+|  [emit(key, data)](./kit.messagecenter.emit.md) |  | Send message to local or other instance of extension |
 |  [off(event, handler)](./kit.messagecenter.off.md) |  | Remove the listener of an event |
 |  [on(event, handler)](./kit.messagecenter.on.md) |  | Listen to an event |
-|  [send(args)](./kit.messagecenter.send.md) |  | Send message to local or other instance of extension |
+|  [writeToConsole(on)](./kit.messagecenter.writetoconsole.md) |  | Should MessageCenter prints all messages to console? |
 

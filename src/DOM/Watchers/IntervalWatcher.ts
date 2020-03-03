@@ -31,8 +31,4 @@ export class IntervalWatcher<
         super.stopWatch()
         if (this.timer) clearInterval(this.timer)
     }
-    /**
-     * {@inheritdoc Watcher.enableSingleMode}
-     */
-    enableSingleMode: () => IntervalWatcher<T, Before, After, true> = this._enableSingleMode as any
 }

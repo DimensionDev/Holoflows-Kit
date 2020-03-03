@@ -26,8 +26,4 @@ export class EventWatcher<
     public eventListener = () => {
         this.requestIdleCallback(this.scheduleWatcherCheck, { timeout: 500 })
     }
-    /**
-     * {@inheritdoc Watcher.enableSingleMode}
-     */
-    enableSingleMode: () => EventWatcher<T, Before, After, true> = this._enableSingleMode as any
 }

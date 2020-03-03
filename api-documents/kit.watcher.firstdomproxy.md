@@ -9,5 +9,5 @@ This DOMProxy always point to the first node in the LiveSelector
 <b>Signature:</b>
 
 ```typescript
-readonly firstDOMProxy: T extends Node ? DOMProxy<T, Before, After> : never;
+get firstDOMProxy(): T extends Node ? DOMProxy<T, Before, After> : never;
 ```

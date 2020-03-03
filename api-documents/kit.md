@@ -22,10 +22,7 @@ A toolkit for browser extension developing.
 
 |  Function | Description |
 |  --- | --- |
-|  [AsyncCall(implementation, options)](./kit.asynccall.md) |  |
-|  [AsyncGeneratorCall(implementation, options)](./kit.asyncgeneratorcall.md) |  |
 |  [AutomatedTabTask(taskImplements, options)](./kit.automatedtabtask.md) | Open a new page in the background, execute some task, then close it automatically. |
-|  [DomProxy(args)](./kit.domproxy.md) | DOMProxy provide an interface that be stable even dom is changed. |
 |  [DOMProxy(options)](./kit.domproxy.md) | DOMProxy provide an interface that be stable even dom is changed. |
 |  [GetContext()](./kit.getcontext.md) | Get current running context. |
 |  [OnlyRunInContext(context, name)](./kit.onlyrunincontext.md) | Make sure this file only run in wanted context |
@@ -38,10 +35,9 @@ A toolkit for browser extension developing.
 |  [AutomatedTabTaskDefineTimeOptions](./kit.automatedtabtaskdefinetimeoptions.md) | Define-time options for [AutomatedTabTask()](./kit.automatedtabtask.md) |
 |  [AutomatedTabTaskRuntimeOptions](./kit.automatedtabtaskruntimeoptions.md) | Runtime options for [AutomatedTabTask()](./kit.automatedtabtask.md) |
 |  [AutomatedTabTaskSharedOptions](./kit.automatedtabtasksharedoptions.md) | Shared options for AutomatedTabTask between the define-time and the runtime. |
-|  [DomProxy](./kit.domproxy.md) | DOMProxy provide an interface that be stable even dom is changed. |
 |  [DOMProxy](./kit.domproxy.md) | DOMProxy provide an interface that be stable even dom is changed. |
-|  [DomProxyOptions](./kit.domproxyoptions.md) | Options for DOMProxy |
 |  [DOMProxyOptions](./kit.domproxyoptions.md) | Options for DOMProxy |
+|  [Serialization](./kit.serialization.md) | Define how to do serialization and deserialization of remote procedure call |
 
 ## Namespaces
 

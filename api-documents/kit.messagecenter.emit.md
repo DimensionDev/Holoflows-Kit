@@ -9,7 +9,7 @@ Send message to local or other instance of extension
 <b>Signature:</b>
 
 ```typescript
-emit<Key extends keyof ITypedMessages>(key: Key, data: ITypedMessages[Key], alsoSendToDocument?: boolean): Promise<void>;
+emit<Key extends keyof ITypedMessages>(key: Key, data: ITypedMessages[Key]): Promise<void>;
 ```
 
 ## Parameters
@@ -18,7 +18,6 @@ emit<Key extends keyof ITypedMessages>(key: Key, data: ITypedMessages[Key], also
 |  --- | --- | --- |
 |  key | <code>Key</code> | Key of the message |
 |  data | <code>ITypedMessages[Key]</code> | Data of the message |
-|  alsoSendToDocument | <code>boolean</code> | ! Send message to document. This may leaks secret! Only open in localhost! |
 
 <b>Returns:</b>
 

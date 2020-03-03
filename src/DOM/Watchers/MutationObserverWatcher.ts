@@ -62,6 +62,9 @@ export class MutationObserverWatcher<
         } else watch(this.consistentWatchRoot)
         return this
     }
+    protected defaultStarterForThen() {
+        if (!this.isWatching) this.startWatch({ subtree: true, childList: true, characterData: true })
+    }
     /**
      * {@inheritdoc Watcher.stopWatch}
      */
@@ -69,8 +72,4 @@ export class MutationObserverWatcher<
         super.stopWatch()
         this.observer.disconnect()
     }
-    /**
-     * {@inheritdoc Watcher.enableSingleMode}
-     */
-    enableSingleMode: () => MutationObserverWatcher<T, Before, After, true> = this._enableSingleMode as any
 }

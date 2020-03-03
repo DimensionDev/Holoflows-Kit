@@ -7,10 +7,18 @@
  * @example
  * ```ts
  * const ref = new ValueRef(64)
- * function useRef() {
- *     const [state, setState] = React.useState(ref.value)
- *     React.useEffect(() => ref.addListener(e => setState(e)))
- *     return state
+ * function useValueRef<T>(ref: ValueRef<T>) {
+ *   const { useState, useEffect } = React
+ *
+ *   const [value, setValue] = useState<T>(ref.value)
+ *   useEffect(() => {
+ *       if (ref.isEqual(value, ref.value) === false) {
+ *           // The state is outdated before the useEffect runs
+ *           setValue(ref.value)
+ *       }
+ *       return ref.addListener(v => setValue(v))
+ *   }, [ref, value])
+ *   return value
  * }
  * ref.value = 42 // useRef will receive the new value
  * ```
@@ -35,8 +43,17 @@ export class ValueRef<T> {
         }
     }
     /** All watchers */
-    private watcher = new Set<(newVal: T, oldVal: T) => void>()
-    constructor(private _value: T, private isEqual: (a: T, b: T) => boolean = (a, b) => a === b) {}
+    private watcher = new Set<(newVal: any, oldVal: any) => void>()
+    // To keep the variant rule.
+    public isEqual: (a: unknown, b: unknown) => boolean
+    /**
+     *
+     * @param _value - The internal value
+     * @param isEqual - The comparer function
+     */
+    constructor(private _value: T, isEqual: (a: T, b: T) => boolean = (a, b) => a === b) {
+        this.isEqual = isEqual as any
+    }
     /**
      * Add a listener. This will return a remover.
      * @example

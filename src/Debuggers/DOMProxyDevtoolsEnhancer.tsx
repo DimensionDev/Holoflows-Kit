@@ -29,7 +29,7 @@ export class DOMProxyDevtoolsEnhancer implements React.CustomObjectFormatter {
     decorateShadow(obj: ShadowRoot) {
         return <span>{`#shadow-root (${obj.mode})`}</span>
     }
-    body(obj: DOMProxy<any, any, any>, clearState: boolean) {
+    body(obj: DOMProxy<Node, Element, Element>, clearState: boolean) {
         const [state, setState, render] = React.useState(obj, x)
         if (clearState) setState({ refreshed: false })
 

@@ -1,0 +1,6 @@
+es
+doc
+temp
+*.spec.ts
+*.test.ts
+umd

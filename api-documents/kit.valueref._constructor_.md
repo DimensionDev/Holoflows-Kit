@@ -9,12 +9,13 @@ Constructs a new instance of the `ValueRef` class
 <b>Signature:</b>
 
 ```typescript
-constructor(_value: T);
+constructor(_value: T, isEqual?: (a: T, b: T) => boolean);
 ```
 
 ## Parameters
 
 |  Parameter | Type | Description |
 |  --- | --- | --- |
-|  \_value | <code>T</code> |  |
+|  \_value | <code>T</code> | The internal value |
+|  isEqual | <code>(a: T, b: T) =&gt; boolean</code> | The comparer function |
 

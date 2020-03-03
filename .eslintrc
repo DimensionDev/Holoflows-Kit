@@ -1,0 +1,37 @@
+{
+  "parserOptions": {
+    "ecmaVersion": 2020,
+    "sourceType": "module",
+    "project": "./tsconfig.json"
+  },
+  "parser": "@typescript-eslint/parser",
+  "plugins": ["@typescript-eslint"],
+  "extends": [],
+  "env": {},
+  "rules": {
+    "no-debugger": "error",
+    "no-plusplus": "error",
+    "no-bitwise": "error",
+    "no-new-wrappers": "error",
+    "constructor-super": "error",
+    "no-redeclare": "error",
+    "no-eval": "error",
+    "no-template-curly-in-string": "error",
+    "no-return-await": "error",
+    "no-sparse-arrays": "error",
+    "dot-notation": "error",
+    "no-fallthrough": "error",
+    "prefer-const": "error",
+    "eqeqeq": "error",
+    "no-extra-bind": "error",
+    "use-isnan": "error",
+    "@typescript-eslint/strict-boolean-expressions": [
+      2,
+      {
+        "allowNullable": true,
+        "allowSafe": true,
+        "ignoreRhs": true
+      }
+    ]
+  }
+}

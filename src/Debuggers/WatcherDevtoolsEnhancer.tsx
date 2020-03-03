@@ -90,6 +90,10 @@ export class WatcherDevtoolsEnhancer implements React.CustomObjectFormatter {
             setState({ refreshed: true })
             forceRender()
         }
+        function isNil(x: any): boolean {
+            if (x === null || x === undefined) return false
+            return true
+        }
         return (
             <div>
                 <span variant={['fade']}>Last values:</span>
@@ -102,13 +106,17 @@ export class WatcherDevtoolsEnhancer implements React.CustomObjectFormatter {
                 <span variant={['fade']}>Other:</span>
                 <table>
                     {this.optionsRow('LiveSelector', priv.liveSelector, () => false)}
-                    {this.optionsRow('ConsistentWatchRoot', priv.consistentWatchRoot, x => x === document.body || !x)}
+                    {this.optionsRow(
+                        'ConsistentWatchRoot',
+                        priv.consistentWatchRoot,
+                        x => x === document.body || isNil(x),
+                    )}
                     {this.optionsRow('DomProxyOptions', priv.domProxyOption, x => Object.keys(x).length === 0)}
                     {this.optionsRow('KeyComparer', priv.keyComparer, x => x(test, test))}
                     {this.optionsRow('ValueComparer', priv.valueComparer, x => x(test, test))}
                     {this.optionsRow('MapNodeToKey', priv.mapNodeToKey, x => x(test, 0, []) === test)}
                     {this.optionsRow('FirstDOMProxy', obj.firstDOMProxy, x => true)}
-                    {this.optionsRow('stopWatchOnDisconnected', priv.stopWatchOnDisconnected, x => !x)}
+                    {this.optionsRow('stopWatchOnDisconnected', priv.stopWatchOnDisconnected, isNil)}
                 </table>
                 <br />
                 <div variant={['bigint']}>Actions:</div>

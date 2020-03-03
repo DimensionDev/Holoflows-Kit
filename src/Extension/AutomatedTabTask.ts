@@ -1,8 +1,9 @@
 import { sleep, timeout as timeoutFn } from '../util/sleep'
-import { AsyncCall, AsyncCallOptions } from '../util/AsyncCall'
+import { AsyncCall, AsyncCallOptions } from 'async-call-rpc'
 import { GetContext } from './Context'
 import Lock from 'concurrent-lock'
 import { memorize } from 'memorize-decorator'
+import { MessageCenter } from './MessageCenter'
 
 /**
  * Shared options for AutomatedTabTask between the define-time and the runtime.
@@ -138,6 +139,7 @@ export function AutomatedTabTask<T extends Record<string, (...args: any[]) => Pr
     }
     const AsyncCallKey = AsyncCallOptions.key
     const REGISTER = AsyncCallKey + ':ping'
+    const finalAsyncCallOptions = { messageChannel: new MessageCenter(false), ...AsyncCallOptions }
     if (GetContext() === 'content') {
         // If run in content script
         // Register this tab
@@ -151,7 +153,7 @@ export function AutomatedTabTask<T extends Record<string, (...args: any[]) => Pr
                     tasksWithId[getTaskNameByTabId(taskName, tabId)] = value
                 }
                 // Register AsyncCall
-                AsyncCall(tasksWithId, AsyncCallOptions)
+                AsyncCall(tasksWithId, finalAsyncCallOptions)
             },
             () => {},
         )
@@ -170,7 +172,7 @@ export function AutomatedTabTask<T extends Record<string, (...args: any[]) => Pr
             return undefined
         }) as browser.runtime.onMessageVoid)
         // Register a empty AsyncCall for runtime-generated call
-        const asyncCall = AsyncCall<any>({}, AsyncCallOptions)
+        const asyncCall = AsyncCall<any>({}, finalAsyncCallOptions)
         const lock = new Lock(concurrent)
         const memoRunTask = memorize(createOrGetTheTabToExecuteTask, { ttl: memorizeTTL })
         /**
@@ -208,7 +210,7 @@ export function AutomatedTabTask<T extends Record<string, (...args: any[]) => Pr
 
             let finalURL: string
             if (typeof urlOrTabID === 'string') finalURL = urlOrTabID
-            else finalURL = url || ''
+            else finalURL = url ?? ''
             function proxyTrap(_target: unknown, taskName: string | number | symbol) {
                 return (...taskArgs: any[]) => {
                     if (typeof taskName !== 'string') throw new TypeError('Key must be a string')
@@ -275,7 +277,7 @@ async function createOrGetTheTabToExecuteTask(options: createOrGetTheTabToExecut
     /**
      * does it need a lock to avoid too many open at the same time?
      */
-    const withoutLock = Boolean(isImportant || autoClose === false || active || typeof wantedTabID !== 'number')
+    const withoutLock = Boolean(isImportant || autoClose === false || active || !(typeof wantedTabID === 'number'))
     if (!withoutLock) await lock.lock(timeout)
 
     const tabId = await getTabOrCreate(wantedTabID, url, needRedirect, active, pinned)
@@ -302,10 +304,7 @@ async function getTabOrCreate(
     pinned: boolean,
 ) {
     if (typeof openInCurrentTab === 'number') {
-        if (needRedirect) {
-            // TODO: read the api
-            browser.tabs.executeScript(openInCurrentTab, { code: 'location.href = ' + url })
-        }
+        await browser.tabs.update(openInCurrentTab, { url: needRedirect ? url : undefined, active, pinned })
         return openInCurrentTab
     }
     // Create a new tab

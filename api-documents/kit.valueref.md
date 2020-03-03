@@ -17,10 +17,18 @@ export declare class ValueRef<T>
 
 ```ts
 const ref = new ValueRef(64)
-function useRef() {
-    const [state, setState] = React.useState(ref.value)
-    React.useEffect(() => ref.addListener(e => setState(e)))
-    return state
+function useValueRef<T>(ref: ValueRef<T>) {
+  const { useState, useEffect } = React
+
+  const [value, setValue] = useState<T>(ref.value)
+  useEffect(() => {
+      if (ref.isEqual(value, ref.value) === false) {
+          // The state is outdated before the useEffect runs
+          setValue(ref.value)
+      }
+      return ref.addListener(v => setValue(v))
+  }, [ref, value])
+  return value
 }
 ref.value = 42 // useRef will receive the new value
 
@@ -30,13 +38,14 @@ ref.value = 42 // useRef will receive the new value
 
 |  Constructor | Modifiers | Description |
 |  --- | --- | --- |
-|  [(constructor)(\_value)](./kit.valueref._constructor_.md) |  | Constructs a new instance of the <code>ValueRef</code> class |
+|  [(constructor)(\_value, isEqual)](./kit.valueref._constructor_.md) |  | Constructs a new instance of the <code>ValueRef</code> class |
 
 ## Properties
 
 |  Property | Modifiers | Type | Description |
 |  --- | --- | --- | --- |
-|  [value](./kit.valueref.value.md) |  | <code>T</code> | Set current value |
+|  [isEqual](./kit.valueref.isequal.md) |  | <code>(a: unknown, b: unknown) =&gt; boolean</code> |  |
+|  [value](./kit.valueref.value.md) |  | <code>T</code> | Get current value |
 
 ## Methods
 

@@ -4,10 +4,12 @@
 
 ## ValueRef.value property
 
-Set current value
+Get current value
 
 <b>Signature:</b>
 
 ```typescript
-value: T;
+get value(): T;
+
+set value(newVal: T);
 ```

@@ -2,28 +2,6 @@ import { DOMProxyDevtoolsEnhancer } from '../Debuggers/DOMProxyDevtoolsEnhancer'
 import { installCustomObjectFormatter } from 'jsx-jsonml-devtools-renderer'
 
 /**
- * {@inheritdoc (DOMProxy:interface)}
- * @deprecated use DOMProxy instead, will removed in 0.7.0
- */
-export interface DomProxy<
-    ProxiedElement extends Node = HTMLElement,
-    Before extends Element = HTMLSpanElement,
-    After extends Element = HTMLSpanElement
-> extends DOMProxy<ProxiedElement, Before, After> {}
-/**
- * {@inheritdoc (DOMProxy:function)}
- * @deprecated use DOMProxy instead, will removed in 0.7.0
- */
-export function DomProxy(...args: Parameters<typeof DOMProxy>): ReturnType<typeof DOMProxy> {
-    return DOMProxy(...args)
-}
-/**
- * {@inheritdoc DOMProxyOptions}
- * @deprecated use DOMProxyOptions instead, will removed in 0.7.0
- */
-export interface DomProxyOptions<Before extends Element = HTMLSpanElement, After extends Element = HTMLSpanElement>
-    extends DOMProxyOptions<Before, After> {}
-/**
  * Options for DOMProxy
  */
 export interface DOMProxyOptions<Before extends Element = HTMLSpanElement, After extends Element = HTMLSpanElement> {
@@ -80,7 +58,7 @@ export function DOMProxy<
     let virtualAfter: After | null = null
     let virtualAfterShadow: ShadowRoot | null = null
     /** All changes applied on the `proxy` */
-    let changes: (ActionTypes[keyof ActionTypes])[] = []
+    const changes: ActionTypes[keyof ActionTypes][] = []
     /** Read Traps */
     const readonlyTraps: ProxyHandler<any> = {
         ownKeys: () => {
@@ -154,7 +132,7 @@ export function DOMProxy<
     const modifyTrapsNotWrite = modifyTraps(false)
     const proxy = Proxy.revocable(defaultCurrent, { ...readonlyTraps, ...modifyTrapsWrite })
     function hasStyle(e: Node): e is HTMLElement {
-        return !!(e as any).style
+        return 'style' in e
     }
     /** Call before realCurrent change */
     function undoEffects(nextCurrent?: Node | null) {
@@ -166,7 +144,7 @@ export function DOMProxy<
                 } else if (attr === 'appendChild') {
                     if (!nextCurrent) {
                         const node = (change.op.thisArg as Parameters<HTMLElement['appendChild']>)[0]
-                        node && current.removeChild(node)
+                        if (node !== undefined) current.removeChild(node)
                     }
                 }
             } else if (change.type === 'modifyStyle') {
@@ -192,7 +170,7 @@ export function DOMProxy<
                 const replayable = ['appendChild', 'addEventListener', 'before', 'after']
                 const key: keyof Node = change.op.name as any
                 if (replayable.indexOf(key) !== -1) {
-                    if (current[key]) {
+                    if (current[key] !== undefined) {
                         ;(current[key] as any)(...change.op.param)
                     } else {
                         console.warn(current, `doesn't have method "${key}", replay failed.`)
@@ -316,6 +294,7 @@ export function DOMProxy<
     DOMProxyDevtoolsEnhancer.allDOMProxy.set(DOMProxyObject, changes)
     return DOMProxyObject
 }
+// eslint-disable-next-line no-redeclare
 export namespace DOMProxy {
     export function enhanceDebugger() {
         installCustomObjectFormatter(new DOMProxyDevtoolsEnhancer())

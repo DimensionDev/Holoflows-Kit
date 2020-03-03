@@ -120,11 +120,13 @@ export abstract class Watcher<T, Before extends Element, After extends Element, 
     }
     //#endregion
     //#region .then()
+    protected defaultStarterForThen() {
+        this.startWatch()
+    }
     /**
      * Start the watcher, once it emitted data, stop watching.
      * @param map - Map function transform T to Result
      * @param options - Options for watcher
-     * @param starter - How to start the watcher
      *
      * @remarks This is an implementation of `PromiseLike`
      *
@@ -132,8 +134,6 @@ export abstract class Watcher<T, Before extends Element, After extends Element, 
      * ```ts
      * const value = await watcher
      * const value2 = await watcher(undefined, undefined, { minimalResultsRequired: 5 })
-     * // If your watcher need parameters for startWatch
-     * const value3 = await watcher(undefined, undefined, {}, s => s.startWatch(...))
      * ```
      */
     // The PromiseLike<T> interface
@@ -141,9 +141,8 @@ export abstract class Watcher<T, Before extends Element, After extends Element, 
         onfulfilled?: ((value: ResultOf<SingleMode, T>) => TResult1 | PromiseLike<TResult1>) | null,
         onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | null,
         options: { minimalResultsRequired?: number; timeout?: number } = {},
-        starter: (this: this, self: this) => void = watcher => watcher.startWatch(),
     ): Promise<TResult1 | TResult2> {
-        this._warning_forget_watch_.ignored = true
+        this.defaultStarterForThen()
         const { minimalResultsRequired, timeout: timeoutTime } = {
             ...({
                 minimalResultsRequired: 1,
@@ -174,9 +173,8 @@ export abstract class Watcher<T, Before extends Element, After extends Element, 
                     if (state) resolve(val)
                     else reject(val)
                 }
-                starter.bind(this)(this)
                 const f = (v: OnIterationEvent<any>) => {
-                    const nodes = v.values.current
+                    const nodes = Array.from(v.current.values())
                     if (this.singleMode && nodes.length >= 1) {
                         return done(true, nodes[0])
                     }
@@ -372,35 +370,6 @@ export abstract class Watcher<T, Before extends Element, After extends Element, 
     //#endregion
     //#region Single mode
     /**
-     * Enable single mode.
-     *
-     * @deprecated Use LiveSelector.enableSingleMode(), will removed in 0.7.0
-     *
-     * @privateRemarks
-     * Subclass need to implement it to get the correct type.
-     * Example to subclass implementor:
-     *
-     * ```ts
-     * class MyWatcher<T, Before extends Element, After extends Element, SingleMode extends boolean>
-     * extends Watcher<T, Before, After, SingleMode> {
-     *      public enableSingleMode: MyWatcher<T, Before, After, true> = this._enableSingleMode as any
-     * }
-     * ```
-     */
-    public abstract enableSingleMode(): Watcher<T, Before, After, true>
-    /**
-     * @privateRemarks
-     * Every subclass should call this.
-     */
-    protected _enableSingleMode() {
-        console.warn(
-            'You should call this method on LiveSelector instead of a Watcher. Watcher.enableSingleMode is deprecated.',
-        )
-        this._warning_single_mode.ignored = true
-        this.liveSelector.enableSingleMode()
-        return this
-    }
-    /**
      * Is the single mode is on.
      */
     protected get singleMode(): boolean {
@@ -506,7 +475,7 @@ export abstract class Watcher<T, Before extends Element, After extends Element, 
     //#endregion
     //#region events
     /** Event emitter */
-    protected readonly eventEmitter = new mitt()
+    protected readonly eventEmitter = mitt()
     private isEventsListening: Record<'onIteration' | 'onChange' | 'onRemove' | 'onAdd', boolean> = {
         onAdd: false,
         onChange: false,
@@ -547,14 +516,6 @@ export abstract class Watcher<T, Before extends Element, After extends Element, 
      */
     public get firstDOMProxy() {
         return (this._firstDOMProxy as unknown) as T extends Node ? DOMProxy<T, Before, After> : never
-    }
-    /**
-     * {@inheritdoc Watcher.firstDOMProxy}
-     * @deprecated use firstDOMProxy instead. will remove in 0.7.0
-     */
-    public get firstVirtualNode() {
-        console.warn('firstVirtualNode is deprecated, use firstDOMProxy instead')
-        return this.firstDOMProxy
     }
     //#endregion
     //#region Watcher settings
@@ -643,18 +604,10 @@ export abstract class Watcher<T, Before extends Element, After extends Element, 
         this.noNeedInSingleMode(this.getDOMProxyByKey.name)
         return this.lastDOMProxyMap.get([...this.lastDOMProxyMap.keys()].find(_ => this.keyComparer(_, key))) || null
     }
-    /**
-     * {@inheritdoc Watcher.getDOMProxyByKey}
-     * @deprecated use getDOMProxyByKey instead. will removed in 0.7.0
-     */
-    public getVirtualNodeByKey(key: unknown) {
-        console.warn('getVirtualNodeByKey is deprecated, use getDOMProxyByKey instead')
-        return this.getDOMProxyByKey(key)
-    }
     /** window.requestIdleCallback, or polyfill. */
     protected readonly requestIdleCallback = requestIdleCallback
     /** For debug usage. Just keep it. */
-    private readonly stack = new Error().stack || ''
+    private readonly stack = new Error().stack ?? ''
     //#endregion
     //#region Warnings
     /**
@@ -691,14 +644,6 @@ Or to ignore this message, call \`.dismissSingleModeWarning()\` on the watcher.\
             )
         },
     })
-    /**
-     * {@inheritdoc Watcher.dismissSingleModeWarning}
-     * @deprecated will removed in 0.7.0
-     */
-    public enableBatchMode(): this {
-        console.warn('This method is deprecated. Use dismissSingleModeWarning() instead.')
-        return this.dismissSingleModeWarning()
-    }
     /**
      * Dismiss the warning that let you enable single mode but the warning is false positive.
      */
@@ -748,10 +693,6 @@ type OnAddOrRemoveEvent<T> = {
     value: T
 }
 type OnIterationEvent<T> = {
-    /** @deprecated will remove in 0.7.0 */
-    keys: Record<'removed' | 'new' | 'current', unknown[]>
-    /** @deprecated will remove in 0.7.0 */
-    values: Record<'removed' | 'new' | 'current', T[]>
     new: Map<unknown, T>
     removed: Map<unknown, T>
     current: Map<unknown, T>
@@ -781,10 +722,10 @@ type useForeachReturns<T> =
 
 function applyUseForeachCallback<T>(callback: useForeachReturns<T>) {
     const cb = callback as useForeachReturns<Node>
-    let remove: any, change: any, mutation: any
-    if (cb === undefined) {
-    } else if (typeof cb === 'function') remove = cb
-    else if (cb) {
+    type f = undefined | ((...args: any[]) => any)
+    let remove: f, change: f, mutation: f
+    if (typeof cb === 'function') remove = cb
+    else if (cb !== undefined) {
         const { onNodeMutation, onRemove, onTargetChanged } = cb
         ;[remove, change, mutation] = [onRemove, onTargetChanged, onNodeMutation]
     }
@@ -804,7 +745,7 @@ function applyUseForeachCallback<T>(callback: useForeachReturns<T>) {
 }
 //#endregion
 //#region Typescript generic helper
-type ResultOf<SingleMode extends boolean, Result> = SingleMode extends true ? (Result) : (Result)[]
+type ResultOf<SingleMode extends boolean, Result> = SingleMode extends true ? Result : Result[]
 //#endregion
 //#region Warnings
 interface WarningOptions {
@@ -818,7 +759,7 @@ interface WarningOptions {
 function warning(_: Partial<WarningOptions> = {}) {
     const { dev, once, fn } = { ...({ dev: false, once: true, fn: () => {} } as WarningOptions), ..._ }
     if (dev) if (process.env.NODE_ENV !== 'development') return { warn(f = fn) {}, ignored: true, stack: '' }
-    const [_0, _1, _2, ...lines] = (new Error().stack || '').split('\n')
+    const [_0, _1, _2, ...lines] = (new Error().stack ?? '').split('\n')
     const stack = lines.join('\n')
     let warned = 0
     const obj = {
@@ -826,9 +767,9 @@ function warning(_: Partial<WarningOptions> = {}) {
         stack,
         warn(f = fn) {
             if (obj.ignored) return
-            if (warned && once) return
+            if (warned > 0 && once) return
             if (typeof once === 'number' && warned <= once) return
-            warned++
+            warned = warned + 1
             f(stack)
         },
     }
