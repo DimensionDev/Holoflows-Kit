@@ -1,6 +1,6 @@
 {
   "name": "@holoflows/kit",
-  "version": "0.6.1",
+  "version": "0.7.0",
   "module": "./es/index.js",
   "main": "./umd/index.js",
   "typings": "./es/",
