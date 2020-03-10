@@ -23,9 +23,6 @@ export interface AutomatedTabTaskSharedOptions {
     timeout: number
     /**
      * Should the new tab pinned?
-     * @defaultValue true
-     *
-     * !TODO: make it false on Vavaldi.
      */
     pinned?: boolean
     /**
@@ -35,7 +32,6 @@ export interface AutomatedTabTaskSharedOptions {
     autoClose: boolean
     /**
      * Should the new tab to be active?
-     * @defaultValue false
      */
     active?: boolean
 }
@@ -306,7 +302,7 @@ async function getTabOrCreate(
     if (finalOpts.pinned === undefined) delete finalOpts.pinned
     if (finalOpts.active === undefined) delete finalOpts.active
     if (typeof openInCurrentTab === 'number') {
-        if (needRedirect) delete finalOpts.url
+        if (!needRedirect) delete finalOpts.url
         await browser.tabs.update(openInCurrentTab, finalOpts)
         return openInCurrentTab
     }
