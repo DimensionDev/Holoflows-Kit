@@ -27,10 +27,10 @@ export interface AutomatedTabTaskRuntimeOptions extends AutomatedTabTaskSharedOp
 
 // @public
 export interface AutomatedTabTaskSharedOptions {
-    active: boolean;
+    active?: boolean;
     autoClose: boolean;
     memorable: boolean;
-    pinned: boolean;
+    pinned?: boolean;
     timeout: number;
 }
 

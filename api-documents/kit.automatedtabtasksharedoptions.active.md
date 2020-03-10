@@ -9,5 +9,5 @@ Should the new tab to be active?
 <b>Signature:</b>
 
 ```typescript
-active: boolean;
+active?: boolean;
 ```
