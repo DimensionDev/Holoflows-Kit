@@ -9,6 +9,7 @@
     "url": "https://github.com/DimensionDev/Holoflows-Kit/issues"
   },
   "dependencies": {
+    "@servie/events": "^1.0.0",
     "async-call-rpc": "^1.0.4",
     "concurrent-lock": "^1.0.7",
     "jsx-jsonml-devtools-renderer": "^1.4.1",

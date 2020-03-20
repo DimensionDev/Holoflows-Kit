@@ -5,6 +5,7 @@
 ```ts
 
 import { AsyncCallOptions } from 'async-call-rpc';
+import { Emitter } from '@servie/events';
 import mitt from 'mitt';
 
 // @public
@@ -42,12 +43,12 @@ export function DOMProxy<ProxiedElement extends Node = HTMLElement, Before exten
 
 // @public (undocumented)
 export namespace DOMProxy {
-    // (undocumented)
-    export function enhanceDebugger(): void;
+    var // (undocumented)
+    enhanceDebugger: () => void;
 }
 
 // @public
-export interface DOMProxy<ProxiedElement extends Node = HTMLElement, Before extends Element = HTMLSpanElement, After extends Element = HTMLSpanElement> {
+export interface DOMProxy<ProxiedElement extends Node = HTMLElement, Before extends Element = HTMLSpanElement, After extends Element = HTMLSpanElement> extends Emitter<DOMProxyEvents<ProxiedElement>> {
     readonly after: After;
     readonly afterShadow: ShadowRoot;
     readonly before: Before;
@@ -65,6 +66,15 @@ export interface DOMProxy<ProxiedElement extends Node = HTMLElement, Before exte
         init: MutationObserverInit | undefined;
     };
     realCurrent: ProxiedElement | null;
+}
+
+// @public
+export interface DOMProxyEvents<ProxiedElement extends Node> {
+    // @eventProperty
+    currentChanged: [{
+        new: ProxiedElement | null;
+        old: ProxiedElement | null;
+    }];
 }
 
 // @public

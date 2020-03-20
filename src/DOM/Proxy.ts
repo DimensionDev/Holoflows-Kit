@@ -1,5 +1,6 @@
 import { DOMProxyDevtoolsEnhancer } from '../Debuggers/DOMProxyDevtoolsEnhancer'
 import { installCustomObjectFormatter } from 'jsx-jsonml-devtools-renderer'
+import { Emitter } from '@servie/events'
 
 /**
  * Options for DOMProxy
@@ -38,6 +39,7 @@ export function DOMProxy<
     Before extends Element = HTMLSpanElement,
     After extends Element = HTMLSpanElement
 >(options: Partial<DOMProxyOptions<Before, After>> = {}): DOMProxy<ProxiedElement, Before, After> {
+    const event = new Emitter<DOMProxyEvents<ProxiedElement>>()
     // Options
     const { createAfter, createBefore, afterShadowRootInit, beforeShadowRootInit } = {
         ...({
@@ -257,6 +259,7 @@ export function DOMProxy<
             return current as any
         },
         set realCurrent(node: ProxiedElement | null) {
+            const old: ProxiedElement | null = current as any
             if (isDestroyed) throw new TypeError('You can not set current for a destroyed proxy')
             if (node === current) return
             if ((node === virtualAfter || node === virtualBefore) && node !== null) {
@@ -277,6 +280,7 @@ export function DOMProxy<
                 if (virtualBefore && current instanceof Element) current.before(virtualBefore)
                 redoEffects()
             }
+            event.emit('currentChanged', { new: node, old })
         },
         destroy() {
             observer && observer.disconnect()
@@ -291,15 +295,13 @@ export function DOMProxy<
             current = defaultCurrent
         },
     } as DOMProxy<ProxiedElement, Before, After>
-    DOMProxyDevtoolsEnhancer.allDOMProxy.set(DOMProxyObject, changes)
-    return DOMProxyObject
+    DOMProxyDevtoolsEnhancer.allDOMProxy.set(event as any, changes)
+    Object.defineProperties(event, Object.getOwnPropertyDescriptors(DOMProxyObject))
+    return event as any
 }
-// eslint-disable-next-line no-redeclare
-export namespace DOMProxy {
-    export function enhanceDebugger() {
-        installCustomObjectFormatter(new DOMProxyDevtoolsEnhancer())
-        DOMProxy.enhanceDebugger = () => {}
-    }
+DOMProxy.enhanceDebugger = function enhanceDebugger() {
+    installCustomObjectFormatter(new DOMProxyDevtoolsEnhancer())
+    DOMProxy.enhanceDebugger = () => {}
 }
 /**
  * {@inheritdoc (DOMProxy:function)}
@@ -308,7 +310,7 @@ export interface DOMProxy<
     ProxiedElement extends Node = HTMLElement,
     Before extends Element = HTMLSpanElement,
     After extends Element = HTMLSpanElement
-> {
+> extends Emitter<DOMProxyEvents<ProxiedElement>> {
     /** Destroy the DOMProxy */
     destroy(): void
     readonly destroyed: boolean
@@ -344,6 +346,16 @@ export interface DOMProxy<
         callback: MutationCallback | undefined
         init: MutationObserverInit | undefined
     }
+}
+/**
+ * Events on the DOMProxy object
+ */
+export interface DOMProxyEvents<ProxiedElement extends Node> {
+    /**
+     * Emit on current changed
+     * @eventProperty
+     */
+    currentChanged: [{ new: ProxiedElement | null; old: ProxiedElement | null }]
 }
 
 type Keys = string | number | symbol

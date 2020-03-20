@@ -2,14 +2,10 @@
 
 [Home](./index.md) &gt; [@holoflows/kit](./kit.md) &gt; [DOMProxy](./kit.domproxy.md) &gt; [enhanceDebugger](./kit.domproxy.enhancedebugger.md)
 
-## DOMProxy.enhanceDebugger() function
+## DOMProxy.enhanceDebugger variable
 
 <b>Signature:</b>
 
 ```typescript
-function enhanceDebugger(): void;
+enhanceDebugger: () => void
 ```
-<b>Returns:</b>
-
-`void`
-
