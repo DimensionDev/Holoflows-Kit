@@ -22,7 +22,7 @@ export declare abstract class Watcher<T, Before extends Element, After extends E
 
 |  Property | Modifiers | Type | Description |
 |  --- | --- | --- | --- |
-|  [\_firstDOMProxy](./kit.watcher._firstdomproxy.md) |  | <code>DOMProxy&lt;any, Before, After&gt;</code> | The first DOMProxy |
+|  [\_firstDOMProxy](./kit.watcher._firstdomproxy.md) |  | <code>DOMProxy&lt;Node, Before, After&gt;</code> | The first DOMProxy |
 |  [\_warning\_forget\_watch\_](./kit.watcher._warning_forget_watch_.md) |  | <code>{</code><br/><code>        warn(f?: (stack: string) =&gt; void): void;</code><br/><code>        ignored: boolean;</code><br/><code>        stack: string;</code><br/><code>    }</code> | Warning to remember if developer forget to call the startWatch. |
 |  [domProxyOption](./kit.watcher.domproxyoption.md) |  | <code>Partial&lt;DOMProxyOptions&lt;Before, After&gt;&gt;</code> | The dom proxy option used in DOMProxy() |
 |  [findNodeFromListByKey](./kit.watcher.findnodefromlistbykey.md) |  | <code>(list: readonly T[], keys: readonly unknown[]) =&gt; (key: unknown) =&gt; T &#124; null</code> | Find node from the given list by key |

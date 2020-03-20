@@ -200,7 +200,7 @@ export abstract class Watcher<T, Before extends Element, After extends Element, 
     static enhanceDebugger(): void;
     protected findNodeFromListByKey: (list: readonly T[], keys: readonly unknown[]) => (key: unknown) => T | null;
     get firstDOMProxy(): T extends Node ? DOMProxy<T, Before, After> : never;
-    protected _firstDOMProxy: DOMProxy<any, Before, After>;
+    protected _firstDOMProxy: DOMProxy<Node, Before, After>;
     getDOMProxyByKey(key: unknown): DOMProxy<any, Before, After> | null;
     protected isWatching: boolean;
     protected keyComparer: (a: unknown, b: unknown) => boolean;
