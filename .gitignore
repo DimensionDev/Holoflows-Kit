@@ -5,6 +5,7 @@
 # temp file
 /temp
 .rpt2_cache
+*.tsbuildinfo
 
 # dependencies
 /node_modules

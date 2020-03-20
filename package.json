@@ -59,7 +59,7 @@
     "web-ext-types": "^3.2.1"
   },
   "peerDependencies": {
-    "webextension-polyfill": "^0.4.0"
+    "webextension-polyfill": "*"
   },
   "license": "AGPL-3.0-or-later"
 }
