@@ -191,7 +191,8 @@ export function AutomatedTabTask<T extends Record<string, (...args: any[]) => Pr
                     memorable: defaultMemorable,
                     important: false,
                     timeout: defaultTimeout,
-                    autoClose: typeof urlOrTabID === 'number' || options.runAtTabID ? false : defaultAutoClose,
+                    autoClose:
+                        typeof urlOrTabID === 'number' || options.runAtTabID === undefined ? false : defaultAutoClose,
                     pinned: defaultPinned,
                     active: defaultActive,
                     needRedirect: false,

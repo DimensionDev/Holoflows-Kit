@@ -322,7 +322,8 @@ export abstract class Watcher<T, Before extends Element, After extends Element, 
         this.lastKeyList = thisKeyList
         this.lastNodeList = currentIteration
 
-        if (this.$.onIteration?.length && changedNodes.length + goneKeys.length + newKeys.length) {
+        const has = (item: undefined | unknown[]) => Boolean(item?.length)
+        if (has(this.$.onIteration) && changedNodes.length + goneKeys.length + newKeys.length > 0) {
             // Make a copy to prevent modifications
             const newMap = new Map<unknown, T>(newKeys.map(key => [key, findFromNew(key)!]))
             const removedMap = new Map<unknown, T>(goneKeys.map(key => [key, findFromLast(key)!]))
@@ -333,15 +334,15 @@ export abstract class Watcher<T, Before extends Element, After extends Element, 
                 current: currentMap,
             })
         }
-        if (this.$.onChange?.length)
+        if (has(this.$.onChange))
             for (const [oldNode, newNode, oldKey, newKey] of changedNodes) {
                 this.emit('onChange', { oldValue: oldNode, newValue: newNode, oldKey, newKey })
             }
-        if (this.$.onRemove?.length)
+        if (has(this.$.onRemove))
             for (const key of goneKeys) {
                 this.emit('onRemove', { key, value: findFromLast(key)! })
             }
-        if (this.$.onAdd?.length)
+        if (has(this.$.onAdd))
             for (const key of newKeys) {
                 this.emit('onAdd', { key, value: findFromNew(key)! })
             }
@@ -468,7 +469,7 @@ export abstract class Watcher<T, Before extends Element, After extends Element, 
     //#region events
     //#region firstDOMProxy
     /** The first DOMProxy */
-    protected _firstDOMProxy = DOMProxy<any, Before, After>(this.domProxyOption)
+    protected _firstDOMProxy = DOMProxy<Node, Before, After>(this.domProxyOption)
     /**
      * This DOMProxy always point to the first node in the LiveSelector
      */
@@ -750,7 +751,7 @@ function warning(_: Partial<WarningOptions> = {}) {
         stack,
         warn(f = fn) {
             if (obj.ignored) return
-            if (warned > 0 && once) return
+            if (warned > 0 && Boolean(once)) return
             if (typeof once === 'number' && warned <= once) return
             warned = warned + 1
             f(stack)
