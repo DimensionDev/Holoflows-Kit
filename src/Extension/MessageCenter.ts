@@ -1,4 +1,4 @@
-import mitt from 'mitt'
+import { Emitter } from '@servie/events'
 import { NoSerialization } from 'async-call-rpc'
 /**
  * Define how to do serialization and deserialization of remote procedure call
@@ -30,7 +30,7 @@ export class MessageCenter<ITypedMessages> {
      * @defaultValue NoSerialization
      */
     public serialization: Serialization = NoSerialization
-    private eventEmitter = mitt()
+    private eventEmitter = new Emitter<any>()
     private listener = async (request: unknown) => {
         const { key, data, instanceKey } = (await this.serialization.deserialization(request)) as InternalMessageType
         // Message is not for us
