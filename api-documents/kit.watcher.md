@@ -9,7 +9,7 @@ Use LiveSelector to watch dom change
 <b>Signature:</b>
 
 ```typescript
-export declare abstract class Watcher<T, Before extends Element, After extends Element, SingleMode extends boolean> implements PromiseLike<ResultOf<SingleMode, T>> 
+export declare abstract class Watcher<T, Before extends Element, After extends Element, SingleMode extends boolean> extends Emitter<WatcherEvents<T>> implements PromiseLike<ResultOf<SingleMode, T>> 
 ```
 
 ## Constructors
@@ -25,7 +25,6 @@ export declare abstract class Watcher<T, Before extends Element, After extends E
 |  [\_firstDOMProxy](./kit.watcher._firstdomproxy.md) |  | <code>DOMProxy&lt;any, Before, After&gt;</code> | The first DOMProxy |
 |  [\_warning\_forget\_watch\_](./kit.watcher._warning_forget_watch_.md) |  | <code>{</code><br/><code>        warn(f?: (stack: string) =&gt; void): void;</code><br/><code>        ignored: boolean;</code><br/><code>        stack: string;</code><br/><code>    }</code> | Warning to remember if developer forget to call the startWatch. |
 |  [domProxyOption](./kit.watcher.domproxyoption.md) |  | <code>Partial&lt;DOMProxyOptions&lt;Before, After&gt;&gt;</code> | The dom proxy option used in DOMProxy() |
-|  [eventEmitter](./kit.watcher.eventemitter.md) |  | <code>mitt.Emitter</code> | Event emitter |
 |  [findNodeFromListByKey](./kit.watcher.findnodefromlistbykey.md) |  | <code>(list: readonly T[], keys: readonly unknown[]) =&gt; (key: unknown) =&gt; T &#124; null</code> | Find node from the given list by key |
 |  [firstDOMProxy](./kit.watcher.firstdomproxy.md) |  | <code>T extends Node ? DOMProxy&lt;T, Before, After&gt; : never</code> | This DOMProxy always point to the first node in the LiveSelector |
 |  [isWatching](./kit.watcher.iswatching.md) |  | <code>boolean</code> | Is the watcher running |
@@ -49,25 +48,13 @@ export declare abstract class Watcher<T, Before extends Element, After extends E
 
 |  Method | Modifiers | Description |
 |  --- | --- | --- |
-|  [addListener(event, fn)](./kit.watcher.addlistener.md) |  |  |
-|  [addListener(event, fn)](./kit.watcher.addlistener_1.md) |  |  |
-|  [addListener(event, fn)](./kit.watcher.addlistener_2.md) |  |  |
-|  [addListener(event, fn)](./kit.watcher.addlistener_3.md) |  |  |
 |  [assignKeys(keyAssigner)](./kit.watcher.assignkeys.md) |  | To help identify same nodes in different iteration, you need to implement a map function that map <code>node</code> to <code>key</code>If the key is changed, the same node will call through <code>forEachRemove</code> then <code>forEach</code> |
 |  [defaultStarterForThen()](./kit.watcher.defaultstarterforthen.md) |  |  |
 |  [dismissSingleModeWarning()](./kit.watcher.dismisssinglemodewarning.md) |  | Dismiss the warning that let you enable single mode but the warning is false positive. |
-|  [emit(event, data)](./kit.watcher.emit.md) |  |  |
-|  [emit(event, data)](./kit.watcher.emit_1.md) |  |  |
-|  [emit(event, data)](./kit.watcher.emit_2.md) |  |  |
-|  [emit(event, data)](./kit.watcher.emit_3.md) |  |  |
 |  [enhanceDebugger()](./kit.watcher.enhancedebugger.md) | <code>static</code> | Call this function to enhance the debug experience in the Chrome DevTools<!-- -->You need to open "Enable custom formatters" in your DevTools settings. |
 |  [getDOMProxyByKey(key)](./kit.watcher.getdomproxybykey.md) |  | Get DOMProxy by key. DOMProxy will be unavailable if it is deleted |
 |  [omitWarningForForgetWatch()](./kit.watcher.omitwarningforforgetwatch.md) |  | If you're expecting Watcher may not be called, call this function, this will omit the warning. |
 |  [omitWarningForRepeatedKeys()](./kit.watcher.omitwarningforrepeatedkeys.md) |  | If you're expecting repeating keys, call this function, this will omit the warning. |
-|  [removeListener(event, fn)](./kit.watcher.removelistener.md) |  |  |
-|  [removeListener(event, fn)](./kit.watcher.removelistener_1.md) |  |  |
-|  [removeListener(event, fn)](./kit.watcher.removelistener_2.md) |  |  |
-|  [removeListener(event, fn)](./kit.watcher.removelistener_3.md) |  |  |
 |  [setComparer(keyComparer, valueComparer)](./kit.watcher.setcomparer.md) |  | To help identify same nodes in different iteration, you need to implement a map function to compare <code>node</code> and <code>key</code>You probably don't need this. |
 |  [setDOMProxyOption(option)](./kit.watcher.setdomproxyoption.md) |  | Set option for DOMProxy |
 |  [startWatch(args)](./kit.watcher.startwatch.md) |  | Let the watcher start to watching |

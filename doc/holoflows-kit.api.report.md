@@ -6,7 +6,6 @@
 
 import { AsyncCallOptions } from 'async-call-rpc';
 import { Emitter } from '@servie/events';
-import mitt from 'mitt';
 
 // @public
 export function AutomatedTabTask<T extends Record<string, (...args: any[]) => PromiseLike<any>>>(taskImplements: T, options?: Partial<AutomatedTabTaskDefineTimeOptions>): ((urlOrTabID: string | number, options?: Partial<AutomatedTabTaskRuntimeOptions>) => T) | null;
@@ -113,7 +112,7 @@ export class LiveSelector<T, SingleMode extends boolean = false> {
     concat<NextType>(newEle: LiveSelector<NextType, SingleMode>): LiveSelector<T | NextType, SingleMode>;
     enableSingleMode(): LiveSelector<T, true>;
     static enhanceDebugger(): void;
-    evaluate(): SingleMode extends true ? (T | undefined) : T[];
+    evaluate(): SingleMode extends true ? T | undefined : T[];
     filter(f: (value: T, index: number, array: T[]) => any): LiveSelector<NonNullable<T>, SingleMode>;
     flat(): LiveSelector<T extends ArrayLike<infer U> ? U : never, SingleMode>;
     getElementsByClassName<T extends Element = Element>(className: string): LiveSelector<T, SingleMode>;
@@ -122,6 +121,7 @@ export class LiveSelector<T, SingleMode extends boolean = false> {
     getElementsByTagName<K extends keyof SVGElementTagNameMap>(tag: K): LiveSelector<SVGElementTagNameMap[K], SingleMode>;
     // (undocumented)
     getElementsByTagName<E extends Element = Element>(tag: string): LiveSelector<E, SingleMode>;
+    isSingleMode: boolean;
     map<NextType>(callbackfn: (element: T, index: number, array: T[]) => NextType): LiveSelector<NonNullable<NextType>, SingleMode>;
     nth(n: SingleMode extends true ? 'LiveSelector.nth() is not available in SingleMode' : number): LiveSelector<T, SingleMode>;
     querySelector<K extends keyof HTMLElementTagNameMap>(selector: K): LiveSelector<HTMLElementTagNameMap[K], SingleMode>;
@@ -190,38 +190,14 @@ export class ValueRef<T> {
 // Warning: (ae-forgotten-export) The symbol "ResultOf" needs to be exported by the entry point index.d.ts
 //
 // @public
-export abstract class Watcher<T, Before extends Element, After extends Element, SingleMode extends boolean> implements PromiseLike<ResultOf<SingleMode, T>> {
+export abstract class Watcher<T, Before extends Element, After extends Element, SingleMode extends boolean> extends Emitter<WatcherEvents<T>> implements PromiseLike<ResultOf<SingleMode, T>> {
     constructor(liveSelector: LiveSelector<T, SingleMode>);
-    // Warning: (ae-forgotten-export) The symbol "EventCallback" needs to be exported by the entry point index.d.ts
-    // Warning: (ae-forgotten-export) The symbol "OnIterationEvent" needs to be exported by the entry point index.d.ts
-    //
-    // (undocumented)
-    addListener(event: 'onIteration', fn: EventCallback<OnIterationEvent<T>>): this;
-    // Warning: (ae-forgotten-export) The symbol "OnChangeEvent" needs to be exported by the entry point index.d.ts
-    //
-    // (undocumented)
-    addListener(event: 'onChange', fn: EventCallback<OnChangeEvent<T>>): this;
-    // Warning: (ae-forgotten-export) The symbol "OnAddOrRemoveEvent" needs to be exported by the entry point index.d.ts
-    //
-    // (undocumented)
-    addListener(event: 'onRemove', fn: EventCallback<OnAddOrRemoveEvent<T>>): this;
-    // (undocumented)
-    addListener(event: 'onAdd', fn: EventCallback<OnAddOrRemoveEvent<T>>): this;
     assignKeys<Q = unknown>(keyAssigner: (node: T, index: number, arr: readonly T[]) => Q): this;
     // (undocumented)
     protected defaultStarterForThen(): void;
     dismissSingleModeWarning(): this;
     protected domProxyOption: Partial<DOMProxyOptions<Before, After>>;
-    // (undocumented)
-    protected emit(event: 'onIteration', data: OnIterationEvent<T>): void;
-    // (undocumented)
-    protected emit(event: 'onChange', data: OnChangeEvent<T>): void;
-    // (undocumented)
-    protected emit(event: 'onRemove', data: OnAddOrRemoveEvent<T>): void;
-    // (undocumented)
-    protected emit(event: 'onAdd', data: OnAddOrRemoveEvent<T>): void;
     static enhanceDebugger(): void;
-    protected readonly eventEmitter: mitt.Emitter;
     protected findNodeFromListByKey: (list: readonly T[], keys: readonly unknown[]) => (key: unknown) => T | null;
     get firstDOMProxy(): T extends Node ? DOMProxy<T, Before, After> : never;
     protected _firstDOMProxy: DOMProxy<any, Before, After>;
@@ -236,14 +212,6 @@ export abstract class Watcher<T, Before extends Element, After extends Element, 
     protected mapNodeToKey: (node: T, index: number, arr: readonly T[]) => unknown;
     omitWarningForForgetWatch(): this;
     omitWarningForRepeatedKeys(): this;
-    // (undocumented)
-    removeListener(event: 'onIteration', fn: EventCallback<OnIterationEvent<T>>): this;
-    // (undocumented)
-    removeListener(event: 'onChange', fn: EventCallback<OnChangeEvent<T>>): this;
-    // (undocumented)
-    removeListener(event: 'onRemove', fn: EventCallback<OnAddOrRemoveEvent<T>>): this;
-    // (undocumented)
-    removeListener(event: 'onAdd', fn: EventCallback<OnAddOrRemoveEvent<T>>): this;
     // Warning: (ae-forgotten-export) The symbol "requestIdleCallback" needs to be exported by the entry point index.d.ts
     protected readonly requestIdleCallback: typeof requestIdleCallback;
     protected scheduleWatcherCheck: () => void;
@@ -269,6 +237,33 @@ export abstract class Watcher<T, Before extends Element, After extends Element, 
         stack: string;
     };
     }
+
+// @public (undocumented)
+export interface WatcherEvents<T> {
+    // @eventProperty (undocumented)
+    onAdd: [{
+        key: unknown;
+        value: T;
+    }];
+    // @eventProperty (undocumented)
+    onChange: [{
+        oldKey: unknown;
+        newKey: unknown;
+        oldValue?: T;
+        newValue: T;
+    }];
+    // @eventProperty (undocumented)
+    onIteration: [{
+        new: Map<unknown, T>;
+        removed: Map<unknown, T>;
+        current: Map<unknown, T>;
+    }];
+    // @eventProperty (undocumented)
+    onRemove: [{
+        key: unknown;
+        value: T;
+    }];
+}
 
 
 ```

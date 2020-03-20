@@ -31,6 +31,12 @@ ls.evaluate() // returns all urls at the current time.
 |  --- | --- | --- |
 |  [(constructor)(initialElements)](./kit.liveselector._constructor_.md) |  | Create a new LiveSelector. |
 
+## Properties
+
+|  Property | Modifiers | Type | Description |
+|  --- | --- | --- | --- |
+|  [isSingleMode](./kit.liveselector.issinglemode.md) |  | <code>boolean</code> | Is this LiveSelector run in the SingleMode |
+
 ## Methods
 
 |  Method | Modifiers | Description |

@@ -60,7 +60,7 @@ export class LiveSelector<T, SingleMode extends boolean = false> {
     /**
      * Is this LiveSelector run in the SingleMode
      */
-    private isSingleMode = false
+    public isSingleMode = false
     /**
      * Enable single mode. Only 1 result will be emitted.
      */
@@ -325,7 +325,7 @@ export class LiveSelector<T, SingleMode extends boolean = false> {
     /**
      * Evaluate selector expression
      */
-    evaluate(): SingleMode extends true ? (T | undefined) : T[] {
+    evaluate(): SingleMode extends true ? T | undefined : T[] {
         let arr: readonly (T | Element)[] = this.initialElements
         function isElementArray(x: readonly any[]): x is Element[] {
             // Do a simple check

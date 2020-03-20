@@ -10,7 +10,7 @@
  * - Event watcher (based on addEventListener)
  */
 import { DOMProxy, DOMProxyOptions } from './Proxy'
-import mitt from 'mitt'
+import { Emitter } from '@servie/events'
 import { LiveSelector } from './LiveSelector'
 
 import differenceWith from 'lodash-es/differenceWith'
@@ -26,12 +26,14 @@ import { installCustomObjectFormatter } from 'jsx-jsonml-devtools-renderer'
  * Use LiveSelector to watch dom change
  */
 export abstract class Watcher<T, Before extends Element, After extends Element, SingleMode extends boolean>
+    extends Emitter<WatcherEvents<T>>
     implements PromiseLike<ResultOf<SingleMode, T>> {
     /**
      * The liveSelector that this object holds.
      */
     protected readonly liveSelector: LiveSelector<T, SingleMode>
     constructor(liveSelector: LiveSelector<T, SingleMode>) {
+        super()
         this.liveSelector = liveSelector.clone()
     }
     //#region How to start and stop the watcher
@@ -169,11 +171,11 @@ export abstract class Watcher<T, Before extends Element, After extends Element, 
             return new Promise<ResultOf<SingleMode, TResult1>>((resolve, reject) => {
                 done = (state, val) => {
                     this.stopWatch()
-                    this.removeListener('onIteration', f)
+                    this.off('onIteration', f)
                     if (state) resolve(val)
                     else reject(val)
                 }
-                const f = (v: OnIterationEvent<any>) => {
+                const f = (v: WatcherEvents<T>['onIteration'][0]) => {
                     const nodes = Array.from(v.current.values())
                     if (this.singleMode && nodes.length >= 1) {
                         return done(true, nodes[0])
@@ -181,7 +183,7 @@ export abstract class Watcher<T, Before extends Element, After extends Element, 
                     if (nodes.length < minimalResultsRequired) return
                     return done(true, nodes)
                 }
-                this.addListener('onIteration', f)
+                this.on('onIteration', f)
             })
         }
         const withTimeout = timeout(then(), timeoutTime)
@@ -320,36 +322,26 @@ export abstract class Watcher<T, Before extends Element, After extends Element, 
         this.lastKeyList = thisKeyList
         this.lastNodeList = currentIteration
 
-        if (this.isEventsListening.onIteration && changedNodes.length + goneKeys.length + newKeys.length) {
+        if (this.$.onIteration?.length && changedNodes.length + goneKeys.length + newKeys.length) {
             // Make a copy to prevent modifications
             const newMap = new Map<unknown, T>(newKeys.map(key => [key, findFromNew(key)!]))
             const removedMap = new Map<unknown, T>(goneKeys.map(key => [key, findFromLast(key)!]))
             const currentMap = new Map<unknown, T>(thisKeyList.map(key => [key, findFromNew(key)!]))
             this.emit('onIteration', {
-                keys: {
-                    current: thisKeyList,
-                    new: newKeys,
-                    removed: goneKeys,
-                },
-                values: {
-                    current: currentIteration,
-                    new: newKeys.map(findFromNew),
-                    removed: goneKeys.map(findFromLast),
-                },
                 new: newMap,
                 removed: removedMap,
                 current: currentMap,
-            } as OnIterationEvent<T>)
+            })
         }
-        if (this.isEventsListening.onChange)
+        if (this.$.onChange?.length)
             for (const [oldNode, newNode, oldKey, newKey] of changedNodes) {
                 this.emit('onChange', { oldValue: oldNode, newValue: newNode, oldKey, newKey })
             }
-        if (this.isEventsListening.onRemove)
+        if (this.$.onRemove?.length)
             for (const key of goneKeys) {
                 this.emit('onRemove', { key, value: findFromLast(key)! })
             }
-        if (this.isEventsListening.onAdd)
+        if (this.$.onAdd?.length)
             for (const key of newKeys) {
                 this.emit('onAdd', { key, value: findFromNew(key)! })
             }
@@ -426,7 +418,7 @@ export abstract class Watcher<T, Before extends Element, After extends Element, 
                 oldKey: undefined,
                 newValue: firstValue,
                 oldValue: this.singleModeLastValue,
-            } as OnChangeEvent<T>)
+            })
             this.singleModeLastValue = firstValue
             this.singleModeHasLastValue = true
         }
@@ -474,40 +466,6 @@ export abstract class Watcher<T, Before extends Element, After extends Element, 
     }
     //#endregion
     //#region events
-    /** Event emitter */
-    protected readonly eventEmitter = mitt()
-    private isEventsListening: Record<'onIteration' | 'onChange' | 'onRemove' | 'onAdd', boolean> = {
-        onAdd: false,
-        onChange: false,
-        onIteration: false,
-        onRemove: false,
-    }
-    addListener(event: 'onIteration', fn: EventCallback<OnIterationEvent<T>>): this
-    addListener(event: 'onChange', fn: EventCallback<OnChangeEvent<T>>): this
-    addListener(event: 'onRemove', fn: EventCallback<OnAddOrRemoveEvent<T>>): this
-    addListener(event: 'onAdd', fn: EventCallback<OnAddOrRemoveEvent<T>>): this
-    addListener(event: string, fn: (...args: any[]) => void): this {
-        if (event === 'onIteration') this.noNeedInSingleMode('addListener("onIteration", ...)')
-        this.eventEmitter.on(event, fn)
-        ;(this.isEventsListening as any)[event] = true
-        return this
-    }
-    removeListener(event: 'onIteration', fn: EventCallback<OnIterationEvent<T>>): this
-    removeListener(event: 'onChange', fn: EventCallback<OnChangeEvent<T>>): this
-    removeListener(event: 'onRemove', fn: EventCallback<OnAddOrRemoveEvent<T>>): this
-    removeListener(event: 'onAdd', fn: EventCallback<OnAddOrRemoveEvent<T>>): this
-    removeListener(event: string, fn: (...args: any[]) => void): this {
-        this.eventEmitter.off(event, fn)
-        return this
-    }
-    protected emit(event: 'onIteration', data: OnIterationEvent<T>): void
-    protected emit(event: 'onChange', data: OnChangeEvent<T>): void
-    protected emit(event: 'onRemove', data: OnAddOrRemoveEvent<T>): void
-    protected emit(event: 'onAdd', data: OnAddOrRemoveEvent<T>): void
-    protected emit(event: string, data: any) {
-        return this.eventEmitter.emit(event, data)
-    }
-    //#endregion
     //#region firstDOMProxy
     /** The first DOMProxy */
     protected _firstDOMProxy = DOMProxy<any, Before, After>(this.domProxyOption)
@@ -672,6 +630,48 @@ Or to ignore this message, call \`.dismissSingleModeWarning()\` on the watcher.\
     }
 }
 
+export interface WatcherEvents<T> {
+    /**
+     * @eventProperty
+     */
+    onIteration: [
+        {
+            new: Map<unknown, T>
+            removed: Map<unknown, T>
+            current: Map<unknown, T>
+        },
+    ]
+    /**
+     * @eventProperty
+     */
+    onChange: [
+        {
+            oldKey: unknown
+            newKey: unknown
+            oldValue?: T
+            newValue: T
+        },
+    ]
+    /**
+     * @eventProperty
+     */
+    onRemove: [
+        {
+            key: unknown
+            value: T
+        },
+    ]
+    /**
+     * @eventProperty
+     */
+    onAdd: [
+        {
+            key: unknown
+            value: T
+        },
+    ]
+}
+
 //#region Default implementations
 function defaultEqualityComparer(a: unknown, b: unknown) {
     return a === b
@@ -681,22 +681,6 @@ function defaultMapNodeToKey(node: unknown) {
 }
 //#endregion
 //#region Events
-// ? Event data
-type OnChangeEvent<T> = {
-    oldKey: unknown
-    newKey: unknown
-    oldValue: T
-    newValue: T
-}
-type OnAddOrRemoveEvent<T> = {
-    key: unknown
-    value: T
-}
-type OnIterationEvent<T> = {
-    new: Map<unknown, T>
-    removed: Map<unknown, T>
-    current: Map<unknown, T>
-}
 // ? Event callbacks
 /** Callback on Remove */
 type RemoveCallback<T> = (oldNode: T) => void
@@ -704,7 +688,6 @@ type RemoveCallback<T> = (oldNode: T) => void
 type TargetChangedCallback<T> = (newNode: T, oldNode: T) => void
 /** Callback on  */
 type MutationCallback<T> = (node: T, mutations: MutationRecord[]) => void
-type EventCallback<T> = (fn: T) => void
 //#endregion
 //#region useForeach types and helpers
 /**
