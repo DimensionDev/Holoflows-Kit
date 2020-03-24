@@ -47,7 +47,7 @@ export namespace DOMProxy {
 }
 
 // @public
-export interface DOMProxy<ProxiedElement extends Node = HTMLElement, Before extends Element = HTMLSpanElement, After extends Element = HTMLSpanElement> extends Emitter<DOMProxyEvents<ProxiedElement>> {
+export interface DOMProxy<ProxiedElement extends Node = HTMLElement, Before extends Element = HTMLSpanElement, After extends Element = HTMLSpanElement> extends Omit<Emitter<DOMProxyEvents<ProxiedElement>>, '_' | '$'> {
     readonly after: After;
     readonly afterShadow: ShadowRoot;
     readonly before: Before;
@@ -192,6 +192,8 @@ export class ValueRef<T> {
 // @public
 export abstract class Watcher<T, Before extends Element, After extends Element, SingleMode extends boolean> extends Emitter<WatcherEvents<T>> implements PromiseLike<ResultOf<SingleMode, T>> {
     constructor(liveSelector: LiveSelector<T, SingleMode>);
+    // (undocumented)
+    addListener(...args: Parameters<Emitter<WatcherEvents<T>>['on']>): this;
     assignKeys<Q = unknown>(keyAssigner: (node: T, index: number, arr: readonly T[]) => Q): this;
     // (undocumented)
     protected defaultStarterForThen(): void;
@@ -212,6 +214,8 @@ export abstract class Watcher<T, Before extends Element, After extends Element, 
     protected mapNodeToKey: (node: T, index: number, arr: readonly T[]) => unknown;
     omitWarningForForgetWatch(): this;
     omitWarningForRepeatedKeys(): this;
+    // (undocumented)
+    removeListener(...args: Parameters<Emitter<WatcherEvents<T>>['off']>): this;
     // Warning: (ae-forgotten-export) The symbol "requestIdleCallback" needs to be exported by the entry point index.d.ts
     protected readonly requestIdleCallback: typeof requestIdleCallback;
     protected scheduleWatcherCheck: () => void;

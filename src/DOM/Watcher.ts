@@ -467,6 +467,15 @@ export abstract class Watcher<T, Before extends Element, After extends Element, 
     }
     //#endregion
     //#region events
+    addListener(...args: Parameters<Emitter<WatcherEvents<T>>['on']>) {
+        this.on(...args)
+        return this
+    }
+    removeListener(...args: Parameters<Emitter<WatcherEvents<T>>['off']>) {
+        this.off(...args)
+        return this
+    }
+    //#endregion
     //#region firstDOMProxy
     /** The first DOMProxy */
     protected _firstDOMProxy = DOMProxy<Node, Before, After>(this.domProxyOption)

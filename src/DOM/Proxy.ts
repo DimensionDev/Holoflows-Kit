@@ -310,7 +310,7 @@ export interface DOMProxy<
     ProxiedElement extends Node = HTMLElement,
     Before extends Element = HTMLSpanElement,
     After extends Element = HTMLSpanElement
-> extends Emitter<DOMProxyEvents<ProxiedElement>> {
+> extends Omit<Emitter<DOMProxyEvents<ProxiedElement>>, '_' | '$'> {
     /** Destroy the DOMProxy */
     destroy(): void
     readonly destroyed: boolean
