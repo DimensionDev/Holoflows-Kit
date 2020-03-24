@@ -48,7 +48,7 @@ export declare abstract class Watcher<T, Before extends Element, After extends E
 
 |  Method | Modifiers | Description |
 |  --- | --- | --- |
-|  [addListener(args)](./kit.watcher.addlistener.md) |  |  |
+|  [addListener(type, callback)](./kit.watcher.addlistener.md) |  |  |
 |  [assignKeys(keyAssigner)](./kit.watcher.assignkeys.md) |  | To help identify same nodes in different iteration, you need to implement a map function that map <code>node</code> to <code>key</code>If the key is changed, the same node will call through <code>forEachRemove</code> then <code>forEach</code> |
 |  [defaultStarterForThen()](./kit.watcher.defaultstarterforthen.md) |  |  |
 |  [dismissSingleModeWarning()](./kit.watcher.dismisssinglemodewarning.md) |  | Dismiss the warning that let you enable single mode but the warning is false positive. |
@@ -56,7 +56,7 @@ export declare abstract class Watcher<T, Before extends Element, After extends E
 |  [getDOMProxyByKey(key)](./kit.watcher.getdomproxybykey.md) |  | Get DOMProxy by key. DOMProxy will be unavailable if it is deleted |
 |  [omitWarningForForgetWatch()](./kit.watcher.omitwarningforforgetwatch.md) |  | If you're expecting Watcher may not be called, call this function, this will omit the warning. |
 |  [omitWarningForRepeatedKeys()](./kit.watcher.omitwarningforrepeatedkeys.md) |  | If you're expecting repeating keys, call this function, this will omit the warning. |
-|  [removeListener(args)](./kit.watcher.removelistener.md) |  |  |
+|  [removeListener(type, callback)](./kit.watcher.removelistener.md) |  |  |
 |  [setComparer(keyComparer, valueComparer)](./kit.watcher.setcomparer.md) |  | To help identify same nodes in different iteration, you need to implement a map function to compare <code>node</code> and <code>key</code>You probably don't need this. |
 |  [setDOMProxyOption(option)](./kit.watcher.setdomproxyoption.md) |  | Set option for DOMProxy |
 |  [startWatch(args)](./kit.watcher.startwatch.md) |  | Let the watcher start to watching |

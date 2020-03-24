@@ -7,14 +7,15 @@
 <b>Signature:</b>
 
 ```typescript
-removeListener(...args: Parameters<Emitter<WatcherEvents<T>>['off']>): this;
+removeListener<K extends keyof WatcherEvents<T>>(type: K, callback: EventListener<WatcherEvents<T>, K>): this;
 ```
 
 ## Parameters
 
 |  Parameter | Type | Description |
 |  --- | --- | --- |
-|  args | <code>Parameters&lt;Emitter&lt;WatcherEvents&lt;T&gt;&gt;['off']&gt;</code> |  |
+|  type | <code>K</code> |  |
+|  callback | <code>EventListener&lt;WatcherEvents&lt;T&gt;, K&gt;</code> |  |
 
 <b>Returns:</b>
 

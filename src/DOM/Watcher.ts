@@ -10,7 +10,7 @@
  * - Event watcher (based on addEventListener)
  */
 import { DOMProxy, DOMProxyOptions } from './Proxy'
-import { Emitter } from '@servie/events'
+import { Emitter, EventListener } from '@servie/events'
 import { LiveSelector } from './LiveSelector'
 
 import differenceWith from 'lodash-es/differenceWith'
@@ -467,12 +467,13 @@ export abstract class Watcher<T, Before extends Element, After extends Element, 
     }
     //#endregion
     //#region events
-    addListener(...args: Parameters<Emitter<WatcherEvents<T>>['on']>) {
-        this.on(...args)
+
+    addListener<K extends keyof WatcherEvents<T>>(type: K, callback: EventListener<WatcherEvents<T>, K>): this {
+        this.on(type, callback)
         return this
     }
-    removeListener(...args: Parameters<Emitter<WatcherEvents<T>>['off']>) {
-        this.off(...args)
+    removeListener<K extends keyof WatcherEvents<T>>(type: K, callback: EventListener<WatcherEvents<T>, K>): this {
+        this.off(type, callback)
         return this
     }
     //#endregion
