@@ -298,7 +298,7 @@ async function getTabOrCreate(
     active: boolean | undefined,
     pinned: boolean | undefined,
 ) {
-    const finalOpts = { active, pinned, url }
+    const finalOpts = { active, pinned, url: url as undefined | string }
     // Gecko view doesn't support this.
     if (finalOpts.pinned === undefined) delete finalOpts.pinned
     if (finalOpts.active === undefined) delete finalOpts.active
@@ -327,6 +327,6 @@ function GetDefaultKey() {
             return 'debug'
         case 'unknown':
         default:
-            throw new TypeError('Unknown running context')
+            return '@holoflows/kit:AutomatedTabTask@Unknown!'
     }
 }
