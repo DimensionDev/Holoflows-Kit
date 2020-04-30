@@ -6,7 +6,7 @@
 
 import { AsyncCallOptions } from 'async-call-rpc';
 import { Emitter } from '@servie/events';
-import { EventListener } from '@servie/events';
+import { EventListener as EventListener_2 } from '@servie/events';
 
 // @public
 export function AutomatedTabTask<T extends Record<string, (...args: any[]) => PromiseLike<any>>>(taskImplements: T, options?: Partial<AutomatedTabTaskDefineTimeOptions>): ((urlOrTabID: string | number, options?: Partial<AutomatedTabTaskRuntimeOptions>) => T) | null;
@@ -194,7 +194,7 @@ export class ValueRef<T> {
 export abstract class Watcher<T, Before extends Element, After extends Element, SingleMode extends boolean> extends Emitter<WatcherEvents<T>> implements PromiseLike<ResultOf<SingleMode, T>> {
     constructor(liveSelector: LiveSelector<T, SingleMode>);
     // (undocumented)
-    addListener<K extends keyof WatcherEvents<T>>(type: K, callback: EventListener<WatcherEvents<T>, K>): this;
+    addListener<K extends keyof WatcherEvents<T>>(type: K, callback: EventListener_2<WatcherEvents<T>, K>): this;
     assignKeys<Q = unknown>(keyAssigner: (node: T, index: number, arr: readonly T[]) => Q): this;
     // (undocumented)
     protected defaultStarterForThen(): void;
@@ -216,7 +216,7 @@ export abstract class Watcher<T, Before extends Element, After extends Element, 
     omitWarningForForgetWatch(): this;
     omitWarningForRepeatedKeys(): this;
     // (undocumented)
-    removeListener<K extends keyof WatcherEvents<T>>(type: K, callback: EventListener<WatcherEvents<T>, K>): this;
+    removeListener<K extends keyof WatcherEvents<T>>(type: K, callback: EventListener_2<WatcherEvents<T>, K>): this;
     // Warning: (ae-forgotten-export) The symbol "requestIdleCallback" needs to be exported by the entry point index.d.ts
     protected readonly requestIdleCallback: typeof requestIdleCallback;
     protected scheduleWatcherCheck: () => void;
