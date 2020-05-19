@@ -202,7 +202,7 @@ export abstract class Watcher<T, Before extends Element, After extends Element, 
     protected lastDOMProxyMap = new Map<unknown, DOMProxy<any, Before, After>>()
     /** Find node from the given list by key */
     protected findNodeFromListByKey = (list: readonly T[], keys: readonly unknown[]) => (key: unknown) => {
-        const i = keys.findIndex(x => this.keyComparer(x, key))
+        const i = keys.findIndex((x) => this.keyComparer(x, key))
         if (i === -1) return null
         return list[i]
     }
@@ -269,14 +269,14 @@ export abstract class Watcher<T, Before extends Element, After extends Element, 
                     proxy.realCurrent = value
                     // This step must be sync.
                     const callbacks = this.useForeachFn(proxy.current, newKey, proxy as any)
-                    if (callbacks && typeof callbacks !== 'function' && 'onNodeMutation' in callbacks) {
+                    if (hasMutationCallback(callbacks) && !proxy.observer.callback) {
                         proxy.observer.init = {
                             subtree: true,
                             childList: true,
                             characterData: true,
                             attributes: true,
                         }
-                        proxy.observer.callback = m => callbacks.onNodeMutation!(value, m)
+                        proxy.observer.callback = (m) => callbacks.onNodeMutation?.(value, m)
                     }
                     nextCallbackMap.set(newKey, callbacks)
                     nextDOMProxyMap.set(newKey, proxy)
@@ -295,7 +295,9 @@ export abstract class Watcher<T, Before extends Element, After extends Element, 
         const newSameKeys = intersectionWith(thisKeyList, this.lastKeyList, this.keyComparer)
         type U = [T, T, unknown, unknown]
         const changedNodes = oldSameKeys
-            .map(x => [findFromLast(x), findFromNew(x), x, newSameKeys.find(newK => this.keyComparer(newK, x))] as U)
+            .map(
+                (x) => [findFromLast(x), findFromNew(x), x, newSameKeys.find((newK) => this.keyComparer(newK, x))] as U,
+            )
             .filter(([a, b]) => this.valueComparer(a, b) === false)
         for (const [oldNode, newNode, oldKey, newKey] of changedNodes) {
             const fn = this.lastCallbackMap.get(oldKey)
@@ -313,7 +315,7 @@ export abstract class Watcher<T, Before extends Element, After extends Element, 
 
         // #region Final: Copy the same keys
         for (const newKey of newSameKeys) {
-            const oldKey = oldSameKeys.find(oldKey => this.keyComparer(newKey, oldKey))
+            const oldKey = oldSameKeys.find((oldKey) => this.keyComparer(newKey, oldKey))
             nextCallbackMap.set(newKey, this.lastCallbackMap.get(oldKey))
             nextDOMProxyMap.set(newKey, this.lastDOMProxyMap.get(oldKey)!)
         }
@@ -325,9 +327,9 @@ export abstract class Watcher<T, Before extends Element, After extends Element, 
         const has = (item: undefined | unknown[]) => Boolean(item?.length)
         if (has(this.$.onIteration) && changedNodes.length + goneKeys.length + newKeys.length > 0) {
             // Make a copy to prevent modifications
-            const newMap = new Map<unknown, T>(newKeys.map(key => [key, findFromNew(key)!]))
-            const removedMap = new Map<unknown, T>(goneKeys.map(key => [key, findFromLast(key)!]))
-            const currentMap = new Map<unknown, T>(thisKeyList.map(key => [key, findFromNew(key)!]))
+            const newMap = new Map<unknown, T>(newKeys.map((key) => [key, findFromNew(key)!]))
+            const removedMap = new Map<unknown, T>(goneKeys.map((key) => [key, findFromLast(key)!]))
+            const currentMap = new Map<unknown, T>(thisKeyList.map((key) => [key, findFromNew(key)!]))
             this.emit('onIteration', {
                 new: newMap,
                 removed: removedMap,
@@ -382,6 +384,12 @@ export abstract class Watcher<T, Before extends Element, After extends Element, 
         }
         if (firstValue instanceof Node) {
             this.firstDOMProxy.realCurrent = firstValue
+        }
+        if (hasMutationCallback(this.singleModeCallback) && !this._firstDOMProxy.observer.callback) {
+            this._firstDOMProxy.observer.init = { attributes: true, characterData: true, subtree: true }
+            this._firstDOMProxy.observer.callback = (e) =>
+                hasMutationCallback(this.singleModeCallback) &&
+                this.singleModeCallback.onNodeMutation(this._firstDOMProxy.current as any, e)
         }
         // ? Case: value is gone
         if (this.singleModeHasLastValue && isNil(firstValue)) {
@@ -571,7 +579,7 @@ export abstract class Watcher<T, Before extends Element, After extends Element, 
      */
     public getDOMProxyByKey(key: unknown) {
         this.noNeedInSingleMode(this.getDOMProxyByKey.name)
-        return this.lastDOMProxyMap.get([...this.lastDOMProxyMap.keys()].find(_ => this.keyComparer(_, key))) || null
+        return this.lastDOMProxyMap.get([...this.lastDOMProxyMap.keys()].find((_) => this.keyComparer(_, key))) || null
     }
     /** window.requestIdleCallback, or polyfill. */
     protected readonly requestIdleCallback = requestIdleCallback
@@ -583,7 +591,7 @@ export abstract class Watcher<T, Before extends Element, After extends Element, 
      * Warning to remember if developer forget to call the startWatch.
      */
     protected _warning_forget_watch_ = warning({
-        fn: stack => console.warn('Did you forget to call `.startWatch()`?\n', stack),
+        fn: (stack) => console.warn('Did you forget to call `.startWatch()`?\n', stack),
     })
     /**
      * If you're expecting Watcher may not be called, call this function, this will omit the warning.
@@ -704,16 +712,20 @@ type MutationCallback<T> = (node: T, mutations: MutationRecord[]) => void
 /**
  * Return value of useForeach
  */
-type useForeachReturns<T> =
-    | void
-    | RemoveCallback<T>
-    | {
-          onRemove?: RemoveCallback<T>
-          onTargetChanged?: TargetChangedCallback<T>
-          /** This will not be called if T is not Node */
-          onNodeMutation?: MutationCallback<T>
-      }
-
+type useForeachObject<T> = {
+    onRemove?: RemoveCallback<T>
+    onTargetChanged?: TargetChangedCallback<T>
+    /** This will not be called if T is not Node */
+    onNodeMutation?: MutationCallback<T>
+}
+type useForeachReturns<T> = void | RemoveCallback<T> | useForeachObject<T>
+function hasMutationCallback<T>(
+    x: useForeachReturns<T>,
+): x is useForeachObject<T> & Required<Pick<useForeachObject<T>, 'onNodeMutation'>> {
+    if (typeof x !== 'object' || x === null) return false
+    if ('onNodeMutation' in x && typeof x.onNodeMutation === 'function') return true
+    return false
+}
 function applyUseForeachCallback<T>(callback: useForeachReturns<T>) {
     const cb = callback as useForeachReturns<Node>
     type f = undefined | ((...args: any[]) => any)
@@ -727,13 +739,11 @@ function applyUseForeachCallback<T>(callback: useForeachReturns<T>) {
     interface applyUseForeach {
         (type: 'remove'): RemoveCallback<T>
         (type: 'target change'): TargetChangedCallback<T>
-        (type: 'mutation'): MutationCallback<T>
         (type: 'warn mutation'): (x: ReturnType<typeof warning>) => void
     }
     return ((type: string) => (...args: any[]) => {
         if (type === 'remove') remove && remove(...args)
         else if (type === 'target change') change && change(...args)
-        else if (type === 'mutation') mutation && mutation(...args)
         else if (type === 'warn mutation') mutation && args[0]()
     }) as applyUseForeach
 }
