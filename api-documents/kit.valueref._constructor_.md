@@ -16,6 +16,6 @@ constructor(_value: T, isEqual?: (a: T, b: T) => boolean);
 
 |  Parameter | Type | Description |
 |  --- | --- | --- |
-|  \_value | <code>T</code> | The internal value |
-|  isEqual | <code>(a: T, b: T) =&gt; boolean</code> | The comparer function |
+|  \_value | T | The internal value |
+|  isEqual | (a: T, b: T) =&gt; boolean | The comparer function |
 

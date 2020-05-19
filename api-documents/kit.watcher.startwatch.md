@@ -16,9 +16,9 @@ startWatch(...args: any[]): this;
 
 |  Parameter | Type | Description |
 |  --- | --- | --- |
-|  args | <code>any[]</code> |  |
+|  args | any\[\] |  |
 
 <b>Returns:</b>
 
-`this`
+this
 

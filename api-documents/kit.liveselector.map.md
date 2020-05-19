@@ -16,11 +16,11 @@ map<NextType>(callbackfn: (element: T, index: number, array: T[]) => NextType): 
 
 |  Parameter | Type | Description |
 |  --- | --- | --- |
-|  callbackfn | <code>(element: T, index: number, array: T[]) =&gt; NextType</code> | Map function |
+|  callbackfn | (element: T, index: number, array: T\[\]) =&gt; NextType | Map function |
 
 <b>Returns:</b>
 
-`LiveSelector<NonNullable<NextType>, SingleMode>`
+[LiveSelector](./kit.liveselector.md)<!-- -->&lt;NonNullable&lt;NextType&gt;, SingleMode&gt;
 
 ## Example
 

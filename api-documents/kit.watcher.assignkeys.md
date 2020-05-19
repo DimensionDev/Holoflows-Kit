@@ -18,11 +18,11 @@ assignKeys<Q = unknown>(keyAssigner: (node: T, index: number, arr: readonly T[])
 
 |  Parameter | Type | Description |
 |  --- | --- | --- |
-|  keyAssigner | <code>(node: T, index: number, arr: readonly T[]) =&gt; Q</code> | map <code>node</code> to <code>key</code>, defaults to <code>node =&gt; node</code> |
+|  keyAssigner | (node: T, index: number, arr: readonly T\[\]) =&gt; Q | map <code>node</code> to <code>key</code>, defaults to <code>node =&gt; node</code> |
 
 <b>Returns:</b>
 
-`this`
+this
 
 ## Example
 

@@ -16,11 +16,11 @@ startWatch(options: MutationObserverInit): this;
 
 |  Parameter | Type | Description |
 |  --- | --- | --- |
-|  options | <code>MutationObserverInit</code> |  |
+|  options | MutationObserverInit |  |
 
 <b>Returns:</b>
 
-`this`
+this
 
 ## Remarks
 

@@ -14,9 +14,9 @@ querySelector<E extends Element = Element>(selector: string): LiveSelector<E, Si
 
 |  Parameter | Type | Description |
 |  --- | --- | --- |
-|  selector | <code>string</code> |  |
+|  selector | string |  |
 
 <b>Returns:</b>
 
-`LiveSelector<E, SingleMode>`
+[LiveSelector](./kit.liveselector.md)<!-- -->&lt;E, SingleMode&gt;
 

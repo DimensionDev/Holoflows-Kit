@@ -13,5 +13,5 @@ enableSingleMode(): LiveSelector<T, true>;
 ```
 <b>Returns:</b>
 
-`LiveSelector<T, true>`
+[LiveSelector](./kit.liveselector.md)<!-- -->&lt;T, true&gt;
 

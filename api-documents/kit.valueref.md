@@ -44,8 +44,8 @@ ref.value = 42 // useRef will receive the new value
 
 |  Property | Modifiers | Type | Description |
 |  --- | --- | --- | --- |
-|  [isEqual](./kit.valueref.isequal.md) |  | <code>(a: unknown, b: unknown) =&gt; boolean</code> |  |
-|  [value](./kit.valueref.value.md) |  | <code>T</code> | Get current value |
+|  [isEqual](./kit.valueref.isequal.md) |  | (a: unknown, b: unknown) =&gt; boolean |  |
+|  [value](./kit.valueref.value.md) |  | T | Get current value |
 
 ## Methods
 

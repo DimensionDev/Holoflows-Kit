@@ -14,10 +14,10 @@ addListener<K extends keyof WatcherEvents<T>>(type: K, callback: EventListener<W
 
 |  Parameter | Type | Description |
 |  --- | --- | --- |
-|  type | <code>K</code> |  |
-|  callback | <code>EventListener&lt;WatcherEvents&lt;T&gt;, K&gt;</code> |  |
+|  type | K |  |
+|  callback | EventListener&lt;[WatcherEvents](./kit.watcherevents.md)<!-- -->&lt;T&gt;, K&gt; |  |
 
 <b>Returns:</b>
 
-`this`
+this
 

@@ -16,6 +16,6 @@ constructor(sendToSelf: boolean, instanceKey?: string);
 
 |  Parameter | Type | Description |
 |  --- | --- | --- |
-|  sendToSelf | <code>boolean</code> | If this MessageCenter will send message to this instance itself |
-|  instanceKey | <code>string</code> | Use this instanceKey to distinguish your messages and others. This option cannot make your message safe! |
+|  sendToSelf | boolean | If this MessageCenter will send message to this instance itself |
+|  instanceKey | string | Use this instanceKey to distinguish your messages and others. This option cannot make your message safe! |
 

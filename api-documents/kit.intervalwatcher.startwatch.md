@@ -16,9 +16,9 @@ startWatch(interval: number): this;
 
 |  Parameter | Type | Description |
 |  --- | --- | --- |
-|  interval | <code>number</code> |  |
+|  interval | number |  |
 
 <b>Returns:</b>
 
-`this`
+this
 

@@ -16,9 +16,9 @@ writeToConsole(on: boolean): this;
 
 |  Parameter | Type | Description |
 |  --- | --- | --- |
-|  on | <code>boolean</code> |  |
+|  on | boolean |  |
 
 <b>Returns:</b>
 
-`this`
+this
 

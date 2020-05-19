@@ -31,5 +31,5 @@ document.addEventListener('event', e.eventListener)
 
 |  Property | Modifiers | Type | Description |
 |  --- | --- | --- | --- |
-|  [eventListener](./kit.eventwatcher.eventlistener.md) |  | <code>() =&gt; void</code> | Use this function as event listener to invoke watcher. |
+|  [eventListener](./kit.eventwatcher.eventlistener.md) |  | () =&gt; void | Use this function as event listener to invoke watcher. |
 

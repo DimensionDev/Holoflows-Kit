@@ -11,5 +11,5 @@ protected defaultStarterForThen(): void;
 ```
 <b>Returns:</b>
 
-`void`
+void
 

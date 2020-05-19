@@ -22,27 +22,27 @@ export declare abstract class Watcher<T, Before extends Element, After extends E
 
 |  Property | Modifiers | Type | Description |
 |  --- | --- | --- | --- |
-|  [\_firstDOMProxy](./kit.watcher._firstdomproxy.md) |  | <code>DOMProxy&lt;Node, Before, After&gt;</code> | The first DOMProxy |
-|  [\_warning\_forget\_watch\_](./kit.watcher._warning_forget_watch_.md) |  | <code>{</code><br/><code>        warn(f?: (stack: string) =&gt; void): void;</code><br/><code>        ignored: boolean;</code><br/><code>        stack: string;</code><br/><code>    }</code> | Warning to remember if developer forget to call the startWatch. |
-|  [domProxyOption](./kit.watcher.domproxyoption.md) |  | <code>Partial&lt;DOMProxyOptions&lt;Before, After&gt;&gt;</code> | The dom proxy option used in DOMProxy() |
-|  [findNodeFromListByKey](./kit.watcher.findnodefromlistbykey.md) |  | <code>(list: readonly T[], keys: readonly unknown[]) =&gt; (key: unknown) =&gt; T &#124; null</code> | Find node from the given list by key |
-|  [firstDOMProxy](./kit.watcher.firstdomproxy.md) |  | <code>T extends Node ? DOMProxy&lt;T, Before, After&gt; : never</code> | This DOMProxy always point to the first node in the LiveSelector |
-|  [isWatching](./kit.watcher.iswatching.md) |  | <code>boolean</code> | Is the watcher running |
-|  [keyComparer](./kit.watcher.keycomparer.md) |  | <code>(a: unknown, b: unknown) =&gt; boolean</code> | Compare between <code>key</code> and <code>key</code>, in case of you don't want the default behavior |
-|  [lastCallbackMap](./kit.watcher.lastcallbackmap.md) |  | <code>Map&lt;unknown, useForeachReturns&lt;T&gt;&gt;</code> | Saved callback map of last watch |
-|  [lastDOMProxyMap](./kit.watcher.lastdomproxymap.md) |  | <code>Map&lt;unknown, DOMProxy&lt;any, Before, After&gt;&gt;</code> | Saved DOMProxy of last watch |
-|  [lastKeyList](./kit.watcher.lastkeylist.md) |  | <code>readonly unknown[]</code> | Found key list of last watch |
-|  [lastNodeList](./kit.watcher.lastnodelist.md) |  | <code>readonly T[]</code> | Found Node list of last watch |
-|  [liveSelector](./kit.watcher.liveselector.md) |  | <code>LiveSelector&lt;T, SingleMode&gt;</code> | The liveSelector that this object holds. |
-|  [mapNodeToKey](./kit.watcher.mapnodetokey.md) |  | <code>(node: T, index: number, arr: readonly T[]) =&gt; unknown</code> | Map <code>Node -&gt; Key</code>, in case of you don't want the default behavior |
-|  [requestIdleCallback](./kit.watcher.requestidlecallback.md) |  | <code>typeof requestIdleCallback</code> | window.requestIdleCallback, or polyfill. |
-|  [scheduleWatcherCheck](./kit.watcher.schedulewatchercheck.md) |  | <code>() =&gt; void</code> | Schedule a watcher check |
-|  [singleMode](./kit.watcher.singlemode.md) |  | <code>boolean</code> | Is the single mode is on. |
-|  [singleModeCallback](./kit.watcher.singlemodecallback.md) |  | <code>useForeachReturns&lt;T&gt;</code> | Callback for single mode |
-|  [singleModeHasLastValue](./kit.watcher.singlemodehaslastvalue.md) |  | <code>boolean</code> | Does it has a last iteration value in single mode? |
-|  [singleModeLastValue](./kit.watcher.singlemodelastvalue.md) |  | <code>T</code> | Last iteration value for single mode |
-|  [useForeachFn](./kit.watcher.useforeachfn.md) |  | <code>Parameters&lt;Watcher&lt;T, any, any, any&gt;['useForeach']&gt;[0]</code> | Saved useForeach |
-|  [valueComparer](./kit.watcher.valuecomparer.md) |  | <code>(a: T, b: T) =&gt; boolean</code> | Compare between <code>value</code> and <code>value</code>, in case of you don't want the default behavior |
+|  [\_firstDOMProxy](./kit.watcher._firstdomproxy.md) |  | [DOMProxy](./kit.domproxy.md)<!-- -->&lt;Node, Before, After&gt; | The first DOMProxy |
+|  [\_warning\_forget\_watch\_](./kit.watcher._warning_forget_watch_.md) |  | { warn(f?: (stack: string) =&gt; void): void; ignored: boolean; stack: string; } | Warning to remember if developer forget to call the startWatch. |
+|  [domProxyOption](./kit.watcher.domproxyoption.md) |  | Partial&lt;[DOMProxyOptions](./kit.domproxyoptions.md)<!-- -->&lt;Before, After&gt;&gt; | The dom proxy option used in DOMProxy() |
+|  [findNodeFromListByKey](./kit.watcher.findnodefromlistbykey.md) |  | (list: readonly T\[\], keys: readonly unknown\[\]) =&gt; (key: unknown) =&gt; T \| null | Find node from the given list by key |
+|  [firstDOMProxy](./kit.watcher.firstdomproxy.md) |  | T extends Node ? [DOMProxy](./kit.domproxy.md)<!-- -->&lt;T, Before, After&gt; : never | This DOMProxy always point to the first node in the LiveSelector |
+|  [isWatching](./kit.watcher.iswatching.md) |  | boolean | Is the watcher running |
+|  [keyComparer](./kit.watcher.keycomparer.md) |  | (a: unknown, b: unknown) =&gt; boolean | Compare between <code>key</code> and <code>key</code>, in case of you don't want the default behavior |
+|  [lastCallbackMap](./kit.watcher.lastcallbackmap.md) |  | Map&lt;unknown, useForeachReturns&lt;T&gt;&gt; | Saved callback map of last watch |
+|  [lastDOMProxyMap](./kit.watcher.lastdomproxymap.md) |  | Map&lt;unknown, [DOMProxy](./kit.domproxy.md)<!-- -->&lt;any, Before, After&gt;&gt; | Saved DOMProxy of last watch |
+|  [lastKeyList](./kit.watcher.lastkeylist.md) |  | readonly unknown\[\] | Found key list of last watch |
+|  [lastNodeList](./kit.watcher.lastnodelist.md) |  | readonly T\[\] | Found Node list of last watch |
+|  [liveSelector](./kit.watcher.liveselector.md) |  | [LiveSelector](./kit.liveselector.md)<!-- -->&lt;T, SingleMode&gt; | The liveSelector that this object holds. |
+|  [mapNodeToKey](./kit.watcher.mapnodetokey.md) |  | (node: T, index: number, arr: readonly T\[\]) =&gt; unknown | Map <code>Node -&gt; Key</code>, in case of you don't want the default behavior |
+|  [requestIdleCallback](./kit.watcher.requestidlecallback.md) |  | typeof requestIdleCallback | window.requestIdleCallback, or polyfill. |
+|  [scheduleWatcherCheck](./kit.watcher.schedulewatchercheck.md) |  | () =&gt; void | Schedule a watcher check |
+|  [singleMode](./kit.watcher.singlemode.md) |  | boolean | Is the single mode is on. |
+|  [singleModeCallback](./kit.watcher.singlemodecallback.md) |  | useForeachReturns&lt;T&gt; | Callback for single mode |
+|  [singleModeHasLastValue](./kit.watcher.singlemodehaslastvalue.md) |  | boolean | Does it has a last iteration value in single mode? |
+|  [singleModeLastValue](./kit.watcher.singlemodelastvalue.md) |  | T | Last iteration value for single mode |
+|  [useForeachFn](./kit.watcher.useforeachfn.md) |  | Parameters&lt;[Watcher](./kit.watcher.md)<!-- -->&lt;T, any, any, any&gt;\['useForeach'\]&gt;\[0\] | Saved useForeach |
+|  [valueComparer](./kit.watcher.valuecomparer.md) |  | (a: T, b: T) =&gt; boolean | Compare between <code>value</code> and <code>value</code>, in case of you don't want the default behavior |
 
 ## Methods
 

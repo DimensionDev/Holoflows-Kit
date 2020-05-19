@@ -18,12 +18,12 @@ setComparer(keyComparer?: (a: unknown, b: unknown) => boolean, valueComparer?: (
 
 |  Parameter | Type | Description |
 |  --- | --- | --- |
-|  keyComparer | <code>(a: unknown, b: unknown) =&gt; boolean</code> | compare between two keys, defaults to <code>===</code> |
-|  valueComparer | <code>(a: T, b: T) =&gt; boolean</code> | compare between two value, defaults to <code>===</code> |
+|  keyComparer | (a: unknown, b: unknown) =&gt; boolean | compare between two keys, defaults to <code>===</code> |
+|  valueComparer | (a: T, b: T) =&gt; boolean | compare between two value, defaults to <code>===</code> |
 
 <b>Returns:</b>
 
-`this`
+this
 
 ## Example
 

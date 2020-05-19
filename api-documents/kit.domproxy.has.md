@@ -16,9 +16,9 @@ has(type: 'before'): Before | null;
 
 |  Parameter | Type | Description |
 |  --- | --- | --- |
-|  type | <code>'before'</code> |  |
+|  type | 'before' |  |
 
 <b>Returns:</b>
 
-`Before | null`
+Before \| null
 

@@ -16,12 +16,12 @@ slice(start?: number, end?: number): LiveSelector<T, SingleMode>;
 
 |  Parameter | Type | Description |
 |  --- | --- | --- |
-|  start | <code>number</code> | The beginning of the specified portion of the array. |
-|  end | <code>number</code> | The end of the specified portion of the array. |
+|  start | number | The beginning of the specified portion of the array. |
+|  end | number | The end of the specified portion of the array. |
 
 <b>Returns:</b>
 
-`LiveSelector<T, SingleMode>`
+[LiveSelector](./kit.liveselector.md)<!-- -->&lt;T, SingleMode&gt;
 
 ## Example
 

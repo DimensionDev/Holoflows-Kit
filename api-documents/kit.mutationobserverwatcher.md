@@ -34,7 +34,7 @@ new MutationObserverWatcher(ls)
 
 |  Property | Modifiers | Type | Description |
 |  --- | --- | --- | --- |
-|  [liveSelector](./kit.mutationobserverwatcher.liveselector.md) |  | <code>LiveSelector&lt;T, SingleMode&gt;</code> | LiveSelector that this object holds |
+|  [liveSelector](./kit.mutationobserverwatcher.liveselector.md) |  | [LiveSelector](./kit.liveselector.md)<!-- -->&lt;T, SingleMode&gt; | LiveSelector that this object holds |
 
 ## Methods
 

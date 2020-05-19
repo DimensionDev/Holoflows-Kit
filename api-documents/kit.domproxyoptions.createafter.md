@@ -13,5 +13,5 @@ createAfter(): After;
 ```
 <b>Returns:</b>
 
-`After`
+After
 

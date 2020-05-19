@@ -16,9 +16,9 @@ getDOMProxyByKey(key: unknown): DOMProxy<any, Before, After> | null;
 
 |  Parameter | Type | Description |
 |  --- | --- | --- |
-|  key | <code>unknown</code> | Key used to find DOMProxy |
+|  key | unknown | Key used to find DOMProxy |
 
 <b>Returns:</b>
 
-`DOMProxy<any, Before, After> | null`
+[DOMProxy](./kit.domproxy.md)<!-- -->&lt;any, Before, After&gt; \| null
 

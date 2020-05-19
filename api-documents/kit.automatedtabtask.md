@@ -16,12 +16,12 @@ export declare function AutomatedTabTask<T extends Record<string, (...args: any[
 
 |  Parameter | Type | Description |
 |  --- | --- | --- |
-|  taskImplements | <code>T</code> | All tasks that background page can call. |
-|  options | <code>Partial&lt;AutomatedTabTaskDefineTimeOptions&gt;</code> | Options |
+|  taskImplements | T | All tasks that background page can call. |
+|  options | Partial&lt;[AutomatedTabTaskDefineTimeOptions](./kit.automatedtabtaskdefinetimeoptions.md)<!-- -->&gt; | Options |
 
 <b>Returns:</b>
 
-`((urlOrTabID: string | number, options?: Partial<AutomatedTabTaskRuntimeOptions>) => T) | null`
+((urlOrTabID: string \| number, options?: Partial&lt;[AutomatedTabTaskRuntimeOptions](./kit.automatedtabtaskruntimeoptions.md)<!-- -->&gt;) =&gt; T) \| null
 
 ## Example
 

@@ -16,11 +16,11 @@ concat<NextType>(newEle: LiveSelector<NextType, SingleMode>): LiveSelector<T | N
 
 |  Parameter | Type | Description |
 |  --- | --- | --- |
-|  newEle | <code>LiveSelector&lt;NextType, SingleMode&gt;</code> | Additional LiveSelector to combine. |
+|  newEle | [LiveSelector](./kit.liveselector.md)<!-- -->&lt;NextType, SingleMode&gt; | Additional LiveSelector to combine. |
 
 <b>Returns:</b>
 
-`LiveSelector<T | NextType, SingleMode>`
+[LiveSelector](./kit.liveselector.md)<!-- -->&lt;T \| NextType, SingleMode&gt;
 
 ## Example
 

@@ -16,5 +16,5 @@ constructor(initialElements?: readonly T[]);
 
 |  Parameter | Type | Description |
 |  --- | --- | --- |
-|  initialElements | <code>readonly T[]</code> | provides initial results, equals to <code>.replace(() =&gt; initialElements)</code> |
+|  initialElements | readonly T\[\] | provides initial results, equals to <code>.replace(() =&gt; initialElements)</code> |
 

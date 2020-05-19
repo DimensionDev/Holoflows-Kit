@@ -35,7 +35,7 @@ ls.evaluate() // returns all urls at the current time.
 
 |  Property | Modifiers | Type | Description |
 |  --- | --- | --- | --- |
-|  [isSingleMode](./kit.liveselector.issinglemode.md) |  | <code>boolean</code> | Is this LiveSelector run in the SingleMode |
+|  [isSingleMode](./kit.liveselector.issinglemode.md) |  | boolean | Is this LiveSelector run in the SingleMode |
 
 ## Methods
 

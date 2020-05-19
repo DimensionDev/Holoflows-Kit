@@ -16,10 +16,10 @@ export declare function OnlyRunInContext(context: Contexts | Contexts[], throws:
 
 |  Parameter | Type | Description |
 |  --- | --- | --- |
-|  context | <code>Contexts &#124; Contexts[]</code> | Wanted context or contexts |
-|  throws | <code>false</code> | set to false, OnlyRunInContext will not throws but return a boolean |
+|  context | [Contexts](./kit.contexts.md) \| [Contexts](./kit.contexts.md)<!-- -->\[\] | Wanted context or contexts |
+|  throws | false | set to false, OnlyRunInContext will not throws but return a boolean |
 
 <b>Returns:</b>
 
-`boolean`
+boolean
 

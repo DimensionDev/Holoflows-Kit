@@ -16,11 +16,11 @@ sort(compareFn?: (a: T, b: T) => number): LiveSelector<T, SingleMode>;
 
 |  Parameter | Type | Description |
 |  --- | --- | --- |
-|  compareFn | <code>(a: T, b: T) =&gt; number</code> | The name of the function used to determine the order of the elements. If omitted, the elements are sorted in ascending, ASCII character order. |
+|  compareFn | (a: T, b: T) =&gt; number | The name of the function used to determine the order of the elements. If omitted, the elements are sorted in ascending, ASCII character order. |
 
 <b>Returns:</b>
 
-`LiveSelector<T, SingleMode>`
+[LiveSelector](./kit.liveselector.md)<!-- -->&lt;T, SingleMode&gt;
 
 ## Example
 

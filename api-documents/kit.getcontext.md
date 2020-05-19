@@ -13,7 +13,7 @@ export declare function GetContext(): Contexts;
 ```
 <b>Returns:</b>
 
-`Contexts`
+[Contexts](./kit.contexts.md)
 
 ## Remarks
 

@@ -16,9 +16,9 @@ setDOMProxyOption(option: Partial<DOMProxyOptions<Before, After>>): this;
 
 |  Parameter | Type | Description |
 |  --- | --- | --- |
-|  option | <code>Partial&lt;DOMProxyOptions&lt;Before, After&gt;&gt;</code> | DOMProxy options |
+|  option | Partial&lt;[DOMProxyOptions](./kit.domproxyoptions.md)<!-- -->&lt;Before, After&gt;&gt; | DOMProxy options |
 
 <b>Returns:</b>
 
-`this`
+this
 

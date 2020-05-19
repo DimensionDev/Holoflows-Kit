@@ -16,11 +16,11 @@ replace<NextType>(f: (arr: T[]) => NextType[]): LiveSelector<NextType, SingleMod
 
 |  Parameter | Type | Description |
 |  --- | --- | --- |
-|  f | <code>(arr: T[]) =&gt; NextType[]</code> | returns new array. |
+|  f | (arr: T\[\]) =&gt; NextType\[\] | returns new array. |
 
 <b>Returns:</b>
 
-`LiveSelector<NextType, SingleMode>`
+[LiveSelector](./kit.liveselector.md)<!-- -->&lt;NextType, SingleMode&gt;
 
 ## Example
 

@@ -15,5 +15,5 @@ static enhanceDebugger(): void;
 ```
 <b>Returns:</b>
 
-`void`
+void
 

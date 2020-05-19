@@ -22,7 +22,7 @@ export declare class MessageCenter<ITypedMessages>
 
 |  Property | Modifiers | Type | Description |
 |  --- | --- | --- | --- |
-|  [serialization](./kit.messagecenter.serialization.md) |  | <code>Serialization</code> | How should MessageCenter serialization the message |
+|  [serialization](./kit.messagecenter.serialization.md) |  | [Serialization](./kit.serialization.md) | How should MessageCenter serialization the message |
 
 ## Methods
 

@@ -16,5 +16,5 @@ export interface DOMProxyEvents<ProxiedElement extends Node>
 
 |  Property | Type | Description |
 |  --- | --- | --- |
-|  [currentChanged](./kit.domproxyevents.currentchanged.md) | <code>[{</code><br/><code>        new: ProxiedElement &#124; null;</code><br/><code>        old: ProxiedElement &#124; null;</code><br/><code>    }]</code> | Emit on current changed |
+|  [currentChanged](./kit.domproxyevents.currentchanged.md) | \[{ new: ProxiedElement \| null; old: ProxiedElement \| null; }\] | Emit on current changed |
 

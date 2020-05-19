@@ -14,9 +14,9 @@ closest<K extends keyof SVGElementTagNameMap>(selectors: K): LiveSelector<SVGEle
 
 |  Parameter | Type | Description |
 |  --- | --- | --- |
-|  selectors | <code>K</code> |  |
+|  selectors | K |  |
 
 <b>Returns:</b>
 
-`LiveSelector<SVGElementTagNameMap[K], SingleMode>`
+[LiveSelector](./kit.liveselector.md)<!-- -->&lt;SVGElementTagNameMap\[K\], SingleMode&gt;
 

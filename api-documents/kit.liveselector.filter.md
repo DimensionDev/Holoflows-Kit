@@ -16,11 +16,11 @@ filter(f: (value: T, index: number, array: T[]) => any): LiveSelector<NonNullabl
 
 |  Parameter | Type | Description |
 |  --- | --- | --- |
-|  f | <code>(value: T, index: number, array: T[]) =&gt; any</code> | The filter method |
+|  f | (value: T, index: number, array: T\[\]) =&gt; any | The filter method |
 
 <b>Returns:</b>
 
-`LiveSelector<NonNullable<T>, SingleMode>`
+[LiveSelector](./kit.liveselector.md)<!-- -->&lt;NonNullable&lt;T&gt;, SingleMode&gt;
 
 ## Example
 

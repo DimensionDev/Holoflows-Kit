@@ -14,9 +14,9 @@ closest<E extends Element = Element>(selectors: string): LiveSelector<E, SingleM
 
 |  Parameter | Type | Description |
 |  --- | --- | --- |
-|  selectors | <code>string</code> |  |
+|  selectors | string |  |
 
 <b>Returns:</b>
 
-`LiveSelector<E, SingleMode>`
+[LiveSelector](./kit.liveselector.md)<!-- -->&lt;E, SingleMode&gt;
 

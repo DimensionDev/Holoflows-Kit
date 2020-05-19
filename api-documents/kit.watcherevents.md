@@ -14,8 +14,8 @@ export interface WatcherEvents<T>
 
 |  Property | Type | Description |
 |  --- | --- | --- |
-|  [onAdd](./kit.watcherevents.onadd.md) | <code>[{</code><br/><code>        key: unknown;</code><br/><code>        value: T;</code><br/><code>    }]</code> |  |
-|  [onChange](./kit.watcherevents.onchange.md) | <code>[{</code><br/><code>        oldKey: unknown;</code><br/><code>        newKey: unknown;</code><br/><code>        oldValue?: T;</code><br/><code>        newValue: T;</code><br/><code>    }]</code> |  |
-|  [onIteration](./kit.watcherevents.oniteration.md) | <code>[{</code><br/><code>        new: Map&lt;unknown, T&gt;;</code><br/><code>        removed: Map&lt;unknown, T&gt;;</code><br/><code>        current: Map&lt;unknown, T&gt;;</code><br/><code>    }]</code> |  |
-|  [onRemove](./kit.watcherevents.onremove.md) | <code>[{</code><br/><code>        key: unknown;</code><br/><code>        value: T;</code><br/><code>    }]</code> |  |
+|  [onAdd](./kit.watcherevents.onadd.md) | \[{ key: unknown; value: T; }\] |  |
+|  [onChange](./kit.watcherevents.onchange.md) | \[{ oldKey: unknown; newKey: unknown; oldValue?: T; newValue: T; }\] |  |
+|  [onIteration](./kit.watcherevents.oniteration.md) | \[{ new: Map&lt;unknown, T&gt;; removed: Map&lt;unknown, T&gt;; current: Map&lt;unknown, T&gt;; }\] |  |
+|  [onRemove](./kit.watcherevents.onremove.md) | \[{ key: unknown; value: T; }\] |  |
 

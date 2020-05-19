@@ -13,5 +13,5 @@ evaluate(): SingleMode extends true ? T | undefined : T[];
 ```
 <b>Returns:</b>
 
-`SingleMode extends true ? T | undefined : T[]`
+SingleMode extends true ? T \| undefined : T\[\]
 
