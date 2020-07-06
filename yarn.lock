@@ -888,10 +888,10 @@ astral-regex@^1.0.0:
   resolved "https://registry.yarnpkg.com/astral-regex/-/astral-regex-1.0.0.tgz#6c8c3fb827dd43ee3918f27b82782ab7658a6fd9"
   integrity sha512-+Ryf6g3BKoRc7jfp7ad8tM4TtMiaWvbF/1/sQcZPkkS7ag3D5nMBCe2UfOTONtAkaG0tO0ij3C5Lwmf1EiyjHg==
 
-async-call-rpc@^1.0.4:
-  version "1.0.4"
-  resolved "https://registry.yarnpkg.com/async-call-rpc/-/async-call-rpc-1.0.4.tgz#ded3ef0fac75d0ae90e0ac574adda1ffae4a5cc9"
-  integrity sha512-dsLSfuF+n1GmgsL5Y+uGCkd+/wYZtHObKPxUncEoJ05bb1Lk3wUlU4ppTXL5sBsRuIXPEUxEdb6w86d0u59udg==
+async-call-rpc@^3.2.2:
+  version "3.2.2"
+  resolved "https://registry.yarnpkg.com/async-call-rpc/-/async-call-rpc-3.2.2.tgz#1f139913c465e1820a4c8c3152017f5c78e0aa90"
+  integrity sha512-0pCSCQhwPFZr6SuAhXKPYwHIvMSfVRily5ZaCpk15Y21sSCVHhFKSD+QOu9NKYVfW6arxL9TpIdb9XimqkBI1Q==
 
 asynckit@^0.4.0:
   version "0.4.0"
