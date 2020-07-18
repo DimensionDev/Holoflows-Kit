@@ -1,12 +1,31 @@
 {
   "name": "@holoflows/kit",
   "version": "0.7.0",
-  "module": "./es/index.js",
-  "main": "./umd/index.js",
-  "typings": "./es/",
-  "repository": "https://github.com/DimensionDev/Holoflows-Kit",
   "bugs": {
     "url": "https://github.com/DimensionDev/Holoflows-Kit/issues"
+  },
+  "repository": "https://github.com/DimensionDev/Holoflows-Kit",
+  "license": "AGPL-3.0-or-later",
+  "sideEffects": false,
+  "main": "./umd/index.js",
+  "module": "./es/index.js",
+  "typings": "./es/",
+  "scripts": {
+    "build": "env-cmd -e production run-p clean \"build:tsc -- {@}\" build:rollup",
+    "build:rollup": "rollup -c -m",
+    "build:tsc": "tsc",
+    "clean": "rimraf ./es ./umd",
+    "doc": "run-s build:tsc doc:api doc:md",
+    "doc:api": "api-extractor run --local --verbose",
+    "doc:md": "api-documenter markdown -i temp -o api-documents",
+    "eslint": "eslint . --ext .ts,.tsx",
+    "eslint:watch": "yarn esw . --ext .ts,.tsx -w --color",
+    "prepublishOnly": "npm run build",
+    "start": "env-cmd -e development run-p \"start:tsc -- {@}\" start:rollup",
+    "start:rollup": "rollup -c -w",
+    "start:tsc": "tsc --watch",
+    "test": "jest --watch",
+    "test:ci": "jest"
   },
   "dependencies": {
     "@servie/events": "^1.0.0",
@@ -15,24 +34,6 @@
     "jsx-jsonml-devtools-renderer": "^1.4.1",
     "lodash-es": "^4.17.15",
     "memorize-decorator": "^0.2.2"
-  },
-  "sideEffects": false,
-  "scripts": {
-    "start": "env-cmd -e development run-p \"start:tsc -- {@}\" start:rollup",
-    "start:tsc": "tsc --watch",
-    "start:rollup": "rollup -c -w",
-    "build": "env-cmd -e production run-p clean \"build:tsc -- {@}\" build:rollup",
-    "build:tsc": "tsc",
-    "build:rollup": "rollup -c -m",
-    "eslint": "eslint . --ext .ts,.tsx",
-    "eslint:watch": "yarn esw . --ext .ts,.tsx -w --color",
-    "clean": "rimraf ./es ./umd",
-    "prepublishOnly": "npm run build",
-    "doc": "run-s build:tsc doc:api doc:md",
-    "doc:api": "api-extractor run --local --verbose",
-    "doc:md": "api-documenter markdown -i temp -o api-documents",
-    "test": "jest --watch",
-    "test:ci": "jest"
   },
   "devDependencies": {
     "@microsoft/api-documenter": "^7.8.1",
@@ -59,6 +60,5 @@
   },
   "peerDependencies": {
     "webextension-polyfill": "*"
-  },
-  "license": "AGPL-3.0-or-later"
+  }
 }
