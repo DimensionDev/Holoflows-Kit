@@ -3065,9 +3065,9 @@ map-visit@^1.0.0:
     object-visit "^1.0.0"
 
 memorize-decorator@^0.2.2:
-  version "0.2.2"
-  resolved "https://registry.yarnpkg.com/memorize-decorator/-/memorize-decorator-0.2.2.tgz#f3dcb14a2584981b486454fa3f1bd59c17586d70"
-  integrity sha512-gjMxF1Dw7alhiVbxTQiMcYtMCGJ8cGVdUPCEek88H4WvRGShozxObMFm1BMWctXXZpP7F7eIUJQkTa/jLPZeFQ==
+  version "0.2.4"
+  resolved "https://registry.yarnpkg.com/memorize-decorator/-/memorize-decorator-0.2.4.tgz#eb30c4cf433f9e4be6e8dfeb96ab1907d0123dd6"
+  integrity sha512-njm1PXESxZoFtYq3wPbkuQVuP0M27wtZ+94rD9AV7o1w4qnPx43gmocMePeof1Lr6Fe8ko2WWqBkaIDEhWSvqA==
   dependencies:
     multikey-map "^0.2.0"
 
