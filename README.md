@@ -10,13 +10,13 @@ Toolkit for developing Augmented Virtuality.
 
 [API Documentation](./api-documents/kit.md)
 
-## Usage unstable version
+## Using unstable version
 
 <https://github.com/DimensionDev/Holoflows-Kit/packages/318460>
 
 ```bash
-npm config set "@dimensiondev:registry" "https://npm.pkg.github.com/DimensionDev"
-npm install @dimensiondev/holoflows-kit@unstable
+npm config set "@dimensiondev:registry" "https://npm.dimension.im"
+npm install @dimensiondev/holoflows-kit
 ```
 
 ## License
