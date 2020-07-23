@@ -1,5 +1,5 @@
 import { Emitter } from '@servie/events'
-import { NoSerialization } from 'async-call-rpc'
+import { NoSerialization, EventBasedChannel } from 'async-call-rpc'
 /**
  * Define how to do serialization and deserialization of remote procedure call
  */
@@ -8,12 +8,12 @@ export interface Serialization {
      * Do serialization
      * @param from - original data
      */
-    serialization(from: any): PromiseLike<unknown>
+    serialization(from: any): unknown | PromiseLike<unknown>
     /**
      * Do deserialization
      * @param serialized - Serialized data
      */
-    deserialization(serialized: unknown): PromiseLike<any>
+    deserialization(serialized: unknown): unknown | PromiseLike<unknown>
 }
 type InternalMessageType = {
     key: string
@@ -102,7 +102,7 @@ export class MessageCenter<ITypedMessages> {
         if (typeof browser !== 'undefined') {
             browser.runtime?.sendMessage?.(serialized).catch(noop)
             // Send message to Content Script
-            browser.tabs?.query({ discarded: false }).then(tabs => {
+            browser.tabs?.query({ discarded: false }).then((tabs) => {
                 for (const tab of tabs) {
                     if (tab.id !== undefined) browser.tabs.sendMessage(tab.id, serialized).catch(noop)
                 }
@@ -119,5 +119,9 @@ export class MessageCenter<ITypedMessages> {
     writeToConsole(on: boolean) {
         this.log = on
         return this
+    }
+    eventBasedChannel: EventBasedChannel = {
+        on: (e) => this.on('__async-call' as any, e),
+        send: (e) => this.emit('__async-call' as any, e as any),
     }
 }
