@@ -15,9 +15,7 @@ jobs:
               uses: actions/setup-node@v1
               with:
                   node-version: 12.x
-            - uses: jgierer12/npm-auth-gpr@v1
-              with:
-                  token: ${{ secrets.GITHUB_TOKEN }}
+            - uses: NiceLabs/automatic-github-token@v1
             - name: Install
               run: yarn install
             - name: Test
