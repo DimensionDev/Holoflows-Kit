@@ -29,7 +29,6 @@ export class ValueRef<T> {
     get value() {
         return this._value
     }
-    /** Set current value */
     set value(newVal: T) {
         const oldVal = this._value
         if (this.isEqual(newVal, oldVal)) return

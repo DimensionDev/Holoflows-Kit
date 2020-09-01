@@ -11,6 +11,7 @@ Runtime options for [AutomatedTabTask()](./kit.automatedtabtask.md)
 ```typescript
 export interface AutomatedTabTaskRuntimeOptions extends AutomatedTabTaskSharedOptions 
 ```
+<b>Extends:</b> [AutomatedTabTaskSharedOptions](./kit.automatedtabtasksharedoptions.md)
 
 ## Properties
 

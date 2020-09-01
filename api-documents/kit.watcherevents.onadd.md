@@ -8,8 +8,10 @@
 <b>Signature:</b>
 
 ```typescript
-onAdd: [{
-        key: unknown;
-        value: T;
-    }];
+onAdd: [
+        {
+            key: unknown;
+            value: T;
+        }
+    ];
 ```

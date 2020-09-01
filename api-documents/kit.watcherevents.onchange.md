@@ -8,10 +8,12 @@
 <b>Signature:</b>
 
 ```typescript
-onChange: [{
-        oldKey: unknown;
-        newKey: unknown;
-        oldValue?: T;
-        newValue: T;
-    }];
+onChange: [
+        {
+            oldKey: unknown;
+            newKey: unknown;
+            oldValue?: T;
+            newValue: T;
+        }
+    ];
 ```

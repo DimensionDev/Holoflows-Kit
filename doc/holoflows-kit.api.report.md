@@ -6,6 +6,7 @@
 
 import { AsyncCallOptions } from 'async-call-rpc';
 import { Emitter } from '@servie/events';
+import { EventBasedChannel } from 'async-call-rpc';
 import { EventListener as EventListener_2 } from '@servie/events';
 
 // @public
@@ -145,6 +146,8 @@ export class LiveSelector<T, SingleMode extends boolean = false> {
 export class MessageCenter<ITypedMessages> {
     constructor(sendToSelf: boolean, instanceKey?: string);
     emit<Key extends keyof ITypedMessages>(key: Key, data: ITypedMessages[Key]): Promise<void>;
+    // (undocumented)
+    eventBasedChannel: EventBasedChannel;
     off<Key extends keyof ITypedMessages>(event: Key, handler: (data: ITypedMessages[Key]) => void): void;
     on<Key extends keyof ITypedMessages>(event: Key, handler: (data: ITypedMessages[Key]) => void): () => void;
     serialization: Serialization;
@@ -172,8 +175,8 @@ export function OnlyRunInContext(context: Contexts | Contexts[], throws: false):
 
 // @public
 export interface Serialization {
-    deserialization(serialized: unknown): PromiseLike<any>;
-    serialization(from: any): PromiseLike<unknown>;
+    deserialization(serialized: unknown): unknown | PromiseLike<unknown>;
+    serialization(from: any): unknown | PromiseLike<unknown>;
 }
 
 // @public @eventProperty
@@ -246,28 +249,36 @@ export abstract class Watcher<T, Before extends Element, After extends Element, 
 // @public (undocumented)
 export interface WatcherEvents<T> {
     // @eventProperty (undocumented)
-    onAdd: [{
-        key: unknown;
-        value: T;
-    }];
+    onAdd: [
+        {
+            key: unknown;
+            value: T;
+        }
+    ];
     // @eventProperty (undocumented)
-    onChange: [{
-        oldKey: unknown;
-        newKey: unknown;
-        oldValue?: T;
-        newValue: T;
-    }];
+    onChange: [
+        {
+            oldKey: unknown;
+            newKey: unknown;
+            oldValue?: T;
+            newValue: T;
+        }
+    ];
     // @eventProperty (undocumented)
-    onIteration: [{
-        new: Map<unknown, T>;
-        removed: Map<unknown, T>;
-        current: Map<unknown, T>;
-    }];
+    onIteration: [
+        {
+            new: Map<unknown, T>;
+            removed: Map<unknown, T>;
+            current: Map<unknown, T>;
+        }
+    ];
     // @eventProperty (undocumented)
-    onRemove: [{
-        key: unknown;
-        value: T;
-    }];
+    onRemove: [
+        {
+            key: unknown;
+            value: T;
+        }
+    ];
 }
 
 

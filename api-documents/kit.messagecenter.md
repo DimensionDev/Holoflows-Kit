@@ -22,6 +22,7 @@ export declare class MessageCenter<ITypedMessages>
 
 |  Property | Modifiers | Type | Description |
 |  --- | --- | --- | --- |
+|  [eventBasedChannel](./kit.messagecenter.eventbasedchannel.md) |  | EventBasedChannel |  |
 |  [serialization](./kit.messagecenter.serialization.md) |  | [Serialization](./kit.serialization.md) | How should MessageCenter serialization the message |
 
 ## Methods

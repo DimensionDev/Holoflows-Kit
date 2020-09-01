@@ -8,9 +8,11 @@
 <b>Signature:</b>
 
 ```typescript
-onIteration: [{
-        new: Map<unknown, T>;
-        removed: Map<unknown, T>;
-        current: Map<unknown, T>;
-    }];
+onIteration: [
+        {
+            new: Map<unknown, T>;
+            removed: Map<unknown, T>;
+            current: Map<unknown, T>;
+        }
+    ];
 ```

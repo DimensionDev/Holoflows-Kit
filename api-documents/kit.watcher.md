@@ -11,6 +11,9 @@ Use LiveSelector to watch dom change
 ```typescript
 export declare abstract class Watcher<T, Before extends Element, After extends Element, SingleMode extends boolean> extends Emitter<WatcherEvents<T>> implements PromiseLike<ResultOf<SingleMode, T>> 
 ```
+<b>Extends:</b> Emitter&lt;[WatcherEvents](./kit.watcherevents.md)<!-- -->&lt;T&gt;&gt;
+
+<b>Implements:</b> PromiseLike&lt;ResultOf&lt;SingleMode, T&gt;&gt;
 
 ## Constructors
 

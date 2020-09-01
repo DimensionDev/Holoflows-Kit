@@ -11,6 +11,7 @@ Define-time options for [AutomatedTabTask()](./kit.automatedtabtask.md)
 ```typescript
 export interface AutomatedTabTaskDefineTimeOptions extends AutomatedTabTaskSharedOptions 
 ```
+<b>Extends:</b> [AutomatedTabTaskSharedOptions](./kit.automatedtabtasksharedoptions.md)
 
 ## Properties
 

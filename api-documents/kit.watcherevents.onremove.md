@@ -8,8 +8,10 @@
 <b>Signature:</b>
 
 ```typescript
-onRemove: [{
-        key: unknown;
-        value: T;
-    }];
+onRemove: [
+        {
+            key: unknown;
+            value: T;
+        }
+    ];
 ```
