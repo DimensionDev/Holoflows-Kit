@@ -402,7 +402,7 @@ export abstract class Watcher<T, Before extends Element, After extends Element, 
             this.singleModeHasLastValue = false
         }
         // ? Case: value is new
-        else if (!this.singleModeHasLastValue && firstValue) {
+        else if (!this.singleModeHasLastValue && Boolean(firstValue)) {
             if (this.useForeachFn) {
                 if (firstValue instanceof Node) {
                     this.singleModeCallback = this.useForeachFn(

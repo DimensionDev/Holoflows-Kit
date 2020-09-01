@@ -53,13 +53,13 @@ export class MessageCenter<ITypedMessages> {
      * This option cannot make your message safe!
      */
     constructor(private sendToSelf: boolean, private instanceKey = '') {
-        if (typeof browser !== 'undefined' && browser?.runtime?.onMessage) {
+        try {
             // Fired when a message is sent from either an extension process (by runtime.sendMessage)
             // or a content script (by tabs.sendMessage).
             browser.runtime.onMessage.addListener((e: any) => {
                 this.listener(e)
             })
-        }
+        } catch {}
     }
     /**
      * Listen to an event
