@@ -50,7 +50,7 @@ jobs:
                   keys:
                       - v1-dependencies-{{ checksum "pnpm-lock.yaml" }}
                       - v1-dependencies-
-            - run: npx pnpm
+            - run: npx pnpm install
             - run: npm run test:ci
 workflows:
     version: 2
