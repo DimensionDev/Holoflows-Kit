@@ -42,7 +42,7 @@ jobs:
                   destination: /esmodule.zip
     test:
         docker:
-            - image: circleci/node:13.0
+            - image: circleci/node:current
         working_directory: ~/repo
         steps:
             - checkout
