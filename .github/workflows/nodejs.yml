@@ -17,10 +17,10 @@ jobs:
                   node-version: 12.x
             - uses: NiceLabs/automatic-github-token@v2
               with:
-                registry: true
+                  registry: true
             - name: Install
-              run: yarn install
+              run: npx pnpm install
             - name: Test
-              run: yarn test:ci
+              run: npm run test:ci
             - name: Publish to GitHub Package (unstable)
               run: ./scripts/publish-to-github.sh
