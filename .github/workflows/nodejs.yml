@@ -19,7 +19,7 @@ jobs:
               with:
                   registry: true
             - name: Install
-              run: npx pnpm install
+              run: npx pnpm install --frozen-lockfile
             - name: Test
               run: npm run test:ci
             - name: Publish to GitHub Package (unstable)
