@@ -16,15 +16,15 @@ jobs:
                       - build-cache
             - restore_cache:
                   keys:
-                      - v1-dependencies-{{ checksum "yarn.lock" }}
+                      - v1-dependencies-{{ checksum "pnpm-lock.yaml" }}
                       - v1-dependencies-
-            - run: yarn install
+            - run: npx pnpm install
             - save_cache:
                   paths:
                       - node_modules
-                  key: v1-dependencies-{{ checksum "yarn.lock" }}
-            - run: yarn eslint
-            - run: yarn build
+                  key: v1-dependencies-{{ checksum "pnpm-lock.yaml" }}
+            - run: npm run eslint
+            - run: npm run build
             - save_cache:
                   paths:
                       - .rpt2_cache
@@ -42,16 +42,16 @@ jobs:
                   destination: /esmodule.zip
     test:
         docker:
-            - image: circleci/node:13.0
+            - image: circleci/node:current
         working_directory: ~/repo
         steps:
             - checkout
             - restore_cache:
                   keys:
-                      - v1-dependencies-{{ checksum "yarn.lock" }}
+                      - v1-dependencies-{{ checksum "pnpm-lock.yaml" }}
                       - v1-dependencies-
-            - run: yarn
-            - run: yarn test:ci
+            - run: npx pnpm install
+            - run: npm run test:ci
 workflows:
     version: 2
     main:
