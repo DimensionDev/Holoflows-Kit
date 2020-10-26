@@ -10,7 +10,7 @@ function parseMaybe(s) {
 const config = {
     input: './src/index.ts',
     output: {
-        file: './umd/index.js',
+        file: './umd/index.cjs',
         format: 'umd',
         name: 'HoloflowsKit',
     },
@@ -21,9 +21,13 @@ const config = {
             mainFields: ['module', 'main'],
             customResolveOptions: {
                 moduleDirectory: process.env.MODULE_DIR || 'node_modules',
-            }
+            },
         }),
-        typescript({ tsconfigOverride: { compilerOptions: { target: 'es6', ...parseMaybe(process.env.TS_OPTS) } } }),
+        typescript({
+            tsconfigOverride: {
+                compilerOptions: { target: 'ES2018', ...parseMaybe(process.env.TS_OPTS) },
+            },
+        }),
         replace({
             'process.env.NODE_ENV': JSON.stringify(process.env.NODE_ENV || 'production'),
         }),
