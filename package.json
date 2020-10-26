@@ -16,7 +16,7 @@
       "import": "./es/index.js",
       "require": "./umd/index.cjs"
     },
-    "./es/": "./es/"
+    "./es": "./es/index.js"
   },
   "scripts": {
     "build": "env-cmd -e production run-p clean \"build:tsc -- {@}\" build:rollup",
