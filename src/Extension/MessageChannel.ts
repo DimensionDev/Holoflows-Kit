@@ -1,7 +1,7 @@
 export enum MessageTarget {
     /** Current execution context */ Local = 1 << 1,
     /** All content script that runs in normal web page */ ContentScripts = 1 << 2,
-    /** The page that user current browsing. */ CurrentActivePage = 1 << 3,
+    /** The page that user current browsing. */ CurrentActivatedPage = 1 << 3,
     /** Any *-extension: page besides BackgroundPage */ VisibleExtensionPage = 1 << 4,
     /** Page that specified in manifest.background */ BackgroundPage = 1 << 5,
     /** Page that specified in manifest.browser_action */ PopupPage = 1 << 6,
@@ -25,7 +25,7 @@ export interface UnboundedRegister<T, BindType> extends Omit<BasicEventRegister<
     sendToLocal(data: T): void
     sendToBackgroundPage(data: T): void
     sendToContentScripts(data: T): void
-    sendToCurrentActivePage(data: T): void
+    sendToCurrentActivatedPage(data: T): void
     sendToUserVisible(data: T): void
     sendByBroadcast(data: T): void
     sendToAll(data: T): void
@@ -75,7 +75,7 @@ import { Serialization } from './MessageCenter'
         approved: string
     }
     const myChannel = new WebExtensionMessage<Messages>()
-    myChannel.events.approved.send(MessageTarget.BackgroundPage | MessageTarget.CurrentActivePage, 'data')
+    myChannel.events.approved.send(MessageTarget.BackgroundPage | MessageTarget.CurrentActivatedPage, 'data')
     const bind = myChannel.events.approved.bind(MessageTarget.Broadcast)
     AsyncCall({}, { channel: bind })
     async function main() {
