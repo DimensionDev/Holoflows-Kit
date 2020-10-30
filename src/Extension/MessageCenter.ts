@@ -23,6 +23,7 @@ type InternalMessageType = {
 const noop = () => {}
 /**
  * Send and receive messages in different contexts.
+ * @deprecated
  */
 export class MessageCenter<ITypedMessages> {
     /**
