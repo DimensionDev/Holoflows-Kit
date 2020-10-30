@@ -1,62 +1,68 @@
 export enum MessageTarget {
-    /** Current execution context */
-    Local = 1 << 1,
-    /** Page that starts with chrome-extension:// or browser-extension:// but not BackgroundPage */
-    ExtensionPage = 1 << 2,
-    /** Page that specified in manifest.background */
-    BackgroundPage = 1 << 3,
-    /** Content Script that runs in normal web page */
-    ContentScript = 1 << 4,
-    /** The page that user current browsing. Might be ExtensionPage or ContentScript. */
-    CurrentActivePage = 1 << 5,
-    UserVisible = ExtensionPage | ContentScript,
-    Broadcast = ExtensionPage | BackgroundPage | ContentScript,
+    /** Current execution context */ Local = 1 << 1,
+    /** All content script that runs in normal web page */ ContentScripts = 1 << 2,
+    /** The page that user current browsing. */ CurrentActivePage = 1 << 3,
+    /** Any *-extension: page besides BackgroundPage */ VisibleExtensionPage = 1 << 4,
+    /** Page that specified in manifest.background */ BackgroundPage = 1 << 5,
+    /** Page that specified in manifest.browser_action */ PopupPage = 1 << 6,
+    /** Page that specified in manifest.options_ui */ OptionsPage = 1 << 7,
+    ExtensionPage = VisibleExtensionPage | BackgroundPage,
+    UserVisible = VisibleExtensionPage | ContentScripts,
+    Broadcast = ExtensionPage | ContentScripts,
     All = Broadcast | Local,
 }
-// export interface WebExtensionMessageChannelEventTarget<T> extends EventTarget {}
-// export interface WebExtensionMessageChannelNodeEventEmitter<T> extends NodeJS.EventEmitter {}
-export interface WebExtensionMessageChannelBasic<T> {
+export interface BasicEventRegister<T> {
     /** @returns A function to remove the listener */
     on(callback: (data: T) => void): () => void
     off(callback: (data: T) => void): void
     send(data: T): void
 }
-export interface WebExtensionMessageChannelListenerObject<T>
-    extends Omit<WebExtensionMessageChannelBasic<T>, 'send'>,
-        AsyncIterable<T> {
+// export interface EventTargetRegister<T> extends EventTarget {}
+// export interface EventEmitterRegister<T> extends NodeJS.EventEmitter {}
+export interface UnboundedRegister<T, BindType> extends Omit<BasicEventRegister<T>, 'send'>, AsyncIterable<T> {
     // For different send targets
-    send_raw(target: MessageTarget, data: T): void
-    send_local(data: T): void
-    send_extension_page(data: T): void
-    send_background_page(data: T): void
-    send_content_script(data: T): void
-    send_current_active_page(data: T): void
-    send_user_visible(data: T): void
-    send_broadcast(data: T): void
-    send_all(data: T): void
-    // There is no default *send* to prevent misuse. You must know where do you want to send to.
-
-    // Or if you want to export the API for other usages
+    send(target: MessageTarget, data: T): void
+    sendToLocal(data: T): void
+    sendToBackgroundPage(data: T): void
+    sendToContentScripts(data: T): void
+    sendToCurrentActivePage(data: T): void
+    sendToUserVisible(data: T): void
+    sendByBroadcast(data: T): void
+    sendToAll(data: T): void
     /** You may create a bound version that have a clear interface. */
-    bind(target: MessageTarget, style?: 'basic'): WebExtensionMessageChannelBasic<T>
-    // Return a DOM EventTarget style object
-    // bind(target: MessageTarget, style: 'EventTarget'): WebExtensionMessageChannelEventTarget<T>
-    // Return a Node EventEmitter style object
-    // bind(target: MessageTarget, style: 'EventEmitter'): WebExtensionMessageChannelNodeEventEmitter<T>
+    bind(target: MessageTarget): BindType
 }
-export interface WebExtensionMessageChannelOptions {
+export interface TabBoundedRegister<T> {
+    readonly tabId: string
+    readonly url: string
+    readonly events: { readonly [key in keyof T]: BasicEventRegister<T[key]> }
+    // readonly eventTarget: { readonly [key in keyof T]: EventTargetRegister<T[key]> }
+    // readonly eventEmitter: { readonly [key in keyof T]: EventEmitterRegister<T[key]> }
+}
+export interface WebExtensionMessageOptions {
     readonly instanceBy?: string
 }
-export class WebExtensionMessageChannel<TypedMessages> {
+export class WebExtensionMessage<Message> {
+    /** Event listeners */
     declare readonly events: {
-        readonly [key in keyof TypedMessages]: WebExtensionMessageChannelListenerObject<TypedMessages[key]>
+        readonly [key in keyof Message]: UnboundedRegister<Message[key], BasicEventRegister<Message>>
+    }
+    // declare readonly eventTarget: { readonly [key in keyof Message]: UnboundedRegister<Message[key], EventTargetRegister<Message>> }
+    // declare readonly eventEmitter: { readonly [key in keyof Message]: UnboundedRegister<Message[key], EventEmitterRegister<Message>> }
+    /**
+     * Watch new tabs created and get event listener register of that tab.
+     *
+     * This API only works in the BackgroundPage.
+     */
+    tabs(): AsyncIterableIterator<TabBoundedRegister<Message>> {
+        return {} as any
     }
     /** Same message name with different instanceBy won't collide with each other. */
     declare readonly instanceBy?: string
     declare serialization?: Serialization
-    declare logFormatter?: <T extends keyof TypedMessages>(instance: this, key: T, data: TypedMessages[T]) => unknown
+    declare logFormatter?: <T extends keyof Message>(instance: this, key: T, data: Message[T]) => unknown
     public log: (...args: unknown[]) => void = console.log
-    constructor(options?: WebExtensionMessageChannelOptions) {
+    constructor(options?: WebExtensionMessageOptions) {
         this.instanceBy = options?.instanceBy
     }
 }
@@ -68,13 +74,16 @@ import { Serialization } from './MessageCenter'
         // Note: You can use "Find All Reference" on it!
         approved: string
     }
-    const myChannel = new WebExtensionMessageChannel<Messages>()
-    myChannel.events.approved.send_raw(MessageTarget.BackgroundPage | MessageTarget.CurrentActivePage, 'data')
+    const myChannel = new WebExtensionMessage<Messages>()
+    myChannel.events.approved.send(MessageTarget.BackgroundPage | MessageTarget.CurrentActivePage, 'data')
     const bind = myChannel.events.approved.bind(MessageTarget.Broadcast)
     AsyncCall({}, { channel: bind })
     async function main() {
-        for await (const data of myChannel.events.approved) {
-            data.slice
+        for await (const tab of myChannel.tabs()) {
+            if (tab.url !== 'http://example.com') continue
+            // Listen on the event by this page.
+            tab.events.approved.on(console.log)
+            tab.events.approved.send('hello')
         }
     }
 }
