@@ -44,22 +44,21 @@ export interface WebExtensionMessageChannelListenerObject<T>
     // Return a Node EventEmitter style object
     // bind(target: MessageTarget, style: 'EventEmitter'): WebExtensionMessageChannelNodeEventEmitter<T>
 }
-export interface WebExtensionMessageChannel<TypedMessages extends object> extends WebExtensionMessageChannelOptions {
-    readonly events: {
-        readonly [key in keyof TypedMessages]: WebExtensionMessageChannelListenerObject<TypedMessages[key]>
-    }
+export interface WebExtensionMessageChannelOptions {
     readonly instanceBy?: string
 }
-export interface WebExtensionMessageChannelOptions {
-    serialization?: Serialization
-    log?: boolean
-    instanceBy?: string
-}
-export function createWebExtensionMessageChannel<TypedMessages extends object>(
-    options?: WebExtensionMessageChannelOptions,
-): WebExtensionMessageChannel<TypedMessages> {
-    // TODO:
-    return {} as any
+export class WebExtensionMessageChannel<TypedMessages> {
+    declare readonly events: {
+        readonly [key in keyof TypedMessages]: WebExtensionMessageChannelListenerObject<TypedMessages[key]>
+    }
+    /** Same message name with different instanceBy won't collide with each other. */
+    declare readonly instanceBy?: string
+    declare serialization?: Serialization
+    declare logFormatter?: <T extends keyof TypedMessages>(instance: this, key: T, data: TypedMessages[T]) => unknown
+    public log: (...args: unknown[]) => void = console.log
+    constructor(options?: WebExtensionMessageChannelOptions) {
+        this.instanceBy = options?.instanceBy
+    }
 }
 import { AsyncCall } from 'async-call-rpc'
 import { Serialization } from './MessageCenter'
@@ -69,7 +68,7 @@ import { Serialization } from './MessageCenter'
         // Note: You can use "Find All Reference" on it!
         approved: string
     }
-    const myChannel = createWebExtensionMessageChannel<Messages>()
+    const myChannel = new WebExtensionMessageChannel<Messages>()
     myChannel.events.approved.send_raw(MessageTarget.BackgroundPage | MessageTarget.CurrentActivePage, 'data')
     const bind = myChannel.events.approved.bind(MessageTarget.Broadcast)
     AsyncCall({}, { channel: bind })
