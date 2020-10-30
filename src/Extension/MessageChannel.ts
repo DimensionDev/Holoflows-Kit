@@ -21,7 +21,9 @@ export interface WebExtensionMessageChannelBasic<T> {
     off(callback: (data: T) => void): void
     send(data: T): void
 }
-export interface WebExtensionMessageChannelListenerObject<T> extends Omit<WebExtensionMessageChannelBasic<T>, 'send'> {
+export interface WebExtensionMessageChannelListenerObject<T>
+    extends Omit<WebExtensionMessageChannelBasic<T>, 'send'>,
+        AsyncIterable<T> {
     // For different send targets
     send_raw(target: MessageTarget, data: T): void
     send_local(data: T): void
@@ -71,4 +73,9 @@ import { Serialization } from './MessageCenter'
     myChannel.events.approved.send_raw(MessageTarget.BackgroundPage | MessageTarget.CurrentActivePage, 'data')
     const bind = myChannel.events.approved.bind(MessageTarget.Broadcast)
     AsyncCall({}, { channel: bind })
+    async function main() {
+        for await (const data of myChannel.events.approved) {
+            data.slice
+        }
+    }
 }
