@@ -38,13 +38,9 @@ export enum Environment {
     /** Current running context is Content Script */ ContentScript = 1 << 3,
     // userScript = 1 << 4,
     /** URL is listed in the manifest.background or generated background page */ ManifestBackground = 1 << 6,
-    BackgroundPage = HasBrowserAPI | ExtensionProtocol | ManifestBackground,
     /** URL is listed in the manifest.options_ui */ ManifestOptions = 1 << 7,
-    OptionsPage = HasBrowserAPI | ExtensionProtocol | ManifestOptions,
     /** URL is listed in the manifest.browser_action */ ManifestBrowserAction = 1 << 8,
-    BrowserActionPopup = HasBrowserAPI | ExtensionProtocol | ManifestBrowserAction,
     /** URL is listed in the manifest.page_action */ ManifestPageAction = 1 << 9,
-    PageActionPopup = HasBrowserAPI | ExtensionProtocol | ManifestPageAction,
     /** URL is listed in the manifest.devtools_page */ ManifestDevTools = 1 << 10,
     /** URL is listed in the manifest.sidebar_action. Firefox Only */ ManifestSidebar = 1 << 11,
     /** URL is listed in the manifest.chrome_url_overrides.newtab */ ManifestOverridesNewTab = 1 << 12,
@@ -53,11 +49,13 @@ export enum Environment {
     // DO NOT USE value that bigger than 1 << 20
 }
 declare const __holoflows_kit_get_environment_debug__: number
+let result: Environment
 /**
  * Get the current running environment
  * @remarks You can use the global variable `__holoflows_kit_get_environment_debug__` to overwrite the return value if the current hostname is localhost or 127.0.0.1
  */
 export function getExtensionEnvironment(): Environment {
+    if (result !== undefined) return result
     try {
         if (location.hostname === 'localhost' || location.hostname === '127.0.0.1') {
             const val = __holoflows_kit_get_environment_debug__
@@ -100,7 +98,7 @@ export function getExtensionEnvironment(): Environment {
             } catch {}
         }
     }
-    return flag
+    return (result = flag)
     function slashSuffix(x: string | undefined) {
         if (x === undefined) return '_'
         if (x[0] !== '/') return '/' + x
