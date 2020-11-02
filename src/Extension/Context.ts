@@ -33,14 +33,18 @@ export function GetContext(): Contexts {
 
 /** Current running environment of Web Extension */
 export enum Environment {
-    /** has browser or chrome as a global variable */ HasBrowserAPI = 1 << 1,
+    /** has browser as a global variable */ HasBrowserAPI = 1 << 1,
     /** URL protocol ends with "-extension:" */ ExtensionProtocol = 1 << 2,
     /** Current running context is Content Script */ ContentScript = 1 << 3,
     // userScript = 1 << 4,
     /** URL is listed in the manifest.background or generated background page */ ManifestBackground = 1 << 6,
+    BackgroundPage = HasBrowserAPI | ExtensionProtocol | ManifestBackground,
     /** URL is listed in the manifest.options_ui */ ManifestOptions = 1 << 7,
-    /** URL is listed in the manifest.browser_action */ ManifestPopup = 1 << 8,
+    OptionsPage = HasBrowserAPI | ExtensionProtocol | ManifestOptions,
+    /** URL is listed in the manifest.browser_action */ ManifestBrowserAction = 1 << 8,
+    BrowserActionPopup = HasBrowserAPI | ExtensionProtocol | ManifestBrowserAction,
     /** URL is listed in the manifest.page_action */ ManifestPageAction = 1 << 9,
+    PageActionPopup = HasBrowserAPI | ExtensionProtocol | ManifestPageAction,
     /** URL is listed in the manifest.devtools_page */ ManifestDevTools = 1 << 10,
     /** URL is listed in the manifest.sidebar_action. Firefox Only */ ManifestSidebar = 1 << 11,
     /** URL is listed in the manifest.chrome_url_overrides.newtab */ ManifestOverridesNewTab = 1 << 12,
@@ -81,7 +85,8 @@ export function getExtensionEnvironment(): Environment {
 
                 if (current === slashSuffix(background)) flag |= Environment.ManifestBackground
                 // TODO: this property support i18n. What will I get when call browser.runtime.getManifest()?
-                if (current === slashSuffix(manifest.browser_action?.default_popup)) flag |= Environment.ManifestPopup
+                if (current === slashSuffix(manifest.browser_action?.default_popup))
+                    flag |= Environment.ManifestBrowserAction
                 if (current === slashSuffix(manifest.sidebar_action?.default_panel)) flag |= Environment.ManifestSidebar
                 if (current === slashSuffix(options)) flag |= Environment.ManifestOptions
                 if (current === slashSuffix(manifest.devtools_page)) flag |= Environment.ManifestDevTools
@@ -119,7 +124,7 @@ export function printExtensionEnvironment(e: Environment = getExtensionEnvironme
     if (Environment.ManifestOverridesBookmarks & e) flag.push('ManifestOverridesBookmarks')
     if (Environment.ManifestOverridesHistory & e) flag.push('ManifestOverridesHistory')
     if (Environment.ManifestOverridesNewTab & e) flag.push('ManifestOverridesNewTab')
-    if (Environment.ManifestPopup & e) flag.push('ManifestPopup')
+    if (Environment.ManifestBrowserAction & e) flag.push('ManifestBrowserAction')
     if (Environment.ManifestSidebar & e) flag.push('ManifestSidebar')
     return flag.join('|')
 }
@@ -156,6 +161,18 @@ export function assertEnvironment(env: Environment) {
     if (!isEnvironment(env))
         throw new TypeError(
             `Running in the wrong context, (expected ${printExtensionEnvironment(
+                env,
+            )}, actually ${printExtensionEnvironment()})`,
+        )
+}
+/**
+ * Assert the current environment NOT satisfy the rejected flags
+ * @param env The rejected environment
+ */
+export function assertNotEnvironment(env: Environment) {
+    if (getExtensionEnvironment() & env)
+        throw new TypeError(
+            `Running in wrong context, (expected not match ${printExtensionEnvironment(
                 env,
             )}, actually ${printExtensionEnvironment()})`,
         )
