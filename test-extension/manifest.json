@@ -1,0 +1,10 @@
+{
+    "$schema": "http://json.schemastore.org/chrome-manifest",
+    "name": "holoflows-kit test",
+    "version": "1.0.0",
+    "manifest_version": 2,
+    "permissions": ["<all_urls>"],
+    "background": { "page": "background.html" },
+    "options_ui": { "page": "index.html", "open_in_tab": true },
+    "browser_action": { "default_popup": "popup.html" }
+}
