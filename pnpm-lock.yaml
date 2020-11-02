@@ -1,7 +1,7 @@
 dependencies:
   '@servie/events': 1.0.0
   async-call-rpc: 4.1.0
-  concurrent-lock: 1.0.7
+  event-iterator: 2.0.0
   jsx-jsonml-devtools-renderer: 1.4.3
   lodash-es: 4.17.15
   memorize-decorator: 0.2.4
@@ -23,6 +23,7 @@ devDependencies:
   npm-run-all: 4.1.5
   rimraf: 3.0.2
   rollup: 2.32.1
+  rollup-plugin-analyzer: 3.3.0
   rollup-plugin-typescript2: 0.28.0_rollup@2.32.1+typescript@4.0.5
   ts-jest: 26.4.3_jest@26.6.1+typescript@4.0.5
   ts-node: 9.0.0_typescript@4.0.5
@@ -264,12 +265,6 @@ packages:
       '@babel/core': ^7.0.0-0
     resolution:
       integrity: sha512-KoK9ErH1MBlCPxV0VANkXW2/dw4vlbGDrFgz8bmUsBGYkFRcbRwMh6cIJubdPrkxRwuGdtCk0v/wPTKbQgBjkg==
-  /@babel/runtime/7.11.2:
-    dependencies:
-      regenerator-runtime: 0.13.7
-    dev: false
-    resolution:
-      integrity: sha512-TeWkU52so0mPtDcaCTxNBI/IHiz0pZgr8VEFqXFtZWpYD08ZB6FaSwVAS8MKRQAP3bYKiVjwysOJgMFY28o6Tw==
   /@babel/template/7.10.4:
     dependencies:
       '@babel/code-frame': 7.10.4
@@ -1475,12 +1470,6 @@ packages:
     dev: true
     resolution:
       integrity: sha1-2Klr13/Wjfd5OnMDajug1UBdR3s=
-  /concurrent-lock/1.0.7:
-    dependencies:
-      '@babel/runtime': 7.11.2
-    dev: false
-    resolution:
-      integrity: sha512-WhivxLzkjaqpd3Bs+8UCq8cDznvx4vX5tzW17Zbk1c8nyuALt3h7EK5qpc3BSLFZADpCmMJieqUoZ6iOSTYIPA==
   /convert-source-map/1.7.0:
     dependencies:
       safe-buffer: 5.1.2
@@ -1968,6 +1957,10 @@ packages:
       node: '>=0.10.0'
     resolution:
       integrity: sha512-kVscqXk4OCp68SZ0dkgEKVi6/8ij300KBWTJq32P/dYeWTSwK41WyTxalN1eRmA5Z9UU/LX9D7FWSmV9SAYx6g==
+  /event-iterator/2.0.0:
+    dev: false
+    resolution:
+      integrity: sha512-KGft0ldl31BZVV//jj+IAIGCxkvvUkkON+ScH6zfoX+l+omX6001ggyRSpI0Io2Hlro0ThXotswCtfzS8UkIiQ==
   /exec-sh/0.3.4:
     dev: true
     resolution:
@@ -4148,10 +4141,6 @@ packages:
       node: '>=8.10.0'
     resolution:
       integrity: sha512-0xe001vZBnJEK+uKcj8qOhyAKPzIT+gStxWr3LCB0DwcXR5NZJ3IaC+yGnHCYzB/S7ov3m3EEbZI2zeNvX+hGQ==
-  /regenerator-runtime/0.13.7:
-    dev: false
-    resolution:
-      integrity: sha512-a54FxoJDIr27pgf7IgeQGxmqUNYrcV338lf/6gH456HZ/PhX+5BcwHXG9ajESmwe6WRO0tAzRUrRmNONWgkrew==
   /regex-not/1.0.2:
     dependencies:
       extend-shallow: 3.0.2
@@ -4311,6 +4300,12 @@ packages:
     hasBin: true
     resolution:
       integrity: sha512-JZkJMZkAGFFPP2YqXZXPbMlMBgsxzE8ILs4lMIX/2o0L9UBw9O/Y3o6wFw/i9YLapcUJWwqbi3kdxIPdC62TIA==
+  /rollup-plugin-analyzer/3.3.0:
+    dev: true
+    engines:
+      node: '>=8.0.0'
+    resolution:
+      integrity: sha512-zUPGitW4usmZcVa0nKecRvw3odtXgnxdCben9Hx1kxVoR3demek8RU9tmRG/R35hnRPQTb7wEsYEe3GUcjxIMA==
   /rollup-plugin-typescript2/0.28.0_rollup@2.32.1+typescript@4.0.5:
     dependencies:
       '@rollup/pluginutils': 3.1.0_rollup@2.32.1
@@ -5298,10 +5293,10 @@ specifiers:
   '@typescript-eslint/eslint-plugin': ^4.6.0
   '@typescript-eslint/parser': ^4.6.0
   async-call-rpc: ^4.1.0
-  concurrent-lock: ^1.0.7
   env-cmd: ^10.1.0
   eslint: ^7.12.1
   eslint-watch: ^7.0.0
+  event-iterator: ^2.0.0
   jest: ^26.6.1
   jsx-jsonml-devtools-renderer: ^1.4.3
   lodash-es: ^4.17.15
@@ -5309,6 +5304,7 @@ specifiers:
   npm-run-all: ^4.1.5
   rimraf: ^3.0.1
   rollup: ^2.30.0
+  rollup-plugin-analyzer: ^3.3.0
   rollup-plugin-typescript2: ^0.28.0
   ts-jest: ^26.4.3
   ts-node: ^9.0.0
