@@ -26,7 +26,12 @@ const config = {
         }),
         typescript({
             tsconfigOverride: {
-                compilerOptions: { target: 'ES2018', noEmit: true, ...parseMaybe(process.env.TS_OPTS) },
+                compilerOptions: {
+                    target: 'ES2018',
+                    declaration: false,
+                    declarationMap: false,
+                    ...parseMaybe(process.env.TS_OPTS),
+                },
             },
         }),
         replace({

@@ -6,7 +6,7 @@
 /temp
 .rpt2_cache
 *.tsbuildinfo
-test-extension/kit.js
+test-extension/kit.*
 
 # dependencies
 /node_modules
