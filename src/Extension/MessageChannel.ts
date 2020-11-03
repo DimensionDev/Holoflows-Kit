@@ -6,7 +6,7 @@ import { Environment, getExtensionEnvironment, isEnvironment, printExtensionEnvi
 
 export enum MessageTarget {
     /** Current execution context */ IncludeLocal = 1 << 20,
-    LocalOnly = (1 << 21) | IncludeLocal,
+    LocalOnly = 1 << 21,
     /** Visible page, maybe have more than 1 page. */ VisiblePageOnly = 1 << 22,
     /** Page that has focus (devtools not included), 0 or 1 page. */ FocusedPageOnly = 1 << 23,
     Broadcast = Environment.HasBrowserAPI,
@@ -54,7 +54,7 @@ const backgroundOnlyLivingPorts = new Map<
 // Only be set in other pages
 let currentTabID = -1
 // Shared global
-let postMessageToOtherSide: browser.runtime.Port['postMessage'] | undefined = undefined
+let postMessage: ((message: number | InternalMessageType) => void) | undefined = undefined
 const domainRegistry = new Emitter<Record<string, [InternalMessageType]>>()
 const constant = '@holoflows/kit/WebExtensionMessage/setupBroadcastBetweenContentScripts'
 export class WebExtensionMessage<Message> {
@@ -79,12 +79,24 @@ export class WebExtensionMessage<Message> {
                 port.onMessage.addListener(backgroundPageMessageHandler.bind(port))
                 port.onDisconnect.addListener(() => backgroundOnlyLivingPorts.delete(port))
             })
-            postMessageToOtherSide = backgroundPageMessageHandler
+            postMessage = backgroundPageMessageHandler
         } else {
             WebExtensionMessage.setup = () => {}
             function reconnect() {
                 const port = browser.runtime.connect({ name: constant })
-                postMessageToOtherSide = (data) => port.postMessage(data)
+                postMessage = (payload) => {
+                    if (typeof payload !== 'object') return port.postMessage(payload)
+
+                    const bound = payload.target
+                    if (bound.kind === 'tab') return port.postMessage(payload)
+                    const target = bound.target
+                    if (target & (MessageTarget.IncludeLocal | MessageTarget.LocalOnly)) {
+                        domainRegistry.emit(payload.domain, payload)
+                        if (target & MessageTarget.LocalOnly) return
+                        bound.target &= ~MessageTarget.IncludeLocal // unset IncludeLocal
+                    }
+                    port.postMessage(payload)
+                }
                 // report self environment
                 port.postMessage(getExtensionEnvironment())
                 // server will send self tab ID on connected
@@ -189,29 +201,18 @@ function isInternalMessageType(e: unknown): e is InternalMessageType {
     if (typeof target !== 'object' || target === null) return false
     return true
 }
-function shouldIgnoreThisMessage(target: BoundTarget) {
-    if (target.kind === 'tab') {
-        if (target.id !== currentTabID) return true
-    } else {
-        const flag = target.target
-        if (flag & MessageTarget.FocusedPageOnly) {
-            try {
-                if (!document.hasFocus()) return true
-            } catch {
-                return true
-            }
-        }
-        if (flag & MessageTarget.VisiblePageOnly) {
-            // background page has document.visibilityState === 'visible' for reason I don't know why
-            if (getExtensionEnvironment() & Environment.ManifestBackground) return true
-            try {
-                if (document.visibilityState !== 'visible') return true
-            } catch {
-                return true
-            }
-        }
+function shouldAcceptThisMessage(target: BoundTarget) {
+    if (target.kind === 'tab') return target.id === currentTabID
+    const flag = target.target
+    if (flag & (MessageTarget.IncludeLocal | MessageTarget.LocalOnly)) return true
+    const here = getExtensionEnvironment()
+    if (flag & MessageTarget.FocusedPageOnly) return typeof document === 'object' && document?.hasFocus?.()
+    if (flag & MessageTarget.VisiblePageOnly) {
+        // background page has document.visibilityState === 'visible' for reason I don't know why
+        if (here & Environment.ManifestBackground) return false
+        return typeof document === 'object' && document?.visibilityState === 'visible'
     }
-    return false
+    return Boolean(here & flag)
 }
 function UnboundedRegistry<T, Binder>(
     instance: WebExtensionMessage<T>,
@@ -222,27 +223,23 @@ function UnboundedRegistry<T, Binder>(
     domainRegistry.on(instance.domain, async function (payload: InternalMessageType) {
         if (!isInternalMessageType(payload)) return
         let { event, data, target } = payload
+        if (!shouldAcceptThisMessage(target)) return
         data = await instance.serialization.deserialization(data)
-        // Message is not for us
-        if (shouldIgnoreThisMessage(target)) return
         if (instance.enableLog) {
             instance.log(...instance.logFormatter(instance, event, data))
         }
         eventListener.emit(event, data)
     })
     async function send(target: MessageTarget | Environment, data: T) {
-        const payload: InternalMessageType = {
+        if (typeof target !== 'number') throw new TypeError('target must be a bit flag of MessageTarget | Environment')
+        postMessage!({
             data: await instance.serialization.serialization(data),
             domain: instance.domain,
             event: eventName,
             target: { kind: 'target', target },
-        }
-        if (target & MessageTarget.IncludeLocal) {
-            domainRegistry.emit(instance.domain, payload)
-            if (target & MessageTarget.LocalOnly) return
-        }
-        postMessageToOtherSide!(payload)
+        })
     }
+    let binder: Binder
     return {
         send,
         sendToLocal: send.bind(null, MessageTarget.LocalOnly),
@@ -252,11 +249,14 @@ function UnboundedRegistry<T, Binder>(
         sendToFocusedPage: send.bind(null, MessageTarget.FocusedPageOnly),
         sendByBroadcast: send.bind(null, MessageTarget.Broadcast),
         sendToAll: send.bind(null, MessageTarget.All),
-        bind: (target) => createBind(target),
-        on: (cb) => {
-            eventListener.on(eventName, cb)
-            return () => eventListener.off(eventName, cb)
+        bind: (target) => {
+            if (typeof binder === 'undefined') {
+                binder = createBind(target)
+                createBind = undefined!
+            }
+            return binder
         },
+        on: (cb) => (eventListener.on(eventName, cb), () => eventListener.off(eventName, cb)),
         off: (cb) => void eventListener.off(eventName, cb),
         async *[Symbol.asyncIterator]() {
             yield* new EventIterator<T>(({ push }) => this.on(push))
@@ -275,20 +275,15 @@ function TargetBoundEventRegisterImpl(
     serialization: Serialization,
 ): TargetBoundEventRegistry<unknown> {
     return {
-        on: (callback) => {
-            eventRegistry.on(event, callback)
-            return () => eventRegistry.off(event, callback)
-        },
+        on: (callback) => (eventRegistry.on(event, callback), () => eventRegistry.off(event, callback)),
         off: (callback) => eventRegistry.off(event, callback),
-        send: async (data) => {
-            const payload: InternalMessageType = {
+        send: async (data) =>
+            postMessage!({
                 data: await serialization.serialization(data),
                 domain,
                 event,
                 target: boundTarget,
-            }
-            postMessageToOtherSide!(payload)
-        },
+            }),
     }
 }
 
@@ -302,11 +297,16 @@ function backgroundPageMessageHandler(this: browser.runtime.Port | undefined, da
         }
     } else {
         const flag = data.target.target
+        // Also dispatch this message to background page itself. shouldAcceptThisMessage will help us to filter the message
+        domainRegistry.emit(data.domain, data)
+        if (flag & MessageTarget.LocalOnly) return
         for (const [port, { environment }] of backgroundOnlyLivingPorts) {
             if (port === this) continue // Not sending to the source.
             if (environment === undefined) continue
             try {
                 if (environment & flag) port.postMessage(data)
+                // they will handle this by thyself
+                else if (flag & (MessageTarget.FocusedPageOnly | MessageTarget.VisiblePageOnly)) port.postMessage(data)
             } catch (e) {
                 console.error(e)
             }
