@@ -2,7 +2,7 @@ import { NoSerialization } from 'async-call-rpc'
 import { Serialization } from './MessageCenter'
 import { Emitter } from '@servie/events'
 import { EventIterator } from 'event-iterator'
-import { Environment, getExtensionEnvironment, isEnvironment, printExtensionEnvironment } from './Context'
+import { assertEnvironment, Environment, getExtensionEnvironment, isEnvironment } from './Context'
 
 export enum MessageTarget {
     /** Current execution context */ IncludeLocal = 1 << 20,
@@ -33,24 +33,19 @@ export interface UnboundedRegistry<T, BindType> extends Omit<TargetBoundEventReg
     /** You may create a bound version that have a clear interface. */
     bind(target: MessageTarget | Environment): BindType
 }
-export interface TabBoundedRegistry<T> {
-    readonly tabId: string
-    readonly url: string
-    readonly events: { readonly [key in keyof T]: TargetBoundEventRegistry<T[key]> }
-    // readonly eventTarget: { readonly [key in keyof T]: EventTargetRegister<T[key]> }
-    // readonly eventEmitter: { readonly [key in keyof T]: EventEmitterRegister<T[key]> }
-}
 export interface WebExtensionMessageOptions {
     readonly domain?: string
 }
 const throwSetter = () => {
     throw new TypeError()
 }
+type BackgroundOnlyLivingPortsInfo = {
+    sender?: browser.runtime.MessageSender
+    environment?: Environment
+}
+
 // Only available in background page
-const backgroundOnlyLivingPorts = new Map<
-    browser.runtime.Port,
-    { sender?: browser.runtime.MessageSender; environment?: Environment }
->()
+const backgroundOnlyLivingPorts = new Map<browser.runtime.Port, BackgroundOnlyLivingPortsInfo>()
 // Only be set in other pages
 let currentTabID = -1
 // Shared global
@@ -89,6 +84,8 @@ export class WebExtensionMessage<Message> {
 
                     const bound = payload.target
                     if (bound.kind === 'tab') return port.postMessage(payload)
+                    if (bound.kind === 'port')
+                        throw new Error('Unreachable case: bound type = port in non-background script')
                     const target = bound.target
                     if (target & (MessageTarget.IncludeLocal | MessageTarget.LocalOnly)) {
                         domainRegistry.emit(payload.domain, payload)
@@ -137,14 +134,13 @@ export class WebExtensionMessage<Message> {
             ),
         )
     }
-    #cache: any = { __proto__: null }
     //#region Simple API
-    #events: any = new Proxy(this.#cache, {
+    #events: any = new Proxy({ __proto__: null } as any, {
         get: (cache, key) => {
             if (typeof key !== 'string') throw new Error('Only string can be event keys')
             if (cache[key]) return cache[key]
             const event = this.__createEventObject__(key)
-            Object.defineProperty(this.#cache, key, { value: event })
+            Object.defineProperty(cache, key, { value: event })
             return event
         },
         defineProperty: () => false,
@@ -164,10 +160,6 @@ export class WebExtensionMessage<Message> {
      *
      * This API only works in the BackgroundPage.
      */
-    public tabs(): AsyncIterableIterator<TabBoundedRegistry<Message>> {
-        // TODO
-        throw new Error('Not implemented yet')
-    }
     public serialization: Serialization = NoSerialization
     public logFormatter: (instance: this, key: string, data: unknown) => unknown[] = (instance, key, data) => {
         return [
@@ -203,6 +195,7 @@ function isInternalMessageType(e: unknown): e is InternalMessageType {
 }
 function shouldAcceptThisMessage(target: BoundTarget) {
     if (target.kind === 'tab') return target.id === currentTabID
+    if (target.kind === 'port') return true
     const flag = target.target
     if (flag & (MessageTarget.IncludeLocal | MessageTarget.LocalOnly)) return true
     const here = getExtensionEnvironment()
@@ -265,7 +258,10 @@ function UnboundedRegistry<T, Binder>(
 }
 
 type EventRegistry = Emitter<Record<string, [unknown]>>
-type BoundTarget = { kind: 'tab'; id: number } | { kind: 'target'; target: MessageTarget | Environment }
+type BoundTarget =
+    | { kind: 'tab'; id: number }
+    | { kind: 'target'; target: MessageTarget | Environment }
+    | { kind: 'port'; port: browser.runtime.Port }
 
 function TargetBoundEventRegisterImpl(
     domain: string,
@@ -295,6 +291,8 @@ function backgroundPageMessageHandler(this: browser.runtime.Port | undefined, da
             if (data.target.id !== sender?.tab?.id) continue
             return port.postMessage(data)
         }
+    } else if (data.target.kind === 'port') {
+        data.target.port.postMessage(data)
     } else {
         const flag = data.target.target
         // Also dispatch this message to background page itself. shouldAcceptThisMessage will help us to filter the message
