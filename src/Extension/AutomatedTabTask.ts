@@ -1,7 +1,7 @@
 import { sleep, timeout as timeoutFn } from '../util/sleep'
 import { AsyncCall, AsyncCallOptions } from 'async-call-rpc'
 import { GetContext } from './Context'
-import Lock from 'concurrent-lock'
+import Lock from '../util/ConcurrentLock'
 import { memorize } from 'memorize-decorator'
 import { MessageCenter } from './MessageCenter'
 

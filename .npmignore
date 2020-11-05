@@ -2,9 +2,7 @@
 /.vscode
 /.circleci
 
-# use less build output
-/umd/**/*.ts
-/umd/**/*.ts.map
+/test-extension
 
 # can be regenerated
 /api-documents

@@ -1,0 +1,20 @@
+{
+    "$schema": "http://json.schemastore.org/chrome-manifest",
+    "name": "holoflows-kit test",
+    "version": "1.0.0",
+    "manifest_version": 2,
+    "permissions": ["<all_urls>", "tabs"],
+    "background": {
+        "scripts": ["./node_modules/webextension-polyfill/dist/browser-polyfill.js", "kit.js", "setup.js"]
+    },
+    "options_ui": { "page": "index.html", "open_in_tab": true },
+    "browser_action": { "default_popup": "popup.html" },
+    "content_scripts": [
+        {
+            "matches": ["<all_urls>"],
+            "js": ["./node_modules/webextension-polyfill/dist/browser-polyfill.js", "kit.js", "setup.js"]
+        }
+    ],
+    "devtools_page": "devtools.html",
+    "_page_action": { "default_popup": "popup.html" }
+}

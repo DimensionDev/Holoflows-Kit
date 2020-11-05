@@ -6,9 +6,10 @@
 /temp
 .rpt2_cache
 *.tsbuildinfo
+test-extension/kit.*
 
 # dependencies
-/node_modules
+node_modules
 
 # testing
 /coverage
