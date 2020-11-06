@@ -127,7 +127,18 @@ export class WebExtensionMessage<Message> {
      */
     constructor(options?: WebExtensionMessageOptions) {
         WebExtensionMessage.setup()
-        this.#domain = options?.domain ?? ''
+        const domain = (this.#domain = options?.domain ?? '')
+
+        domainRegistry.on(domain, async (payload: InternalMessageType) => {
+            if (!isInternalMessageType(payload)) return
+            let { event, data, target } = payload
+            if (!shouldAcceptThisMessage(target)) return
+            data = await this.serialization.deserialization(data)
+            if (this.enableLog) {
+                this.log(...this.logFormatter(this, event, data))
+            }
+            this.#eventRegistry.emit(event, data)
+        })
     }
     //#region Simple API
     #events: any = new Proxy({ __proto__: null } as any, {
@@ -211,16 +222,6 @@ function UnboundedRegistry<T>(
     let pausing = false
     const pausingMap = new Map<Environment | MessageTarget, T[]>()
     //#endregion
-    domainRegistry.on(instance.domain, async function (payload: InternalMessageType) {
-        if (!isInternalMessageType(payload)) return
-        let { event, data, target } = payload
-        if (!shouldAcceptThisMessage(target)) return
-        data = await instance.serialization.deserialization(data)
-        if (instance.enableLog) {
-            instance.log(...instance.logFormatter(instance, event, data))
-        }
-        eventListener.emit(event, data)
-    })
     async function send(target: MessageTarget | Environment, data: T) {
         if (typeof target !== 'number') throw new TypeError('target must be a bit flag of MessageTarget | Environment')
         if (pausing) {
