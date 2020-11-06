@@ -2,7 +2,7 @@ import { NoSerialization } from 'async-call-rpc'
 import { Serialization } from './MessageCenter'
 import { Emitter } from '@servie/events'
 import { EventIterator } from 'event-iterator'
-import { assertEnvironment, Environment, getExtensionEnvironment, isEnvironment } from './Context'
+import { Environment, getExtensionEnvironment, isEnvironment } from './Context'
 
 export enum MessageTarget {
     /** Current execution context */ IncludeLocal = 1 << 20,
@@ -17,6 +17,12 @@ export interface TargetBoundEventRegistry<T> {
     on(callback: (data: T) => void): () => void
     off(callback: (data: T) => void): void
     send(data: T): void
+    /**
+     * Pausing the dispatch of this event. Collect all new incoming events.
+     * @param reducer When resuming the dispatch of events, all pausing data will be passed into this function. Return value of the reducer will be used as the final result for dispatching. Every target will have a unique call to the reducer.
+     * @returns A function that resume the dispatching
+     */
+    pause(reducer?: (data: T[]) => T[]): () => Promise<void>
 }
 // export interface EventTargetRegistry<T> extends EventTarget {}
 // export interface EventEmitterRegistry<T> extends NodeJS.EventEmitter {}
@@ -51,7 +57,7 @@ let currentTabID = -1
 // Shared global
 let postMessage: ((message: number | InternalMessageType) => void) | undefined = undefined
 const domainRegistry = new Emitter<Record<string, [InternalMessageType]>>()
-const constant = '@holoflows/kit/WebExtensionMessage/setupBroadcastBetweenContentScripts'
+const constant = '@holoflows/kit/WebExtensionMessage/setup'
 export class WebExtensionMessage<Message> {
     // Only execute once.
     private static setup() {
@@ -213,6 +219,10 @@ function UnboundedRegistry<T, Binder>(
     eventListener: Emitter<any>,
     createBind: (f: MessageTarget | Environment) => Binder,
 ): UnboundedRegistry<T, Binder> {
+    //#region Batch message
+    let pausing = false
+    const pausingMap = new Map<Environment | MessageTarget, T[]>()
+    //#endregion
     domainRegistry.on(instance.domain, async function (payload: InternalMessageType) {
         if (!isInternalMessageType(payload)) return
         let { event, data, target } = payload
@@ -225,6 +235,12 @@ function UnboundedRegistry<T, Binder>(
     })
     async function send(target: MessageTarget | Environment, data: T) {
         if (typeof target !== 'number') throw new TypeError('target must be a bit flag of MessageTarget | Environment')
+        if (pausing) {
+            const list = pausingMap.get(target) || []
+            pausingMap.set(target, list)
+            list.push(data)
+            return
+        }
         postMessage!({
             data: await instance.serialization.serialization(data),
             domain: instance.domain,
@@ -242,7 +258,7 @@ function UnboundedRegistry<T, Binder>(
         sendToFocusedPage: send.bind(null, MessageTarget.FocusedPageOnly),
         sendByBroadcast: send.bind(null, MessageTarget.Broadcast),
         sendToAll: send.bind(null, MessageTarget.All),
-        bind: (target) => {
+        bind(target) {
             if (typeof binder === 'undefined') {
                 binder = createBind(target)
                 createBind = undefined!
@@ -253,6 +269,19 @@ function UnboundedRegistry<T, Binder>(
         off: (cb) => void eventListener.off(eventName, cb),
         async *[Symbol.asyncIterator]() {
             yield* new EventIterator<T>(({ push }) => this.on(push))
+        },
+        pause(reducer = (x) => x) {
+            pausing = true
+            return async () => {
+                pausing = false
+                for (const [target, list] of pausingMap) {
+                    try {
+                        await Promise.all(reducer(list).map((x) => send(target, x)))
+                    } finally {
+                        pausingMap.clear()
+                    }
+                }
+            }
         },
     }
 }
@@ -267,19 +296,34 @@ function TargetBoundEventRegisterImpl(
     domain: string,
     event: string,
     eventRegistry: EventRegistry,
-    boundTarget: BoundTarget,
+    target: BoundTarget,
     serialization: Serialization,
 ): TargetBoundEventRegistry<unknown> {
+    //#region  Batch message
+    let pausing = false
+    const list = [] as any[]
+    //#endregion
+
+    async function send(data: unknown): Promise<void> {
+        if (pausing) return void list.push(data)
+        data = await serialization.serialization(data)
+        return postMessage!({ data, domain, event, target })
+    }
     return {
         on: (callback) => (eventRegistry.on(event, callback), () => eventRegistry.off(event, callback)),
         off: (callback) => eventRegistry.off(event, callback),
-        send: async (data) =>
-            postMessage!({
-                data: await serialization.serialization(data),
-                domain,
-                event,
-                target: boundTarget,
-            }),
+        send,
+        pause(reducer = (x) => x) {
+            pausing = true
+            return async () => {
+                pausing = false
+                try {
+                    await Promise.all(reducer(list).map(send))
+                } finally {
+                    list.length = 0
+                }
+            }
+        },
     }
 }
 
