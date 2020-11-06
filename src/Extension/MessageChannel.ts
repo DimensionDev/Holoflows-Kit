@@ -22,11 +22,11 @@ export interface TargetBoundEventRegistry<T> {
      * @param reducer When resuming the dispatch of events, all pausing data will be passed into this function. Return value of the reducer will be used as the final result for dispatching. Every target will have a unique call to the reducer.
      * @returns A function that resume the dispatching
      */
-    pause(reducer?: (data: T[]) => T[]): () => Promise<void>
+    pause(): (reducer?: (data: T[]) => T[]) => Promise<void>
 }
 // export interface EventTargetRegistry<T> extends EventTarget {}
 // export interface EventEmitterRegistry<T> extends NodeJS.EventEmitter {}
-export interface UnboundedRegistry<T, BindType> extends Omit<TargetBoundEventRegistry<T>, 'send'>, AsyncIterable<T> {
+export interface UnboundedRegistry<T> extends Omit<TargetBoundEventRegistry<T>, 'send'>, AsyncIterable<T> {
     // For different send targets
     send(target: MessageTarget | Environment, data: T): void
     sendToLocal(data: T): void
@@ -37,7 +37,7 @@ export interface UnboundedRegistry<T, BindType> extends Omit<TargetBoundEventReg
     sendByBroadcast(data: T): void
     sendToAll(data: T): void
     /** You may create a bound version that have a clear interface. */
-    bind(target: MessageTarget | Environment): BindType
+    bind(target: MessageTarget | Environment): TargetBoundEventRegistry<T>
 }
 export interface WebExtensionMessageOptions {
     readonly domain?: string
@@ -129,32 +129,21 @@ export class WebExtensionMessage<Message> {
         WebExtensionMessage.setup()
         this.#domain = options?.domain ?? ''
     }
-    private __createEventObject__(event: string): any {
-        return UnboundedRegistry(this, event, this.#eventRegistry, (target) =>
-            TargetBoundEventRegisterImpl(
-                this.#domain,
-                event,
-                this.#eventRegistry,
-                { kind: 'target', target },
-                this.serialization,
-            ),
-        )
-    }
     //#region Simple API
     #events: any = new Proxy({ __proto__: null } as any, {
-        get: (cache, key) => {
-            if (typeof key !== 'string') throw new Error('Only string can be event keys')
-            if (cache[key]) return cache[key]
-            const event = this.__createEventObject__(key)
-            Object.defineProperty(cache, key, { value: event })
-            return event
+        get: (cache, event) => {
+            if (typeof event !== 'string') throw new Error('Only string can be event keys')
+            if (cache[event]) return cache[event]
+            const registry = UnboundedRegistry(this, event, this.#eventRegistry)
+            Object.defineProperty(cache, event, { value: registry })
+            return registry
         },
         defineProperty: () => false,
         setPrototypeOf: () => false,
         set: throwSetter,
     })
     /** Event listeners */
-    get events(): { readonly [K in keyof Message]: UnboundedRegistry<Message[K], TargetBoundEventRegistry<Message>> } {
+    get events(): { readonly [K in keyof Message]: UnboundedRegistry<Message[K]> } {
         return this.#events
     }
     //#endregion
@@ -213,12 +202,11 @@ function shouldAcceptThisMessage(target: BoundTarget) {
     }
     return Boolean(here & flag)
 }
-function UnboundedRegistry<T, Binder>(
+function UnboundedRegistry<T>(
     instance: WebExtensionMessage<T>,
     eventName: string,
     eventListener: Emitter<any>,
-    createBind: (f: MessageTarget | Environment) => Binder,
-): UnboundedRegistry<T, Binder> {
+): UnboundedRegistry<T> {
     //#region Batch message
     let pausing = false
     const pausingMap = new Map<Environment | MessageTarget, T[]>()
@@ -248,8 +236,28 @@ function UnboundedRegistry<T, Binder>(
             target: { kind: 'target', target },
         })
     }
-    let binder: Binder
-    return {
+    let binder: TargetBoundEventRegistry<T>
+    function on(cb: (data: T) => void) {
+        eventListener.on(eventName, cb)
+        return () => eventListener.off(eventName, cb)
+    }
+    function off(cb: (data: T) => void) {
+        eventListener.off(eventName, cb)
+    }
+    function pause() {
+        pausing = true
+        return async (reducer: (args: T[]) => T[] = (x) => x) => {
+            pausing = false
+            for (const [target, list] of pausingMap) {
+                try {
+                    await Promise.all(reducer(list).map((x) => send(target, x)))
+                } finally {
+                    pausingMap.clear()
+                }
+            }
+        }
+    }
+    const self: UnboundedRegistry<T> = {
         send,
         sendToLocal: send.bind(null, MessageTarget.LocalOnly),
         sendToBackgroundPage: send.bind(null, Environment.ManifestBackground),
@@ -260,30 +268,18 @@ function UnboundedRegistry<T, Binder>(
         sendToAll: send.bind(null, MessageTarget.All),
         bind(target) {
             if (typeof binder === 'undefined') {
-                binder = createBind(target)
-                createBind = undefined!
+                binder = { on, off, send: (data) => send(target, data), pause }
             }
             return binder
         },
-        on: (cb) => (eventListener.on(eventName, cb), () => eventListener.off(eventName, cb)),
-        off: (cb) => void eventListener.off(eventName, cb),
+        on,
+        off,
+        pause,
         async *[Symbol.asyncIterator]() {
             yield* new EventIterator<T>(({ push }) => this.on(push))
         },
-        pause(reducer = (x) => x) {
-            pausing = true
-            return async () => {
-                pausing = false
-                for (const [target, list] of pausingMap) {
-                    try {
-                        await Promise.all(reducer(list).map((x) => send(target, x)))
-                    } finally {
-                        pausingMap.clear()
-                    }
-                }
-            }
-        },
     }
+    return self
 }
 
 type EventRegistry = Emitter<Record<string, [unknown]>>
@@ -291,41 +287,6 @@ type BoundTarget =
     | { kind: 'tab'; id: number }
     | { kind: 'target'; target: MessageTarget | Environment }
     | { kind: 'port'; port: browser.runtime.Port }
-
-function TargetBoundEventRegisterImpl(
-    domain: string,
-    event: string,
-    eventRegistry: EventRegistry,
-    target: BoundTarget,
-    serialization: Serialization,
-): TargetBoundEventRegistry<unknown> {
-    //#region  Batch message
-    let pausing = false
-    const list = [] as any[]
-    //#endregion
-
-    async function send(data: unknown): Promise<void> {
-        if (pausing) return void list.push(data)
-        data = await serialization.serialization(data)
-        return postMessage!({ data, domain, event, target })
-    }
-    return {
-        on: (callback) => (eventRegistry.on(event, callback), () => eventRegistry.off(event, callback)),
-        off: (callback) => eventRegistry.off(event, callback),
-        send,
-        pause(reducer = (x) => x) {
-            pausing = true
-            return async () => {
-                pausing = false
-                try {
-                    await Promise.all(reducer(list).map(send))
-                } finally {
-                    list.length = 0
-                }
-            }
-        },
-    }
-}
 
 function backgroundPageMessageHandler(this: browser.runtime.Port | undefined, data: unknown) {
     // receive payload from the other side
