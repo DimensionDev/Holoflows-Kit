@@ -4,6 +4,11 @@
 
 ## MessageCenter class
 
+> Warning: This API is now obsolete.
+> 
+> Remove in 0.9.0
+> 
+
 Send and receive messages in different contexts.
 
 <b>Signature:</b>

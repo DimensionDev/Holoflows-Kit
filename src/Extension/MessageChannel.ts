@@ -2,7 +2,7 @@ import { NoSerialization } from 'async-call-rpc'
 import { Serialization } from './MessageCenter'
 import { Emitter } from '@servie/events'
 import { EventIterator } from 'event-iterator'
-import { Environment, getExtensionEnvironment, isEnvironment } from './Context'
+import { Environment, getEnvironment, isEnvironment } from './Context'
 
 export enum MessageTarget {
     /** Current execution context */ IncludeLocal = 1 << 20,
@@ -101,7 +101,7 @@ export class WebExtensionMessage<Message> {
                     port.postMessage(payload)
                 }
                 // report self environment
-                port.postMessage(getExtensionEnvironment())
+                port.postMessage(getEnvironment())
                 // server will send self tab ID on connected
                 port.onMessage.addListener(function tabIDListener(x) {
                     currentTabID = Number(x)
@@ -204,7 +204,7 @@ function shouldAcceptThisMessage(target: BoundTarget) {
     if (target.kind === 'port') return true
     const flag = target.target
     if (flag & (MessageTarget.IncludeLocal | MessageTarget.LocalOnly)) return true
-    const here = getExtensionEnvironment()
+    const here = getEnvironment()
     if (flag & MessageTarget.FocusedPageOnly) return typeof document === 'object' && document?.hasFocus?.()
     if (flag & MessageTarget.VisiblePageOnly) {
         // background page has document.visibilityState === 'visible' for reason I don't know why

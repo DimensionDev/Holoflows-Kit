@@ -10,6 +10,28 @@ import { EventBasedChannel } from 'async-call-rpc';
 import { EventListener as EventListener_2 } from '@servie/events';
 
 // @public
+export function assertEnvironment(env: Environment): void;
+
+// @public (undocumented)
+export namespace assertEnvironment {
+    var // (undocumented)
+    oneOf: (...args: Environment[]) => void;
+    var // (undocumented)
+    allOf: (...args: Environment[]) => void[];
+}
+
+// @public
+export function assertNotEnvironment(env: Environment): void;
+
+// @public (undocumented)
+export namespace assertNotEnvironment {
+    var // (undocumented)
+    oneOf: (...args: Environment[]) => void;
+    var // (undocumented)
+    allOf: (...args: Environment[]) => void[];
+}
+
+// @public
 export function AutomatedTabTask<T extends Record<string, (...args: any[]) => PromiseLike<any>>>(taskImplements: T, options?: Partial<AutomatedTabTaskDefineTimeOptions>): ((urlOrTabID: string | number, options?: Partial<AutomatedTabTaskRuntimeOptions>) => T) | null;
 
 // @public
@@ -87,19 +109,49 @@ export interface DOMProxyOptions<Before extends Element = HTMLSpanElement, After
 }
 
 // @public
+export enum Environment {
+    ContentScript = 8,
+    ExtensionProtocol = 4,
+    HasBrowserAPI = 2,
+    ManifestBackground = 64,
+    ManifestBrowserAction = 256,
+    ManifestDevTools = 1024,
+    ManifestOptions = 128,
+    ManifestOverridesBookmarks = 8192,
+    ManifestOverridesHistory = 16384,
+    ManifestOverridesNewTab = 4096,
+    ManifestPageAction = 512,
+    ManifestSidebar = 2048
+}
+
+// @public
 export class EventWatcher<T, Before extends Element = HTMLSpanElement, After extends Element = HTMLSpanElement, SingleMode extends boolean = false> extends Watcher<T, Before, After, SingleMode> {
     constructor(liveSelector: LiveSelector<T, SingleMode>);
     eventListener: () => void;
 }
 
-// @public
+// @public @deprecated
 export function GetContext(): Contexts;
+
+// @public
+export function getEnvironment(): Environment;
 
 // @public
 export class IntervalWatcher<T, Before extends Element = HTMLSpanElement, After extends Element = HTMLSpanElement, SingleMode extends boolean = false> extends Watcher<T, Before, After, SingleMode> {
     startWatch(interval: number): this;
     stopWatch(): void;
     }
+
+// @public
+export function isEnvironment(env: Environment): boolean;
+
+// @public (undocumented)
+export namespace isEnvironment {
+    var // (undocumented)
+    oneOf: (...args: Environment[]) => boolean;
+    var // (undocumented)
+    allOf: (...args: Environment[]) => boolean[];
+}
 
 // @public
 export class LiveSelector<T, SingleMode extends boolean = false> {
@@ -142,7 +194,7 @@ export class LiveSelector<T, SingleMode extends boolean = false> {
     sort(compareFn?: (a: T, b: T) => number): LiveSelector<T, SingleMode>;
     }
 
-// @public
+// @public @deprecated
 export class MessageCenter<ITypedMessages> {
     constructor(sendToSelf: boolean, instanceKey?: string);
     emit<Key extends keyof ITypedMessages>(key: Key, data: ITypedMessages[Key]): Promise<void>;
@@ -152,6 +204,19 @@ export class MessageCenter<ITypedMessages> {
     on<Key extends keyof ITypedMessages>(event: Key, handler: (data: ITypedMessages[Key]) => void): () => void;
     serialization: Serialization;
     writeToConsole(on: boolean): this;
+}
+
+// @public (undocumented)
+export enum MessageTarget {
+    // (undocumented)
+    All = 1048578,
+    // (undocumented)
+    Broadcast = 2,
+    FocusedPageOnly = 8388608,
+    IncludeLocal = 1048576,
+    // (undocumented)
+    LocalOnly = 2097152,
+    VisiblePageOnly = 4194304
 }
 
 // @public
@@ -167,16 +232,51 @@ export class MutationObserverWatcher<T, Before extends Element = HTMLSpanElement
     stopWatch(): void;
     }
 
-// @public
+// @public @deprecated
 export function OnlyRunInContext(context: Contexts | Contexts[], name: string): void;
 
-// @public
+// @public @deprecated
 export function OnlyRunInContext(context: Contexts | Contexts[], throws: false): boolean;
+
+// @public
+export function printEnvironment(e?: Environment): string;
 
 // @public
 export interface Serialization {
     deserialization(serialized: unknown): unknown | PromiseLike<unknown>;
     serialization(from: any): unknown | PromiseLike<unknown>;
+}
+
+// @public (undocumented)
+export interface TargetBoundEventRegistry<T> {
+    // (undocumented)
+    off(callback: (data: T) => void): void;
+    // (undocumented)
+    on(callback: (data: T) => void): () => void;
+    pause(): (reducer?: (data: T[]) => T[]) => Promise<void>;
+    // (undocumented)
+    send(data: T): void;
+}
+
+// @public (undocumented)
+export interface UnboundedRegistry<T> extends Omit<TargetBoundEventRegistry<T>, 'send'>, AsyncIterable<T> {
+    bind(target: MessageTarget | Environment): TargetBoundEventRegistry<T>;
+    // (undocumented)
+    send(target: MessageTarget | Environment, data: T): void;
+    // (undocumented)
+    sendByBroadcast(data: T): void;
+    // (undocumented)
+    sendToAll(data: T): void;
+    // (undocumented)
+    sendToBackgroundPage(data: T): void;
+    // (undocumented)
+    sendToContentScripts(data: T): void;
+    // (undocumented)
+    sendToFocusedPage(data: T): void;
+    // (undocumented)
+    sendToLocal(data: T): void;
+    // (undocumented)
+    sendToVisiblePages(data: T): void;
 }
 
 // @public @eventProperty
@@ -279,6 +379,32 @@ export interface WatcherEvents<T> {
             value: T;
         }
     ];
+}
+
+// @public (undocumented)
+export class WebExtensionMessage<Message> {
+    constructor(options?: WebExtensionMessageOptions);
+    get domain(): string;
+    // (undocumented)
+    enableLog: boolean;
+    // Warning: (ae-forgotten-export) The symbol "EventRegistry" needs to be exported by the entry point index.d.ts
+    //
+    // (undocumented)
+    protected get eventRegistry(): EventRegistry;
+    get events(): {
+        readonly [K in keyof Message]: UnboundedRegistry<Message[K]>;
+    };
+    // (undocumented)
+    log: (...args: unknown[]) => void;
+    // (undocumented)
+    logFormatter: (instance: this, key: string, data: unknown) => unknown[];
+    serialization: Serialization;
+    }
+
+// @public (undocumented)
+export interface WebExtensionMessageOptions {
+    // (undocumented)
+    readonly domain?: string;
 }
 
 

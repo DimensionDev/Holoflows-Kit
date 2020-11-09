@@ -4,6 +4,11 @@
 
 ## OnlyRunInContext() function
 
+> Warning: This API is now obsolete.
+> 
+> Remove in 0.9.0, use assertEnvironment
+> 
+
 Make sure this file only run in wanted context
 
 <b>Signature:</b>

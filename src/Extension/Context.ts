@@ -54,7 +54,7 @@ let result: Environment
  * Get the current running environment
  * @remarks You can use the global variable `__holoflows_kit_get_environment_debug__` to overwrite the return value if the current hostname is localhost or 127.0.0.1
  */
-export function getExtensionEnvironment(): Environment {
+export function getEnvironment(): Environment {
     if (result !== undefined) return result
     try {
         if (location.hostname === 'localhost' || location.hostname === '127.0.0.1') {
@@ -110,7 +110,7 @@ export function getExtensionEnvironment(): Environment {
  * Print the Environment bit flag in a human-readable format
  * @param e - Printing environment bit flag
  */
-export function printExtensionEnvironment(e: Environment = getExtensionEnvironment()) {
+export function printEnvironment(e: Environment = getEnvironment()) {
     const flag: (keyof typeof Environment)[] = []
     if (Environment.ContentScript & e) flag.push('ContentScript')
     if (Environment.ExtensionProtocol & e) flag.push('ExtensionProtocol')
@@ -158,28 +158,43 @@ export function OnlyRunInContext(context: Contexts | Contexts[], name: string | 
 export function assertEnvironment(env: Environment) {
     if (!isEnvironment(env))
         throw new TypeError(
-            `Running in the wrong context, (expected ${printExtensionEnvironment(
-                env,
-            )}, actually ${printExtensionEnvironment()})`,
+            `Running in the wrong context, (expected ${printEnvironment(env)}, actually ${printEnvironment()})`,
         )
 }
+assertEnvironment.oneOf = (...args: Environment[]) => {
+    return assertEnvironment(args.reduce((p, c) => p | c))
+}
+assertEnvironment.allOf = (...args: Environment[]) => {
+    return args.map(assertEnvironment)
+}
+
 /**
  * Assert the current environment NOT satisfy the rejected flags
  * @param env The rejected environment
  */
 export function assertNotEnvironment(env: Environment) {
-    if (getExtensionEnvironment() & env)
+    if (getEnvironment() & env)
         throw new TypeError(
-            `Running in wrong context, (expected not match ${printExtensionEnvironment(
-                env,
-            )}, actually ${printExtensionEnvironment()})`,
+            `Running in wrong context, (expected not match ${printEnvironment(env)}, actually ${printEnvironment()})`,
         )
+}
+assertNotEnvironment.oneOf = (...args: Environment[]) => {
+    return assertNotEnvironment(args.reduce((p, c) => p | c))
+}
+assertNotEnvironment.allOf = (...args: Environment[]) => {
+    return args.map(assertNotEnvironment)
 }
 /**
  * Check if the current environment satisfy the expectation
  * @param env The expectation environment
  */
 export function isEnvironment(env: Environment) {
-    const now = getExtensionEnvironment()
+    const now = getEnvironment()
     return Boolean(env & now)
+}
+isEnvironment.oneOf = (...args: Environment[]) => {
+    return isEnvironment(args.reduce((p, c) => p | c))
+}
+isEnvironment.allOf = (...args: Environment[]) => {
+    return args.map(isEnvironment)
 }
