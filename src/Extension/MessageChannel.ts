@@ -55,14 +55,13 @@ const backgroundOnlyLivingPorts = new Map<browser.runtime.Port, BackgroundOnlyLi
 // Only be set in other pages
 let currentTabID = -1
 // Shared global
-let postMessage: ((message: number | InternalMessageType) => void) | undefined = undefined
+let postMessage: (message: number | InternalMessageType) => void = () => {}
 const domainRegistry = new Emitter<Record<string, [InternalMessageType]>>()
 const constant = '@holoflows/kit/WebExtensionMessage/setup'
 export class WebExtensionMessage<Message> {
     // Only execute once.
     private static setup() {
         if (isEnvironment(Environment.ManifestBackground)) {
-            WebExtensionMessage.setup = () => {}
             // Wait for other pages to connect
             browser.runtime.onConnect.addListener((port) => {
                 if (port.name !== constant) return // not for ours
@@ -80,9 +79,9 @@ export class WebExtensionMessage<Message> {
                 port.onMessage.addListener(backgroundPageMessageHandler.bind(port))
                 port.onDisconnect.addListener(() => backgroundOnlyLivingPorts.delete(port))
             })
+            WebExtensionMessage.setup = () => {}
             postMessage = backgroundPageMessageHandler
         } else {
-            WebExtensionMessage.setup = () => {}
             function reconnect() {
                 const port = browser.runtime.connect({ name: constant })
                 postMessage = (payload) => {
@@ -115,6 +114,7 @@ export class WebExtensionMessage<Message> {
                 port.onDisconnect.addListener(reconnect)
             }
             reconnect()
+            WebExtensionMessage.setup = () => {}
         }
     }
     #domain: string
@@ -126,7 +126,9 @@ export class WebExtensionMessage<Message> {
      * @param options WebExtensionMessage options
      */
     constructor(options?: WebExtensionMessageOptions) {
-        WebExtensionMessage.setup()
+        try {
+            WebExtensionMessage.setup()
+        } catch {}
         const domain = (this.#domain = options?.domain ?? '')
 
         domainRegistry.on(domain, async (payload: InternalMessageType) => {
@@ -230,7 +232,7 @@ function UnboundedRegistry<T>(
             list.push(data)
             return
         }
-        postMessage!({
+        postMessage({
             data: await instance.serialization.serialization(data),
             domain: instance.domain,
             event: eventName,
