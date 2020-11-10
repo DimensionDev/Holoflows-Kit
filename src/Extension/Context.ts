@@ -40,7 +40,10 @@ export enum Environment {
     /** URL is listed in the manifest.background or generated background page */ ManifestBackground = 1 << 6,
     /** URL is listed in the manifest.options_ui */ ManifestOptions = 1 << 7,
     /** URL is listed in the manifest.browser_action */ ManifestBrowserAction = 1 << 8,
-    /** URL is listed in the manifest.page_action */ ManifestPageAction = 1 << 9,
+    /**
+     * URL is listed in the manifest.page_action
+     * @deprecated Suggest to define browser_action instead.
+     */ ManifestPageAction = 1 << 9,
     /** URL is listed in the manifest.devtools_page */ ManifestDevTools = 1 << 10,
     /** URL is listed in the manifest.sidebar_action. Firefox Only */ ManifestSidebar = 1 << 11,
     /** URL is listed in the manifest.chrome_url_overrides.newtab */ ManifestOverridesNewTab = 1 << 12,
