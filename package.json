@@ -7,7 +7,7 @@
   "repository": "https://github.com/DimensionDev/Holoflows-Kit",
   "license": "AGPL-3.0-or-later",
   "sideEffects": false,
-  "main": "./umd/index.js",
+  "main": "./umd/index.cjs",
   "module": "./es/index.js",
   "typings": "./es/",
   "type": "module",
