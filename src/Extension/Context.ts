@@ -84,28 +84,34 @@ export function getEnvironment(): Environment {
                     manifest.background?.page || manifest.background_page || '/_generated_background_page.html'
                 const options = manifest.options_ui?.page || manifest.options_page
 
-                if (current === slashSuffix(background)) flag |= Environment.ManifestBackground
+                if (current === normalize(background)) flag |= Environment.ManifestBackground
                 // TODO: this property support i18n. What will I get when call browser.runtime.getManifest()?
-                if (current === slashSuffix(manifest.browser_action?.default_popup))
+                if (current === normalize(manifest.browser_action?.default_popup))
                     flag |= Environment.ManifestBrowserAction
-                if (current === slashSuffix(manifest.sidebar_action?.default_panel)) flag |= Environment.ManifestSidebar
-                if (current === slashSuffix(options)) flag |= Environment.ManifestOptions
-                if (current === slashSuffix(manifest.devtools_page)) flag |= Environment.ManifestDevTools
-                if (current === slashSuffix(manifest.page_action?.default_popup)) flag |= Environment.ManifestPageAction
+                if (current === normalize(manifest.sidebar_action?.default_panel)) flag |= Environment.ManifestSidebar
+                if (current === normalize(options)) flag |= Environment.ManifestOptions
+                if (current === normalize(manifest.devtools_page)) flag |= Environment.ManifestDevTools
+                if (current === normalize(manifest.page_action?.default_popup)) flag |= Environment.ManifestPageAction
 
                 // TODO: this property support i18n.
                 const { bookmarks, history, newtab } = manifest.chrome_url_overrides || {}
-                if (current === slashSuffix(bookmarks)) flag |= Environment.ManifestOverridesBookmarks
-                if (current === slashSuffix(history)) flag |= Environment.ManifestOverridesHistory
-                if (current === slashSuffix(newtab)) flag |= Environment.ManifestOverridesNewTab
+                if (current === normalize(bookmarks)) flag |= Environment.ManifestOverridesBookmarks
+                if (current === normalize(history)) flag |= Environment.ManifestOverridesHistory
+                if (current === normalize(newtab)) flag |= Environment.ManifestOverridesNewTab
             } catch {}
         }
     }
     return (result = flag)
-    function slashSuffix(x: string | undefined) {
+    function normalize(x: string | undefined) {
         if (x === undefined) return '_'
-        if (x[0] !== '/') return '/' + x
-        else return x
+        try {
+            // on firefox it is a full qualified URL
+            return new URL(x).pathname
+        } catch {
+            // on chrome it is unmodified
+            if (x[0] !== '/') return '/' + x
+            return x
+        }
     }
 }
 
