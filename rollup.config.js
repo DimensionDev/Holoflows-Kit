@@ -21,7 +21,7 @@ const config = {
             preferBuiltins: false,
             mainFields: ['module', 'main'],
             customResolveOptions: {
-                moduleDirectory: process.env.MODULE_DIR || 'node_modules',
+                moduleDirectories: [process.env.MODULE_DIR || 'node_modules'],
             },
         }),
         typescript({
