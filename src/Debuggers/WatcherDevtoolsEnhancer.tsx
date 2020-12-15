@@ -29,7 +29,7 @@ const initState = (obj: AnyWatcher): State => {
             hooks: priv.lastCallbackMap.get(key),
         })
     })
-    obj.addListener('onIteration', iter => {
+    obj.on('onIteration', iter => {
         const priv = WatcherDevtoolsEnhancer.prototype.getPrivateItems(obj)
         everythingMap.clear()
         newMap.clear()

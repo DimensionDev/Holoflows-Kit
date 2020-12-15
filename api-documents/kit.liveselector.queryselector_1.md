@@ -14,9 +14,9 @@ querySelector<K extends keyof SVGElementTagNameMap>(selector: K): LiveSelector<S
 
 |  Parameter | Type | Description |
 |  --- | --- | --- |
-|  selector | <code>K</code> |  |
+|  selector | K |  |
 
 <b>Returns:</b>
 
-`LiveSelector<SVGElementTagNameMap[K], SingleMode>`
+[LiveSelector](./kit.liveselector.md)<!-- -->&lt;SVGElementTagNameMap\[K\], SingleMode&gt;
 

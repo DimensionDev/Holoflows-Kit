@@ -16,11 +16,11 @@ useForeach(forEach: (element: T, key: unknown, metadata: T extends Node ? DOMPro
 
 |  Parameter | Type | Description |
 |  --- | --- | --- |
-|  forEach | <code>(element: T, key: unknown, metadata: T extends Node ? DOMProxy&lt;T, Before, After&gt; : unknown) =&gt; useForeachReturns&lt;T&gt;</code> |  |
+|  forEach | (element: T, key: unknown, metadata: T extends Node ? [DOMProxy](./kit.domproxy.md)<!-- -->&lt;T, Before, After&gt; : unknown) =&gt; useForeachReturns&lt;T&gt; |  |
 
 <b>Returns:</b>
 
-`this`
+this
 
 ## Remarks
 

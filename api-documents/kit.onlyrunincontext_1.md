@@ -4,6 +4,11 @@
 
 ## OnlyRunInContext() function
 
+> Warning: This API is now obsolete.
+> 
+> Remove in 0.9.0, use isEnvironment
+> 
+
 Make sure this file only run in wanted context
 
 <b>Signature:</b>
@@ -16,10 +21,10 @@ export declare function OnlyRunInContext(context: Contexts | Contexts[], throws:
 
 |  Parameter | Type | Description |
 |  --- | --- | --- |
-|  context | <code>Contexts &#124; Contexts[]</code> | Wanted context or contexts |
-|  throws | <code>false</code> | set to false, OnlyRunInContext will not throws but return a boolean |
+|  context | [Contexts](./kit.contexts.md) \| [Contexts](./kit.contexts.md)<!-- -->\[\] | Wanted context or contexts |
+|  throws | false | set to false, OnlyRunInContext will not throws but return a boolean |
 
 <b>Returns:</b>
 
-`boolean`
+boolean
 

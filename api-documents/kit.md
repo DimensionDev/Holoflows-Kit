@@ -17,16 +17,29 @@ A toolkit for browser extension developing.
 |  [MutationObserverWatcher](./kit.mutationobserverwatcher.md) | A watcher based on MutationObserver |
 |  [ValueRef](./kit.valueref.md) | A <code>ref</code> object with <code>addListener</code> |
 |  [Watcher](./kit.watcher.md) | Use LiveSelector to watch dom change |
+|  [WebExtensionMessage](./kit.webextensionmessage.md) |  |
+
+## Enumerations
+
+|  Enumeration | Description |
+|  --- | --- |
+|  [Environment](./kit.environment.md) | Current running environment of Web Extension |
+|  [MessageTarget](./kit.messagetarget.md) |  |
 
 ## Functions
 
 |  Function | Description |
 |  --- | --- |
+|  [assertEnvironment(env)](./kit.assertenvironment.md) | Assert the current environment satisfy the expectation |
+|  [assertNotEnvironment(env)](./kit.assertnotenvironment.md) | Assert the current environment NOT satisfy the rejected flags |
 |  [AutomatedTabTask(taskImplements, options)](./kit.automatedtabtask.md) | Open a new page in the background, execute some task, then close it automatically. |
 |  [DOMProxy(options)](./kit.domproxy.md) | DOMProxy provide an interface that be stable even dom is changed. |
 |  [GetContext()](./kit.getcontext.md) | Get current running context. |
+|  [getEnvironment()](./kit.getenvironment.md) | Get the current running environment |
+|  [isEnvironment(env)](./kit.isenvironment.md) | Check if the current environment satisfy the expectation |
 |  [OnlyRunInContext(context, name)](./kit.onlyrunincontext.md) | Make sure this file only run in wanted context |
 |  [OnlyRunInContext(context, throws)](./kit.onlyrunincontext_1.md) | Make sure this file only run in wanted context |
+|  [printEnvironment(e)](./kit.printenvironment.md) | Print the Environment bit flag in a human-readable format |
 
 ## Interfaces
 
@@ -36,18 +49,26 @@ A toolkit for browser extension developing.
 |  [AutomatedTabTaskRuntimeOptions](./kit.automatedtabtaskruntimeoptions.md) | Runtime options for [AutomatedTabTask()](./kit.automatedtabtask.md) |
 |  [AutomatedTabTaskSharedOptions](./kit.automatedtabtasksharedoptions.md) | Shared options for AutomatedTabTask between the define-time and the runtime. |
 |  [DOMProxy](./kit.domproxy.md) | DOMProxy provide an interface that be stable even dom is changed. |
+|  [DOMProxyEvents](./kit.domproxyevents.md) | Events on the DOMProxy object |
 |  [DOMProxyOptions](./kit.domproxyoptions.md) | Options for DOMProxy |
 |  [Serialization](./kit.serialization.md) | Define how to do serialization and deserialization of remote procedure call |
+|  [TargetBoundEventRegistry](./kit.targetboundeventregistry.md) |  |
+|  [UnboundedRegistry](./kit.unboundedregistry.md) |  |
+|  [WatcherEvents](./kit.watcherevents.md) |  |
+|  [WebExtensionMessageOptions](./kit.webextensionmessageoptions.md) |  |
 
 ## Namespaces
 
 |  Namespace | Description |
 |  --- | --- |
+|  [assertEnvironment](./kit.assertenvironment.md) |  |
+|  [assertNotEnvironment](./kit.assertnotenvironment.md) |  |
 |  [DOMProxy](./kit.domproxy.md) |  |
+|  [isEnvironment](./kit.isenvironment.md) |  |
 
 ## Type Aliases
 
 |  Type Alias | Description |
 |  --- | --- |
-|  [Contexts](./kit.contexts.md) | All context that possible in when developing a WebExtension |
+|  [Contexts](./kit.contexts.md) | All context that possible in when developing a WebExtension @<!-- -->deprecated, remove in 0.9.0 |
 

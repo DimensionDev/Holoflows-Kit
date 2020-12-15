@@ -16,11 +16,11 @@ closest<T>(parentOfNth: number): LiveSelector<T, SingleMode>;
 
 |  Parameter | Type | Description |
 |  --- | --- | --- |
-|  parentOfNth | <code>number</code> |  |
+|  parentOfNth | number |  |
 
 <b>Returns:</b>
 
-`LiveSelector<T, SingleMode>`
+[LiveSelector](./kit.liveselector.md)<!-- -->&lt;T, SingleMode&gt;
 
 ## Example
 

@@ -16,10 +16,10 @@ emit<Key extends keyof ITypedMessages>(key: Key, data: ITypedMessages[Key]): Pro
 
 |  Parameter | Type | Description |
 |  --- | --- | --- |
-|  key | <code>Key</code> | Key of the message |
-|  data | <code>ITypedMessages[Key]</code> | Data of the message |
+|  key | Key | Key of the message |
+|  data | ITypedMessages\[Key\] | Data of the message |
 
 <b>Returns:</b>
 
-`Promise<void>`
+Promise&lt;void&gt;
 

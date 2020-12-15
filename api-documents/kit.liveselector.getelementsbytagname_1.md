@@ -14,9 +14,9 @@ getElementsByTagName<K extends keyof SVGElementTagNameMap>(tag: K): LiveSelector
 
 |  Parameter | Type | Description |
 |  --- | --- | --- |
-|  tag | <code>K</code> |  |
+|  tag | K |  |
 
 <b>Returns:</b>
 
-`LiveSelector<SVGElementTagNameMap[K], SingleMode>`
+[LiveSelector](./kit.liveselector.md)<!-- -->&lt;SVGElementTagNameMap\[K\], SingleMode&gt;
 

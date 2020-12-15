@@ -16,10 +16,10 @@ off<Key extends keyof ITypedMessages>(event: Key, handler: (data: ITypedMessages
 
 |  Parameter | Type | Description |
 |  --- | --- | --- |
-|  event | <code>Key</code> | Name of the event |
-|  handler | <code>(data: ITypedMessages[Key]) =&gt; void</code> | Handler of the event |
+|  event | Key | Name of the event |
+|  handler | (data: ITypedMessages\[Key\]) =&gt; void | Handler of the event |
 
 <b>Returns:</b>
 
-`void`
+void
 

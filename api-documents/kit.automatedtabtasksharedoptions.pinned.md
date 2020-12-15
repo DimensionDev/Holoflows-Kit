@@ -9,5 +9,5 @@ Should the new tab pinned?
 <b>Signature:</b>
 
 ```typescript
-pinned: boolean;
+pinned?: boolean;
 ```

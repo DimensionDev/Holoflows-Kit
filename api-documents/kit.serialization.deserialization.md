@@ -9,16 +9,16 @@ Do deserialization
 <b>Signature:</b>
 
 ```typescript
-deserialization(serialized: unknown): PromiseLike<any>;
+deserialization(serialized: unknown): unknown | PromiseLike<unknown>;
 ```
 
 ## Parameters
 
 |  Parameter | Type | Description |
 |  --- | --- | --- |
-|  serialized | <code>unknown</code> | Serialized data |
+|  serialized | unknown | Serialized data |
 
 <b>Returns:</b>
 
-`PromiseLike<any>`
+unknown \| PromiseLike&lt;unknown&gt;
 

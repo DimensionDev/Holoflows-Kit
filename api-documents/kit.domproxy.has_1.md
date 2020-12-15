@@ -16,9 +16,9 @@ has(type: 'after'): After | null;
 
 |  Parameter | Type | Description |
 |  --- | --- | --- |
-|  type | <code>'after'</code> |  |
+|  type | 'after' |  |
 
 <b>Returns:</b>
 
-`After | null`
+After \| null
 

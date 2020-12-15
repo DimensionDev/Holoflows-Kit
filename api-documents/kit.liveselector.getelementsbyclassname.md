@@ -16,11 +16,11 @@ getElementsByClassName<T extends Element = Element>(className: string): LiveSele
 
 |  Parameter | Type | Description |
 |  --- | --- | --- |
-|  className | <code>string</code> | Class name |
+|  className | string | Class name |
 
 <b>Returns:</b>
 
-`LiveSelector<T, SingleMode>`
+[LiveSelector](./kit.liveselector.md)<!-- -->&lt;T, SingleMode&gt;
 
 ## Example
 

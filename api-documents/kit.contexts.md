@@ -4,7 +4,7 @@
 
 ## Contexts type
 
-All context that possible in when developing a WebExtension
+All context that possible in when developing a WebExtension @<!-- -->deprecated, remove in 0.9.0
 
 <b>Signature:</b>
 

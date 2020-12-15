@@ -19,13 +19,13 @@ then<TResult1 = ResultOf<SingleMode, T>, TResult2 = never>(onfulfilled?: ((value
 
 |  Parameter | Type | Description |
 |  --- | --- | --- |
-|  onfulfilled | <code>((value: ResultOf&lt;SingleMode, T&gt;) =&gt; TResult1 &#124; PromiseLike&lt;TResult1&gt;) &#124; null</code> |  |
-|  onrejected | <code>((reason: any) =&gt; TResult2 &#124; PromiseLike&lt;TResult2&gt;) &#124; null</code> |  |
-|  options | <code>{</code><br/><code>        minimalResultsRequired?: number;</code><br/><code>        timeout?: number;</code><br/><code>    }</code> | Options for watcher |
+|  onfulfilled | ((value: ResultOf&lt;SingleMode, T&gt;) =&gt; TResult1 \| PromiseLike&lt;TResult1&gt;) \| null |  |
+|  onrejected | ((reason: any) =&gt; TResult2 \| PromiseLike&lt;TResult2&gt;) \| null |  |
+|  options | { minimalResultsRequired?: number; timeout?: number; } | Options for watcher |
 
 <b>Returns:</b>
 
-`Promise<TResult1 | TResult2>`
+Promise&lt;TResult1 \| TResult2&gt;
 
 ## Remarks
 

@@ -4,6 +4,11 @@
 
 ## OnlyRunInContext() function
 
+> Warning: This API is now obsolete.
+> 
+> Remove in 0.9.0, use assertEnvironment
+> 
+
 Make sure this file only run in wanted context
 
 <b>Signature:</b>
@@ -16,10 +21,10 @@ export declare function OnlyRunInContext(context: Contexts | Contexts[], name: s
 
 |  Parameter | Type | Description |
 |  --- | --- | --- |
-|  context | <code>Contexts &#124; Contexts[]</code> | Wanted context or contexts |
-|  name | <code>string</code> | name to throw |
+|  context | [Contexts](./kit.contexts.md) \| [Contexts](./kit.contexts.md)<!-- -->\[\] | Wanted context or contexts |
+|  name | string | name to throw |
 
 <b>Returns:</b>
 
-`void`
+void
 

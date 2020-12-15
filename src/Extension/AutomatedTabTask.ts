@@ -1,7 +1,7 @@
 import { sleep, timeout as timeoutFn } from '../util/sleep'
 import { AsyncCall, AsyncCallOptions } from 'async-call-rpc'
 import { GetContext } from './Context'
-import Lock from 'concurrent-lock'
+import Lock from '../util/ConcurrentLock'
 import { memorize } from 'memorize-decorator'
 import { MessageCenter } from './MessageCenter'
 
@@ -23,11 +23,8 @@ export interface AutomatedTabTaskSharedOptions {
     timeout: number
     /**
      * Should the new tab pinned?
-     * @defaultValue true
-     *
-     * !TODO: make it false on Vavaldi.
      */
-    pinned: boolean
+    pinned?: boolean
     /**
      * Should the new tab to be closed automatically?
      * @defaultValue true
@@ -35,9 +32,8 @@ export interface AutomatedTabTaskSharedOptions {
     autoClose: boolean
     /**
      * Should the new tab to be active?
-     * @defaultValue false
      */
-    active: boolean
+    active?: boolean
 }
 /**
  * Define-time options for {@link AutomatedTabTask}
@@ -88,8 +84,6 @@ const AutomatedTabTaskDefineTimeOptionsDefault: Readonly<AutomatedTabTaskDefineT
     memorizeTTL: 30 * 60 * 1000,
     memorable: false,
     autoClose: true,
-    pinned: true,
-    active: false,
     AsyncCallOptions: {},
 }
 /**
@@ -139,7 +133,10 @@ export function AutomatedTabTask<T extends Record<string, (...args: any[]) => Pr
     }
     const AsyncCallKey = AsyncCallOptions.key
     const REGISTER = AsyncCallKey + ':ping'
-    const finalAsyncCallOptions = { messageChannel: new MessageCenter(false), ...AsyncCallOptions }
+    const finalAsyncCallOptions: AsyncCallOptions = {
+        channel: new MessageCenter(false, AsyncCallKey).eventBasedChannel,
+        ...AsyncCallOptions,
+    }
     if (GetContext() === 'content') {
         // If run in content script
         // Register this tab
@@ -197,7 +194,8 @@ export function AutomatedTabTask<T extends Record<string, (...args: any[]) => Pr
                     memorable: defaultMemorable,
                     important: false,
                     timeout: defaultTimeout,
-                    autoClose: typeof urlOrTabID === 'number' || options.runAtTabID ? false : defaultAutoClose,
+                    autoClose:
+                        typeof urlOrTabID === 'number' || options.runAtTabID === undefined ? false : defaultAutoClose,
                     pinned: defaultPinned,
                     active: defaultActive,
                     needRedirect: false,
@@ -261,9 +259,9 @@ interface createOrGetTheTabToExecuteTaskOptions {
     taskName: string
     timeout: number
     isImportant: boolean
-    pinned: boolean
+    pinned?: boolean
     autoClose: boolean
-    active: boolean
+    active?: boolean
     tabID: number | undefined
     needRedirect: boolean
     taskArgs: any[]
@@ -300,15 +298,20 @@ async function getTabOrCreate(
     openInCurrentTab: number | undefined,
     url: string,
     needRedirect: boolean,
-    active: boolean,
-    pinned: boolean,
+    active: boolean | undefined,
+    pinned: boolean | undefined,
 ) {
+    const finalOpts = { active, pinned, url: url as undefined | string }
+    // Gecko view doesn't support this.
+    if (finalOpts.pinned === undefined) delete finalOpts.pinned
+    if (finalOpts.active === undefined) delete finalOpts.active
     if (typeof openInCurrentTab === 'number') {
-        await browser.tabs.update(openInCurrentTab, { url: needRedirect ? url : undefined, active, pinned })
+        if (!needRedirect) delete finalOpts.url
+        await browser.tabs.update(openInCurrentTab, finalOpts)
         return openInCurrentTab
     }
     // Create a new tab
-    const tab = await browser.tabs.create({ active, pinned, url })
+    const tab = await browser.tabs.create(finalOpts)
     return tab.id!
 }
 
@@ -327,6 +330,6 @@ function GetDefaultKey() {
             return 'debug'
         case 'unknown':
         default:
-            throw new TypeError('Unknown running context')
+            return '@holoflows/kit:AutomatedTabTask@Unknown!'
     }
 }

@@ -16,11 +16,11 @@ closest<K extends keyof HTMLElementTagNameMap>(selectors: K): LiveSelector<HTMLE
 
 |  Parameter | Type | Description |
 |  --- | --- | --- |
-|  selectors | <code>K</code> |  |
+|  selectors | K |  |
 
 <b>Returns:</b>
 
-`LiveSelector<HTMLElementTagNameMap[K], SingleMode>`
+[LiveSelector](./kit.liveselector.md)<!-- -->&lt;HTMLElementTagNameMap\[K\], SingleMode&gt;
 
 ## Example
 

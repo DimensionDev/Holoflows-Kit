@@ -4,6 +4,11 @@
 
 ## MessageCenter class
 
+> Warning: This API is now obsolete.
+> 
+> Remove in 0.9.0
+> 
+
 Send and receive messages in different contexts.
 
 <b>Signature:</b>
@@ -22,7 +27,8 @@ export declare class MessageCenter<ITypedMessages>
 
 |  Property | Modifiers | Type | Description |
 |  --- | --- | --- | --- |
-|  [serialization](./kit.messagecenter.serialization.md) |  | <code>Serialization</code> | How should MessageCenter serialization the message |
+|  [eventBasedChannel](./kit.messagecenter.eventbasedchannel.md) |  | EventBasedChannel |  |
+|  [serialization](./kit.messagecenter.serialization.md) |  | [Serialization](./kit.serialization.md) | How should MessageCenter serialization the message |
 
 ## Methods
 

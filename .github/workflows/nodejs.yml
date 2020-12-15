@@ -1,0 +1,24 @@
+name: Node.js CI
+
+on:
+    push:
+        branches: [master]
+    pull_request:
+        branches: [master]
+
+jobs:
+    build:
+        runs-on: ubuntu-latest
+        steps:
+            - uses: actions/checkout@v2
+            - name: Use Node.js (LTS)
+              uses: actions/setup-node@v2-beta
+            - uses: DimensionDev/github-token-action@latest
+              with:
+                  registry: true
+            - name: Install
+              run: npx pnpm install --frozen-lockfile
+            # - name: Test
+            #   run: npm run test:ci
+            - name: Publish to GitHub Package (unstable)
+              run: ./scripts/publish-to-github.sh

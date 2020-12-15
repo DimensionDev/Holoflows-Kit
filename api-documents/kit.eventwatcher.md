@@ -11,6 +11,7 @@ A Watcher based on event handlers.
 ```typescript
 export declare class EventWatcher<T, Before extends Element = HTMLSpanElement, After extends Element = HTMLSpanElement, SingleMode extends boolean = false> extends Watcher<T, Before, After, SingleMode> 
 ```
+<b>Extends:</b> [Watcher](./kit.watcher.md)<!-- -->&lt;T, Before, After, SingleMode&gt;
 
 ## Example
 
@@ -31,5 +32,5 @@ document.addEventListener('event', e.eventListener)
 
 |  Property | Modifiers | Type | Description |
 |  --- | --- | --- | --- |
-|  [eventListener](./kit.eventwatcher.eventlistener.md) |  | <code>() =&gt; void</code> | Use this function as event listener to invoke watcher. |
+|  [eventListener](./kit.eventwatcher.eventlistener.md) |  | () =&gt; void | Use this function as event listener to invoke watcher. |
 

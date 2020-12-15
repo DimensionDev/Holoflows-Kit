@@ -16,11 +16,11 @@ querySelector<K extends keyof HTMLElementTagNameMap>(selector: K): LiveSelector<
 
 |  Parameter | Type | Description |
 |  --- | --- | --- |
-|  selector | <code>K</code> | Selector |
+|  selector | K | Selector |
 
 <b>Returns:</b>
 
-`LiveSelector<HTMLElementTagNameMap[K], SingleMode>`
+[LiveSelector](./kit.liveselector.md)<!-- -->&lt;HTMLElementTagNameMap\[K\], SingleMode&gt;
 
 ## Example
 

@@ -7,17 +7,17 @@
 <b>Signature:</b>
 
 ```typescript
-addListener(event: 'onIteration', fn: EventCallback<OnIterationEvent<T>>): this;
+addListener<K extends keyof WatcherEvents<T>>(type: K, callback: EventListener<WatcherEvents<T>, K>): this;
 ```
 
 ## Parameters
 
 |  Parameter | Type | Description |
 |  --- | --- | --- |
-|  event | <code>'onIteration'</code> |  |
-|  fn | <code>EventCallback&lt;OnIterationEvent&lt;T&gt;&gt;</code> |  |
+|  type | K |  |
+|  callback | EventListener&lt;[WatcherEvents](./kit.watcherevents.md)<!-- -->&lt;T&gt;, K&gt; |  |
 
 <b>Returns:</b>
 
-`this`
+this
 

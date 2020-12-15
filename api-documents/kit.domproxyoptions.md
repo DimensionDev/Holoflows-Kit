@@ -16,8 +16,8 @@ export interface DOMProxyOptions<Before extends Element = HTMLSpanElement, After
 
 |  Property | Type | Description |
 |  --- | --- | --- |
-|  [afterShadowRootInit](./kit.domproxyoptions.aftershadowrootinit.md) | <code>ShadowRootInit</code> | ShadowRootInit for creating the shadow of <code>after</code> |
-|  [beforeShadowRootInit](./kit.domproxyoptions.beforeshadowrootinit.md) | <code>ShadowRootInit</code> | ShadowRootInit for creating the shadow of <code>before</code> |
+|  [afterShadowRootInit](./kit.domproxyoptions.aftershadowrootinit.md) | ShadowRootInit | ShadowRootInit for creating the shadow of <code>after</code> |
+|  [beforeShadowRootInit](./kit.domproxyoptions.beforeshadowrootinit.md) | ShadowRootInit | ShadowRootInit for creating the shadow of <code>before</code> |
 
 ## Methods
 

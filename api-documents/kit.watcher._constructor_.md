@@ -16,5 +16,5 @@ constructor(liveSelector: LiveSelector<T, SingleMode>);
 
 |  Parameter | Type | Description |
 |  --- | --- | --- |
-|  liveSelector | <code>LiveSelector&lt;T, SingleMode&gt;</code> |  |
+|  liveSelector | [LiveSelector](./kit.liveselector.md)<!-- -->&lt;T, SingleMode&gt; |  |
 

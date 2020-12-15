@@ -11,12 +11,13 @@ Define-time options for [AutomatedTabTask()](./kit.automatedtabtask.md)
 ```typescript
 export interface AutomatedTabTaskDefineTimeOptions extends AutomatedTabTaskSharedOptions 
 ```
+<b>Extends:</b> [AutomatedTabTaskSharedOptions](./kit.automatedtabtasksharedoptions.md)
 
 ## Properties
 
 |  Property | Type | Description |
 |  --- | --- | --- |
-|  [AsyncCallOptions](./kit.automatedtabtaskdefinetimeoptions.asynccalloptions.md) | <code>Partial&lt;AsyncCallOptions&gt;</code> | Options when creating AsyncCall |
-|  [concurrent](./kit.automatedtabtaskdefinetimeoptions.concurrent.md) | <code>number</code> | At most run <code>concurrent</code> tasks. Prevents open too many tabs at the same time. |
-|  [memorizeTTL](./kit.automatedtabtaskdefinetimeoptions.memorizettl.md) | <code>number</code> | TTL for memorize |
+|  [AsyncCallOptions](./kit.automatedtabtaskdefinetimeoptions.asynccalloptions.md) | Partial&lt;AsyncCallOptions&gt; | Options when creating AsyncCall |
+|  [concurrent](./kit.automatedtabtaskdefinetimeoptions.concurrent.md) | number | At most run <code>concurrent</code> tasks. Prevents open too many tabs at the same time. |
+|  [memorizeTTL](./kit.automatedtabtaskdefinetimeoptions.memorizettl.md) | number | TTL for memorize |
 

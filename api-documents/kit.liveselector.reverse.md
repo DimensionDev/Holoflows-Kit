@@ -13,7 +13,7 @@ reverse(): LiveSelector<T, SingleMode>;
 ```
 <b>Returns:</b>
 
-`LiveSelector<T, SingleMode>`
+[LiveSelector](./kit.liveselector.md)<!-- -->&lt;T, SingleMode&gt;
 
 ## Example
 

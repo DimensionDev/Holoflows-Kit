@@ -10,14 +10,11 @@
  * - Event watcher (based on addEventListener)
  */
 import { DOMProxy, DOMProxyOptions } from './Proxy'
-import mitt from 'mitt'
+import { Emitter, EventListener } from '@servie/events'
 import { LiveSelector } from './LiveSelector'
 
-import differenceWith from 'lodash-es/differenceWith'
-import intersectionWith from 'lodash-es/intersectionWith'
-import uniqWith from 'lodash-es/uniqWith'
 import { Deadline, requestIdleCallback } from '../util/requestIdleCallback'
-import { isNil } from 'lodash-es'
+import { isNil, uniqWith, intersectionWith, differenceWith } from 'lodash-es'
 import { timeout } from '../util/sleep'
 import { WatcherDevtoolsEnhancer } from '../Debuggers/WatcherDevtoolsEnhancer'
 import { installCustomObjectFormatter } from 'jsx-jsonml-devtools-renderer'
@@ -26,12 +23,14 @@ import { installCustomObjectFormatter } from 'jsx-jsonml-devtools-renderer'
  * Use LiveSelector to watch dom change
  */
 export abstract class Watcher<T, Before extends Element, After extends Element, SingleMode extends boolean>
+    extends Emitter<WatcherEvents<T>>
     implements PromiseLike<ResultOf<SingleMode, T>> {
     /**
      * The liveSelector that this object holds.
      */
     protected readonly liveSelector: LiveSelector<T, SingleMode>
     constructor(liveSelector: LiveSelector<T, SingleMode>) {
+        super()
         this.liveSelector = liveSelector.clone()
     }
     //#region How to start and stop the watcher
@@ -169,11 +168,11 @@ export abstract class Watcher<T, Before extends Element, After extends Element, 
             return new Promise<ResultOf<SingleMode, TResult1>>((resolve, reject) => {
                 done = (state, val) => {
                     this.stopWatch()
-                    this.removeListener('onIteration', f)
+                    this.off('onIteration', f)
                     if (state) resolve(val)
                     else reject(val)
                 }
-                const f = (v: OnIterationEvent<any>) => {
+                const f = (v: WatcherEvents<T>['onIteration'][0]) => {
                     const nodes = Array.from(v.current.values())
                     if (this.singleMode && nodes.length >= 1) {
                         return done(true, nodes[0])
@@ -181,7 +180,7 @@ export abstract class Watcher<T, Before extends Element, After extends Element, 
                     if (nodes.length < minimalResultsRequired) return
                     return done(true, nodes)
                 }
-                this.addListener('onIteration', f)
+                this.on('onIteration', f)
             })
         }
         const withTimeout = timeout(then(), timeoutTime)
@@ -200,7 +199,7 @@ export abstract class Watcher<T, Before extends Element, After extends Element, 
     protected lastDOMProxyMap = new Map<unknown, DOMProxy<any, Before, After>>()
     /** Find node from the given list by key */
     protected findNodeFromListByKey = (list: readonly T[], keys: readonly unknown[]) => (key: unknown) => {
-        const i = keys.findIndex(x => this.keyComparer(x, key))
+        const i = keys.findIndex((x) => this.keyComparer(x, key))
         if (i === -1) return null
         return list[i]
     }
@@ -267,14 +266,14 @@ export abstract class Watcher<T, Before extends Element, After extends Element, 
                     proxy.realCurrent = value
                     // This step must be sync.
                     const callbacks = this.useForeachFn(proxy.current, newKey, proxy as any)
-                    if (callbacks && typeof callbacks !== 'function' && 'onNodeMutation' in callbacks) {
+                    if (hasMutationCallback(callbacks) && !proxy.observer.callback) {
                         proxy.observer.init = {
                             subtree: true,
                             childList: true,
                             characterData: true,
                             attributes: true,
                         }
-                        proxy.observer.callback = m => callbacks.onNodeMutation!(value, m)
+                        proxy.observer.callback = (m) => callbacks.onNodeMutation?.(value, m)
                     }
                     nextCallbackMap.set(newKey, callbacks)
                     nextDOMProxyMap.set(newKey, proxy)
@@ -293,7 +292,9 @@ export abstract class Watcher<T, Before extends Element, After extends Element, 
         const newSameKeys = intersectionWith(thisKeyList, this.lastKeyList, this.keyComparer)
         type U = [T, T, unknown, unknown]
         const changedNodes = oldSameKeys
-            .map(x => [findFromLast(x), findFromNew(x), x, newSameKeys.find(newK => this.keyComparer(newK, x))] as U)
+            .map(
+                (x) => [findFromLast(x), findFromNew(x), x, newSameKeys.find((newK) => this.keyComparer(newK, x))] as U,
+            )
             .filter(([a, b]) => this.valueComparer(a, b) === false)
         for (const [oldNode, newNode, oldKey, newKey] of changedNodes) {
             const fn = this.lastCallbackMap.get(oldKey)
@@ -311,7 +312,7 @@ export abstract class Watcher<T, Before extends Element, After extends Element, 
 
         // #region Final: Copy the same keys
         for (const newKey of newSameKeys) {
-            const oldKey = oldSameKeys.find(oldKey => this.keyComparer(newKey, oldKey))
+            const oldKey = oldSameKeys.find((oldKey) => this.keyComparer(newKey, oldKey))
             nextCallbackMap.set(newKey, this.lastCallbackMap.get(oldKey))
             nextDOMProxyMap.set(newKey, this.lastDOMProxyMap.get(oldKey)!)
         }
@@ -320,36 +321,27 @@ export abstract class Watcher<T, Before extends Element, After extends Element, 
         this.lastKeyList = thisKeyList
         this.lastNodeList = currentIteration
 
-        if (this.isEventsListening.onIteration && changedNodes.length + goneKeys.length + newKeys.length) {
+        const has = (item: undefined | unknown[]) => Boolean(item?.length)
+        if (has(this.$.onIteration) && changedNodes.length + goneKeys.length + newKeys.length > 0) {
             // Make a copy to prevent modifications
-            const newMap = new Map<unknown, T>(newKeys.map(key => [key, findFromNew(key)!]))
-            const removedMap = new Map<unknown, T>(goneKeys.map(key => [key, findFromLast(key)!]))
-            const currentMap = new Map<unknown, T>(thisKeyList.map(key => [key, findFromNew(key)!]))
+            const newMap = new Map<unknown, T>(newKeys.map((key) => [key, findFromNew(key)!]))
+            const removedMap = new Map<unknown, T>(goneKeys.map((key) => [key, findFromLast(key)!]))
+            const currentMap = new Map<unknown, T>(thisKeyList.map((key) => [key, findFromNew(key)!]))
             this.emit('onIteration', {
-                keys: {
-                    current: thisKeyList,
-                    new: newKeys,
-                    removed: goneKeys,
-                },
-                values: {
-                    current: currentIteration,
-                    new: newKeys.map(findFromNew),
-                    removed: goneKeys.map(findFromLast),
-                },
                 new: newMap,
                 removed: removedMap,
                 current: currentMap,
-            } as OnIterationEvent<T>)
+            })
         }
-        if (this.isEventsListening.onChange)
+        if (has(this.$.onChange))
             for (const [oldNode, newNode, oldKey, newKey] of changedNodes) {
                 this.emit('onChange', { oldValue: oldNode, newValue: newNode, oldKey, newKey })
             }
-        if (this.isEventsListening.onRemove)
+        if (has(this.$.onRemove))
             for (const key of goneKeys) {
                 this.emit('onRemove', { key, value: findFromLast(key)! })
             }
-        if (this.isEventsListening.onAdd)
+        if (has(this.$.onAdd))
             for (const key of newKeys) {
                 this.emit('onAdd', { key, value: findFromNew(key)! })
             }
@@ -390,6 +382,12 @@ export abstract class Watcher<T, Before extends Element, After extends Element, 
         if (firstValue instanceof Node) {
             this.firstDOMProxy.realCurrent = firstValue
         }
+        if (hasMutationCallback(this.singleModeCallback) && !this._firstDOMProxy.observer.callback) {
+            this._firstDOMProxy.observer.init = { attributes: true, characterData: true, subtree: true }
+            this._firstDOMProxy.observer.callback = (e) =>
+                hasMutationCallback(this.singleModeCallback) &&
+                this.singleModeCallback.onNodeMutation(this._firstDOMProxy.current as any, e)
+        }
         // ? Case: value is gone
         if (this.singleModeHasLastValue && isNil(firstValue)) {
             applyUseForeachCallback(this.singleModeCallback)('remove')(this.singleModeLastValue!)
@@ -401,7 +399,7 @@ export abstract class Watcher<T, Before extends Element, After extends Element, 
             this.singleModeHasLastValue = false
         }
         // ? Case: value is new
-        else if (!this.singleModeHasLastValue && firstValue) {
+        else if (!this.singleModeHasLastValue && Boolean(firstValue)) {
             if (this.useForeachFn) {
                 if (firstValue instanceof Node) {
                     this.singleModeCallback = this.useForeachFn(
@@ -426,7 +424,7 @@ export abstract class Watcher<T, Before extends Element, After extends Element, 
                 oldKey: undefined,
                 newValue: firstValue,
                 oldValue: this.singleModeLastValue,
-            } as OnChangeEvent<T>)
+            })
             this.singleModeLastValue = firstValue
             this.singleModeHasLastValue = true
         }
@@ -474,43 +472,19 @@ export abstract class Watcher<T, Before extends Element, After extends Element, 
     }
     //#endregion
     //#region events
-    /** Event emitter */
-    protected readonly eventEmitter = mitt()
-    private isEventsListening: Record<'onIteration' | 'onChange' | 'onRemove' | 'onAdd', boolean> = {
-        onAdd: false,
-        onChange: false,
-        onIteration: false,
-        onRemove: false,
-    }
-    addListener(event: 'onIteration', fn: EventCallback<OnIterationEvent<T>>): this
-    addListener(event: 'onChange', fn: EventCallback<OnChangeEvent<T>>): this
-    addListener(event: 'onRemove', fn: EventCallback<OnAddOrRemoveEvent<T>>): this
-    addListener(event: 'onAdd', fn: EventCallback<OnAddOrRemoveEvent<T>>): this
-    addListener(event: string, fn: (...args: any[]) => void): this {
-        if (event === 'onIteration') this.noNeedInSingleMode('addListener("onIteration", ...)')
-        this.eventEmitter.on(event, fn)
-        ;(this.isEventsListening as any)[event] = true
+
+    addListener<K extends keyof WatcherEvents<T>>(type: K, callback: EventListener<WatcherEvents<T>, K>): this {
+        this.on(type, callback)
         return this
     }
-    removeListener(event: 'onIteration', fn: EventCallback<OnIterationEvent<T>>): this
-    removeListener(event: 'onChange', fn: EventCallback<OnChangeEvent<T>>): this
-    removeListener(event: 'onRemove', fn: EventCallback<OnAddOrRemoveEvent<T>>): this
-    removeListener(event: 'onAdd', fn: EventCallback<OnAddOrRemoveEvent<T>>): this
-    removeListener(event: string, fn: (...args: any[]) => void): this {
-        this.eventEmitter.off(event, fn)
+    removeListener<K extends keyof WatcherEvents<T>>(type: K, callback: EventListener<WatcherEvents<T>, K>): this {
+        this.off(type, callback)
         return this
-    }
-    protected emit(event: 'onIteration', data: OnIterationEvent<T>): void
-    protected emit(event: 'onChange', data: OnChangeEvent<T>): void
-    protected emit(event: 'onRemove', data: OnAddOrRemoveEvent<T>): void
-    protected emit(event: 'onAdd', data: OnAddOrRemoveEvent<T>): void
-    protected emit(event: string, data: any) {
-        return this.eventEmitter.emit(event, data)
     }
     //#endregion
     //#region firstDOMProxy
     /** The first DOMProxy */
-    protected _firstDOMProxy = DOMProxy<any, Before, After>(this.domProxyOption)
+    protected _firstDOMProxy = DOMProxy<Node, Before, After>(this.domProxyOption)
     /**
      * This DOMProxy always point to the first node in the LiveSelector
      */
@@ -602,7 +576,7 @@ export abstract class Watcher<T, Before extends Element, After extends Element, 
      */
     public getDOMProxyByKey(key: unknown) {
         this.noNeedInSingleMode(this.getDOMProxyByKey.name)
-        return this.lastDOMProxyMap.get([...this.lastDOMProxyMap.keys()].find(_ => this.keyComparer(_, key))) || null
+        return this.lastDOMProxyMap.get([...this.lastDOMProxyMap.keys()].find((_) => this.keyComparer(_, key))) || null
     }
     /** window.requestIdleCallback, or polyfill. */
     protected readonly requestIdleCallback = requestIdleCallback
@@ -614,7 +588,7 @@ export abstract class Watcher<T, Before extends Element, After extends Element, 
      * Warning to remember if developer forget to call the startWatch.
      */
     protected _warning_forget_watch_ = warning({
-        fn: stack => console.warn('Did you forget to call `.startWatch()`?\n', stack),
+        fn: (stack) => console.warn('Did you forget to call `.startWatch()`?\n', stack),
     })
     /**
      * If you're expecting Watcher may not be called, call this function, this will omit the warning.
@@ -672,6 +646,48 @@ Or to ignore this message, call \`.dismissSingleModeWarning()\` on the watcher.\
     }
 }
 
+export interface WatcherEvents<T> {
+    /**
+     * @eventProperty
+     */
+    onIteration: [
+        {
+            new: Map<unknown, T>
+            removed: Map<unknown, T>
+            current: Map<unknown, T>
+        },
+    ]
+    /**
+     * @eventProperty
+     */
+    onChange: [
+        {
+            oldKey: unknown
+            newKey: unknown
+            oldValue?: T
+            newValue: T
+        },
+    ]
+    /**
+     * @eventProperty
+     */
+    onRemove: [
+        {
+            key: unknown
+            value: T
+        },
+    ]
+    /**
+     * @eventProperty
+     */
+    onAdd: [
+        {
+            key: unknown
+            value: T
+        },
+    ]
+}
+
 //#region Default implementations
 function defaultEqualityComparer(a: unknown, b: unknown) {
     return a === b
@@ -681,22 +697,6 @@ function defaultMapNodeToKey(node: unknown) {
 }
 //#endregion
 //#region Events
-// ? Event data
-type OnChangeEvent<T> = {
-    oldKey: unknown
-    newKey: unknown
-    oldValue: T
-    newValue: T
-}
-type OnAddOrRemoveEvent<T> = {
-    key: unknown
-    value: T
-}
-type OnIterationEvent<T> = {
-    new: Map<unknown, T>
-    removed: Map<unknown, T>
-    current: Map<unknown, T>
-}
 // ? Event callbacks
 /** Callback on Remove */
 type RemoveCallback<T> = (oldNode: T) => void
@@ -704,22 +704,25 @@ type RemoveCallback<T> = (oldNode: T) => void
 type TargetChangedCallback<T> = (newNode: T, oldNode: T) => void
 /** Callback on  */
 type MutationCallback<T> = (node: T, mutations: MutationRecord[]) => void
-type EventCallback<T> = (fn: T) => void
 //#endregion
 //#region useForeach types and helpers
 /**
  * Return value of useForeach
  */
-type useForeachReturns<T> =
-    | void
-    | RemoveCallback<T>
-    | {
-          onRemove?: RemoveCallback<T>
-          onTargetChanged?: TargetChangedCallback<T>
-          /** This will not be called if T is not Node */
-          onNodeMutation?: MutationCallback<T>
-      }
-
+type useForeachObject<T> = {
+    onRemove?: RemoveCallback<T>
+    onTargetChanged?: TargetChangedCallback<T>
+    /** This will not be called if T is not Node */
+    onNodeMutation?: MutationCallback<T>
+}
+type useForeachReturns<T> = void | RemoveCallback<T> | useForeachObject<T>
+function hasMutationCallback<T>(
+    x: useForeachReturns<T>,
+): x is useForeachObject<T> & Required<Pick<useForeachObject<T>, 'onNodeMutation'>> {
+    if (typeof x !== 'object' || x === null) return false
+    if ('onNodeMutation' in x && typeof x.onNodeMutation === 'function') return true
+    return false
+}
 function applyUseForeachCallback<T>(callback: useForeachReturns<T>) {
     const cb = callback as useForeachReturns<Node>
     type f = undefined | ((...args: any[]) => any)
@@ -733,13 +736,11 @@ function applyUseForeachCallback<T>(callback: useForeachReturns<T>) {
     interface applyUseForeach {
         (type: 'remove'): RemoveCallback<T>
         (type: 'target change'): TargetChangedCallback<T>
-        (type: 'mutation'): MutationCallback<T>
         (type: 'warn mutation'): (x: ReturnType<typeof warning>) => void
     }
     return ((type: string) => (...args: any[]) => {
         if (type === 'remove') remove && remove(...args)
         else if (type === 'target change') change && change(...args)
-        else if (type === 'mutation') mutation && mutation(...args)
         else if (type === 'warn mutation') mutation && args[0]()
     }) as applyUseForeach
 }
@@ -767,7 +768,7 @@ function warning(_: Partial<WarningOptions> = {}) {
         stack,
         warn(f = fn) {
             if (obj.ignored) return
-            if (warned > 0 && once) return
+            if (warned > 0 && Boolean(once)) return
             if (typeof once === 'number' && warned <= once) return
             warned = warned + 1
             f(stack)

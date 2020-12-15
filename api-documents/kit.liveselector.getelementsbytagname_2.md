@@ -14,9 +14,9 @@ getElementsByTagName<E extends Element = Element>(tag: string): LiveSelector<E, 
 
 |  Parameter | Type | Description |
 |  --- | --- | --- |
-|  tag | <code>string</code> |  |
+|  tag | string |  |
 
 <b>Returns:</b>
 
-`LiveSelector<E, SingleMode>`
+[LiveSelector](./kit.liveselector.md)<!-- -->&lt;E, SingleMode&gt;
 

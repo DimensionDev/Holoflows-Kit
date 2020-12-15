@@ -4,6 +4,11 @@
 
 ## LiveSelector.nth() method
 
+> Warning: This API is now obsolete.
+> 
+> Use "at" instead, see https://github.com/tc39/proposal-relative-indexing-method
+> 
+
 Select only nth element
 
 <b>Signature:</b>
@@ -16,11 +21,11 @@ nth(n: SingleMode extends true ? 'LiveSelector.nth() is not available in SingleM
 
 |  Parameter | Type | Description |
 |  --- | --- | --- |
-|  n | <code>SingleMode extends true ? 'LiveSelector.nth() is not available in SingleMode' : number</code> | Select only nth element, allow negative number. |
+|  n | SingleMode extends true ? 'LiveSelector.nth() is not available in SingleMode' : number | Select only nth element, allow negative number. |
 
 <b>Returns:</b>
 
-`LiveSelector<T, SingleMode>`
+[LiveSelector](./kit.liveselector.md)<!-- -->&lt;T, SingleMode&gt;
 
 ## Example
 

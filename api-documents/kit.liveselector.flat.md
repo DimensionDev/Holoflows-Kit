@@ -13,7 +13,7 @@ flat(): LiveSelector<T extends ArrayLike<infer U> ? U : never, SingleMode>;
 ```
 <b>Returns:</b>
 
-`LiveSelector<T extends ArrayLike<infer U> ? U : never, SingleMode>`
+[LiveSelector](./kit.liveselector.md)<!-- -->&lt;T extends ArrayLike&lt;infer U&gt; ? U : never, SingleMode&gt;
 
 ## Example
 

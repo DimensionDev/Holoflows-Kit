@@ -16,9 +16,9 @@ has(type: 'beforeShadow' | 'afterShadow'): ShadowRoot | null;
 
 |  Parameter | Type | Description |
 |  --- | --- | --- |
-|  type | <code>'beforeShadow' &#124; 'afterShadow'</code> |  |
+|  type | 'beforeShadow' \| 'afterShadow' |  |
 
 <b>Returns:</b>
 
-`ShadowRoot | null`
+ShadowRoot \| null
 

@@ -17,7 +17,7 @@ interface SelectorChainType {
     slice: [number | undefined, number | undefined]
     sort: ((a: any, b: any) => number) | undefined
     flat: undefined
-    nth: number
+    at: number
     replace: (array: any[]) => any[]
 }
 type MapOf<
@@ -60,7 +60,7 @@ export class LiveSelector<T, SingleMode extends boolean = false> {
     /**
      * Is this LiveSelector run in the SingleMode
      */
-    private isSingleMode = false
+    public isSingleMode = false
     /**
      * Enable single mode. Only 1 result will be emitted.
      */
@@ -294,6 +294,7 @@ export class LiveSelector<T, SingleMode extends boolean = false> {
      * Select only nth element
      *
      * @param n - Select only nth element, allow negative number.
+     * @deprecated Use "at" instead, see https://github.com/tc39/proposal-relative-indexing-method
      * @example
      * ```ts
      * ls.nth(-1)
@@ -302,9 +303,23 @@ export class LiveSelector<T, SingleMode extends boolean = false> {
     nth(
         n: SingleMode extends true ? 'LiveSelector.nth() is not available in SingleMode' : number,
     ): LiveSelector<T, SingleMode> {
+        return this.at(n)
+    }
+    /**
+     * Select only nth element
+     *
+     * @param n - Select only nth element, allow negative number.
+     * @example
+     * ```ts
+     * ls.at(-1)
+     * ```
+     */
+    at(
+        n: SingleMode extends true ? 'LiveSelector.nth() is not available in SingleMode' : number,
+    ): LiveSelector<T, SingleMode> {
         if (typeof n !== 'number') throw new Error('n must be a number')
         if (this.isSingleMode) throw new Error('LiveSelector.nth() is not available in SingleMode')
-        return this.appendSelectorChain('nth')(n)
+        return this.appendSelectorChain('at')(n)
     }
     /**
      * Replace the whole array.
@@ -325,7 +340,7 @@ export class LiveSelector<T, SingleMode extends boolean = false> {
     /**
      * Evaluate selector expression
      */
-    evaluate(): SingleMode extends true ? (T | undefined) : T[] {
+    evaluate(): SingleMode extends true ? T | undefined : T[] {
         let arr: readonly (T | Element)[] = this.initialElements
         function isElementArray(x: readonly any[]): x is Element[] {
             // Do a simple check
@@ -349,7 +364,7 @@ export class LiveSelector<T, SingleMode extends boolean = false> {
                             if (e) arr = unique(arr.concat(e))
                             else previouslyNulled = true
                         } else if (isElementArray(arr)) {
-                            arr = unique(arr.map(e => e.querySelector(op.param)).filter(nonNull))
+                            arr = unique(arr.map((e) => e.querySelector(op.param)).filter(nonNull))
                             if (arr.length === 0) previouslyNulled = true
                         } else throw new TypeError('Call querySelector on non-Element item!')
                     }
@@ -389,9 +404,9 @@ export class LiveSelector<T, SingleMode extends boolean = false> {
                             return findParent(node.parentElement, y - 1)
                         }
                         if (typeof selector === 'number') {
-                            arr = unique(newArr.map(e => findParent(e, selector)).filter(nonNull))
+                            arr = unique(newArr.map((e) => findParent(e, selector)).filter(nonNull))
                         } else {
-                            arr = unique(newArr.map(x => x.closest(selector)).filter(nonNull))
+                            arr = unique(newArr.map((x) => x.closest(selector)).filter(nonNull))
                         }
                     } else {
                         throw new TypeError('Cannot use `.closet on non-Element`')
@@ -417,9 +432,8 @@ export class LiveSelector<T, SingleMode extends boolean = false> {
                 case 'sort':
                     arr = Array.from(arr).sort(op.param)
                     break
-                case 'nth': {
-                    const x = op.param >= 0 ? op.param : arr.length - op.param
-                    arr = [arr[x]]
+                case 'at': {
+                    arr = [at(arr, op.param)!]
                     break
                 }
                 case 'flat':
@@ -445,4 +459,11 @@ export class LiveSelector<T, SingleMode extends boolean = false> {
         installCustomObjectFormatter(new LiveSelectorDevtoolsEnhancer())
         this.enhanceDebugger = () => {}
     }
+}
+// https://github.com/tc39/proposal-relative-indexing-method
+function at<T>(arr: readonly T[], n: number) {
+    n = Math.trunc(n) || 0
+    if (n < 0) n += arr.length
+    if (n < 0 || n >= arr.length) return undefined
+    return arr[n]
 }

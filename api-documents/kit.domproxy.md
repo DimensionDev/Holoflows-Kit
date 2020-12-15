@@ -10,9 +10,9 @@
 export declare namespace DOMProxy 
 ```
 
-## Functions
+## Variables
 
-|  Function | Description |
+|  Variable | Description |
 |  --- | --- |
-|  [enhanceDebugger()](./kit.domproxy.enhancedebugger.md) |  |
+|  [enhanceDebugger](./kit.domproxy.enhancedebugger.md) |  |
 

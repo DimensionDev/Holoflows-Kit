@@ -16,9 +16,9 @@ stopWatch(...args: any[]): void;
 
 |  Parameter | Type | Description |
 |  --- | --- | --- |
-|  args | <code>any[]</code> |  |
+|  args | any\[\] |  |
 
 <b>Returns:</b>
 
-`void`
+void
 

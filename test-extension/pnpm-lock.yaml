@@ -1,0 +1,10 @@
+dependencies:
+  webextension-polyfill: 0.6.0
+lockfileVersion: 5.2
+packages:
+  /webextension-polyfill/0.6.0:
+    dev: false
+    resolution:
+      integrity: sha512-PlYwiX8e4bNZrEeBFxbFFsLtm0SMPxJliLTGdNCA0Bq2XkWrAn2ejUd+89vZm+8BnfFB1BclJyCz3iKsm2atNg==
+specifiers:
+  webextension-polyfill: ^0.6.0

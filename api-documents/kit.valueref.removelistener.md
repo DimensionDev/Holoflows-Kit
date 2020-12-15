@@ -16,9 +16,9 @@ removeListener(fn: (newVal: T, oldVal: T) => void): void;
 
 |  Parameter | Type | Description |
 |  --- | --- | --- |
-|  fn | <code>(newVal: T, oldVal: T) =&gt; void</code> |  |
+|  fn | (newVal: T, oldVal: T) =&gt; void |  |
 
 <b>Returns:</b>
 
-`void`
+void
 

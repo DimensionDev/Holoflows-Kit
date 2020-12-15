@@ -5,7 +5,31 @@
 ```ts
 
 import { AsyncCallOptions } from 'async-call-rpc';
-import mitt from 'mitt';
+import { Emitter } from '@servie/events';
+import { EventBasedChannel } from 'async-call-rpc';
+import { EventListener as EventListener_2 } from '@servie/events';
+
+// @public
+export function assertEnvironment(env: Environment): void;
+
+// @public (undocumented)
+export namespace assertEnvironment {
+    var // (undocumented)
+    oneOf: (...args: Environment[]) => void;
+    var // (undocumented)
+    allOf: (...args: Environment[]) => void[];
+}
+
+// @public
+export function assertNotEnvironment(env: Environment): void;
+
+// @public (undocumented)
+export namespace assertNotEnvironment {
+    var // (undocumented)
+    oneOf: (...args: Environment[]) => void;
+    var // (undocumented)
+    allOf: (...args: Environment[]) => void[];
+}
 
 // @public
 export function AutomatedTabTask<T extends Record<string, (...args: any[]) => PromiseLike<any>>>(taskImplements: T, options?: Partial<AutomatedTabTaskDefineTimeOptions>): ((urlOrTabID: string | number, options?: Partial<AutomatedTabTaskRuntimeOptions>) => T) | null;
@@ -27,10 +51,10 @@ export interface AutomatedTabTaskRuntimeOptions extends AutomatedTabTaskSharedOp
 
 // @public
 export interface AutomatedTabTaskSharedOptions {
-    active: boolean;
+    active?: boolean;
     autoClose: boolean;
     memorable: boolean;
-    pinned: boolean;
+    pinned?: boolean;
     timeout: number;
 }
 
@@ -42,12 +66,12 @@ export function DOMProxy<ProxiedElement extends Node = HTMLElement, Before exten
 
 // @public (undocumented)
 export namespace DOMProxy {
-    // (undocumented)
-    export function enhanceDebugger(): void;
+    var // (undocumented)
+    enhanceDebugger: () => void;
 }
 
 // @public
-export interface DOMProxy<ProxiedElement extends Node = HTMLElement, Before extends Element = HTMLSpanElement, After extends Element = HTMLSpanElement> {
+export interface DOMProxy<ProxiedElement extends Node = HTMLElement, Before extends Element = HTMLSpanElement, After extends Element = HTMLSpanElement> extends Omit<Emitter<DOMProxyEvents<ProxiedElement>>, '_' | '$'> {
     readonly after: After;
     readonly afterShadow: ShadowRoot;
     readonly before: Before;
@@ -68,6 +92,15 @@ export interface DOMProxy<ProxiedElement extends Node = HTMLElement, Before exte
 }
 
 // @public
+export interface DOMProxyEvents<ProxiedElement extends Node> {
+    // @eventProperty
+    currentChanged: [{
+        new: ProxiedElement | null;
+        old: ProxiedElement | null;
+    }];
+}
+
+// @public
 export interface DOMProxyOptions<Before extends Element = HTMLSpanElement, After extends Element = HTMLSpanElement> {
     afterShadowRootInit: ShadowRootInit;
     beforeShadowRootInit: ShadowRootInit;
@@ -76,13 +109,35 @@ export interface DOMProxyOptions<Before extends Element = HTMLSpanElement, After
 }
 
 // @public
+export enum Environment {
+    ContentScript = 8,
+    ExtensionProtocol = 4,
+    HasBrowserAPI = 2,
+    ManifestAction = 256,
+    ManifestBackground = 64,
+    // @deprecated
+    ManifestBrowserAction = 256,
+    ManifestDevTools = 1024,
+    ManifestOptions = 128,
+    ManifestOverridesBookmarks = 8192,
+    ManifestOverridesHistory = 16384,
+    ManifestOverridesNewTab = 4096,
+    // @deprecated
+    ManifestPageAction = 512,
+    ManifestSidebar = 2048
+}
+
+// @public
 export class EventWatcher<T, Before extends Element = HTMLSpanElement, After extends Element = HTMLSpanElement, SingleMode extends boolean = false> extends Watcher<T, Before, After, SingleMode> {
     constructor(liveSelector: LiveSelector<T, SingleMode>);
     eventListener: () => void;
 }
 
-// @public
+// @public @deprecated
 export function GetContext(): Contexts;
+
+// @public
+export function getEnvironment(): Environment;
 
 // @public
 export class IntervalWatcher<T, Before extends Element = HTMLSpanElement, After extends Element = HTMLSpanElement, SingleMode extends boolean = false> extends Watcher<T, Before, After, SingleMode> {
@@ -91,8 +146,20 @@ export class IntervalWatcher<T, Before extends Element = HTMLSpanElement, After 
     }
 
 // @public
+export function isEnvironment(env: Environment): boolean;
+
+// @public (undocumented)
+export namespace isEnvironment {
+    var // (undocumented)
+    oneOf: (...args: Environment[]) => boolean;
+    var // (undocumented)
+    allOf: (...args: Environment[]) => boolean[];
+}
+
+// @public
 export class LiveSelector<T, SingleMode extends boolean = false> {
     constructor(initialElements?: readonly T[]);
+    at(n: SingleMode extends true ? 'LiveSelector.nth() is not available in SingleMode' : number): LiveSelector<T, SingleMode>;
     clone(): LiveSelector<T, SingleMode>;
     closest<T>(parentOfNth: number): LiveSelector<T, SingleMode>;
     closest<K extends keyof HTMLElementTagNameMap>(selectors: K): LiveSelector<HTMLElementTagNameMap[K], SingleMode>;
@@ -103,7 +170,7 @@ export class LiveSelector<T, SingleMode extends boolean = false> {
     concat<NextType>(newEle: LiveSelector<NextType, SingleMode>): LiveSelector<T | NextType, SingleMode>;
     enableSingleMode(): LiveSelector<T, true>;
     static enhanceDebugger(): void;
-    evaluate(): SingleMode extends true ? (T | undefined) : T[];
+    evaluate(): SingleMode extends true ? T | undefined : T[];
     filter(f: (value: T, index: number, array: T[]) => any): LiveSelector<NonNullable<T>, SingleMode>;
     flat(): LiveSelector<T extends ArrayLike<infer U> ? U : never, SingleMode>;
     getElementsByClassName<T extends Element = Element>(className: string): LiveSelector<T, SingleMode>;
@@ -112,7 +179,9 @@ export class LiveSelector<T, SingleMode extends boolean = false> {
     getElementsByTagName<K extends keyof SVGElementTagNameMap>(tag: K): LiveSelector<SVGElementTagNameMap[K], SingleMode>;
     // (undocumented)
     getElementsByTagName<E extends Element = Element>(tag: string): LiveSelector<E, SingleMode>;
+    isSingleMode: boolean;
     map<NextType>(callbackfn: (element: T, index: number, array: T[]) => NextType): LiveSelector<NonNullable<NextType>, SingleMode>;
+    // @deprecated
     nth(n: SingleMode extends true ? 'LiveSelector.nth() is not available in SingleMode' : number): LiveSelector<T, SingleMode>;
     querySelector<K extends keyof HTMLElementTagNameMap>(selector: K): LiveSelector<HTMLElementTagNameMap[K], SingleMode>;
     // (undocumented)
@@ -130,14 +199,29 @@ export class LiveSelector<T, SingleMode extends boolean = false> {
     sort(compareFn?: (a: T, b: T) => number): LiveSelector<T, SingleMode>;
     }
 
-// @public
+// @public @deprecated
 export class MessageCenter<ITypedMessages> {
     constructor(sendToSelf: boolean, instanceKey?: string);
     emit<Key extends keyof ITypedMessages>(key: Key, data: ITypedMessages[Key]): Promise<void>;
+    // (undocumented)
+    eventBasedChannel: EventBasedChannel;
     off<Key extends keyof ITypedMessages>(event: Key, handler: (data: ITypedMessages[Key]) => void): void;
     on<Key extends keyof ITypedMessages>(event: Key, handler: (data: ITypedMessages[Key]) => void): () => void;
     serialization: Serialization;
     writeToConsole(on: boolean): this;
+}
+
+// @public (undocumented)
+export enum MessageTarget {
+    // (undocumented)
+    All = 1048578,
+    // (undocumented)
+    Broadcast = 2,
+    FocusedPageOnly = 8388608,
+    IncludeLocal = 1048576,
+    // (undocumented)
+    LocalOnly = 2097152,
+    VisiblePageOnly = 4194304
 }
 
 // @public
@@ -153,16 +237,51 @@ export class MutationObserverWatcher<T, Before extends Element = HTMLSpanElement
     stopWatch(): void;
     }
 
-// @public
+// @public @deprecated
 export function OnlyRunInContext(context: Contexts | Contexts[], name: string): void;
 
-// @public
+// @public @deprecated
 export function OnlyRunInContext(context: Contexts | Contexts[], throws: false): boolean;
 
 // @public
+export function printEnvironment(e?: Environment): string;
+
+// @public
 export interface Serialization {
-    deserialization(serialized: unknown): PromiseLike<any>;
-    serialization(from: any): PromiseLike<unknown>;
+    deserialization(serialized: unknown): unknown | PromiseLike<unknown>;
+    serialization(from: any): unknown | PromiseLike<unknown>;
+}
+
+// @public (undocumented)
+export interface TargetBoundEventRegistry<T> {
+    // (undocumented)
+    off(callback: (data: T) => void): void;
+    // (undocumented)
+    on(callback: (data: T) => void): () => void;
+    pause(): (reducer?: (data: T[]) => T[]) => Promise<void>;
+    // (undocumented)
+    send(data: T): void;
+}
+
+// @public (undocumented)
+export interface UnboundedRegistry<T> extends Omit<TargetBoundEventRegistry<T>, 'send'>, AsyncIterable<T> {
+    bind(target: MessageTarget | Environment): TargetBoundEventRegistry<T>;
+    // (undocumented)
+    send(target: MessageTarget | Environment, data: T): void;
+    // (undocumented)
+    sendByBroadcast(data: T): void;
+    // (undocumented)
+    sendToAll(data: T): void;
+    // (undocumented)
+    sendToBackgroundPage(data: T): void;
+    // (undocumented)
+    sendToContentScripts(data: T): void;
+    // (undocumented)
+    sendToFocusedPage(data: T): void;
+    // (undocumented)
+    sendToLocal(data: T): void;
+    // (undocumented)
+    sendToVisiblePages(data: T): void;
 }
 
 // @public @eventProperty
@@ -180,41 +299,19 @@ export class ValueRef<T> {
 // Warning: (ae-forgotten-export) The symbol "ResultOf" needs to be exported by the entry point index.d.ts
 //
 // @public
-export abstract class Watcher<T, Before extends Element, After extends Element, SingleMode extends boolean> implements PromiseLike<ResultOf<SingleMode, T>> {
+export abstract class Watcher<T, Before extends Element, After extends Element, SingleMode extends boolean> extends Emitter<WatcherEvents<T>> implements PromiseLike<ResultOf<SingleMode, T>> {
     constructor(liveSelector: LiveSelector<T, SingleMode>);
-    // Warning: (ae-forgotten-export) The symbol "EventCallback" needs to be exported by the entry point index.d.ts
-    // Warning: (ae-forgotten-export) The symbol "OnIterationEvent" needs to be exported by the entry point index.d.ts
-    //
     // (undocumented)
-    addListener(event: 'onIteration', fn: EventCallback<OnIterationEvent<T>>): this;
-    // Warning: (ae-forgotten-export) The symbol "OnChangeEvent" needs to be exported by the entry point index.d.ts
-    //
-    // (undocumented)
-    addListener(event: 'onChange', fn: EventCallback<OnChangeEvent<T>>): this;
-    // Warning: (ae-forgotten-export) The symbol "OnAddOrRemoveEvent" needs to be exported by the entry point index.d.ts
-    //
-    // (undocumented)
-    addListener(event: 'onRemove', fn: EventCallback<OnAddOrRemoveEvent<T>>): this;
-    // (undocumented)
-    addListener(event: 'onAdd', fn: EventCallback<OnAddOrRemoveEvent<T>>): this;
+    addListener<K extends keyof WatcherEvents<T>>(type: K, callback: EventListener_2<WatcherEvents<T>, K>): this;
     assignKeys<Q = unknown>(keyAssigner: (node: T, index: number, arr: readonly T[]) => Q): this;
     // (undocumented)
     protected defaultStarterForThen(): void;
     dismissSingleModeWarning(): this;
     protected domProxyOption: Partial<DOMProxyOptions<Before, After>>;
-    // (undocumented)
-    protected emit(event: 'onIteration', data: OnIterationEvent<T>): void;
-    // (undocumented)
-    protected emit(event: 'onChange', data: OnChangeEvent<T>): void;
-    // (undocumented)
-    protected emit(event: 'onRemove', data: OnAddOrRemoveEvent<T>): void;
-    // (undocumented)
-    protected emit(event: 'onAdd', data: OnAddOrRemoveEvent<T>): void;
     static enhanceDebugger(): void;
-    protected readonly eventEmitter: mitt.Emitter;
     protected findNodeFromListByKey: (list: readonly T[], keys: readonly unknown[]) => (key: unknown) => T | null;
     get firstDOMProxy(): T extends Node ? DOMProxy<T, Before, After> : never;
-    protected _firstDOMProxy: DOMProxy<any, Before, After>;
+    protected _firstDOMProxy: DOMProxy<Node, Before, After>;
     getDOMProxyByKey(key: unknown): DOMProxy<any, Before, After> | null;
     protected isWatching: boolean;
     protected keyComparer: (a: unknown, b: unknown) => boolean;
@@ -227,13 +324,7 @@ export abstract class Watcher<T, Before extends Element, After extends Element, 
     omitWarningForForgetWatch(): this;
     omitWarningForRepeatedKeys(): this;
     // (undocumented)
-    removeListener(event: 'onIteration', fn: EventCallback<OnIterationEvent<T>>): this;
-    // (undocumented)
-    removeListener(event: 'onChange', fn: EventCallback<OnChangeEvent<T>>): this;
-    // (undocumented)
-    removeListener(event: 'onRemove', fn: EventCallback<OnAddOrRemoveEvent<T>>): this;
-    // (undocumented)
-    removeListener(event: 'onAdd', fn: EventCallback<OnAddOrRemoveEvent<T>>): this;
+    removeListener<K extends keyof WatcherEvents<T>>(type: K, callback: EventListener_2<WatcherEvents<T>, K>): this;
     // Warning: (ae-forgotten-export) The symbol "requestIdleCallback" needs to be exported by the entry point index.d.ts
     protected readonly requestIdleCallback: typeof requestIdleCallback;
     protected scheduleWatcherCheck: () => void;
@@ -259,6 +350,67 @@ export abstract class Watcher<T, Before extends Element, After extends Element, 
         stack: string;
     };
     }
+
+// @public (undocumented)
+export interface WatcherEvents<T> {
+    // @eventProperty (undocumented)
+    onAdd: [
+        {
+            key: unknown;
+            value: T;
+        }
+    ];
+    // @eventProperty (undocumented)
+    onChange: [
+        {
+            oldKey: unknown;
+            newKey: unknown;
+            oldValue?: T;
+            newValue: T;
+        }
+    ];
+    // @eventProperty (undocumented)
+    onIteration: [
+        {
+            new: Map<unknown, T>;
+            removed: Map<unknown, T>;
+            current: Map<unknown, T>;
+        }
+    ];
+    // @eventProperty (undocumented)
+    onRemove: [
+        {
+            key: unknown;
+            value: T;
+        }
+    ];
+}
+
+// @public (undocumented)
+export class WebExtensionMessage<Message> {
+    constructor(options?: WebExtensionMessageOptions);
+    get domain(): string;
+    // (undocumented)
+    enableLog: boolean;
+    // Warning: (ae-forgotten-export) The symbol "EventRegistry" needs to be exported by the entry point index.d.ts
+    //
+    // (undocumented)
+    protected get eventRegistry(): EventRegistry;
+    get events(): {
+        readonly [K in keyof Message]: UnboundedRegistry<Message[K]>;
+    };
+    // (undocumented)
+    log: (...args: unknown[]) => void;
+    // (undocumented)
+    logFormatter: (instance: this, key: string, data: unknown) => unknown[];
+    serialization: Serialization;
+    }
+
+// @public (undocumented)
+export interface WebExtensionMessageOptions {
+    // (undocumented)
+    readonly domain?: string;
+}
 
 
 ```

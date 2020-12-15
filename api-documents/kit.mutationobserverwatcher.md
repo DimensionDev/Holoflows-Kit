@@ -11,6 +11,7 @@ A watcher based on MutationObserver
 ```typescript
 export declare class MutationObserverWatcher<T, Before extends Element = HTMLSpanElement, After extends Element = HTMLSpanElement, SingleMode extends boolean = false> extends Watcher<T, Before, After, SingleMode> 
 ```
+<b>Extends:</b> [Watcher](./kit.watcher.md)<!-- -->&lt;T, Before, After, SingleMode&gt;
 
 ## Example
 
@@ -34,7 +35,7 @@ new MutationObserverWatcher(ls)
 
 |  Property | Modifiers | Type | Description |
 |  --- | --- | --- | --- |
-|  [liveSelector](./kit.mutationobserverwatcher.liveselector.md) |  | <code>LiveSelector&lt;T, SingleMode&gt;</code> | LiveSelector that this object holds |
+|  [liveSelector](./kit.mutationobserverwatcher.liveselector.md) |  | [LiveSelector](./kit.liveselector.md)<!-- -->&lt;T, SingleMode&gt; | LiveSelector that this object holds |
 
 ## Methods
 

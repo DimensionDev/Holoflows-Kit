@@ -11,13 +11,14 @@ Runtime options for [AutomatedTabTask()](./kit.automatedtabtask.md)
 ```typescript
 export interface AutomatedTabTaskRuntimeOptions extends AutomatedTabTaskSharedOptions 
 ```
+<b>Extends:</b> [AutomatedTabTaskSharedOptions](./kit.automatedtabtasksharedoptions.md)
 
 ## Properties
 
 |  Property | Type | Description |
 |  --- | --- | --- |
-|  [important](./kit.automatedtabtaskruntimeoptions.important.md) | <code>boolean</code> | This task is important, need to start now without queue. |
-|  [needRedirect](./kit.automatedtabtaskruntimeoptions.needredirect.md) | <code>boolean</code> | Use with runAtTabID, tell AutomatedTabTask if you need to redirect the tab to the url provided |
-|  [runAtTabID](./kit.automatedtabtaskruntimeoptions.runattabid.md) | <code>number</code> | Instead of start a new tab, run the script at the existing tab. |
-|  [url](./kit.automatedtabtaskruntimeoptions.url.md) | <code>string</code> | What URL you want to run the task on |
+|  [important](./kit.automatedtabtaskruntimeoptions.important.md) | boolean | This task is important, need to start now without queue. |
+|  [needRedirect](./kit.automatedtabtaskruntimeoptions.needredirect.md) | boolean | Use with runAtTabID, tell AutomatedTabTask if you need to redirect the tab to the url provided |
+|  [runAtTabID](./kit.automatedtabtaskruntimeoptions.runattabid.md) | number | Instead of start a new tab, run the script at the existing tab. |
+|  [url](./kit.automatedtabtaskruntimeoptions.url.md) | string | What URL you want to run the task on |
 

@@ -13,5 +13,5 @@ createBefore(): Before;
 ```
 <b>Returns:</b>
 
-`Before`
+Before
 

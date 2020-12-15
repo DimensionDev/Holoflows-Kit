@@ -9,5 +9,5 @@ The first DOMProxy
 <b>Signature:</b>
 
 ```typescript
-protected _firstDOMProxy: DOMProxy<any, Before, After>;
+protected _firstDOMProxy: DOMProxy<Node, Before, After>;
 ```

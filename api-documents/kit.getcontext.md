@@ -4,6 +4,11 @@
 
 ## GetContext() function
 
+> Warning: This API is now obsolete.
+> 
+> Use getExtensionEnvironment(), remove in 0.9.0
+> 
+
 Get current running context.
 
 <b>Signature:</b>
@@ -13,7 +18,7 @@ export declare function GetContext(): Contexts;
 ```
 <b>Returns:</b>
 
-`Contexts`
+[Contexts](./kit.contexts.md)
 
 ## Remarks
 

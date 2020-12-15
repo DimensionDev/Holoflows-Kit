@@ -1,5 +1,5 @@
-import mitt from 'mitt'
-import { NoSerialization } from 'async-call-rpc'
+import { Emitter } from '@servie/events'
+import { NoSerialization, EventBasedChannel } from 'async-call-rpc'
 /**
  * Define how to do serialization and deserialization of remote procedure call
  */
@@ -8,12 +8,12 @@ export interface Serialization {
      * Do serialization
      * @param from - original data
      */
-    serialization(from: any): PromiseLike<unknown>
+    serialization(from: any): unknown | PromiseLike<unknown>
     /**
      * Do deserialization
      * @param serialized - Serialized data
      */
-    deserialization(serialized: unknown): PromiseLike<any>
+    deserialization(serialized: unknown): unknown | PromiseLike<unknown>
 }
 type InternalMessageType = {
     key: string
@@ -23,6 +23,7 @@ type InternalMessageType = {
 const noop = () => {}
 /**
  * Send and receive messages in different contexts.
+ * @deprecated Remove in 0.9.0
  */
 export class MessageCenter<ITypedMessages> {
     /**
@@ -30,7 +31,7 @@ export class MessageCenter<ITypedMessages> {
      * @defaultValue NoSerialization
      */
     public serialization: Serialization = NoSerialization
-    private eventEmitter = mitt()
+    private eventEmitter = new Emitter<any>()
     private listener = async (request: unknown) => {
         const { key, data, instanceKey } = (await this.serialization.deserialization(request)) as InternalMessageType
         // Message is not for us
@@ -53,13 +54,13 @@ export class MessageCenter<ITypedMessages> {
      * This option cannot make your message safe!
      */
     constructor(private sendToSelf: boolean, private instanceKey = '') {
-        if (typeof browser !== 'undefined' && browser?.runtime?.onMessage) {
+        try {
             // Fired when a message is sent from either an extension process (by runtime.sendMessage)
             // or a content script (by tabs.sendMessage).
             browser.runtime.onMessage.addListener((e: any) => {
                 this.listener(e)
             })
-        }
+        } catch {}
     }
     /**
      * Listen to an event
@@ -102,7 +103,7 @@ export class MessageCenter<ITypedMessages> {
         if (typeof browser !== 'undefined') {
             browser.runtime?.sendMessage?.(serialized).catch(noop)
             // Send message to Content Script
-            browser.tabs?.query({ discarded: false }).then(tabs => {
+            browser.tabs?.query({ discarded: false }).then((tabs) => {
                 for (const tab of tabs) {
                     if (tab.id !== undefined) browser.tabs.sendMessage(tab.id, serialized).catch(noop)
                 }
@@ -119,5 +120,9 @@ export class MessageCenter<ITypedMessages> {
     writeToConsole(on: boolean) {
         this.log = on
         return this
+    }
+    eventBasedChannel: EventBasedChannel = {
+        on: (e) => this.on('__async-call' as any, e),
+        send: (e) => this.emit('__async-call' as any, e as any),
     }
 }
