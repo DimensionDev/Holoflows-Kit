@@ -14,5 +14,5 @@ export interface WebExtensionMessageOptions
 
 |  Property | Type | Description |
 |  --- | --- | --- |
-|  [domain](./kit.webextensionmessageoptions.domain.md) | string |  |
+|  [domain?](./kit.webextensionmessageoptions.domain.md) | string | <i>(Optional)</i> |
 

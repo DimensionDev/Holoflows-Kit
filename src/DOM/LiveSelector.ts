@@ -17,7 +17,7 @@ interface SelectorChainType {
     slice: [number | undefined, number | undefined]
     sort: ((a: any, b: any) => number) | undefined
     flat: undefined
-    nth: number
+    at: number
     replace: (array: any[]) => any[]
 }
 type MapOf<
@@ -294,6 +294,7 @@ export class LiveSelector<T, SingleMode extends boolean = false> {
      * Select only nth element
      *
      * @param n - Select only nth element, allow negative number.
+     * @deprecated Use "at" instead, see https://github.com/tc39/proposal-relative-indexing-method
      * @example
      * ```ts
      * ls.nth(-1)
@@ -302,9 +303,23 @@ export class LiveSelector<T, SingleMode extends boolean = false> {
     nth(
         n: SingleMode extends true ? 'LiveSelector.nth() is not available in SingleMode' : number,
     ): LiveSelector<T, SingleMode> {
+        return this.at(n)
+    }
+    /**
+     * Select only nth element
+     *
+     * @param n - Select only nth element, allow negative number.
+     * @example
+     * ```ts
+     * ls.at(-1)
+     * ```
+     */
+    at(
+        n: SingleMode extends true ? 'LiveSelector.nth() is not available in SingleMode' : number,
+    ): LiveSelector<T, SingleMode> {
         if (typeof n !== 'number') throw new Error('n must be a number')
         if (this.isSingleMode) throw new Error('LiveSelector.nth() is not available in SingleMode')
-        return this.appendSelectorChain('nth')(n)
+        return this.appendSelectorChain('at')(n)
     }
     /**
      * Replace the whole array.
@@ -417,7 +432,7 @@ export class LiveSelector<T, SingleMode extends boolean = false> {
                 case 'sort':
                     arr = Array.from(arr).sort(op.param)
                     break
-                case 'nth': {
+                case 'at': {
                     arr = [at(arr, op.param)!]
                     break
                 }

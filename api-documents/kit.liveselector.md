@@ -41,6 +41,7 @@ ls.evaluate() // returns all urls at the current time.
 
 |  Method | Modifiers | Description |
 |  --- | --- | --- |
+|  [at(n)](./kit.liveselector.at.md) |  | Select only nth element |
 |  [clone()](./kit.liveselector.clone.md) |  | Clone this LiveSelector and return a new LiveSelector. |
 |  [closest(parentOfNth)](./kit.liveselector.closest.md) |  | Select the nth parent |
 |  [closest(selectors)](./kit.liveselector.closest_1.md) |  | Reversely select element in the parent |

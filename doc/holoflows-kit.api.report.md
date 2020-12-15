@@ -113,13 +113,16 @@ export enum Environment {
     ContentScript = 8,
     ExtensionProtocol = 4,
     HasBrowserAPI = 2,
+    ManifestAction = 256,
     ManifestBackground = 64,
+    // @deprecated
     ManifestBrowserAction = 256,
     ManifestDevTools = 1024,
     ManifestOptions = 128,
     ManifestOverridesBookmarks = 8192,
     ManifestOverridesHistory = 16384,
     ManifestOverridesNewTab = 4096,
+    // @deprecated
     ManifestPageAction = 512,
     ManifestSidebar = 2048
 }
@@ -156,6 +159,7 @@ export namespace isEnvironment {
 // @public
 export class LiveSelector<T, SingleMode extends boolean = false> {
     constructor(initialElements?: readonly T[]);
+    at(n: SingleMode extends true ? 'LiveSelector.nth() is not available in SingleMode' : number): LiveSelector<T, SingleMode>;
     clone(): LiveSelector<T, SingleMode>;
     closest<T>(parentOfNth: number): LiveSelector<T, SingleMode>;
     closest<K extends keyof HTMLElementTagNameMap>(selectors: K): LiveSelector<HTMLElementTagNameMap[K], SingleMode>;
@@ -177,6 +181,7 @@ export class LiveSelector<T, SingleMode extends boolean = false> {
     getElementsByTagName<E extends Element = Element>(tag: string): LiveSelector<E, SingleMode>;
     isSingleMode: boolean;
     map<NextType>(callbackfn: (element: T, index: number, array: T[]) => NextType): LiveSelector<NonNullable<NextType>, SingleMode>;
+    // @deprecated
     nth(n: SingleMode extends true ? 'LiveSelector.nth() is not available in SingleMode' : number): LiveSelector<T, SingleMode>;
     querySelector<K extends keyof HTMLElementTagNameMap>(selector: K): LiveSelector<HTMLElementTagNameMap[K], SingleMode>;
     // (undocumented)

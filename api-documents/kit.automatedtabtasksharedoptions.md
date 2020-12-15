@@ -16,9 +16,9 @@ export interface AutomatedTabTaskSharedOptions
 
 |  Property | Type | Description |
 |  --- | --- | --- |
-|  [active](./kit.automatedtabtasksharedoptions.active.md) | boolean | Should the new tab to be active? |
+|  [active?](./kit.automatedtabtasksharedoptions.active.md) | boolean | <i>(Optional)</i> Should the new tab to be active? |
 |  [autoClose](./kit.automatedtabtasksharedoptions.autoclose.md) | boolean | Should the new tab to be closed automatically? |
 |  [memorable](./kit.automatedtabtasksharedoptions.memorable.md) | boolean | If the task is memorable. - true: Memorize by url and all options - false: Does not use Memory |
-|  [pinned](./kit.automatedtabtasksharedoptions.pinned.md) | boolean | Should the new tab pinned? |
+|  [pinned?](./kit.automatedtabtasksharedoptions.pinned.md) | boolean | <i>(Optional)</i> Should the new tab pinned? |
 |  [timeout](./kit.automatedtabtasksharedoptions.timeout.md) | number | Task timeout. |
 

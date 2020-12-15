@@ -19,7 +19,8 @@ export declare enum Environment
 |  ContentScript | <code>8</code> | Current running context is Content Script |
 |  ExtensionProtocol | <code>4</code> | URL protocol ends with "-extension:" |
 |  HasBrowserAPI | <code>2</code> | has browser as a global variable |
-|  ManifestBackground | <code>64</code> | URL is listed in the manifest.background or generated background page |
+|  ManifestAction | <code>256</code> | URL is listed in the manifest.action |
+|  ManifestBackground | <code>64</code> | URL of the manifest.background, generated background page, or manifest v3 service worker |
 |  ManifestBrowserAction | <code>256</code> | URL is listed in the manifest.browser\_action |
 |  ManifestDevTools | <code>1024</code> | URL is listed in the manifest.devtools\_page |
 |  ManifestOptions | <code>128</code> | URL is listed in the manifest.options\_ui |

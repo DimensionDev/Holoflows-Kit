@@ -41,10 +41,10 @@ export declare abstract class Watcher<T, Before extends Element, After extends E
 |  [requestIdleCallback](./kit.watcher.requestidlecallback.md) |  | typeof requestIdleCallback | window.requestIdleCallback, or polyfill. |
 |  [scheduleWatcherCheck](./kit.watcher.schedulewatchercheck.md) |  | () =&gt; void | Schedule a watcher check |
 |  [singleMode](./kit.watcher.singlemode.md) |  | boolean | Is the single mode is on. |
-|  [singleModeCallback](./kit.watcher.singlemodecallback.md) |  | useForeachReturns&lt;T&gt; | Callback for single mode |
+|  [singleModeCallback?](./kit.watcher.singlemodecallback.md) |  | useForeachReturns&lt;T&gt; | <i>(Optional)</i> Callback for single mode |
 |  [singleModeHasLastValue](./kit.watcher.singlemodehaslastvalue.md) |  | boolean | Does it has a last iteration value in single mode? |
-|  [singleModeLastValue](./kit.watcher.singlemodelastvalue.md) |  | T | Last iteration value for single mode |
-|  [useForeachFn](./kit.watcher.useforeachfn.md) |  | Parameters&lt;[Watcher](./kit.watcher.md)<!-- -->&lt;T, any, any, any&gt;\['useForeach'\]&gt;\[0\] | Saved useForeach |
+|  [singleModeLastValue?](./kit.watcher.singlemodelastvalue.md) |  | T | <i>(Optional)</i> Last iteration value for single mode |
+|  [useForeachFn?](./kit.watcher.useforeachfn.md) |  | Parameters&lt;[Watcher](./kit.watcher.md)<!-- -->&lt;T, any, any, any&gt;\['useForeach'\]&gt;\[0\] | <i>(Optional)</i> Saved useForeach |
 |  [valueComparer](./kit.watcher.valuecomparer.md) |  | (a: T, b: T) =&gt; boolean | Compare between <code>value</code> and <code>value</code>, in case of you don't want the default behavior |
 
 ## Methods

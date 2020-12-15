@@ -4,6 +4,11 @@
 
 ## LiveSelector.nth() method
 
+> Warning: This API is now obsolete.
+> 
+> Use "at" instead, see https://github.com/tc39/proposal-relative-indexing-method
+> 
+
 Select only nth element
 
 <b>Signature:</b>
