@@ -349,7 +349,7 @@ export class LiveSelector<T, SingleMode extends boolean = false> {
                             if (e) arr = unique(arr.concat(e))
                             else previouslyNulled = true
                         } else if (isElementArray(arr)) {
-                            arr = unique(arr.map(e => e.querySelector(op.param)).filter(nonNull))
+                            arr = unique(arr.map((e) => e.querySelector(op.param)).filter(nonNull))
                             if (arr.length === 0) previouslyNulled = true
                         } else throw new TypeError('Call querySelector on non-Element item!')
                     }
@@ -389,9 +389,9 @@ export class LiveSelector<T, SingleMode extends boolean = false> {
                             return findParent(node.parentElement, y - 1)
                         }
                         if (typeof selector === 'number') {
-                            arr = unique(newArr.map(e => findParent(e, selector)).filter(nonNull))
+                            arr = unique(newArr.map((e) => findParent(e, selector)).filter(nonNull))
                         } else {
-                            arr = unique(newArr.map(x => x.closest(selector)).filter(nonNull))
+                            arr = unique(newArr.map((x) => x.closest(selector)).filter(nonNull))
                         }
                     } else {
                         throw new TypeError('Cannot use `.closet on non-Element`')
@@ -418,8 +418,7 @@ export class LiveSelector<T, SingleMode extends boolean = false> {
                     arr = Array.from(arr).sort(op.param)
                     break
                 case 'nth': {
-                    const x = op.param >= 0 ? op.param : arr.length - op.param
-                    arr = [arr[x]]
+                    arr = [at(arr, op.param)!]
                     break
                 }
                 case 'flat':
@@ -445,4 +444,11 @@ export class LiveSelector<T, SingleMode extends boolean = false> {
         installCustomObjectFormatter(new LiveSelectorDevtoolsEnhancer())
         this.enhanceDebugger = () => {}
     }
+}
+// https://github.com/tc39/proposal-relative-indexing-method
+function at<T>(arr: readonly T[], n: number) {
+    n = Math.trunc(n) || 0
+    if (n < 0) n += arr.length
+    if (n < 0 || n >= arr.length) return undefined
+    return arr[n]
 }
