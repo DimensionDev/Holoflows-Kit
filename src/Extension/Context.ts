@@ -37,9 +37,13 @@ export enum Environment {
     /** URL protocol ends with "-extension:" */ ExtensionProtocol = 1 << 2,
     /** Current running context is Content Script */ ContentScript = 1 << 3,
     // userScript = 1 << 4,
-    /** URL is listed in the manifest.background or generated background page */ ManifestBackground = 1 << 6,
+    /** URL of the manifest.background, generated background page, or manifest v3 service worker */
+    ManifestBackground = 1 << 6,
     /** URL is listed in the manifest.options_ui */ ManifestOptions = 1 << 7,
-    /** URL is listed in the manifest.browser_action */ ManifestBrowserAction = 1 << 8,
+    /**
+     * URL is listed in the manifest.browser_action
+     * @deprecated It will be removed in manifest v3. Use ManifestAction instead */ ManifestBrowserAction = 1 << 8,
+    /** URL is listed in the manifest.action */ ManifestAction = 1 << 8,
     /**
      * URL is listed in the manifest.page_action
      * @deprecated Suggest to define browser_action instead.
@@ -81,13 +85,16 @@ export function getEnvironment(): Environment {
                 const current = location.pathname
 
                 const background =
-                    manifest.background?.page || manifest.background_page || '/_generated_background_page.html'
+                    // @ts-expect-error Manifest V3
+                    manifest.background?.service_worker ||
+                    manifest.background?.page ||
+                    manifest.background_page ||
+                    '/_generated_background_page.html'
                 const options = manifest.options_ui?.page || manifest.options_page
 
                 if (current === normalize(background)) flag |= Environment.ManifestBackground
                 // TODO: this property support i18n. What will I get when call browser.runtime.getManifest()?
-                if (current === normalize(manifest.browser_action?.default_popup))
-                    flag |= Environment.ManifestBrowserAction
+                if (current === normalize(manifest.browser_action?.default_popup)) flag |= Environment.ManifestAction
                 if (current === normalize(manifest.sidebar_action?.default_panel)) flag |= Environment.ManifestSidebar
                 if (current === normalize(options)) flag |= Environment.ManifestOptions
                 if (current === normalize(manifest.devtools_page)) flag |= Environment.ManifestDevTools
@@ -131,7 +138,7 @@ export function printEnvironment(e: Environment = getEnvironment()) {
     if (Environment.ManifestOverridesBookmarks & e) flag.push('ManifestOverridesBookmarks')
     if (Environment.ManifestOverridesHistory & e) flag.push('ManifestOverridesHistory')
     if (Environment.ManifestOverridesNewTab & e) flag.push('ManifestOverridesNewTab')
-    if (Environment.ManifestBrowserAction & e) flag.push('ManifestBrowserAction')
+    if (Environment.ManifestAction & e) flag.push('ManifestBrowserAction')
     if (Environment.ManifestSidebar & e) flag.push('ManifestSidebar')
     return flag.join('|')
 }
