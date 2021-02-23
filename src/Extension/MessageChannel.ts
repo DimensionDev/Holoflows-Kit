@@ -9,7 +9,8 @@ export enum MessageTarget {
     LocalOnly = 1 << 21,
     /** Visible page, maybe have more than 1 page. */ VisiblePageOnly = 1 << 22,
     /** Page that has focus (devtools not included), 0 or 1 page. */ FocusedPageOnly = 1 << 23,
-    Broadcast = Environment.HasBrowserAPI,
+    /** Send to external. */ External = 1 << 24,
+    /** Externals not included */ Broadcast = Environment.HasBrowserAPI,
     All = Broadcast | IncludeLocal,
 }
 export interface TargetBoundEventRegistry<T> {
@@ -40,7 +41,19 @@ export interface UnboundedRegistry<T> extends Omit<TargetBoundEventRegistry<T>, 
     bind(target: MessageTarget | Environment): TargetBoundEventRegistry<T>
 }
 export interface WebExtensionMessageOptions {
+    /** The "domain" of the message. Messages within different domain won't affect each other. */
     readonly domain?: string
+    /**
+     * Use this when connect from a normal web page.
+     * You must configure externally_connectable to make it work.
+     *
+     * DO NOT use it to connect between two extensions!
+     *
+     * ONLY use it in a normal webpage.
+     *
+     * PLEASE make sure to call acceptExternalConnect otherwise it will not work.
+     */
+    readonly externalExtensionID?: string
 }
 const throwSetter = () => {
     throw new TypeError()
@@ -48,6 +61,7 @@ const throwSetter = () => {
 type BackgroundOnlyLivingPortsInfo = {
     sender?: browser.runtime.MessageSender
     environment?: Environment
+    external?: boolean
 }
 
 // Only available in background page
@@ -55,12 +69,21 @@ const backgroundOnlyLivingPorts = new Map<browser.runtime.Port, BackgroundOnlyLi
 // Only be set in other pages
 let currentTabID = -1
 // Shared global
-let postMessage: (message: number | InternalMessageType) => void = () => {}
+let postMessage: undefined | ((message: number | InternalMessageType) => void) = undefined
 const domainRegistry = new Emitter<Record<string, [InternalMessageType]>>()
 const constant = '@holoflows/kit/WebExtensionMessage/setup'
+export type ShouldAcceptExternalConnectionResult =
+    | boolean
+    | {
+          /** Be careful, acceptAs will treat it as a internal connection, not an external one */
+          acceptAs: Environment
+      }
+export type ShouldAcceptExternalConnection = (
+    sender: browser.runtime.MessageSender,
+) => ShouldAcceptExternalConnectionResult
 export class WebExtensionMessage<Message> {
     // Only execute once.
-    private static setup() {
+    private static setup(id: string | undefined) {
         if (isEnvironment(Environment.ManifestBackground)) {
             // Wait for other pages to connect
             browser.runtime.onConnect.addListener((port) => {
@@ -73,13 +96,44 @@ export class WebExtensionMessage<Message> {
             postMessage = backgroundPageMessageHandler
         } else {
             function reconnect() {
-                const port = browser.runtime.connect({ name: constant })
+                const port = id
+                    ? // @ts-ignore
+                      chrome.runtime.connect(id, { name: constant })
+                    : browser.runtime.connect({ name: constant })
                 postMessage = otherEnvMessageHandler.bind(port)
-                otherEnvPortBoarding(port, reconnect)
+                // don't reconnect when external connect
+                otherEnvPortBoarding(port, id ? () => {} : reconnect)
             }
             reconnect()
             WebExtensionMessage.setup = () => {}
         }
+    }
+    private static acceptExternalConnectFns = new Set<ShouldAcceptExternalConnection>()
+    /** If the connection is not accepted, it will be passed to the next handler until it is handled or no more handlers */
+    static acceptExternalConnect(acceptExternalConnectFn: ShouldAcceptExternalConnection) {
+        this.acceptExternalConnectFns.add(acceptExternalConnectFn)
+        if (!isEnvironment(Environment.ManifestBackground)) return
+        // Wait for other pages to connect
+        // @ts-ignore
+        const c: typeof browser = chrome
+        c.runtime.onConnectExternal.addListener((port) => {
+            if (port.name !== constant) return // not for ours
+            const sender = port.sender
+            if (!sender) return port.disconnect()
+            let accepted = false
+            for (const each of this.acceptExternalConnectFns) {
+                const result = each(sender)
+                if (!result) continue
+                if (result === true) backgroundOnlyLivingPorts.set(port, { sender, external: true, environment: 0 })
+                else backgroundOnlyLivingPorts.set(port, { sender, environment: result.acceptAs })
+                accepted = true
+                break
+            }
+            if (!accepted) return port.disconnect()
+            backgroundPortBoarding(port, sender)
+        })
+        this.acceptExternalConnect = (f) => void this.acceptExternalConnectFns.add(f)
+        postMessage = backgroundPageMessageHandler
     }
     #domain: string
     /** Same message name within different domain won't collide with each other. */
@@ -93,8 +147,14 @@ export class WebExtensionMessage<Message> {
         // invoke the warning if needed
         getEnvironment()
         try {
-            typeof browser === 'object' && browser && WebExtensionMessage.setup()
-        } catch (e) {}
+            if (options?.externalExtensionID) {
+                WebExtensionMessage.setup(options.externalExtensionID)
+            } else {
+                typeof browser === 'object' && browser && WebExtensionMessage.setup(undefined)
+            }
+        } catch (e) {
+            console.error('Setup failed', e)
+        }
         const domain = (this.#domain = options?.domain ?? '')
 
         domainRegistry.on(domain, async (payload: InternalMessageType) => {
@@ -168,7 +228,7 @@ function isInternalMessageType(e: unknown): e is InternalMessageType {
     return true
 }
 function shouldAcceptThisMessage(target: BoundTarget) {
-    if (target.kind === 'tab') return target.id === currentTabID
+    if (target.kind === 'tab') return target.id === currentTabID && currentTabID !== -1
     if (target.kind === 'port') return true
     const flag = target.target
     if (flag & (MessageTarget.IncludeLocal | MessageTarget.LocalOnly)) return true
@@ -200,7 +260,7 @@ function UnboundedRegistry<T>(
             list.push(data)
             return
         }
-        postMessage({
+        postMessage!({
             data: await instance.serialization.serialization(data),
             domain: instance.domain,
             event: eventName,
@@ -308,7 +368,8 @@ function backgroundPortBoarding(port: browser.runtime.Port, sender: undefined | 
     port.postMessage(sender?.tab?.id ?? -1)
     // Client will report it's environment flag on connection
     port.onMessage.addListener(function environmentListener(x) {
-        backgroundOnlyLivingPorts.get(port)!.environment = Number(x)
+        const obj = backgroundOnlyLivingPorts.get(port)!
+        if (typeof obj.environment === undefined) obj.environment = Number(x)
         port.onMessage.removeListener(environmentListener)
     })
     port.onMessage.addListener(backgroundPageMessageHandler.bind(port))
