@@ -68,6 +68,7 @@ type BackgroundOnlyLivingPortsInfo = {
 const backgroundOnlyLivingPorts = new Map<browser.runtime.Port, BackgroundOnlyLivingPortsInfo>()
 // Only be set in other pages
 let currentTabID = -1
+let externalMode = false
 // Shared global
 let postMessage: undefined | ((message: number | InternalMessageType) => void) = undefined
 const domainRegistry = new Emitter<Record<string, [InternalMessageType]>>()
@@ -84,6 +85,7 @@ export type ShouldAcceptExternalConnection = (
 export class WebExtensionMessage<Message> {
     // Only execute once.
     private static setup(id: string | undefined) {
+        if (id) externalMode = true
         if (isEnvironment(Environment.ManifestBackground)) {
             // Wait for other pages to connect
             browser.runtime.onConnect.addListener((port) => {
@@ -239,6 +241,7 @@ function shouldAcceptThisMessage(target: BoundTarget) {
         if (here & Environment.ManifestBackground) return false
         return typeof document === 'object' && document?.visibilityState === 'visible'
     }
+    if (externalMode) return true // skip mode checking for external connection
     return Boolean(here & flag)
 }
 //#endregion
