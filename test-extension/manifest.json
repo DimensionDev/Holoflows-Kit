@@ -16,5 +16,9 @@
         }
     ],
     "devtools_page": "devtools.html",
-    "_page_action": { "default_popup": "popup.html" }
+    "_page_action": { "default_popup": "popup.html" },
+    "externally_connectable": {
+        "ids": ["*"],
+        "matches": ["*://localhost:*/", "*://127.0.0.1:*/"]
+    }
 }

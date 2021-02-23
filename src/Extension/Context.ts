@@ -69,14 +69,25 @@ export function getEnvironment(): Environment {
             if (val !== undefined) return Number(val)
         }
     } catch {}
-    let flag = 0
+    let flag: Environment = 0
     // Scheme test
     try {
         const scheme = location.protocol
         if (scheme.endsWith('-extension:')) flag |= Environment.ExtensionProtocol
     } catch {}
+    // @ts-ignore
+    const chromeLike = isChromeLike()
+    if (!isBrowserLike() && chromeLike) {
+        console.error(
+            [
+                "Cannot find 'browser'. This library does not work with 'chrome' namespace.",
+                'Please use the polyfill (https://www.npmjs.com/package/webextension-polyfill)',
+            ].join('\n'),
+        )
+    }
+    const browser = getBrowserLikeNS()
     // Browser API test
-    if (typeof browser !== 'undefined' && browser !== null) {
+    if (browser) {
         flag |= Environment.HasBrowserAPI
         if (!(flag & Environment.ExtensionProtocol)) flag |= Environment.ContentScript
         else {
@@ -121,7 +132,28 @@ export function getEnvironment(): Environment {
         }
     }
 }
-
+declare const chrome: typeof browser
+function isChromeLike() {
+    try {
+        return !!chrome.runtime.getURL
+    } catch {}
+    return false
+}
+function isBrowserLike() {
+    try {
+        return !!browser.runtime.getURL
+    } catch {}
+    return false
+}
+function getBrowserLikeNS() {
+    try {
+        if (typeof browser.runtime.getURL === 'function') return browser
+    } catch {}
+    try {
+        if (typeof chrome.runtime.getURL === 'function') return chrome
+    } catch {}
+    return undefined
+}
 /**
  * Print the Environment bit flag in a human-readable format
  * @param e - Printing environment bit flag

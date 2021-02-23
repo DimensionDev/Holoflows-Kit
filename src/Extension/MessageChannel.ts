@@ -126,9 +126,11 @@ export class WebExtensionMessage<Message> {
      * @param options WebExtensionMessage options
      */
     constructor(options?: WebExtensionMessageOptions) {
+        // invoke the warning if needed
+        getEnvironment()
         try {
-            WebExtensionMessage.setup()
-        } catch {}
+            typeof browser === 'object' && browser && WebExtensionMessage.setup()
+        } catch (e) {}
         const domain = (this.#domain = options?.domain ?? '')
 
         domainRegistry.on(domain, async (payload: InternalMessageType) => {
