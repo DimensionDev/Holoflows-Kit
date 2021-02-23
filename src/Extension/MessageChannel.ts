@@ -67,51 +67,15 @@ export class WebExtensionMessage<Message> {
                 if (port.name !== constant) return // not for ours
                 const sender = port.sender
                 backgroundOnlyLivingPorts.set(port, { sender })
-                // let the client know it's tab id
-                // sender.tab might be undefined if it is a popup
-                // TODO: check sender if same as ourself? Support external / cross-extension message?
-                port.postMessage(sender?.tab?.id ?? -1)
-                // Client will report it's environment flag on connection
-                port.onMessage.addListener(function environmentListener(x) {
-                    backgroundOnlyLivingPorts.get(port)!.environment = Number(x)
-                    port.onMessage.removeListener(environmentListener)
-                })
-                port.onMessage.addListener(backgroundPageMessageHandler.bind(port))
-                port.onDisconnect.addListener(() => backgroundOnlyLivingPorts.delete(port))
+                backgroundPortBoarding(port, sender)
             })
             WebExtensionMessage.setup = () => {}
             postMessage = backgroundPageMessageHandler
         } else {
             function reconnect() {
                 const port = browser.runtime.connect({ name: constant })
-                postMessage = (payload) => {
-                    if (typeof payload !== 'object') return port.postMessage(payload)
-
-                    const bound = payload.target
-                    if (bound.kind === 'tab') return port.postMessage(payload)
-                    if (bound.kind === 'port')
-                        throw new Error('Unreachable case: bound type = port in non-background script')
-                    const target = bound.target
-                    if (target & (MessageTarget.IncludeLocal | MessageTarget.LocalOnly)) {
-                        domainRegistry.emit(payload.domain, payload)
-                        if (target & MessageTarget.LocalOnly) return
-                        bound.target &= ~MessageTarget.IncludeLocal // unset IncludeLocal
-                    }
-                    port.postMessage(payload)
-                }
-                // report self environment
-                port.postMessage(getEnvironment())
-                // server will send self tab ID on connected
-                port.onMessage.addListener(function tabIDListener(x) {
-                    currentTabID = Number(x)
-                    port.onMessage.removeListener(tabIDListener)
-                })
-                port.onMessage.addListener((data) => {
-                    if (!isInternalMessageType(data)) return
-                    domainRegistry.emit(data.domain, data)
-                })
-                // ? Will it cause infinite loop?
-                port.onDisconnect.addListener(reconnect)
+                postMessage = otherEnvMessageHandler.bind(port)
+                otherEnvPortBoarding(port, reconnect)
             }
             reconnect()
             WebExtensionMessage.setup = () => {}
@@ -187,7 +151,7 @@ export class WebExtensionMessage<Message> {
         return this.#eventRegistry
     }
 }
-
+//#region Internal message handling
 type InternalMessageType = {
     domain: string
     event: string
@@ -217,6 +181,8 @@ function shouldAcceptThisMessage(target: BoundTarget) {
     }
     return Boolean(here & flag)
 }
+//#endregion
+
 function UnboundedRegistry<T>(
     instance: WebExtensionMessage<T>,
     eventName: string,
@@ -286,7 +252,6 @@ function UnboundedRegistry<T>(
     }
     return self
 }
-
 type EventRegistry = Emitter<Record<string, [unknown]>>
 type BoundTarget =
     | { kind: 'tab'; id: number }
@@ -320,4 +285,48 @@ function backgroundPageMessageHandler(this: browser.runtime.Port | undefined, da
             }
         }
     }
+}
+
+function otherEnvMessageHandler(this: browser.runtime.Port, payload: number | InternalMessageType) {
+    if (typeof payload !== 'object') return this.postMessage(payload)
+
+    const bound = payload.target
+    if (bound.kind === 'tab') return this.postMessage(payload)
+    if (bound.kind === 'port') throw new Error('Unreachable case: bound type = port in non-background script')
+    const target = bound.target
+    if (target & (MessageTarget.IncludeLocal | MessageTarget.LocalOnly)) {
+        domainRegistry.emit(payload.domain, payload)
+        if (target & MessageTarget.LocalOnly) return
+        bound.target &= ~MessageTarget.IncludeLocal // unset IncludeLocal
+    }
+    this.postMessage(payload)
+}
+/** The port need to be initialized before use. */
+function backgroundPortBoarding(port: browser.runtime.Port, sender: undefined | browser.runtime.MessageSender) {
+    // let the client know it's tab id
+    // sender.tab might be undefined if it is a popup
+    port.postMessage(sender?.tab?.id ?? -1)
+    // Client will report it's environment flag on connection
+    port.onMessage.addListener(function environmentListener(x) {
+        backgroundOnlyLivingPorts.get(port)!.environment = Number(x)
+        port.onMessage.removeListener(environmentListener)
+    })
+    port.onMessage.addListener(backgroundPageMessageHandler.bind(port))
+    port.onDisconnect.addListener(() => backgroundOnlyLivingPorts.delete(port))
+}
+
+function otherEnvPortBoarding(port: browser.runtime.Port, reconnect: () => void) {
+    // report self environment
+    port.postMessage(getEnvironment())
+    // server will send self tab ID on connected
+    port.onMessage.addListener(function tabIDListener(x) {
+        currentTabID = Number(x)
+        port.onMessage.removeListener(tabIDListener)
+    })
+    port.onMessage.addListener((data) => {
+        if (!isInternalMessageType(data)) return
+        domainRegistry.emit(data.domain, data)
+    })
+    // ? Will it cause infinite loop?
+    port.onDisconnect.addListener(reconnect)
 }
