@@ -372,7 +372,7 @@ function backgroundPortBoarding(port: browser.runtime.Port, sender: undefined | 
     // Client will report it's environment flag on connection
     port.onMessage.addListener(function environmentListener(x) {
         const obj = backgroundOnlyLivingPorts.get(port)!
-        if (typeof obj.environment === undefined) obj.environment = Number(x)
+        if (typeof obj.environment === "undefined") obj.environment = Number(x)
         port.onMessage.removeListener(environmentListener)
     })
     port.onMessage.addListener(backgroundPageMessageHandler.bind(port))
