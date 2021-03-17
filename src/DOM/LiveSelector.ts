@@ -433,7 +433,7 @@ export class LiveSelector<T, SingleMode extends boolean = false> {
                     arr = Array.from(arr).sort(op.param)
                     break
                 case 'at': {
-                    arr = [at(arr, op.param)!]
+                    arr = [at(arr, op.param)!].filter(nonNull)
                     break
                 }
                 case 'flat':
