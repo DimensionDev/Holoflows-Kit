@@ -58,7 +58,6 @@ ls.evaluate() // returns all urls at the current time.
 |  [getElementsByTagName(tag)](./kit.liveselector.getelementsbytagname_1.md) |  |  |
 |  [getElementsByTagName(tag)](./kit.liveselector.getelementsbytagname_2.md) |  |  |
 |  [map(callbackfn)](./kit.liveselector.map.md) |  | Calls a defined callback function on each element of a LiveSelector, and continues with the results. |
-|  [nth(n)](./kit.liveselector.nth.md) |  | Select only nth element |
 |  [querySelector(selector)](./kit.liveselector.queryselector.md) |  | Select the first element that is a descendant of node that matches selectors. |
 |  [querySelector(selector)](./kit.liveselector.queryselector_1.md) |  |  |
 |  [querySelector(selector)](./kit.liveselector.queryselector_2.md) |  |  |

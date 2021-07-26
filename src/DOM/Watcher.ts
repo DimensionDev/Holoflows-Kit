@@ -15,7 +15,7 @@ import { LiveSelector } from './LiveSelector'
 
 import { Deadline, requestIdleCallback } from '../util/requestIdleCallback'
 import { isNil, uniqWith, intersectionWith, differenceWith } from 'lodash-es'
-import { timeout } from '../util/sleep'
+import { timeout } from '../util/timeout'
 import { WatcherDevtoolsEnhancer } from '../Debuggers/WatcherDevtoolsEnhancer'
 import { installCustomObjectFormatter } from 'jsx-jsonml-devtools-renderer'
 

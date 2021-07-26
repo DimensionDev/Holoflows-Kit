@@ -1,8 +1,22 @@
-import { NoSerialization } from 'async-call-rpc'
-import { Serialization } from './MessageCenter'
 import { Emitter } from '@servie/events'
 import { EventIterator } from 'event-iterator'
 import { Environment, getEnvironment, isEnvironment } from './Context'
+
+/**
+ * Define how to do serialization and deserialization of remote procedure call
+ */
+ export interface Serialization {
+    /**
+     * Do serialization
+     * @param from - original data
+     */
+    serialization(from: any): unknown | PromiseLike<unknown>
+    /**
+     * Do deserialization
+     * @param serialized - Serialized data
+     */
+    deserialization(serialized: unknown): unknown | PromiseLike<unknown>
+}
 
 export enum MessageTarget {
     /** Current execution context */ IncludeLocal = 1 << 20,
@@ -20,7 +34,7 @@ export interface TargetBoundEventRegistry<T> {
     send(data: T): void
     /**
      * Pausing the dispatch of this event. Collect all new incoming events.
-     * @param reducer When resuming the dispatch of events, all pausing data will be passed into this function. Return value of the reducer will be used as the final result for dispatching. Every target will have a unique call to the reducer.
+     * @param reducer - When resuming the dispatch of events, all pausing data will be passed into this function. Return value of the reducer will be used as the final result for dispatching. Every target will have a unique call to the reducer.
      * @returns A function that resume the dispatching
      */
     pause(): (reducer?: (data: T[]) => T[]) => Promise<void>
@@ -143,7 +157,7 @@ export class WebExtensionMessage<Message> {
         return this.#domain
     }
     /**
-     * @param options WebExtensionMessage options
+     * @param options - WebExtensionMessage options
      */
     constructor(options?: WebExtensionMessageOptions) {
         // invoke the warning if needed
@@ -196,7 +210,7 @@ export class WebExtensionMessage<Message> {
      *
      * This API only works in the BackgroundPage.
      */
-    public serialization: Serialization = NoSerialization
+    public serialization: Serialization = { deserialization: x => x, serialization: x => x }
     public logFormatter: (instance: this, key: string, data: unknown) => unknown[] = (instance, key, data) => {
         return [
             `%cReceive%c %c${String(key)}`,

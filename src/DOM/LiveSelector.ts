@@ -294,21 +294,6 @@ export class LiveSelector<T, SingleMode extends boolean = false> {
      * Select only nth element
      *
      * @param n - Select only nth element, allow negative number.
-     * @deprecated Use "at" instead, see https://github.com/tc39/proposal-relative-indexing-method
-     * @example
-     * ```ts
-     * ls.nth(-1)
-     * ```
-     */
-    nth(
-        n: SingleMode extends true ? 'LiveSelector.nth() is not available in SingleMode' : number,
-    ): LiveSelector<T, SingleMode> {
-        return this.at(n)
-    }
-    /**
-     * Select only nth element
-     *
-     * @param n - Select only nth element, allow negative number.
      * @example
      * ```ts
      * ls.at(-1)

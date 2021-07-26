@@ -4,9 +4,7 @@
 
 ```ts
 
-import { AsyncCallOptions } from 'async-call-rpc';
 import { Emitter } from '@servie/events';
-import { EventBasedChannel } from 'async-call-rpc';
 import { EventListener as EventListener_2 } from '@servie/events';
 
 // @public
@@ -30,36 +28,6 @@ export namespace assertNotEnvironment {
     var // (undocumented)
     allOf: (...args: Environment[]) => void[];
 }
-
-// @public
-export function AutomatedTabTask<T extends Record<string, (...args: any[]) => PromiseLike<any>>>(taskImplements: T, options?: Partial<AutomatedTabTaskDefineTimeOptions>): ((urlOrTabID: string | number, options?: Partial<AutomatedTabTaskRuntimeOptions>) => T) | null;
-
-// @public
-export interface AutomatedTabTaskDefineTimeOptions extends AutomatedTabTaskSharedOptions {
-    AsyncCallOptions: Partial<AsyncCallOptions>;
-    concurrent: number;
-    memorizeTTL: number;
-}
-
-// @public
-export interface AutomatedTabTaskRuntimeOptions extends AutomatedTabTaskSharedOptions {
-    important: boolean;
-    needRedirect: boolean;
-    runAtTabID: number;
-    url: string;
-}
-
-// @public
-export interface AutomatedTabTaskSharedOptions {
-    active?: boolean;
-    autoClose: boolean;
-    memorable: boolean;
-    pinned?: boolean;
-    timeout: number;
-}
-
-// @public
-export type Contexts = 'background' | 'content' | 'webpage' | 'unknown' | 'options' | 'debugging';
 
 // @public
 export function DOMProxy<ProxiedElement extends Node = HTMLElement, Before extends Element = HTMLSpanElement, After extends Element = HTMLSpanElement>(options?: Partial<DOMProxyOptions<Before, After>>): DOMProxy<ProxiedElement, Before, After>;
@@ -133,9 +101,6 @@ export class EventWatcher<T, Before extends Element = HTMLSpanElement, After ext
     eventListener: () => void;
 }
 
-// @public @deprecated
-export function GetContext(): Contexts;
-
 // @public
 export function getEnvironment(): Environment;
 
@@ -181,8 +146,6 @@ export class LiveSelector<T, SingleMode extends boolean = false> {
     getElementsByTagName<E extends Element = Element>(tag: string): LiveSelector<E, SingleMode>;
     isSingleMode: boolean;
     map<NextType>(callbackfn: (element: T, index: number, array: T[]) => NextType): LiveSelector<NonNullable<NextType>, SingleMode>;
-    // @deprecated
-    nth(n: SingleMode extends true ? 'LiveSelector.nth() is not available in SingleMode' : number): LiveSelector<T, SingleMode>;
     querySelector<K extends keyof HTMLElementTagNameMap>(selector: K): LiveSelector<HTMLElementTagNameMap[K], SingleMode>;
     // (undocumented)
     querySelector<K extends keyof SVGElementTagNameMap>(selector: K): LiveSelector<SVGElementTagNameMap[K], SingleMode>;
@@ -199,24 +162,12 @@ export class LiveSelector<T, SingleMode extends boolean = false> {
     sort(compareFn?: (a: T, b: T) => number): LiveSelector<T, SingleMode>;
     }
 
-// @public @deprecated
-export class MessageCenter<ITypedMessages> {
-    constructor(sendToSelf: boolean, instanceKey?: string);
-    emit<Key extends keyof ITypedMessages>(key: Key, data: ITypedMessages[Key]): Promise<void>;
-    // (undocumented)
-    eventBasedChannel: EventBasedChannel;
-    off<Key extends keyof ITypedMessages>(event: Key, handler: (data: ITypedMessages[Key]) => void): void;
-    on<Key extends keyof ITypedMessages>(event: Key, handler: (data: ITypedMessages[Key]) => void): () => void;
-    serialization: Serialization;
-    writeToConsole(on: boolean): this;
-}
-
 // @public (undocumented)
 export enum MessageTarget {
     // (undocumented)
     All = 1048578,
-    // (undocumented)
     Broadcast = 2,
+    External = 16777216,
     FocusedPageOnly = 8388608,
     IncludeLocal = 1048576,
     // (undocumented)
@@ -237,12 +188,6 @@ export class MutationObserverWatcher<T, Before extends Element = HTMLSpanElement
     stopWatch(): void;
     }
 
-// @public @deprecated
-export function OnlyRunInContext(context: Contexts | Contexts[], name: string): void;
-
-// @public @deprecated
-export function OnlyRunInContext(context: Contexts | Contexts[], throws: false): boolean;
-
 // @public
 export function printEnvironment(e?: Environment): string;
 
@@ -251,6 +196,14 @@ export interface Serialization {
     deserialization(serialized: unknown): unknown | PromiseLike<unknown>;
     serialization(from: any): unknown | PromiseLike<unknown>;
 }
+
+// @public (undocumented)
+export type ShouldAcceptExternalConnection = (sender: browser.runtime.MessageSender) => ShouldAcceptExternalConnectionResult;
+
+// @public (undocumented)
+export type ShouldAcceptExternalConnectionResult = boolean | {
+    acceptAs: Environment;
+};
 
 // @public (undocumented)
 export interface TargetBoundEventRegistry<T> {
@@ -389,6 +342,7 @@ export interface WatcherEvents<T> {
 // @public (undocumented)
 export class WebExtensionMessage<Message> {
     constructor(options?: WebExtensionMessageOptions);
+    static acceptExternalConnect(acceptExternalConnectFn: ShouldAcceptExternalConnection): void;
     get domain(): string;
     // (undocumented)
     enableLog: boolean;
@@ -408,8 +362,8 @@ export class WebExtensionMessage<Message> {
 
 // @public (undocumented)
 export interface WebExtensionMessageOptions {
-    // (undocumented)
     readonly domain?: string;
+    readonly externalExtensionID?: string;
 }
 
 

@@ -14,5 +14,6 @@ export interface WebExtensionMessageOptions
 
 |  Property | Type | Description |
 |  --- | --- | --- |
-|  [domain?](./kit.webextensionmessageoptions.domain.md) | string | <i>(Optional)</i> |
+|  [domain?](./kit.webextensionmessageoptions.domain.md) | string | <i>(Optional)</i> The "domain" of the message. Messages within different domain won't affect each other. |
+|  [externalExtensionID?](./kit.webextensionmessageoptions.externalextensionid.md) | string | <i>(Optional)</i> Use this when connect from a normal web page. You must configure externally\_connectable to make it work.<!-- -->DO NOT use it to connect between two extensions!<!-- -->ONLY use it in a normal webpage.<!-- -->PLEASE make sure to call acceptExternalConnect otherwise it will not work. |
 

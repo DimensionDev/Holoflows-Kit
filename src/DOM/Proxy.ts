@@ -358,7 +358,7 @@ export interface DOMProxyEvents<ProxiedElement extends Node> {
     currentChanged: [{ new: ProxiedElement | null; old: ProxiedElement | null }]
 }
 
-type Keys = string | number | symbol
+type Keys = string | symbol
 type ActionRecord<T extends string, F> = { type: T; op: F }
 interface ActionTypes {
     delete: ActionRecord<'delete', Keys>

@@ -28,3 +28,9 @@ export declare class WebExtensionMessage<Message>
 |  [logFormatter](./kit.webextensionmessage.logformatter.md) |  | (instance: this, key: string, data: unknown) =&gt; unknown\[\] |  |
 |  [serialization](./kit.webextensionmessage.serialization.md) |  | [Serialization](./kit.serialization.md) | Watch new tabs created and get event listener register of that tab.<!-- -->This API only works in the BackgroundPage. |
 
+## Methods
+
+|  Method | Modifiers | Description |
+|  --- | --- | --- |
+|  [acceptExternalConnect(acceptExternalConnectFn)](./kit.webextensionmessage.acceptexternalconnect.md) | <code>static</code> | If the connection is not accepted, it will be passed to the next handler until it is handled or no more handlers |
+

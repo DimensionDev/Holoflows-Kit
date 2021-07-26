@@ -1,36 +1,3 @@
-/**
- * All context that possible in when developing a WebExtension
- * @deprecated, remove in 0.9.0
- */
-export type Contexts = 'background' | 'content' | 'webpage' | 'unknown' | 'options' | 'debugging'
-/**
- * Get current running context.
- * @deprecated Use getExtensionEnvironment(), remove in 0.9.0
- * @remarks
- * - background: background script
- * - content: content script
- * - webpage: a normal webpage
- * - unknown: unknown context
- */
-export function GetContext(): Contexts {
-    if (typeof location === 'undefined') return 'unknown'
-    if (typeof browser !== 'undefined' && browser !== null) {
-        const scheme = location.protocol.match('-extension')
-        const backgroundURL = browser.extension?.getBackgroundPage?.()?.location?.href
-        if (scheme || location.hostname === 'localhost') {
-            if (
-                backgroundURL === location.href ||
-                ['generated', 'background', 'page', '.html'].every((x) => location.pathname.match(x))
-            )
-                return 'background'
-        }
-        if (scheme) return 'options'
-        if (browser.runtime?.getManifest !== undefined) return 'content'
-    }
-    if (location.hostname === 'localhost') return 'debugging'
-    return 'webpage'
-}
-
 /** Current running environment of Web Extension */
 export enum Environment {
     /** has browser as a global variable */ HasBrowserAPI = 1 << 1,
@@ -176,32 +143,8 @@ export function printEnvironment(e: Environment = getEnvironment()) {
 }
 
 /**
- * Make sure this file only run in wanted context
- * @param context - Wanted context or contexts
- * @param name - name to throw
- * @deprecated Remove in 0.9.0, use assertEnvironment
- */
-export function OnlyRunInContext(context: Contexts | Contexts[], name: string): void
-/**
- * Make sure this file only run in wanted context
- * @param context - Wanted context or contexts
- * @param throws - set to false, OnlyRunInContext will not throws but return a boolean
- * @deprecated Remove in 0.9.0, use isEnvironment
- */
-export function OnlyRunInContext(context: Contexts | Contexts[], throws: false): boolean
-export function OnlyRunInContext(context: Contexts | Contexts[], name: string | false) {
-    const ctx = GetContext()
-    if (Array.isArray(context) ? context.indexOf(ctx) === -1 : context !== ctx) {
-        if (typeof name === 'string')
-            throw new TypeError(`${name} run in the wrong context. (Wanted ${context}, actually ${ctx})`)
-        else return false
-    }
-    return true
-}
-
-/**
  * Assert the current environment satisfy the expectation
- * @param env The expected environment
+ * @param env - The expected environment
  */
 export function assertEnvironment(env: Environment) {
     if (!isEnvironment(env))
@@ -218,7 +161,7 @@ assertEnvironment.allOf = (...args: Environment[]) => {
 
 /**
  * Assert the current environment NOT satisfy the rejected flags
- * @param env The rejected environment
+ * @param env - The rejected environment
  */
 export function assertNotEnvironment(env: Environment) {
     if (getEnvironment() & env)
@@ -234,7 +177,7 @@ assertNotEnvironment.allOf = (...args: Environment[]) => {
 }
 /**
  * Check if the current environment satisfy the expectation
- * @param env The expectation environment
+ * @param env - The expectation environment
  */
 export function isEnvironment(env: Environment) {
     const now = getEnvironment()

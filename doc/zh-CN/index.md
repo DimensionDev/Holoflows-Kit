@@ -16,12 +16,10 @@
 
 -   Extension - 一些扩展开发会使用到的实用工具
 -   -   [Context](../../api-documents/kit.contexts.md) 在扩展开发中检测当前的上下文
--   -   [MessageCenter](../../api-documents/kit.messagecenter.md) 在插件开发的不同上下文中通信
--   -   [AutomatedTabTask](../../api-documents/kit.automatedtabtask.md) 打开一个新的标签页，自动执行某些任务，然后回传结果
+-   -   [MessageCenter](../../api-documents/kit.messagechannel.md) 在插件开发的不同上下文中通信
 
 -   Util
 -   -   [ValueRef](../../api-documents/kit.valueref.md) 通过 `setter` 订阅值的变化
--   -   [AsyncCall](../../api-documents/kit.asynccall.md) 跨上下文的远程过程调用工具
 
 ## 安装
 
