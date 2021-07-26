@@ -39,7 +39,7 @@
     "test:ci": "jest"
   },
   "dependencies": {
-    "@servie/events": "^1.0.0",
+    "@servie/events": "^3.0.0",
     "event-iterator": "^2.0.0",
     "jsx-jsonml-devtools-renderer": "^1.4.3",
     "lodash-es": "^4.17.21",
