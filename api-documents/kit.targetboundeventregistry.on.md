@@ -7,7 +7,7 @@
 <b>Signature:</b>
 
 ```typescript
-on(callback: (data: T) => void): () => void;
+on(callback: (data: T) => void, options?: TargetBoundEventListenerOptions): () => void;
 ```
 
 ## Parameters
@@ -15,6 +15,7 @@ on(callback: (data: T) => void): () => void;
 |  Parameter | Type | Description |
 |  --- | --- | --- |
 |  callback | (data: T) =&gt; void |  |
+|  options | [TargetBoundEventListenerOptions](./kit.targetboundeventlisteneroptions.md) |  |
 
 <b>Returns:</b>
 

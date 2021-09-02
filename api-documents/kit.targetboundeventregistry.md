@@ -15,7 +15,7 @@ export interface TargetBoundEventRegistry<T>
 |  Method | Description |
 |  --- | --- |
 |  [off(callback)](./kit.targetboundeventregistry.off.md) |  |
-|  [on(callback)](./kit.targetboundeventregistry.on.md) |  |
+|  [on(callback, options)](./kit.targetboundeventregistry.on.md) |  |
 |  [pause()](./kit.targetboundeventregistry.pause.md) | Pausing the dispatch of this event. Collect all new incoming events. |
 |  [send(data)](./kit.targetboundeventregistry.send.md) |  |
 

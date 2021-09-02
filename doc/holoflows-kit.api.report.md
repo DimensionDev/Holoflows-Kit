@@ -4,6 +4,8 @@
 
 ```ts
 
+/// <reference types="global" />
+
 import { Emitter } from '@servie/events';
 import { EventListener as EventListener_2 } from '@servie/events';
 
@@ -108,7 +110,7 @@ export function getEnvironment(): Environment;
 export class IntervalWatcher<T, Before extends Element = HTMLSpanElement, After extends Element = HTMLSpanElement, SingleMode extends boolean = false> extends Watcher<T, Before, After, SingleMode> {
     startWatch(interval: number): this;
     stopWatch(): void;
-    }
+}
 
 // @public
 export function isEnvironment(env: Environment): boolean;
@@ -160,7 +162,7 @@ export class LiveSelector<T, SingleMode extends boolean = false> {
     reverse(): LiveSelector<T, SingleMode>;
     slice(start?: number, end?: number): LiveSelector<T, SingleMode>;
     sort(compareFn?: (a: T, b: T) => number): LiveSelector<T, SingleMode>;
-    }
+}
 
 // @public (undocumented)
 export enum MessageTarget {
@@ -186,7 +188,7 @@ export class MutationObserverWatcher<T, Before extends Element = HTMLSpanElement
     protected liveSelector: LiveSelector<T, SingleMode>;
     startWatch(options: MutationObserverInit): this;
     stopWatch(): void;
-    }
+}
 
 // @public
 export function printEnvironment(e?: Environment): string;
@@ -206,11 +208,17 @@ export type ShouldAcceptExternalConnectionResult = boolean | {
 };
 
 // @public (undocumented)
+export interface TargetBoundEventListenerOptions {
+    once?: boolean;
+    signal?: AbortSignal;
+}
+
+// @public (undocumented)
 export interface TargetBoundEventRegistry<T> {
     // (undocumented)
     off(callback: (data: T) => void): void;
     // (undocumented)
-    on(callback: (data: T) => void): () => void;
+    on(callback: (data: T) => void, options?: TargetBoundEventListenerOptions): () => void;
     pause(): (reducer?: (data: T[]) => T[]) => Promise<void>;
     // (undocumented)
     send(data: T): void;
@@ -247,7 +255,7 @@ export class ValueRef<T> {
     removeListener(fn: (newVal: T, oldVal: T) => void): void;
     get value(): T;
     set value(newVal: T);
-    }
+}
 
 // Warning: (ae-forgotten-export) The symbol "ResultOf" needs to be exported by the entry point index.d.ts
 //
@@ -302,40 +310,40 @@ export abstract class Watcher<T, Before extends Element, After extends Element, 
         ignored: boolean;
         stack: string;
     };
-    }
+}
 
 // @public (undocumented)
 export interface WatcherEvents<T> {
     // @eventProperty (undocumented)
     onAdd: [
         {
-            key: unknown;
-            value: T;
-        }
+        key: unknown;
+        value: T;
+    }
     ];
     // @eventProperty (undocumented)
     onChange: [
         {
-            oldKey: unknown;
-            newKey: unknown;
-            oldValue?: T;
-            newValue: T;
-        }
+        oldKey: unknown;
+        newKey: unknown;
+        oldValue?: T;
+        newValue: T;
+    }
     ];
     // @eventProperty (undocumented)
     onIteration: [
         {
-            new: Map<unknown, T>;
-            removed: Map<unknown, T>;
-            current: Map<unknown, T>;
-        }
+        new: Map<unknown, T>;
+        removed: Map<unknown, T>;
+        current: Map<unknown, T>;
+    }
     ];
     // @eventProperty (undocumented)
     onRemove: [
         {
-            key: unknown;
-            value: T;
-        }
+        key: unknown;
+        value: T;
+    }
     ];
 }
 
@@ -358,13 +366,12 @@ export class WebExtensionMessage<Message> {
     // (undocumented)
     logFormatter: (instance: this, key: string, data: unknown) => unknown[];
     serialization: Serialization;
-    }
+}
 
 // @public (undocumented)
 export interface WebExtensionMessageOptions {
     readonly domain?: string;
     readonly externalExtensionID?: string;
 }
-
 
 ```

@@ -44,6 +44,7 @@ A toolkit for browser extension developing.
 |  [DOMProxyEvents](./kit.domproxyevents.md) | Events on the DOMProxy object |
 |  [DOMProxyOptions](./kit.domproxyoptions.md) | Options for DOMProxy |
 |  [Serialization](./kit.serialization.md) | Define how to do serialization and deserialization of remote procedure call |
+|  [TargetBoundEventListenerOptions](./kit.targetboundeventlisteneroptions.md) |  |
 |  [TargetBoundEventRegistry](./kit.targetboundeventregistry.md) |  |
 |  [UnboundedRegistry](./kit.unboundedregistry.md) |  |
 |  [WatcherEvents](./kit.watcherevents.md) |  |

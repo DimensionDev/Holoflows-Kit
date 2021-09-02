@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/strict-boolean-expressions */
+/* eslint-disable no-bitwise */
 import { Emitter } from '@servie/events'
 import { EventIterator } from 'event-iterator'
 import { Environment, getEnvironment, isEnvironment } from './Context'
@@ -5,7 +7,7 @@ import { Environment, getEnvironment, isEnvironment } from './Context'
 /**
  * Define how to do serialization and deserialization of remote procedure call
  */
- export interface Serialization {
+export interface Serialization {
     /**
      * Do serialization
      * @param from - original data
@@ -27,9 +29,15 @@ export enum MessageTarget {
     /** Externals not included */ Broadcast = Environment.HasBrowserAPI,
     All = Broadcast | IncludeLocal,
 }
+export interface TargetBoundEventListenerOptions {
+    /** Run the listener only once. */
+    once?: boolean
+    /** Cancel the listener by AbortSignal */
+    signal?: AbortSignal
+}
 export interface TargetBoundEventRegistry<T> {
     /** @returns A function to remove the listener */
-    on(callback: (data: T) => void): () => void
+    on(callback: (data: T) => void, options?: TargetBoundEventListenerOptions): () => void
     off(callback: (data: T) => void): void
     send(data: T): void
     /**
@@ -210,7 +218,7 @@ export class WebExtensionMessage<Message> {
      *
      * This API only works in the BackgroundPage.
      */
-    public serialization: Serialization = { deserialization: x => x, serialization: x => x }
+    public serialization: Serialization = { deserialization: (x) => x, serialization: (x) => x }
     public logFormatter: (instance: this, key: string, data: unknown) => unknown[] = (instance, key, data) => {
         return [
             `%cReceive%c %c${String(key)}`,
@@ -285,9 +293,13 @@ function UnboundedRegistry<T>(
         })
     }
     let binder: TargetBoundEventRegistry<T>
-    function on(cb: (data: T) => void) {
+    function on(cb: (data: T) => void, options?: TargetBoundEventListenerOptions) {
         eventListener.on(eventName, cb)
-        return () => eventListener.off(eventName, cb)
+
+        const off = () => eventListener.off(eventName, cb)
+        if (options?.once) eventListener.on(eventName, off)
+        if (options?.signal) options.signal.addEventListener('abort', off)
+        return off
     }
     function off(cb: (data: T) => void) {
         eventListener.off(eventName, cb)
@@ -386,7 +398,7 @@ function backgroundPortBoarding(port: browser.runtime.Port, sender: undefined | 
     // Client will report it's environment flag on connection
     port.onMessage.addListener(function environmentListener(x) {
         const obj = backgroundOnlyLivingPorts.get(port)!
-        if (typeof obj.environment === "undefined") obj.environment = Number(x)
+        if (typeof obj.environment === 'undefined') obj.environment = Number(x)
         port.onMessage.removeListener(environmentListener)
     })
     port.onMessage.addListener(backgroundPageMessageHandler.bind(port))
