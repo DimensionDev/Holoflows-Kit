@@ -9,7 +9,7 @@ Start to watch the LiveSelector at a interval(ms).
 <b>Signature:</b>
 
 ```typescript
-startWatch(interval: number): this;
+startWatch(interval: number, signal?: AbortSignal): this;
 ```
 
 ## Parameters
@@ -17,6 +17,7 @@ startWatch(interval: number): this;
 |  Parameter | Type | Description |
 |  --- | --- | --- |
 |  interval | number |  |
+|  signal | AbortSignal | <i>(Optional)</i> |
 
 <b>Returns:</b>
 

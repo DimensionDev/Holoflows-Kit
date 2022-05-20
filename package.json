@@ -25,7 +25,7 @@
   "scripts": {
     "build": "env-cmd -e production run-s clean build:tsc build:rollup",
     "build:rollup": "rollup -c -m",
-    "build:tsc": "tsc",
+    "build:tsc": "tsc -p tsconfig.json",
     "clean": "rimraf ./es ./umd",
     "doc": "run-s build:tsc doc:api doc:md",
     "doc:api": "api-extractor run --local --verbose",
@@ -35,7 +35,7 @@
     "prepublishOnly": "npm run build",
     "start": "env-cmd -e development run-p start:tsc start:rollup",
     "start:rollup": "rollup -c -w",
-    "start:tsc": "tsc --watch"
+    "start:tsc": "tsc --watch -p tsconfig.json"
   },
   "dependencies": {
     "@servie/events": "^3.0.0",

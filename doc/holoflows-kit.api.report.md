@@ -95,6 +95,8 @@ export enum Environment {
 export class EventWatcher<T, Before extends Element = HTMLSpanElement, After extends Element = HTMLSpanElement, SingleMode extends boolean = false> extends Watcher<T, Before, After, SingleMode> {
     constructor(liveSelector: LiveSelector<T, SingleMode>);
     eventListener: () => void;
+    // (undocumented)
+    startWatch(signal?: AbortSignal): this;
 }
 
 // @public
@@ -102,7 +104,7 @@ export function getEnvironment(): Environment;
 
 // @public
 export class IntervalWatcher<T, Before extends Element = HTMLSpanElement, After extends Element = HTMLSpanElement, SingleMode extends boolean = false> extends Watcher<T, Before, After, SingleMode> {
-    startWatch(interval: number): this;
+    startWatch(interval: number, signal?: AbortSignal): this;
     stopWatch(): void;
 }
 
@@ -179,7 +181,7 @@ export class MutationObserverWatcher<T, Before extends Element = HTMLSpanElement
     // (undocumented)
     protected defaultStarterForThen(): void;
     protected liveSelector: LiveSelector<T, SingleMode>;
-    startWatch(options: MutationObserverInit): this;
+    startWatch(options: MutationObserverInit, signal?: AbortSignal): this;
     stopWatch(): void;
 }
 

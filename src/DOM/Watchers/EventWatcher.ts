@@ -14,7 +14,7 @@ export class EventWatcher<
     T,
     Before extends Element = HTMLSpanElement,
     After extends Element = HTMLSpanElement,
-    SingleMode extends boolean = false
+    SingleMode extends boolean = false,
 > extends Watcher<T, Before, After, SingleMode> {
     constructor(liveSelector: LiveSelector<T, SingleMode>) {
         super(liveSelector)
@@ -25,5 +25,11 @@ export class EventWatcher<
      */
     public eventListener = () => {
         this.requestIdleCallback(this.scheduleWatcherCheck, { timeout: 500 })
+    }
+    override startWatch(signal?: AbortSignal) {
+        signal?.addEventListener('abort', () => {
+            this.stopWatch()
+        }, { once: true })
+        return this
     }
 }

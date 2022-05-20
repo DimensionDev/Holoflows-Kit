@@ -33,3 +33,9 @@ document.addEventListener('event', e.eventListener)
 |  --- | --- | --- | --- |
 |  [eventListener](./kit.eventwatcher.eventlistener.md) |  | () =&gt; void | Use this function as event listener to invoke watcher. |
 
+## Methods
+
+|  Method | Modifiers | Description |
+|  --- | --- | --- |
+|  [startWatch(signal)](./kit.eventwatcher.startwatch.md) |  |  |
+

@@ -9,7 +9,7 @@ Start an MutationObserverWatcher.
 <b>Signature:</b>
 
 ```typescript
-startWatch(options: MutationObserverInit): this;
+startWatch(options: MutationObserverInit, signal?: AbortSignal): this;
 ```
 
 ## Parameters
@@ -17,6 +17,7 @@ startWatch(options: MutationObserverInit): this;
 |  Parameter | Type | Description |
 |  --- | --- | --- |
 |  options | MutationObserverInit |  |
+|  signal | AbortSignal | <i>(Optional)</i> |
 
 <b>Returns:</b>
 

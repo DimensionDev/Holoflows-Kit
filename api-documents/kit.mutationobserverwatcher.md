@@ -41,6 +41,6 @@ new MutationObserverWatcher(ls)
 |  Method | Modifiers | Description |
 |  --- | --- | --- |
 |  [defaultStarterForThen()](./kit.mutationobserverwatcher.defaultstarterforthen.md) |  |  |
-|  [startWatch(options)](./kit.mutationobserverwatcher.startwatch.md) |  | Start an MutationObserverWatcher. |
+|  [startWatch(options, signal)](./kit.mutationobserverwatcher.startwatch.md) |  | Start an MutationObserverWatcher. |
 |  [stopWatch()](./kit.mutationobserverwatcher.stopwatch.md) |  | Stop the watcher |
 

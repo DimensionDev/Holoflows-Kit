@@ -28,6 +28,6 @@ new IntervalWatcher(ls)
 
 |  Method | Modifiers | Description |
 |  --- | --- | --- |
-|  [startWatch(interval)](./kit.intervalwatcher.startwatch.md) |  | Start to watch the LiveSelector at a interval(ms). |
+|  [startWatch(interval, signal)](./kit.intervalwatcher.startwatch.md) |  | Start to watch the LiveSelector at a interval(ms). |
 |  [stopWatch()](./kit.intervalwatcher.stopwatch.md) |  | Stop the watcher |
 

@@ -50,7 +50,11 @@ export class MutationObserverWatcher<
      *
      * https://mdn.io/MutationObserverInit
      */
-    override startWatch(options: MutationObserverInit) {
+    override startWatch(options: MutationObserverInit, signal?: AbortSignal) {
+        signal?.addEventListener('abort', () => {
+            this.stopWatch()
+        }, { once: true })
+
         super.startWatch()
         this.isWatching = true
         const watch = (root?: Node) => {
