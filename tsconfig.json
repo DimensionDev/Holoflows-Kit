@@ -20,8 +20,8 @@
     "useUnknownInCatchVariables": true,
 
     // Modules
-    "module": "ESNext",
-    "moduleResolution": "node",
+    "module": "NodeNext",
+    "moduleResolution": "NodeNext",
     "resolveJsonModule": true,
     // Exclude everything by default. Include them in each project on-demand
     "types": ["web-ext-types"],
@@ -51,7 +51,8 @@
     "useDefineForClassFields": true,
 
     // Projects
-    "composite": true,
+    // "composite": true,
+    "incremental": false,
 
     // Completeness
     "skipLibCheck": true // skip all type checks for .d.ts files

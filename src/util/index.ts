@@ -1,1 +1,1 @@
-export * from './ValueRef'
+export * from './ValueRef.js'

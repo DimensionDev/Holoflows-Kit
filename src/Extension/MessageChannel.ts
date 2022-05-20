@@ -2,7 +2,7 @@
 /* eslint-disable no-bitwise */
 import { Emitter } from '@servie/events'
 import { EventIterator } from 'event-iterator'
-import { Environment, getEnvironment, isEnvironment } from './Context'
+import { Environment, getEnvironment, isEnvironment } from './Context.js'
 
 /**
  * Define how to do serialization and deserialization of remote procedure call

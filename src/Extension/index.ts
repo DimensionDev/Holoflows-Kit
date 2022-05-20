@@ -1,2 +1,2 @@
-export * from './Context'
-export * from './MessageChannel'
+export * from './Context.js'
+export * from './MessageChannel.js'

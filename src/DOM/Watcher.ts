@@ -9,13 +9,13 @@
  * - Interval watcher (based on time interval)
  * - Event watcher (based on addEventListener)
  */
-import { DOMProxy, DOMProxyOptions } from './Proxy'
+import { DOMProxy, DOMProxyOptions } from './Proxy.js'
 import { Emitter, EventListener } from '@servie/events'
-import type { LiveSelector } from './LiveSelector'
+import type { LiveSelector } from './LiveSelector.js'
 
-import { Deadline, requestIdleCallback } from '../util/requestIdleCallback'
+import { Deadline, requestIdleCallback } from '../util/requestIdleCallback.js'
 import { isNil, uniqWith, intersectionWith, differenceWith } from 'lodash-es'
-import { timeout } from '../util/timeout'
+import { timeout } from '../util/timeout.js'
 
 /**
  * Use LiveSelector to watch dom change

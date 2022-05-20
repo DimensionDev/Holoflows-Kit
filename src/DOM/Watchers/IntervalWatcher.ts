@@ -1,4 +1,4 @@
-import { Watcher } from '../Watcher'
+import { Watcher } from '../Watcher.js'
 /**
  * A watcher based on time interval.
  *
