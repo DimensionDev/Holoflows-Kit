@@ -7,5 +7,5 @@
 <b>Signature:</b>
 
 ```typescript
-protected get eventRegistry(): EventRegistry;
+protected get eventRegistry(): Emitter<any>;
 ```

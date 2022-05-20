@@ -2,6 +2,7 @@
 /* eslint-disable no-bitwise */
 import { Emitter } from '@servie/events'
 import { EventIterator } from 'event-iterator'
+import { createEventTarget } from '../util/EventTarget.js'
 import { Environment, getEnvironment, isEnvironment } from './Context.js'
 
 /**
@@ -231,9 +232,9 @@ export class WebExtensionMessage<Message> {
     }
     public enableLog = false
     public log: (...args: unknown[]) => void = console.log
-    #eventRegistry: EventRegistry = new Emitter<any>()
+    #eventRegistry = createEventTarget<Record<string, [unknown]>>()
     protected get eventRegistry() {
-        return this.#eventRegistry
+        return this.#eventRegistry.emitter
     }
 }
 //#region Internal message handling
@@ -272,7 +273,7 @@ function shouldAcceptThisMessage(target: BoundTarget) {
 function UnboundedRegistry<T>(
     instance: WebExtensionMessage<T>,
     eventName: string,
-    eventListener: Emitter<any>,
+    eventListener: ReturnType<typeof createEventTarget<any>>,
 ): UnboundedRegistry<T> {
     //#region Batch message
     let pausing = false
@@ -294,17 +295,11 @@ function UnboundedRegistry<T>(
         })
     }
     let binder: TargetBoundEventRegistry<T>
-    const removeListenerWeakMap = new WeakMap<Function, Function>()
     function on(cb: (data: T) => void, options?: TargetBoundEventListenerOptions) {
-        const off = eventListener.on(eventName, cb)
-        removeListenerWeakMap.set(cb, off)
-
-        if (options?.once) eventListener.on(eventName, off)
-        if (options?.signal) options.signal.addEventListener('abort', off, { once: true })
-        return off
+        return eventListener.add(eventName, cb, options)
     }
     function off(cb: (data: T) => void) {
-        removeListenerWeakMap.get(cb)?.()
+        eventListener.remove(eventName, cb)
     }
     function pause() {
         pausing = true
@@ -343,7 +338,6 @@ function UnboundedRegistry<T>(
     }
     return self
 }
-type EventRegistry = Emitter<Record<string, [unknown]>>
 type BoundTarget =
     | { kind: 'tab'; id: number }
     | { kind: 'target'; target: MessageTarget | Environment }

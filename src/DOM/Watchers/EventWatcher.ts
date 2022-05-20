@@ -27,6 +27,7 @@ export class EventWatcher<
         this.requestIdleCallback(this.scheduleWatcherCheck, { timeout: 500 })
     }
     override startWatch(signal?: AbortSignal) {
+        super.startWatch()
         signal?.addEventListener(
             'abort',
             () => {

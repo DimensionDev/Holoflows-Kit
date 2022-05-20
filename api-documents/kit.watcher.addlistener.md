@@ -7,7 +7,7 @@
 <b>Signature:</b>
 
 ```typescript
-addListener<K extends keyof WatcherEvents<T>>(type: K, callback: EventListener<WatcherEvents<T>, K>): this;
+addListener<K extends keyof WatcherEvents<T>>(type: K, callback: EventListener<WatcherEvents<T>, K>, options?: AddEventListenerOptions): this;
 ```
 
 ## Parameters
@@ -16,6 +16,7 @@ addListener<K extends keyof WatcherEvents<T>>(type: K, callback: EventListener<W
 |  --- | --- | --- |
 |  type | K |  |
 |  callback | EventListener&lt;[WatcherEvents](./kit.watcherevents.md)<!-- -->&lt;T&gt;, K&gt; |  |
+|  options | AddEventListenerOptions | <i>(Optional)</i> |
 
 <b>Returns:</b>
 

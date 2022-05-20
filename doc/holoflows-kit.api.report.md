@@ -7,7 +7,7 @@
 /// <reference types="web-ext-types" />
 
 import { Emitter } from '@servie/events';
-import { EventListener as EventListener_2 } from '@servie/events';
+import type { EventListener as EventListener_2 } from '@servie/events';
 
 // @public
 export function assertEnvironment(env: Environment): void;
@@ -258,7 +258,7 @@ export class ValueRef<T> {
 export abstract class Watcher<T, Before extends Element, After extends Element, SingleMode extends boolean> implements PromiseLike<ResultOf<SingleMode, T>> {
     constructor(liveSelector: LiveSelector<T, SingleMode>);
     // (undocumented)
-    addListener<K extends keyof WatcherEvents<T>>(type: K, callback: EventListener_2<WatcherEvents<T>, K>): this;
+    addListener<K extends keyof WatcherEvents<T>>(type: K, callback: EventListener_2<WatcherEvents<T>, K>, options?: AddEventListenerOptions): this;
     assignKeys<Q = unknown>(keyAssigner: (node: T, index: number, arr: readonly T[]) => Q): this;
     // (undocumented)
     protected defaultStarterForThen(): void;
@@ -348,10 +348,8 @@ export class WebExtensionMessage<Message> {
     get domain(): string;
     // (undocumented)
     enableLog: boolean;
-    // Warning: (ae-forgotten-export) The symbol "EventRegistry" needs to be exported by the entry point index.d.ts
-    //
     // (undocumented)
-    protected get eventRegistry(): EventRegistry;
+    protected get eventRegistry(): Emitter<any>;
     get events(): {
         readonly [K in keyof Message]: UnboundedRegistry<Message[K]>;
     };
