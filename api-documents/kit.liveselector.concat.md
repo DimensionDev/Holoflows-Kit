@@ -27,6 +27,5 @@ concat<NextType>(newEle: LiveSelector<NextType, SingleMode>): LiveSelector<T | N
 
 ```ts
 ls.concat(new LiveSelector().querySelector('#root'))
-
 ```
 

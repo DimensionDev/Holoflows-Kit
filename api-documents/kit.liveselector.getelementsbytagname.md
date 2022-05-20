@@ -28,6 +28,5 @@ Equal to ls.querySelectorAll('a b')
 
 ```ts
 ls.getElementsByTagName('a').getElementsByTagName('b')
-
 ```
 

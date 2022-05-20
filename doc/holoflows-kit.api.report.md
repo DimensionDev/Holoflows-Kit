@@ -4,7 +4,7 @@
 
 ```ts
 
-/// <reference types="global" />
+/// <reference types="web-ext-types" />
 
 import { Emitter } from '@servie/events';
 import { EventListener as EventListener_2 } from '@servie/events';
@@ -33,12 +33,6 @@ export namespace assertNotEnvironment {
 
 // @public
 export function DOMProxy<ProxiedElement extends Node = HTMLElement, Before extends Element = HTMLSpanElement, After extends Element = HTMLSpanElement>(options?: Partial<DOMProxyOptions<Before, After>>): DOMProxy<ProxiedElement, Before, After>;
-
-// @public (undocumented)
-export namespace DOMProxy {
-    var // (undocumented)
-    enhanceDebugger: () => void;
-}
 
 // @public
 export interface DOMProxy<ProxiedElement extends Node = HTMLElement, Before extends Element = HTMLSpanElement, After extends Element = HTMLSpanElement> extends Omit<Emitter<DOMProxyEvents<ProxiedElement>>, '_' | '$'> {
@@ -136,7 +130,6 @@ export class LiveSelector<T, SingleMode extends boolean = false> {
     closest<E extends Element = Element>(selectors: string): LiveSelector<E, SingleMode>;
     concat<NextType>(newEle: LiveSelector<NextType, SingleMode>): LiveSelector<T | NextType, SingleMode>;
     enableSingleMode(): LiveSelector<T, true>;
-    static enhanceDebugger(): void;
     evaluate(): SingleMode extends true ? T | undefined : T[];
     filter(f: (value: T, index: number, array: T[]) => any): LiveSelector<NonNullable<T>, SingleMode>;
     flat(): LiveSelector<T extends ArrayLike<infer U> ? U : never, SingleMode>;
@@ -260,7 +253,7 @@ export class ValueRef<T> {
 // Warning: (ae-forgotten-export) The symbol "ResultOf" needs to be exported by the entry point index.d.ts
 //
 // @public
-export abstract class Watcher<T, Before extends Element, After extends Element, SingleMode extends boolean> extends Emitter<WatcherEvents<T>> implements PromiseLike<ResultOf<SingleMode, T>> {
+export abstract class Watcher<T, Before extends Element, After extends Element, SingleMode extends boolean> implements PromiseLike<ResultOf<SingleMode, T>> {
     constructor(liveSelector: LiveSelector<T, SingleMode>);
     // (undocumented)
     addListener<K extends keyof WatcherEvents<T>>(type: K, callback: EventListener_2<WatcherEvents<T>, K>): this;
@@ -269,7 +262,6 @@ export abstract class Watcher<T, Before extends Element, After extends Element, 
     protected defaultStarterForThen(): void;
     dismissSingleModeWarning(): this;
     protected domProxyOption: Partial<DOMProxyOptions<Before, After>>;
-    static enhanceDebugger(): void;
     protected findNodeFromListByKey: (list: readonly T[], keys: readonly unknown[]) => (key: unknown) => T | null;
     get firstDOMProxy(): T extends Node ? DOMProxy<T, Before, After> : never;
     protected _firstDOMProxy: DOMProxy<Node, Before, After>;
@@ -287,7 +279,7 @@ export abstract class Watcher<T, Before extends Element, After extends Element, 
     // (undocumented)
     removeListener<K extends keyof WatcherEvents<T>>(type: K, callback: EventListener_2<WatcherEvents<T>, K>): this;
     // Warning: (ae-forgotten-export) The symbol "requestIdleCallback" needs to be exported by the entry point index.d.ts
-    protected readonly requestIdleCallback: typeof requestIdleCallback;
+    protected readonly requestIdleCallback: typeof requestIdleCallback_2;
     protected scheduleWatcherCheck: () => void;
     setComparer(keyComparer?: (a: unknown, b: unknown) => boolean, valueComparer?: (a: T, b: T) => boolean): this;
     setDOMProxyOption(option: Partial<DOMProxyOptions<Before, After>>): this;

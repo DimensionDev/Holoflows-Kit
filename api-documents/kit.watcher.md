@@ -9,11 +9,9 @@ Use LiveSelector to watch dom change
 <b>Signature:</b>
 
 ```typescript
-export declare abstract class Watcher<T, Before extends Element, After extends Element, SingleMode extends boolean> extends Emitter<WatcherEvents<T>> implements PromiseLike<ResultOf<SingleMode, T>> 
+export declare abstract class Watcher<T, Before extends Element, After extends Element, SingleMode extends boolean> implements PromiseLike<ResultOf<SingleMode, T>> 
 ```
-<b>Extends:</b> Emitter&lt;[WatcherEvents](./kit.watcherevents.md)<!-- -->&lt;T&gt;&gt;
-
-<b>Implements:</b> PromiseLike&lt;ResultOf&lt;SingleMode, T&gt;&gt;
+<b>Implements:</b> PromiseLike&lt;ResultOf
 
 ## Constructors
 
@@ -55,7 +53,6 @@ export declare abstract class Watcher<T, Before extends Element, After extends E
 |  [assignKeys(keyAssigner)](./kit.watcher.assignkeys.md) |  | To help identify same nodes in different iteration, you need to implement a map function that map <code>node</code> to <code>key</code>If the key is changed, the same node will call through <code>forEachRemove</code> then <code>forEach</code> |
 |  [defaultStarterForThen()](./kit.watcher.defaultstarterforthen.md) |  |  |
 |  [dismissSingleModeWarning()](./kit.watcher.dismisssinglemodewarning.md) |  | Dismiss the warning that let you enable single mode but the warning is false positive. |
-|  [enhanceDebugger()](./kit.watcher.enhancedebugger.md) | <code>static</code> | Call this function to enhance the debug experience in the Chrome DevTools<!-- -->You need to open "Enable custom formatters" in your DevTools settings. |
 |  [getDOMProxyByKey(key)](./kit.watcher.getdomproxybykey.md) |  | Get DOMProxy by key. DOMProxy will be unavailable if it is deleted |
 |  [omitWarningForForgetWatch()](./kit.watcher.omitwarningforforgetwatch.md) |  | If you're expecting Watcher may not be called, call this function, this will omit the warning. |
 |  [omitWarningForRepeatedKeys()](./kit.watcher.omitwarningforrepeatedkeys.md) |  | If you're expecting repeating keys, call this function, this will omit the warning. |

@@ -56,7 +56,6 @@ A toolkit for browser extension developing.
 |  --- | --- |
 |  [assertEnvironment](./kit.assertenvironment.md) |  |
 |  [assertNotEnvironment](./kit.assertnotenvironment.md) |  |
-|  [DOMProxy](./kit.domproxy.md) |  |
 |  [isEnvironment](./kit.isenvironment.md) |  |
 
 ## Type Aliases

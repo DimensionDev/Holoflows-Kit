@@ -16,5 +16,5 @@ constructor(options?: WebExtensionMessageOptions);
 
 |  Parameter | Type | Description |
 |  --- | --- | --- |
-|  options | [WebExtensionMessageOptions](./kit.webextensionmessageoptions.md) | WebExtensionMessage options |
+|  options | [WebExtensionMessageOptions](./kit.webextensionmessageoptions.md) | <i>(Optional)</i> WebExtensionMessage options |
 

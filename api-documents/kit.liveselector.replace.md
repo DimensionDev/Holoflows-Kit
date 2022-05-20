@@ -27,6 +27,5 @@ replace<NextType>(f: (arr: T[]) => NextType[]): LiveSelector<NextType, SingleMod
 
 ```ts
 ls.replace(x => lodash.dropRight(x, 2))
-
 ```
 

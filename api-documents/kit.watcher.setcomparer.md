@@ -18,8 +18,8 @@ setComparer(keyComparer?: (a: unknown, b: unknown) => boolean, valueComparer?: (
 
 |  Parameter | Type | Description |
 |  --- | --- | --- |
-|  keyComparer | (a: unknown, b: unknown) =&gt; boolean | compare between two keys, defaults to <code>===</code> |
-|  valueComparer | (a: T, b: T) =&gt; boolean | compare between two value, defaults to <code>===</code> |
+|  keyComparer | (a: unknown, b: unknown) =&gt; boolean | <i>(Optional)</i> compare between two keys, defaults to <code>===</code> |
+|  valueComparer | (a: T, b: T) =&gt; boolean | <i>(Optional)</i> compare between two value, defaults to <code>===</code> |
 
 <b>Returns:</b>
 
@@ -33,6 +33,5 @@ watcher.setComparer(
     (a, b) => JSON.stringify(a) === JSON.stringify(b),
     (a, b) => a.equals(b)
 )
-
 ```
 

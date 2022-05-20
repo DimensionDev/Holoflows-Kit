@@ -29,6 +29,5 @@ this
 
 ```ts
 watcher.assignKeys(node => node.innerText)
-
 ```
 

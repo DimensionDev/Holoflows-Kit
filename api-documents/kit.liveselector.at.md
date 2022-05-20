@@ -27,6 +27,5 @@ at(n: SingleMode extends true ? 'LiveSelector.nth() is not available in SingleMo
 
 ```ts
 ls.at(-1)
-
 ```
 

@@ -20,6 +20,5 @@ flat(): LiveSelector<T extends ArrayLike<infer U> ? U : never, SingleMode>;
 
 ```ts
 ls.flat()
-
 ```
 

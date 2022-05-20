@@ -2,17 +2,52 @@
 
 [Home](./index.md) &gt; [@holoflows/kit](./kit.md) &gt; [DOMProxy](./kit.domproxy.md)
 
-## DOMProxy namespace
+## DOMProxy interface
+
+DOMProxy provide an interface that be stable even dom is changed.
 
 <b>Signature:</b>
 
 ```typescript
-export declare namespace DOMProxy 
+export interface DOMProxy<ProxiedElement extends Node = HTMLElement, Before extends Element = HTMLSpanElement, After extends Element = HTMLSpanElement> extends Omit<Emitter<DOMProxyEvents<ProxiedElement>>, '_' | '$'> 
 ```
+<b>Extends:</b> Omit&lt;Emitter&lt;[DOMProxyEvents](./kit.domproxyevents.md)
 
-## Variables
+## Remarks
 
-|  Variable | Description |
+DOMProxy provide 3 nodes. `before`<!-- -->, `current` and `after`<!-- -->. `current` is a fake dom node powered by Proxy, it will forward all your operations to the `realCurrent`<!-- -->.
+
+`before` and `after` is a true `span` that always point to before and after of `realCurrent`
+
+Special Handlers:
+
+\*forward\*: forward to current `realCurrent`
+
+\*undo\*: undo effect when `realCurrent` changes
+
+\*move\*: move effect to new `realCurrent`
+
+- style (forward, undo, move) - addEventListener (forward, undo, move) - appendChild (forward, undo, move)
+
+## Properties
+
+|  Property | Type | Description |
+|  --- | --- | --- |
+|  [after](./kit.domproxy.after.md) | After | Returns the <code>after</code> element, if it doesn't exist, create it implicitly. |
+|  [afterShadow](./kit.domproxy.aftershadow.md) | ShadowRoot | Returns the <code>ShadowRoot</code> of the <code>after</code> element. |
+|  [before](./kit.domproxy.before.md) | Before | Returns the <code>before</code> element, if it doesn't exist, create it implicitly. |
+|  [beforeShadow](./kit.domproxy.beforeshadow.md) | ShadowRoot | Returns the <code>ShadowRoot</code> of the <code>before</code> element. |
+|  [current](./kit.domproxy.current.md) | ProxiedElement | A proxy that always point to <code>realCurrent</code>, and if <code>realCurrent</code> changes, all action will be forwarded to new <code>realCurrent</code> |
+|  [destroyed](./kit.domproxy.destroyed.md) | boolean |  |
+|  [observer](./kit.domproxy.observer.md) | { readonly observer: MutationObserver \| null; callback: MutationCallback \| undefined; init: MutationObserverInit \| undefined; } | Observer for the current node. You need to set callback and init to activate it. |
+|  [realCurrent](./kit.domproxy.realcurrent.md) | ProxiedElement \| null | The real current of the <code>current</code> |
+
+## Methods
+
+|  Method | Description |
 |  --- | --- |
-|  [enhanceDebugger](./kit.domproxy.enhancedebugger.md) |  |
+|  [destroy()](./kit.domproxy.destroy.md) | Destroy the DOMProxy |
+|  [has(type)](./kit.domproxy.has.md) | Get weak reference to <code>before</code> node |
+|  [has(type)](./kit.domproxy.has_1.md) | Get weak reference to <code>after</code> node |
+|  [has(type)](./kit.domproxy.has_2.md) | Get weak reference to <code>beforeShadow</code> or <code>afterShadow</code> node |
 

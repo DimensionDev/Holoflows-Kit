@@ -11,7 +11,7 @@ A watcher based on MutationObserver
 ```typescript
 export declare class MutationObserverWatcher<T, Before extends Element = HTMLSpanElement, After extends Element = HTMLSpanElement, SingleMode extends boolean = false> extends Watcher<T, Before, After, SingleMode> 
 ```
-<b>Extends:</b> [Watcher](./kit.watcher.md)<!-- -->&lt;T, Before, After, SingleMode&gt;
+<b>Extends:</b> [Watcher](./kit.watcher.md)
 
 ## Example
 
@@ -22,7 +22,6 @@ new MutationObserverWatcher(ls)
         console.log(node)
     })
     .startWatch()
-
 ```
 
 ## Constructors

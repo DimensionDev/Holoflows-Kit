@@ -27,6 +27,5 @@ addListener(fn: (newVal: T, oldVal: T) => void): () => void;
 
 ```ts
 React.useEffect(() => ref.addListener(setState))
-
 ```
 

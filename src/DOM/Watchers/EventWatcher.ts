@@ -1,5 +1,5 @@
 import { Watcher } from '../Watcher'
-import { LiveSelector } from '../LiveSelector'
+import type { LiveSelector } from '../LiveSelector'
 
 /**
  * A Watcher based on event handlers.

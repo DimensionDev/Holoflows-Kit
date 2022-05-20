@@ -16,7 +16,7 @@ export declare function printEnvironment(e?: Environment): string;
 
 |  Parameter | Type | Description |
 |  --- | --- | --- |
-|  e | [Environment](./kit.environment.md) | Printing environment bit flag |
+|  e | [Environment](./kit.environment.md) | <i>(Optional)</i> Printing environment bit flag |
 
 <b>Returns:</b>
 

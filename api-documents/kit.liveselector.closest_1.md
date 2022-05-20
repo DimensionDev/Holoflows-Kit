@@ -27,6 +27,5 @@ closest<K extends keyof HTMLElementTagNameMap>(selectors: K): LiveSelector<HTMLE
 
 ```ts
 ls.closest('div')
-
 ```
 

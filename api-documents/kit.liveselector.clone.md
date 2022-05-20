@@ -22,6 +22,5 @@ a new LiveSelector with same action
 
 ```ts
 ls.clone()
-
 ```
 

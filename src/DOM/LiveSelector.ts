@@ -1,6 +1,3 @@
-import { LiveSelectorDevtoolsEnhancer } from '../Debuggers/LiveSelectorDevtoolsEnhancer'
-import { installCustomObjectFormatter } from 'jsx-jsonml-devtools-renderer'
-
 /**
  * Define all possible recordable operations.
  */
@@ -435,15 +432,6 @@ export class LiveSelector<T, SingleMode extends boolean = false> {
         return (arr.filter(nonNull) as T[]) as any
     }
     //#endregion
-    /**
-     * Call this function to enhance the debug experience in the Chrome DevTools
-     *
-     * You need to open "Enable custom formatters" in your DevTools settings.
-     */
-    static enhanceDebugger() {
-        installCustomObjectFormatter(new LiveSelectorDevtoolsEnhancer())
-        this.enhanceDebugger = () => {}
-    }
 }
 // https://github.com/tc39/proposal-relative-indexing-method
 function at<T>(arr: readonly T[], n: number) {

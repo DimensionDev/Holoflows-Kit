@@ -19,9 +19,9 @@ then<TResult1 = ResultOf<SingleMode, T>, TResult2 = never>(onfulfilled?: ((value
 
 |  Parameter | Type | Description |
 |  --- | --- | --- |
-|  onfulfilled | ((value: ResultOf&lt;SingleMode, T&gt;) =&gt; TResult1 \| PromiseLike&lt;TResult1&gt;) \| null |  |
-|  onrejected | ((reason: any) =&gt; TResult2 \| PromiseLike&lt;TResult2&gt;) \| null |  |
-|  options | { minimalResultsRequired?: number; timeout?: number; } | Options for watcher |
+|  onfulfilled | ((value: ResultOf&lt;SingleMode, T&gt;) =&gt; TResult1 \| PromiseLike&lt;TResult1&gt;) \| null | <i>(Optional)</i> |
+|  onrejected | ((reason: any) =&gt; TResult2 \| PromiseLike&lt;TResult2&gt;) \| null | <i>(Optional)</i> |
+|  options | { minimalResultsRequired?: number; timeout?: number; } | <i>(Optional)</i> Options for watcher |
 
 <b>Returns:</b>
 
@@ -37,6 +37,5 @@ This is an implementation of `PromiseLike`
 ```ts
 const value = await watcher
 const value2 = await watcher(undefined, undefined, { minimalResultsRequired: 5 })
-
 ```
 

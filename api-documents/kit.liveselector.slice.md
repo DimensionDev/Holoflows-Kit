@@ -16,8 +16,8 @@ slice(start?: number, end?: number): LiveSelector<T, SingleMode>;
 
 |  Parameter | Type | Description |
 |  --- | --- | --- |
-|  start | number | The beginning of the specified portion of the array. |
-|  end | number | The end of the specified portion of the array. |
+|  start | number | <i>(Optional)</i> The beginning of the specified portion of the array. |
+|  end | number | <i>(Optional)</i> The end of the specified portion of the array. |
 
 <b>Returns:</b>
 
@@ -28,6 +28,5 @@ slice(start?: number, end?: number): LiveSelector<T, SingleMode>;
 
 ```ts
 ls.slice(2, 4)
-
 ```
 

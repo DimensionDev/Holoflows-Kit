@@ -1,12 +1,10 @@
 /**
- * @internal
  */
 export interface Deadline {
     didTimeout: boolean
     timeRemaining(): number
 }
 /**
- * @internal
  * @param fn function to execute
  * @param timeout timeout
  */

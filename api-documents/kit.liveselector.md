@@ -22,7 +22,6 @@ Call [\#evaluate](./kit.liveselector.evaluate.md) to evaluate the element. Falsy
 ```ts
 const ls = new LiveSelector().querySelectorAll('a').map(x => x.href)
 ls.evaluate() // returns all urls at the current time.
-
 ```
 
 ## Constructors
@@ -49,7 +48,6 @@ ls.evaluate() // returns all urls at the current time.
 |  [closest(selectors)](./kit.liveselector.closest_3.md) |  |  |
 |  [concat(newEle)](./kit.liveselector.concat.md) |  | Combines two LiveSelector. |
 |  [enableSingleMode()](./kit.liveselector.enablesinglemode.md) |  | Enable single mode. Only 1 result will be emitted. |
-|  [enhanceDebugger()](./kit.liveselector.enhancedebugger.md) | <code>static</code> | Call this function to enhance the debug experience in the Chrome DevTools<!-- -->You need to open "Enable custom formatters" in your DevTools settings. |
 |  [evaluate()](./kit.liveselector.evaluate.md) |  | Evaluate selector expression |
 |  [filter(f)](./kit.liveselector.filter.md) |  | Select the elements of a LiveSelector that meet the condition specified in a callback function. |
 |  [flat()](./kit.liveselector.flat.md) |  | Flat T\[\]\[\] to T\[\] |

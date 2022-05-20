@@ -19,7 +19,7 @@ export class IntervalWatcher<
 > extends Watcher<T, Before, After, SingleMode> {
     private timer: NodeJS.Timer | undefined
     /** Start to watch the LiveSelector at a interval(ms). */
-    startWatch(interval: number) {
+    override startWatch(interval: number) {
         super.startWatch()
         this.timer = setInterval(this.scheduleWatcherCheck, interval)
         return this
@@ -27,7 +27,7 @@ export class IntervalWatcher<
     /**
      * {@inheritdoc Watcher.stopWatch}
      */
-    stopWatch() {
+    override stopWatch() {
         super.stopWatch()
         if (this.timer) clearInterval(this.timer)
     }

@@ -27,6 +27,5 @@ closest<T>(parentOfNth: number): LiveSelector<T, SingleMode>;
 
 ```ts
 ls.closest(2) // parentElement.parentElement
-
 ```
 

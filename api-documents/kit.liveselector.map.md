@@ -27,6 +27,5 @@ map<NextType>(callbackfn: (element: T, index: number, array: T[]) => NextType): 
 
 ```ts
 ls.map(x => x.parentElement)
-
 ```
 

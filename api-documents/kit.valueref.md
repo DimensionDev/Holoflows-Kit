@@ -31,7 +31,6 @@ function useValueRef<T>(ref: ValueRef<T>) {
   return value
 }
 ref.value = 42 // useRef will receive the new value
-
 ```
 
 ## Constructors

@@ -20,6 +20,5 @@ reverse(): LiveSelector<T, SingleMode>;
 
 ```ts
 ls.reverse()
-
 ```
 

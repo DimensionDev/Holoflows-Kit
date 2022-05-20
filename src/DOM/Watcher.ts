@@ -11,26 +11,25 @@
  */
 import { DOMProxy, DOMProxyOptions } from './Proxy'
 import { Emitter, EventListener } from '@servie/events'
-import { LiveSelector } from './LiveSelector'
+import type { LiveSelector } from './LiveSelector'
 
 import { Deadline, requestIdleCallback } from '../util/requestIdleCallback'
 import { isNil, uniqWith, intersectionWith, differenceWith } from 'lodash-es'
 import { timeout } from '../util/timeout'
-import { WatcherDevtoolsEnhancer } from '../Debuggers/WatcherDevtoolsEnhancer'
-import { installCustomObjectFormatter } from 'jsx-jsonml-devtools-renderer'
 
 /**
  * Use LiveSelector to watch dom change
  */
 export abstract class Watcher<T, Before extends Element, After extends Element, SingleMode extends boolean>
-    extends Emitter<WatcherEvents<T>>
-    implements PromiseLike<ResultOf<SingleMode, T>> {
+    implements PromiseLike<ResultOf<SingleMode, T>>
+{
+    private eventEmitter: Emitter<WatcherEvents<T>> = new Emitter()
+    private removeListenerWeakMap = new Map<string, WeakMap<Function, Function>>()
     /**
      * The liveSelector that this object holds.
      */
     protected readonly liveSelector: LiveSelector<T, SingleMode>
     constructor(liveSelector: LiveSelector<T, SingleMode>) {
-        super()
         this.liveSelector = liveSelector.clone()
     }
     //#region How to start and stop the watcher
@@ -168,7 +167,7 @@ export abstract class Watcher<T, Before extends Element, After extends Element, 
             return new Promise<ResultOf<SingleMode, TResult1>>((resolve, reject) => {
                 done = (state, val) => {
                     this.stopWatch()
-                    this.off('onIteration', f)
+                    this.removeListener('onIteration', f)
                     if (state) resolve(val)
                     else reject(val)
                 }
@@ -180,7 +179,7 @@ export abstract class Watcher<T, Before extends Element, After extends Element, 
                     if (nodes.length < minimalResultsRequired) return
                     return done(true, nodes)
                 }
-                this.on('onIteration', f)
+                this.addListener('onIteration', f)
             })
         }
         const withTimeout = timeout(then(), timeoutTime)
@@ -321,29 +320,28 @@ export abstract class Watcher<T, Before extends Element, After extends Element, 
         this.lastKeyList = thisKeyList
         this.lastNodeList = currentIteration
 
-        const has = (item: undefined | unknown[]) => Boolean(item?.length)
-        if (has(this.$.onIteration) && changedNodes.length + goneKeys.length + newKeys.length > 0) {
+        if (this.eventEmitter.$.onIteration.size && changedNodes.length + goneKeys.length + newKeys.length > 0) {
             // Make a copy to prevent modifications
             const newMap = new Map<unknown, T>(newKeys.map((key) => [key, findFromNew(key)!]))
             const removedMap = new Map<unknown, T>(goneKeys.map((key) => [key, findFromLast(key)!]))
             const currentMap = new Map<unknown, T>(thisKeyList.map((key) => [key, findFromNew(key)!]))
-            this.emit('onIteration', {
+            this.eventEmitter.emit('onIteration', {
                 new: newMap,
                 removed: removedMap,
                 current: currentMap,
             })
         }
-        if (has(this.$.onChange))
+        if (this.eventEmitter.$.onChange.size)
             for (const [oldNode, newNode, oldKey, newKey] of changedNodes) {
-                this.emit('onChange', { oldValue: oldNode, newValue: newNode, oldKey, newKey })
+                this.eventEmitter.emit('onChange', { oldValue: oldNode, newValue: newNode, oldKey, newKey })
             }
-        if (has(this.$.onRemove))
+        if (this.eventEmitter.$.onRemove.size)
             for (const key of goneKeys) {
-                this.emit('onRemove', { key, value: findFromLast(key)! })
+                this.eventEmitter.emit('onRemove', { key, value: findFromLast(key)! })
             }
-        if (has(this.$.onAdd))
+        if (this.eventEmitter.$.onAdd.size)
             for (const key of newKeys) {
-                this.emit('onAdd', { key, value: findFromNew(key)! })
+                this.eventEmitter.emit('onAdd', { key, value: findFromNew(key)! })
             }
         // For firstDOMProxy
         const first = currentIteration[0]
@@ -394,7 +392,7 @@ export abstract class Watcher<T, Before extends Element, After extends Element, 
             if (this.singleModeLastValue instanceof Node) {
                 this._firstDOMProxy.realCurrent = null
             }
-            this.emit('onRemove', { key: undefined, value: this.singleModeLastValue! })
+            this.eventEmitter.emit('onRemove', { key: undefined, value: this.singleModeLastValue! })
             this.singleModeLastValue = undefined
             this.singleModeHasLastValue = false
         }
@@ -412,14 +410,14 @@ export abstract class Watcher<T, Before extends Element, After extends Element, 
                     applyUseForeachCallback(this.singleModeCallback)('warn mutation')(this._warning_mutation_)
                 }
             }
-            this.emit('onAdd', { key: undefined, value: firstValue })
+            this.eventEmitter.emit('onAdd', { key: undefined, value: firstValue })
             this.singleModeLastValue = firstValue
             this.singleModeHasLastValue = true
         }
         // ? Case: value has changed
         else if (this.singleModeHasLastValue && !this.valueComparer(this.singleModeLastValue!, firstValue)) {
             applyUseForeachCallback(this.singleModeCallback)('target change')(firstValue, this.singleModeLastValue!)
-            this.emit('onChange', {
+            this.eventEmitter.emit('onChange', {
                 newKey: undefined,
                 oldKey: undefined,
                 newValue: firstValue,
@@ -474,11 +472,12 @@ export abstract class Watcher<T, Before extends Element, After extends Element, 
     //#region events
 
     addListener<K extends keyof WatcherEvents<T>>(type: K, callback: EventListener<WatcherEvents<T>, K>): this {
-        this.on(type, callback)
+        if (!this.removeListenerWeakMap.has(type)) this.removeListenerWeakMap.set(type, new WeakMap())
+        this.removeListenerWeakMap.get(type)!.set(callback, this.eventEmitter.on(type, callback))
         return this
     }
     removeListener<K extends keyof WatcherEvents<T>>(type: K, callback: EventListener<WatcherEvents<T>, K>): this {
-        this.off(type, callback)
+        this.removeListenerWeakMap.get(type)?.get(callback)?.()
         return this
     }
     //#endregion
@@ -489,7 +488,7 @@ export abstract class Watcher<T, Before extends Element, After extends Element, 
      * This DOMProxy always point to the first node in the LiveSelector
      */
     public get firstDOMProxy() {
-        return (this._firstDOMProxy as unknown) as T extends Node ? DOMProxy<T, Before, After> : never
+        return this._firstDOMProxy as unknown as T extends Node ? DOMProxy<T, Before, After> : never
     }
     //#endregion
     //#region Watcher settings
@@ -635,15 +634,6 @@ Or to ignore this message, call \`.dismissSingleModeWarning()\` on the watcher.\
         },
     })
     //#endregion
-    /**
-     * Call this function to enhance the debug experience in the Chrome DevTools
-     *
-     * You need to open "Enable custom formatters" in your DevTools settings.
-     */
-    static enhanceDebugger() {
-        installCustomObjectFormatter(new WatcherDevtoolsEnhancer())
-        this.enhanceDebugger = () => {}
-    }
 }
 
 export interface WatcherEvents<T> {
@@ -738,11 +728,12 @@ function applyUseForeachCallback<T>(callback: useForeachReturns<T>) {
         (type: 'target change'): TargetChangedCallback<T>
         (type: 'warn mutation'): (x: ReturnType<typeof warning>) => void
     }
-    return ((type: string) => (...args: any[]) => {
-        if (type === 'remove') remove && remove(...args)
-        else if (type === 'target change') change && change(...args)
-        else if (type === 'warn mutation') mutation && args[0]()
-    }) as applyUseForeach
+    return ((type: string) =>
+        (...args: any[]) => {
+            if (type === 'remove') remove && remove(...args)
+            else if (type === 'target change') change && change(...args)
+            else if (type === 'warn mutation') mutation && args[0]()
+        }) as applyUseForeach
 }
 //#endregion
 //#region Typescript generic helper

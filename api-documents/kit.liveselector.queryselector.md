@@ -27,7 +27,6 @@ querySelector<K extends keyof HTMLElementTagNameMap>(selector: K): LiveSelector<
 
 ```ts
 ls.querySelector('div#root')
-
 ```
 About chain on querySelector
 
@@ -35,6 +34,5 @@ About chain on querySelector
 ls.querySelector('a').querySelector('b')
 // equals to
 ls.querySelector('a b')
-
 ```
 

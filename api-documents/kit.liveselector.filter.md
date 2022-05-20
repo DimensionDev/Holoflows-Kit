@@ -27,6 +27,5 @@ filter(f: (value: T, index: number, array: T[]) => any): LiveSelector<NonNullabl
 
 ```ts
 ls.filter(x => x.innerText.match('hello'))
-
 ```
 

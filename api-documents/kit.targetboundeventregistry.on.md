@@ -15,7 +15,7 @@ on(callback: (data: T) => void, options?: TargetBoundEventListenerOptions): () =
 |  Parameter | Type | Description |
 |  --- | --- | --- |
 |  callback | (data: T) =&gt; void |  |
-|  options | [TargetBoundEventListenerOptions](./kit.targetboundeventlisteneroptions.md) |  |
+|  options | [TargetBoundEventListenerOptions](./kit.targetboundeventlisteneroptions.md) | <i>(Optional)</i> |
 
 <b>Returns:</b>
 

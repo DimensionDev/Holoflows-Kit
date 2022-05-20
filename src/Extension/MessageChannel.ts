@@ -293,16 +293,17 @@ function UnboundedRegistry<T>(
         })
     }
     let binder: TargetBoundEventRegistry<T>
+    const removeListenerWeakMap = new WeakMap<Function, Function>()
     function on(cb: (data: T) => void, options?: TargetBoundEventListenerOptions) {
-        eventListener.on(eventName, cb)
+        const off = eventListener.on(eventName, cb)
+        removeListenerWeakMap.set(cb, off)
 
-        const off = () => eventListener.off(eventName, cb)
         if (options?.once) eventListener.on(eventName, off)
-        if (options?.signal) options.signal.addEventListener('abort', off)
+        if (options?.signal) options.signal.addEventListener('abort', off, { once: true })
         return off
     }
     function off(cb: (data: T) => void) {
-        eventListener.off(eventName, cb)
+        removeListenerWeakMap.get(cb)?.()
     }
     function pause() {
         pausing = true

@@ -1,5 +1,5 @@
 import { Watcher } from '../Watcher'
-import { LiveSelector } from '../LiveSelector'
+import type { LiveSelector } from '../LiveSelector'
 /**
  * A watcher based on MutationObserver
  *
@@ -20,7 +20,7 @@ export class MutationObserverWatcher<
 > extends Watcher<T, Before, After, SingleMode> {
     constructor(
         /** LiveSelector that this object holds */
-        protected liveSelector: LiveSelector<T, SingleMode>,
+        protected override liveSelector: LiveSelector<T, SingleMode>,
         /**
          * If you know the element is always inside of a node, set this option.
          * This may improve performance.
@@ -50,7 +50,7 @@ export class MutationObserverWatcher<
      *
      * https://mdn.io/MutationObserverInit
      */
-    startWatch(options: MutationObserverInit) {
+    override startWatch(options: MutationObserverInit) {
         super.startWatch()
         this.isWatching = true
         const watch = (root?: Node) => {
@@ -62,13 +62,13 @@ export class MutationObserverWatcher<
         } else watch(this.consistentWatchRoot)
         return this
     }
-    protected defaultStarterForThen() {
+    protected override defaultStarterForThen() {
         if (!this.isWatching) this.startWatch({ subtree: true, childList: true, characterData: true })
     }
     /**
      * {@inheritdoc Watcher.stopWatch}
      */
-    stopWatch() {
+    override stopWatch() {
         super.stopWatch()
         this.observer.disconnect()
     }

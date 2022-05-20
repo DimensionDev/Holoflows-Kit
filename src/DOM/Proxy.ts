@@ -1,5 +1,3 @@
-import { DOMProxyDevtoolsEnhancer } from '../Debuggers/DOMProxyDevtoolsEnhancer'
-import { installCustomObjectFormatter } from 'jsx-jsonml-devtools-renderer'
 import { Emitter } from '@servie/events'
 
 /**
@@ -295,13 +293,8 @@ export function DOMProxy<
             current = defaultCurrent
         },
     } as DOMProxy<ProxiedElement, Before, After>
-    DOMProxyDevtoolsEnhancer.allDOMProxy.set(event as any, changes)
     Object.defineProperties(event, Object.getOwnPropertyDescriptors(DOMProxyObject))
     return event as any
-}
-DOMProxy.enhanceDebugger = function enhanceDebugger() {
-    installCustomObjectFormatter(new DOMProxyDevtoolsEnhancer())
-    DOMProxy.enhanceDebugger = () => {}
 }
 /**
  * {@inheritdoc (DOMProxy:function)}
