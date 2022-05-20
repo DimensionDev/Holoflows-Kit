@@ -320,7 +320,7 @@ export abstract class Watcher<T, Before extends Element, After extends Element, 
         this.lastKeyList = thisKeyList
         this.lastNodeList = currentIteration
 
-        if (this.eventEmitter.$.onIteration.size && changedNodes.length + goneKeys.length + newKeys.length > 0) {
+        if (this.eventEmitter.$.onIteration.size !== 0 && changedNodes.length + goneKeys.length + newKeys.length > 0) {
             // Make a copy to prevent modifications
             const newMap = new Map<unknown, T>(newKeys.map((key) => [key, findFromNew(key)!]))
             const removedMap = new Map<unknown, T>(goneKeys.map((key) => [key, findFromLast(key)!]))
@@ -331,15 +331,15 @@ export abstract class Watcher<T, Before extends Element, After extends Element, 
                 current: currentMap,
             })
         }
-        if (this.eventEmitter.$.onChange.size)
+        if (this.eventEmitter.$.onChange.size !== 0)
             for (const [oldNode, newNode, oldKey, newKey] of changedNodes) {
                 this.eventEmitter.emit('onChange', { oldValue: oldNode, newValue: newNode, oldKey, newKey })
             }
-        if (this.eventEmitter.$.onRemove.size)
+        if (this.eventEmitter.$.onRemove.size !== 0)
             for (const key of goneKeys) {
                 this.eventEmitter.emit('onRemove', { key, value: findFromLast(key)! })
             }
-        if (this.eventEmitter.$.onAdd.size)
+        if (this.eventEmitter.$.onAdd.size !== 0)
             for (const key of newKeys) {
                 this.eventEmitter.emit('onAdd', { key, value: findFromNew(key)! })
             }

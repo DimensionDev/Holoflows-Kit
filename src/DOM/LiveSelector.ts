@@ -435,6 +435,7 @@ export class LiveSelector<T, SingleMode extends boolean = false> {
 }
 // https://github.com/tc39/proposal-relative-indexing-method
 function at<T>(arr: readonly T[], n: number) {
+    /* eslint-disable @typescript-eslint/strict-boolean-expressions */
     n = Math.trunc(n) || 0
     if (n < 0) n += arr.length
     if (n < 0 || n >= arr.length) return undefined

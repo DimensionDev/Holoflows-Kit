@@ -1,3 +1,5 @@
+/* eslint-disable no-bitwise */
+/* eslint-disable @typescript-eslint/strict-boolean-expressions */
 /** Current running environment of Web Extension */
 export enum Environment {
     /** has browser as a global variable */ HasBrowserAPI = 1 << 1,

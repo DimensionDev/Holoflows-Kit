@@ -183,7 +183,8 @@ export class WebExtensionMessage<Message> {
 
         domainRegistry.on(domain, async (payload: InternalMessageType) => {
             if (!isInternalMessageType(payload)) return
-            let { event, data, target } = payload
+            const { event, target } = payload
+            let { data } = payload
             if (!shouldAcceptThisMessage(target)) return
             data = await this.serialization.deserialization(data)
             if (this.enableLog) {
