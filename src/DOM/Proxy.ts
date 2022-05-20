@@ -35,7 +35,7 @@ export interface DOMProxyOptions<Before extends Element = HTMLSpanElement, After
 export function DOMProxy<
     ProxiedElement extends Node = HTMLElement,
     Before extends Element = HTMLSpanElement,
-    After extends Element = HTMLSpanElement
+    After extends Element = HTMLSpanElement,
 >(options: Partial<DOMProxyOptions<Before, After>> = {}): DOMProxy<ProxiedElement, Before, After> {
     const event = new Emitter<DOMProxyEvents<ProxiedElement>>()
     // Options
@@ -96,17 +96,17 @@ export function DOMProxy<
             changes.push({ type: 'getOwnPropertyDescriptor', op: key })
             return Reflect.getOwnPropertyDescriptor(current, key)
         },
-        isExtensible: t => {
+        isExtensible: (t) => {
             changes.push({ type: 'isExtensible', op: undefined })
             return Reflect.isExtensible(current)
         },
-        getPrototypeOf: t => {
+        getPrototypeOf: (t) => {
             changes.push({ type: 'getPrototypeOf', op: undefined })
             return Reflect.getPrototypeOf(current)
         },
     }
     /** Write Traps */
-    const modifyTraps: (record: boolean) => ProxyHandler<any> = record => ({
+    const modifyTraps: (record: boolean) => ProxyHandler<any> = (record) => ({
         deleteProperty: (t, key: keyof HTMLElement) => {
             record && changes.push({ type: 'delete', op: key })
             return Reflect.deleteProperty(current, key)
@@ -119,7 +119,7 @@ export function DOMProxy<
             record && changes.push({ type: 'defineProperty', op: [key, attributes] })
             return Reflect.defineProperty(current, key, attributes)
         },
-        preventExtensions: t => {
+        preventExtensions: (t) => {
             record && changes.push({ type: 'preventExtensions', op: undefined })
             return Reflect.preventExtensions(current)
         },
@@ -302,7 +302,7 @@ export function DOMProxy<
 export interface DOMProxy<
     ProxiedElement extends Node = HTMLElement,
     Before extends Element = HTMLSpanElement,
-    After extends Element = HTMLSpanElement
+    After extends Element = HTMLSpanElement,
 > extends Omit<Emitter<DOMProxyEvents<ProxiedElement>>, '_' | '$'> {
     /** Destroy the DOMProxy */
     destroy(): void

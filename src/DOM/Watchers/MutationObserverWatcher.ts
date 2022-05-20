@@ -16,7 +16,7 @@ export class MutationObserverWatcher<
     T,
     Before extends Element = HTMLSpanElement,
     After extends Element = HTMLSpanElement,
-    SingleMode extends boolean = false
+    SingleMode extends boolean = false,
 > extends Watcher<T, Before, After, SingleMode> {
     constructor(
         /** LiveSelector that this object holds */
@@ -51,9 +51,13 @@ export class MutationObserverWatcher<
      * https://mdn.io/MutationObserverInit
      */
     override startWatch(options: MutationObserverInit, signal?: AbortSignal) {
-        signal?.addEventListener('abort', () => {
-            this.stopWatch()
-        }, { once: true })
+        signal?.addEventListener(
+            'abort',
+            () => {
+                this.stopWatch()
+            },
+            { once: true },
+        )
 
         super.startWatch()
         this.isWatching = true

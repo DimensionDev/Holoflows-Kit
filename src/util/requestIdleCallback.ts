@@ -16,7 +16,7 @@ export function requestIdleCallback(fn: (t: Deadline) => void, timeout?: { timeo
     return setTimeout(() => {
         fn({
             didTimeout: false,
-            timeRemaining: function() {
+            timeRemaining: function () {
                 return Math.max(0, 50 - (Date.now() - start))
             },
         })

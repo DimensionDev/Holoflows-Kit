@@ -25,7 +25,7 @@ type MapOf<
             param: Original[T]
         }
     },
-    EachType = Type[keyof Type]
+    EachType = Type[keyof Type],
 > = EachType
 type SelectorChainTypeItem = MapOf<SelectorChainType>
 
@@ -68,12 +68,12 @@ export class LiveSelector<T, SingleMode extends boolean = false> {
     /**
      * Record a method call into {@link LiveSelector.selectorChain}
      */
-    private appendSelectorChain = <Key extends keyof SelectorChainType>(type: Key) => (
-        param: SelectorChainType[Key],
-    ): LiveSelector<any, SingleMode> => {
-        this.selectorChain.push({ type: type as any, param: param as any })
-        return this as LiveSelector<any, SingleMode>
-    }
+    private appendSelectorChain =
+        <Key extends keyof SelectorChainType>(type: Key) =>
+        (param: SelectorChainType[Key]): LiveSelector<any, SingleMode> => {
+            this.selectorChain.push({ type: type as any, param: param as any })
+            return this as LiveSelector<any, SingleMode>
+        }
     /**
      * Records of previous calls on LiveSelector
      */
@@ -429,7 +429,7 @@ export class LiveSelector<T, SingleMode extends boolean = false> {
             }
         }
         if (this.isSingleMode) return (arr.filter(nonNull) as T[])[0] as any
-        return (arr.filter(nonNull) as T[]) as any
+        return arr.filter(nonNull) as T[] as any
     }
     //#endregion
 }
