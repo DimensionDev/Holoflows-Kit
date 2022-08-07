@@ -31,16 +31,16 @@ Special Handlers:
 
 ## Properties
 
-|  Property | Type | Description |
-|  --- | --- | --- |
-|  [after](./kit.domproxy.after.md) | After | Returns the <code>after</code> element, if it doesn't exist, create it implicitly. |
-|  [afterShadow](./kit.domproxy.aftershadow.md) | ShadowRoot | Returns the <code>ShadowRoot</code> of the <code>after</code> element. |
-|  [before](./kit.domproxy.before.md) | Before | Returns the <code>before</code> element, if it doesn't exist, create it implicitly. |
-|  [beforeShadow](./kit.domproxy.beforeshadow.md) | ShadowRoot | Returns the <code>ShadowRoot</code> of the <code>before</code> element. |
-|  [current](./kit.domproxy.current.md) | ProxiedElement | A proxy that always point to <code>realCurrent</code>, and if <code>realCurrent</code> changes, all action will be forwarded to new <code>realCurrent</code> |
-|  [destroyed](./kit.domproxy.destroyed.md) | boolean |  |
-|  [observer](./kit.domproxy.observer.md) | { readonly observer: MutationObserver \| null; callback: MutationCallback \| undefined; init: MutationObserverInit \| undefined; } | Observer for the current node. You need to set callback and init to activate it. |
-|  [realCurrent](./kit.domproxy.realcurrent.md) | ProxiedElement \| null | The real current of the <code>current</code> |
+|  Property | Modifiers | Type | Description |
+|  --- | --- | --- | --- |
+|  [after](./kit.domproxy.after.md) | <code>readonly</code> | After | Returns the <code>after</code> element, if it doesn't exist, create it implicitly. |
+|  [afterShadow](./kit.domproxy.aftershadow.md) | <code>readonly</code> | ShadowRoot | Returns the <code>ShadowRoot</code> of the <code>after</code> element. |
+|  [before](./kit.domproxy.before.md) | <code>readonly</code> | Before | Returns the <code>before</code> element, if it doesn't exist, create it implicitly. |
+|  [beforeShadow](./kit.domproxy.beforeshadow.md) | <code>readonly</code> | ShadowRoot | Returns the <code>ShadowRoot</code> of the <code>before</code> element. |
+|  [current](./kit.domproxy.current.md) | <code>readonly</code> | ProxiedElement | A proxy that always point to <code>realCurrent</code>, and if <code>realCurrent</code> changes, all action will be forwarded to new <code>realCurrent</code> |
+|  [destroyed](./kit.domproxy.destroyed.md) | <code>readonly</code> | boolean |  |
+|  [observer](./kit.domproxy.observer.md) | <code>readonly</code> | { readonly observer: MutationObserver \| null; callback: MutationCallback \| undefined; init: MutationObserverInit \| undefined; } | Observer for the current node. You need to set callback and init to activate it. |
+|  [realCurrent](./kit.domproxy.realcurrent.md) |  | ProxiedElement \| null | The real current of the <code>current</code> |
 
 ## Methods
 

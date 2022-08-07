@@ -34,13 +34,13 @@ new MutationObserverWatcher(ls)
 
 |  Property | Modifiers | Type | Description |
 |  --- | --- | --- | --- |
-|  [liveSelector](./kit.mutationobserverwatcher.liveselector.md) |  | [LiveSelector](./kit.liveselector.md)<!-- -->&lt;T, SingleMode&gt; | LiveSelector that this object holds |
+|  [liveSelector](./kit.mutationobserverwatcher.liveselector.md) | <code>protected</code> | [LiveSelector](./kit.liveselector.md)<!-- -->&lt;T, SingleMode&gt; | LiveSelector that this object holds |
 
 ## Methods
 
 |  Method | Modifiers | Description |
 |  --- | --- | --- |
-|  [defaultStarterForThen()](./kit.mutationobserverwatcher.defaultstarterforthen.md) |  |  |
+|  [defaultStarterForThen()](./kit.mutationobserverwatcher.defaultstarterforthen.md) | <code>protected</code> |  |
 |  [startWatch(options, signal)](./kit.mutationobserverwatcher.startwatch.md) |  | Start an MutationObserverWatcher. |
 |  [stopWatch()](./kit.mutationobserverwatcher.stopwatch.md) |  | Stop the watcher |
 

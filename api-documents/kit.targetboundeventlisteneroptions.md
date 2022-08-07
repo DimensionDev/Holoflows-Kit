@@ -12,8 +12,8 @@ export interface TargetBoundEventListenerOptions
 
 ## Properties
 
-|  Property | Type | Description |
-|  --- | --- | --- |
-|  [once?](./kit.targetboundeventlisteneroptions.once.md) | boolean | <i>(Optional)</i> Run the listener only once. |
-|  [signal?](./kit.targetboundeventlisteneroptions.signal.md) | AbortSignal | <i>(Optional)</i> Cancel the listener by AbortSignal |
+|  Property | Modifiers | Type | Description |
+|  --- | --- | --- | --- |
+|  [once?](./kit.targetboundeventlisteneroptions.once.md) |  | boolean | <i>(Optional)</i> Run the listener only once. |
+|  [signal?](./kit.targetboundeventlisteneroptions.signal.md) |  | AbortSignal | <i>(Optional)</i> Cancel the listener by AbortSignal |
 

@@ -349,7 +349,7 @@ export class WebExtensionMessage<Message> {
     // (undocumented)
     enableLog: boolean;
     // (undocumented)
-    protected get eventRegistry(): Emitter<any>;
+    protected get eventRegistry(): Emitter<Record<string, [unknown]>>;
     get events(): {
         readonly [K in keyof Message]: UnboundedRegistry<Message[K]>;
     };

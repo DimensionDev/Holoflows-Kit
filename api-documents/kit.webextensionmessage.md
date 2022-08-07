@@ -20,13 +20,13 @@ export declare class WebExtensionMessage<Message>
 
 |  Property | Modifiers | Type | Description |
 |  --- | --- | --- | --- |
-|  [domain](./kit.webextensionmessage.domain.md) |  | string | Same message name within different domain won't collide with each other. |
+|  [domain](./kit.webextensionmessage.domain.md) | <code>readonly</code> | string | Same message name within different domain won't collide with each other. |
 |  [enableLog](./kit.webextensionmessage.enablelog.md) |  | boolean |  |
-|  [eventRegistry](./kit.webextensionmessage.eventregistry.md) |  | Emitter&lt;any&gt; |  |
-|  [events](./kit.webextensionmessage.events.md) |  | { readonly \[K in keyof Message\]: [UnboundedRegistry](./kit.unboundedregistry.md)<!-- -->&lt;Message\[K\]&gt;; } | Event listeners |
+|  [eventRegistry](./kit.webextensionmessage.eventregistry.md) | <p><code>protected</code></p><p><code>readonly</code></p> | Emitter&lt;Record&lt;string, \[unknown\]&gt;&gt; |  |
+|  [events](./kit.webextensionmessage.events.md) | <code>readonly</code> | { readonly \[K in keyof Message\]: [UnboundedRegistry](./kit.unboundedregistry.md)<!-- -->&lt;Message\[K\]&gt;; } | Event listeners |
 |  [log](./kit.webextensionmessage.log.md) |  | (...args: unknown\[\]) =&gt; void |  |
 |  [logFormatter](./kit.webextensionmessage.logformatter.md) |  | (instance: this, key: string, data: unknown) =&gt; unknown\[\] |  |
-|  [serialization](./kit.webextensionmessage.serialization.md) |  | [Serialization](./kit.serialization.md) | Watch new tabs created and get event listener register of that tab.<!-- -->This API only works in the BackgroundPage. |
+|  [serialization](./kit.webextensionmessage.serialization.md) |  | [Serialization](./kit.serialization.md) | <p>Watch new tabs created and get event listener register of that tab.</p><p>This API only works in the BackgroundPage.</p> |
 
 ## Methods
 
