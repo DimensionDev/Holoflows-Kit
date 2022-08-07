@@ -14,12 +14,12 @@
   "type": "module",
   "exports": {
     ".": {
-      "type": "./es/index.d.ts",
+      "types": "./es/index.d.ts",
       "import": "./es/index.js",
       "require": "./umd/index.cjs"
     },
     "./es": {
-      "type": "./es/index.d.ts",
+      "types": "./es/index.d.ts",
       "import": "./es/index.js",
       "require": "./umd/index.cjs"
     }
