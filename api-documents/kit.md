@@ -40,6 +40,8 @@ A toolkit for browser extension developing.
 
 |  Interface | Description |
 |  --- | --- |
+|  [DOMProxy\_MutationObserver](./kit.domproxy_mutationobserver.md) | The proxied MutationObserver. You need to set callback and init to activate it. |
+|  [DOMProxy\_Properties](./kit.domproxy_properties.md) | DOMProxy provide an interface that be stable even dom is changed. |
 |  [DOMProxy](./kit.domproxy.md) | DOMProxy provide an interface that be stable even dom is changed. |
 |  [DOMProxyEvents](./kit.domproxyevents.md) | Events on the DOMProxy object |
 |  [DOMProxyOptions](./kit.domproxyoptions.md) | Options for DOMProxy |
