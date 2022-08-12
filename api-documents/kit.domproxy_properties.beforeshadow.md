@@ -9,5 +9,5 @@ Returns the `ShadowRoot` of the `before` element.
 <b>Signature:</b>
 
 ```typescript
-readonly beforeShadow: ShadowRoot;
+readonly beforeShadow: ShadowRoot | null;
 ```

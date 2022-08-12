@@ -264,7 +264,8 @@ export abstract class Watcher<T, Before extends Element, After extends Element, 
                     const proxy = DOMProxy<typeof value, Before, After>(this.domProxyOption)
                     proxy.realCurrent = value
                     // This step must be sync.
-                    const callbacks = this.useForeachFn(proxy.current, newKey, proxy as any)
+                    // this DOMProxy is newly created, it cannot be destroyed.
+                    const callbacks = this.useForeachFn(proxy.current!, newKey, proxy as any)
                     if (hasMutationCallback(callbacks) && !proxy.observer.callback) {
                         proxy.observer.init = {
                             subtree: true,
@@ -401,7 +402,8 @@ export abstract class Watcher<T, Before extends Element, After extends Element, 
             if (this.useForeachFn) {
                 if (firstValue instanceof Node) {
                     this.singleModeCallback = this.useForeachFn(
-                        this.firstDOMProxy.current,
+                        // UB when firstDOMProxy is destroyed.
+                        this.firstDOMProxy.current!,
                         undefined,
                         this.firstDOMProxy,
                     )
@@ -489,6 +491,8 @@ export abstract class Watcher<T, Before extends Element, After extends Element, 
     protected _firstDOMProxy = DOMProxy<Node, Before, After>(this.domProxyOption)
     /**
      * This DOMProxy always point to the first node in the LiveSelector
+     *
+     * ! Call .destroy on firstDOMProxy cause undefined behavior
      */
     public get firstDOMProxy() {
         return this._firstDOMProxy as unknown as T extends Node ? DOMProxy<T, Before, After> : never

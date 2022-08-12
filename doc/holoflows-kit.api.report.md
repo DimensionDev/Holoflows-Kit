@@ -49,11 +49,11 @@ export interface DOMProxy_MutationObserver {
 
 // @public
 export interface DOMProxy_Properties<ProxiedElement extends Node, Before extends Element, After extends Element> {
-    readonly after: After;
-    readonly afterShadow: ShadowRoot;
-    readonly before: Before;
-    readonly beforeShadow: ShadowRoot;
-    readonly current: ProxiedElement;
+    readonly after: After | null;
+    readonly afterShadow: ShadowRoot | null;
+    readonly before: Before | null;
+    readonly beforeShadow: ShadowRoot | null;
+    readonly current: ProxiedElement | null;
     destroy(): void;
     // (undocumented)
     readonly destroyed: boolean;

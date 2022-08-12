@@ -9,5 +9,5 @@ Returns the `before` element, if it doesn't exist, create it implicitly.
 <b>Signature:</b>
 
 ```typescript
-readonly before: Before;
+readonly before: Before | null;
 ```
