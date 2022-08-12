@@ -59,11 +59,8 @@ export function DOMProxy<
     let virtualAfterShadow: ShadowRoot | null = null
     /** All changes applied on the `proxy` */
     const changes: ActionTypes[keyof ActionTypes][] = []
-    /** Read Traps */
-    const readonlyTraps: ProxyHandler<any> = {
-        ownKeys: () => {
-            return Object.getOwnPropertyNames(current)
-        },
+    /** Proxy Traps */
+    const proxyTraps: ProxyHandler<Node> = {
         get: (t, key, r) => {
             const current_: any = current
             if (typeof current_[key] === 'function')
@@ -86,45 +83,28 @@ export function DOMProxy<
                 })
             return current_[key]
         },
-        has: (t, key) => {
-            return key in current
-        },
-        getOwnPropertyDescriptor: (t, key) => {
-            return Reflect.getOwnPropertyDescriptor(current, key)
-        },
-        isExtensible: (t) => {
-            return Reflect.isExtensible(current)
-        },
-        getPrototypeOf: (t) => {
-            return Reflect.getPrototypeOf(current)
-        },
-    }
-    /** Write Traps */
-    const modifyTraps: (record: boolean) => ProxyHandler<any> = (record) => ({
         deleteProperty: (t, key: keyof HTMLElement) => {
-            record && changes.push({ type: 'delete', op: key })
+            changes.push({ type: 'delete', op: key })
             return Reflect.deleteProperty(current, key)
         },
         set: (t, key: keyof HTMLElement, value, r) => {
-            record && changes.push({ type: 'set', op: [key, value] })
+            changes.push({ type: 'set', op: [key, value] })
             return ((current as any)[key] = value)
         },
         defineProperty: (t, key, attributes) => {
-            record && changes.push({ type: 'defineProperty', op: [key, attributes] })
+            changes.push({ type: 'defineProperty', op: [key, attributes] })
             return Reflect.defineProperty(current, key, attributes)
         },
         preventExtensions: (t) => {
-            record && changes.push({ type: 'preventExtensions', op: undefined })
+            changes.push({ type: 'preventExtensions', op: undefined })
             return Reflect.preventExtensions(current)
         },
         setPrototypeOf: (t, prototype) => {
-            record && changes.push({ type: 'setPrototypeOf', op: prototype })
+            changes.push({ type: 'setPrototypeOf', op: prototype })
             return Reflect.setPrototypeOf(current, prototype)
         },
-    })
-    const modifyTrapsWrite = modifyTraps(true)
-    const modifyTrapsNotWrite = modifyTraps(false)
-    const proxy = Proxy.revocable(defaultCurrent, { ...readonlyTraps, ...modifyTrapsWrite })
+    }
+    const proxy = Proxy.revocable(defaultCurrent, proxyTraps)
     function hasStyle(e: Node): e is HTMLElement {
         return 'style' in e
     }
@@ -154,12 +134,12 @@ export function DOMProxy<
         if (current === defaultCurrent) return
         const t = {}
         for (const change of changes) {
-            if (change.type === 'setPrototypeOf') modifyTrapsNotWrite.setPrototypeOf!(t, change.op)
-            else if (change.type === 'preventExtensions') modifyTrapsNotWrite.preventExtensions!(t)
+            if (change.type === 'setPrototypeOf') Reflect.setPrototypeOf(current, change.op)
+            else if (change.type === 'preventExtensions') Reflect.preventExtensions(current)
             else if (change.type === 'defineProperty')
-                modifyTrapsNotWrite.defineProperty!(t, change.op[0] as any, change.op[1])
-            else if (change.type === 'set') modifyTrapsNotWrite.set!(t, change.op[0] as any, change.op[1], t)
-            else if (change.type === 'delete') modifyTrapsNotWrite.deleteProperty!(t, change.op as any)
+                Reflect.defineProperty(current, change.op[0], change.op[1])
+            else if (change.type === 'set') Reflect.set(current, change.op[0], change.op[1], t)
+            else if (change.type === 'delete') Reflect.deleteProperty(current, change.op)
             else if (change.type === 'callMethods') {
                 const replayable = ['appendChild', 'addEventListener', 'before', 'after']
                 const key: keyof Node = change.op.name as any
@@ -224,7 +204,7 @@ export function DOMProxy<
         },
         get current(): ProxiedElement {
             if (isDestroyed) throw new TypeError('Try to access `current` node after DOMProxy is destroyed')
-            return proxy.proxy
+            return proxy.proxy as ProxiedElement
         },
         get after(): After {
             if (isDestroyed) throw new TypeError('Try to access `after` node after DOMProxy is destroyed')
