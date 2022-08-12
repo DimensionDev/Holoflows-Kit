@@ -62,11 +62,9 @@ export function DOMProxy<
     /** Read Traps */
     const readonlyTraps: ProxyHandler<any> = {
         ownKeys: () => {
-            changes.push({ type: 'ownKeys', op: undefined })
             return Object.getOwnPropertyNames(current)
         },
         get: (t, key, r) => {
-            changes.push({ type: 'get', op: key })
             const current_: any = current
             if (typeof current_[key] === 'function')
                 return new Proxy(current_[key], {
@@ -89,19 +87,15 @@ export function DOMProxy<
             return current_[key]
         },
         has: (t, key) => {
-            changes.push({ type: 'has', op: key })
             return key in current
         },
         getOwnPropertyDescriptor: (t, key) => {
-            changes.push({ type: 'getOwnPropertyDescriptor', op: key })
             return Reflect.getOwnPropertyDescriptor(current, key)
         },
         isExtensible: (t) => {
-            changes.push({ type: 'isExtensible', op: undefined })
             return Reflect.isExtensible(current)
         },
         getPrototypeOf: (t) => {
-            changes.push({ type: 'getPrototypeOf', op: undefined })
             return Reflect.getPrototypeOf(current)
         },
     }
@@ -163,9 +157,9 @@ export function DOMProxy<
             if (change.type === 'setPrototypeOf') modifyTrapsNotWrite.setPrototypeOf!(t, change.op)
             else if (change.type === 'preventExtensions') modifyTrapsNotWrite.preventExtensions!(t)
             else if (change.type === 'defineProperty')
-                modifyTrapsNotWrite.defineProperty!(t, change.op[0], change.op[1])
-            else if (change.type === 'set') modifyTrapsNotWrite.set!(t, change.op[0], change.op[1], t)
-            else if (change.type === 'delete') modifyTrapsNotWrite.deleteProperty!(t, change.op)
+                modifyTrapsNotWrite.defineProperty!(t, change.op[0] as any, change.op[1])
+            else if (change.type === 'set') modifyTrapsNotWrite.set!(t, change.op[0] as any, change.op[1], t)
+            else if (change.type === 'delete') modifyTrapsNotWrite.deleteProperty!(t, change.op as any)
             else if (change.type === 'callMethods') {
                 const replayable = ['appendChild', 'addEventListener', 'before', 'after']
                 const key: keyof Node = change.op.name as any
@@ -351,20 +345,12 @@ export interface DOMProxyEvents<ProxiedElement extends Node> {
     currentChanged: [{ new: ProxiedElement | null; old: ProxiedElement | null }]
 }
 
-type Keys = string | symbol
-type ActionRecord<T extends string, F> = { type: T; op: F }
 interface ActionTypes {
-    delete: ActionRecord<'delete', Keys>
-    set: ActionRecord<'set', [Keys, any]>
-    defineProperty: ActionRecord<'defineProperty', [Keys, PropertyDescriptor]>
-    preventExtensions: ActionRecord<'preventExtensions', void>
-    setPrototypeOf: ActionRecord<'setPrototypeOf', any>
-    get: ActionRecord<'get', Keys>
-    ownKeys: ActionRecord<'ownKeys', undefined>
-    has: ActionRecord<'has', Keys>
-    getOwnPropertyDescriptor: ActionRecord<'getOwnPropertyDescriptor', Keys>
-    isExtensible: ActionRecord<'isExtensible', undefined>
-    getPrototypeOf: ActionRecord<'getPrototypeOf', undefined>
-    callMethods: ActionRecord<'callMethods', { name: Keys; param: any[]; thisArg: any }>
-    modifyStyle: ActionRecord<'modifyStyle', { name: Keys; value: string; originalValue: string }>
+    delete: { type: 'delete'; op: PropertyKey }
+    set: { type: 'set'; op: [PropertyKey, unknown] }
+    defineProperty: { type: 'defineProperty'; op: [PropertyKey, PropertyDescriptor] }
+    preventExtensions: { type: 'preventExtensions'; op: void }
+    setPrototypeOf: { type: 'setPrototypeOf'; op: object | null }
+    callMethods: { type: 'callMethods'; op: { name: PropertyKey; param: any[]; thisArg: any } }
+    modifyStyle: { type: 'modifyStyle'; op: { name: PropertyKey; value: string; originalValue: string } }
 }
