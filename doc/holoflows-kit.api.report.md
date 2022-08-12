@@ -35,7 +35,20 @@ export namespace assertNotEnvironment {
 export function DOMProxy<ProxiedElement extends Node = HTMLElement, Before extends Element = HTMLSpanElement, After extends Element = HTMLSpanElement>(options?: Partial<DOMProxyOptions<Before, After>>): DOMProxy<ProxiedElement, Before, After>;
 
 // @public
-export interface DOMProxy<ProxiedElement extends Node = HTMLElement, Before extends Element = HTMLSpanElement, After extends Element = HTMLSpanElement> extends Omit<Emitter<DOMProxyEvents<ProxiedElement>>, '_' | '$'> {
+export interface DOMProxy<ProxiedElement extends Node = HTMLElement, Before extends Element = HTMLSpanElement, After extends Element = HTMLSpanElement> extends Emitter<DOMProxyEvents<ProxiedElement>>, DOMProxy_Properties<ProxiedElement, Before, After> {
+}
+
+// @public
+export interface DOMProxy_MutationObserver {
+    get callback(): MutationCallback | undefined;
+    set callback(callback: MutationCallback | undefined);
+    get init(): MutationObserverInit | undefined;
+    set init(init: MutationObserverInit | undefined);
+    readonly observer: MutationObserver | null;
+}
+
+// @public
+export interface DOMProxy_Properties<ProxiedElement extends Node, Before extends Element, After extends Element> {
     readonly after: After;
     readonly afterShadow: ShadowRoot;
     readonly before: Before;
@@ -47,11 +60,7 @@ export interface DOMProxy<ProxiedElement extends Node = HTMLElement, Before exte
     has(type: 'before'): Before | null;
     has(type: 'after'): After | null;
     has(type: 'beforeShadow' | 'afterShadow'): ShadowRoot | null;
-    readonly observer: {
-        readonly observer: MutationObserver | null;
-        callback: MutationCallback | undefined;
-        init: MutationObserverInit | undefined;
-    };
+    readonly observer: DOMProxy_MutationObserver;
     realCurrent: ProxiedElement | null;
 }
 

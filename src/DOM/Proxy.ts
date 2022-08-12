@@ -290,6 +290,7 @@ export function DOMProxy<
     Object.defineProperties(event, Object.getOwnPropertyDescriptors(DOMProxyObject))
     return event as any
 }
+
 /**
  * {@inheritdoc (DOMProxy:function)}
  */
@@ -297,7 +298,13 @@ export interface DOMProxy<
     ProxiedElement extends Node = HTMLElement,
     Before extends Element = HTMLSpanElement,
     After extends Element = HTMLSpanElement,
-> extends Omit<Emitter<DOMProxyEvents<ProxiedElement>>, '_' | '$'> {
+> extends Emitter<DOMProxyEvents<ProxiedElement>>,
+        DOMProxy_Properties<ProxiedElement, Before, After> {}
+
+/**
+ * {@inheritdoc (DOMProxy:function)}
+ */
+export interface DOMProxy_Properties<ProxiedElement extends Node, Before extends Element, After extends Element> {
     /** Destroy the DOMProxy */
     destroy(): void
     readonly destroyed: boolean
@@ -328,12 +335,35 @@ export interface DOMProxy<
      * Observer for the current node.
      * You need to set callback and init to activate it.
      */
-    readonly observer: {
-        readonly observer: MutationObserver | null
-        callback: MutationCallback | undefined
-        init: MutationObserverInit | undefined
-    }
+    readonly observer: DOMProxy_MutationObserver
 }
+
+/**
+ * The proxied MutationObserver. You need to set callback and init to activate it.
+ */
+export interface DOMProxy_MutationObserver {
+    /**
+     * The proxied of MutationObserver of this DOMProxy
+     */
+    readonly observer: MutationObserver | null
+    /**
+     * Get the callback of the MutationObserver
+     */
+    get callback(): MutationCallback | undefined
+    /**
+     * Set the callback of the MutationObserver
+     */
+    set callback(callback: MutationCallback | undefined)
+    /**
+     * Get the init parameter of the MutationObserver
+     */
+    get init(): MutationObserverInit | undefined
+    /**
+     * Set the init parameter of the MutationObserver
+     */
+    set init(init: MutationObserverInit | undefined)
+}
+
 /**
  * Events on the DOMProxy object
  */
