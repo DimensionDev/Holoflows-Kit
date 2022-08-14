@@ -9,5 +9,5 @@ Returns the `after` element, if it doesn't exist, create it implicitly.
 <b>Signature:</b>
 
 ```typescript
-readonly after: After | null;
+readonly after: After;
 ```

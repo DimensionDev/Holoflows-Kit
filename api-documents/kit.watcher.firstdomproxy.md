@@ -6,8 +6,6 @@
 
 This DOMProxy always point to the first node in the LiveSelector
 
-! Call .destroy on firstDOMProxy cause undefined behavior
-
 <b>Signature:</b>
 
 ```typescript

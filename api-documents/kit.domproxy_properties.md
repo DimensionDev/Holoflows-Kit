@@ -32,11 +32,11 @@ Special Handlers:
 
 |  Property | Modifiers | Type | Description |
 |  --- | --- | --- | --- |
-|  [after](./kit.domproxy_properties.after.md) | <code>readonly</code> | After \| null | Returns the <code>after</code> element, if it doesn't exist, create it implicitly. |
-|  [afterShadow](./kit.domproxy_properties.aftershadow.md) | <code>readonly</code> | ShadowRoot \| null | Returns the <code>ShadowRoot</code> of the <code>after</code> element. |
-|  [before](./kit.domproxy_properties.before.md) | <code>readonly</code> | Before \| null | Returns the <code>before</code> element, if it doesn't exist, create it implicitly. |
-|  [beforeShadow](./kit.domproxy_properties.beforeshadow.md) | <code>readonly</code> | ShadowRoot \| null | Returns the <code>ShadowRoot</code> of the <code>before</code> element. |
-|  [current](./kit.domproxy_properties.current.md) | <code>readonly</code> | ProxiedElement \| null | A proxy that always point to <code>realCurrent</code>, and if <code>realCurrent</code> changes, all action will be forwarded to new <code>realCurrent</code> |
+|  [after](./kit.domproxy_properties.after.md) | <code>readonly</code> | After | Returns the <code>after</code> element, if it doesn't exist, create it implicitly. |
+|  [afterShadow](./kit.domproxy_properties.aftershadow.md) | <code>readonly</code> | ShadowRoot | Returns the <code>ShadowRoot</code> of the <code>after</code> element. |
+|  [before](./kit.domproxy_properties.before.md) | <code>readonly</code> | Before | Returns the <code>before</code> element, if it doesn't exist, create it implicitly. |
+|  [beforeShadow](./kit.domproxy_properties.beforeshadow.md) | <code>readonly</code> | ShadowRoot | Returns the <code>ShadowRoot</code> of the <code>before</code> element. |
+|  [current](./kit.domproxy_properties.current.md) | <code>readonly</code> | ProxiedElement | A proxy that always point to <code>realCurrent</code>, and if <code>realCurrent</code> changes, all action will be forwarded to new <code>realCurrent</code> |
 |  [destroyed](./kit.domproxy_properties.destroyed.md) | <code>readonly</code> | boolean |  |
 |  [observer](./kit.domproxy_properties.observer.md) | <code>readonly</code> | [DOMProxy\_MutationObserver](./kit.domproxy_mutationobserver.md) | Observer for the current node. You need to set callback and init to activate it. |
 |  [realCurrent](./kit.domproxy_properties.realcurrent.md) |  | ProxiedElement \| null | The real current of the <code>current</code> |

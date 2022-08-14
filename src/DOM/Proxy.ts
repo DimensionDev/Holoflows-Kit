@@ -166,7 +166,7 @@ export function DOMProxy<
         if (reinit || !observer) observer = new MutationObserver(observerCallback)
         observer.observe(current, mutationObserverInit)
     }
-    const DOMProxyObject: DOMProxy_Properties<ProxiedElement, Before, After> = {
+    const DOMProxyObject = {
         observer: {
             set callback(v) {
                 if (v === undefined) v = noop
@@ -191,31 +191,31 @@ export function DOMProxy<
             return isDestroyed
         },
         get before() {
-            if (isDestroyed) return null
+            if (isDestroyed) throw new TypeError('Try to access `before` node after DOMProxy is destroyed')
             if (!virtualBefore) {
                 virtualBefore = createBefore()
                 if (current instanceof Element) current.before(virtualBefore)
             }
             return virtualBefore
         },
-        get beforeShadow() {
-            if (!virtualBeforeShadow) virtualBeforeShadow = this.before?.attachShadow(beforeShadowRootInit) || null
+        get beforeShadow(): ShadowRoot {
+            if (!virtualBeforeShadow) virtualBeforeShadow = this.before.attachShadow(beforeShadowRootInit)
             return virtualBeforeShadow
         },
-        get current() {
-            if (isDestroyed) return null
+        get current(): ProxiedElement {
+            if (isDestroyed) throw new TypeError('Try to access `current` node after DOMProxy is destroyed')
             return proxy.proxy as ProxiedElement
         },
-        get after() {
-            if (isDestroyed) return null
+        get after(): After {
+            if (isDestroyed) throw new TypeError('Try to access `after` node after DOMProxy is destroyed')
             if (!virtualAfter) {
                 virtualAfter = createAfter()
                 if (current instanceof Element) current.after(virtualAfter)
             }
             return virtualAfter
         },
-        get afterShadow() {
-            if (!virtualAfterShadow) virtualAfterShadow = this.after?.attachShadow(afterShadowRootInit) || null
+        get afterShadow(): ShadowRoot {
+            if (!virtualAfterShadow) virtualAfterShadow = this.after.attachShadow(afterShadowRootInit)
             return virtualAfterShadow
         },
         has(type: 'beforeShadow' | 'afterShadow' | 'before' | 'after'): any | null {
@@ -266,7 +266,7 @@ export function DOMProxy<
             virtualAfter = null
             current = defaultCurrent
         },
-    }
+    } as DOMProxy<ProxiedElement, Before, After>
     Object.defineProperties(event, Object.getOwnPropertyDescriptors(DOMProxyObject))
     return event as any
 }
@@ -289,18 +289,18 @@ export interface DOMProxy_Properties<ProxiedElement extends Node, Before extends
     destroy(): void
     readonly destroyed: boolean
     /** Returns the `before` element, if it doesn't exist, create it implicitly. */
-    readonly before: Before | null
+    readonly before: Before
     /** Returns the `ShadowRoot` of the `before` element. */
-    readonly beforeShadow: ShadowRoot | null
+    readonly beforeShadow: ShadowRoot
     /**
      * A proxy that always point to `realCurrent`,
      * and if `realCurrent` changes, all action will be forwarded to new `realCurrent`
      */
-    readonly current: ProxiedElement | null
+    readonly current: ProxiedElement
     /** Returns the `after` element, if it doesn't exist, create it implicitly. */
-    readonly after: After | null
+    readonly after: After
     /** Returns the `ShadowRoot` of the `after` element. */
-    readonly afterShadow: ShadowRoot | null
+    readonly afterShadow: ShadowRoot
     /** Get weak reference to `before` node */
     has(type: 'before'): Before | null
     /** Get weak reference to `after` node */

@@ -9,5 +9,5 @@ A proxy that always point to `realCurrent`<!-- -->, and if `realCurrent` changes
 <b>Signature:</b>
 
 ```typescript
-readonly current: ProxiedElement | null;
+readonly current: ProxiedElement;
 ```
