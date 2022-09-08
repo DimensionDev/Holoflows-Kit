@@ -195,18 +195,36 @@ export class WebExtensionMessage<Message> {
         })
     }
     //#region Simple API
-    #events: any = new Proxy({ __proto__: null } as any, {
-        get: (cache, event) => {
-            if (typeof event !== 'string') throw new Error('Only string can be event keys')
-            if (cache[event]) return cache[event]
-            const registry = UnboundedRegistry(this, event, this.#eventRegistry)
-            Object.defineProperty(cache, event, { value: registry })
-            return registry
-        },
-        defineProperty: () => false,
-        setPrototypeOf: () => false,
-        set: throwSetter,
-    })
+    #events: any = (() => {
+        const set = (event: string) => {
+            const value = UnboundedRegistry(this, event, this.#eventRegistry)
+            Object.defineProperty(container, event, {
+                configurable: true,
+                value,
+            })
+            return value
+        }
+        const container = {
+            __proto__: new Proxy(
+                {},
+                {
+                    get(target, key) {
+                        if (typeof key === 'symbol') return undefined
+                        return set(key)
+                    },
+                },
+            ),
+        }
+        return new Proxy(container, {
+            setPrototypeOf: (t, p) => p === null,
+            getPrototypeOf: () => null,
+            getOwnPropertyDescriptor: (t, key) => {
+                if (typeof key === 'symbol') return undefined
+                set(key)
+                return Object.getOwnPropertyDescriptor(container, key)
+            },
+        })
+    })()
     /** Event listeners */
     get events(): { readonly [K in keyof Message]: UnboundedRegistry<Message[K]> } {
         return this.#events
