@@ -9,13 +9,13 @@
 ```typescript
 export interface UnboundedRegistry<T> extends Omit<TargetBoundEventRegistry<T>, 'send'>, AsyncIterable<T> 
 ```
-<b>Extends:</b> Omit&lt;[TargetBoundEventRegistry](./kit.targetboundeventregistry.md)<!-- -->&lt;T&gt;, 'send'&gt;, AsyncIterable
+<b>Extends:</b> Omit&lt;[TargetBoundEventRegistry](./kit.targetboundeventregistry.md)<!-- -->&lt;T&gt;, 'send'&gt;, AsyncIterable&lt;T&gt;
 
 ## Methods
 
 |  Method | Description |
 |  --- | --- |
-|  [bind(target)](./kit.unboundedregistry.bind.md) | You may create a bound version that have a clear interface. |
+|  [bind(target, signal)](./kit.unboundedregistry.bind.md) | You may create a bound version that have a clear interface. |
 |  [send(target, data)](./kit.unboundedregistry.send.md) |  |
 |  [sendByBroadcast(data)](./kit.unboundedregistry.sendbybroadcast.md) |  |
 |  [sendToAll(data)](./kit.unboundedregistry.sendtoall.md) |  |

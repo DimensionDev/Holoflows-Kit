@@ -9,7 +9,7 @@ You may create a bound version that have a clear interface.
 <b>Signature:</b>
 
 ```typescript
-bind(target: MessageTarget | Environment): TargetBoundEventRegistry<T>;
+bind(target: MessageTarget | Environment, signal?: AbortSignal): TargetBoundEventRegistry<T>;
 ```
 
 ## Parameters
@@ -17,6 +17,7 @@ bind(target: MessageTarget | Environment): TargetBoundEventRegistry<T>;
 |  Parameter | Type | Description |
 |  --- | --- | --- |
 |  target | [MessageTarget](./kit.messagetarget.md) \| [Environment](./kit.environment.md) |  |
+|  signal | AbortSignal | <i>(Optional)</i> |
 
 <b>Returns:</b>
 

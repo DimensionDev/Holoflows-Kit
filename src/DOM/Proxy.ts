@@ -330,17 +330,11 @@ export interface DOMProxy_MutationObserver {
      * Get the callback of the MutationObserver
      */
     get callback(): MutationCallback | undefined
-    /**
-     * Set the callback of the MutationObserver
-     */
     set callback(callback: MutationCallback | undefined)
     /**
      * Get the init parameter of the MutationObserver
      */
     get init(): MutationObserverInit | undefined
-    /**
-     * Set the init parameter of the MutationObserver
-     */
     set init(init: MutationObserverInit | undefined)
 }
 

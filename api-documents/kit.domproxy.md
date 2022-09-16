@@ -11,7 +11,7 @@ DOMProxy provide an interface that be stable even dom is changed.
 ```typescript
 export interface DOMProxy<ProxiedElement extends Node = HTMLElement, Before extends Element = HTMLSpanElement, After extends Element = HTMLSpanElement> extends Emitter<DOMProxyEvents<ProxiedElement>>, DOMProxy_Properties<ProxiedElement, Before, After> 
 ```
-<b>Extends:</b> Emitter&lt;[DOMProxyEvents](./kit.domproxyevents.md)<!-- -->&lt;ProxiedElement&gt;&gt;, [DOMProxy\_Properties](./kit.domproxy_properties.md)
+<b>Extends:</b> Emitter&lt;[DOMProxyEvents](./kit.domproxyevents.md)<!-- -->&lt;ProxiedElement&gt;&gt;, [DOMProxy\_Properties](./kit.domproxy_properties.md)<!-- -->&lt;ProxiedElement, Before, After&gt;
 
 ## Remarks
 

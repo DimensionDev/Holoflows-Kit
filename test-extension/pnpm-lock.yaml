@@ -1,13 +1,13 @@
 lockfileVersion: 5.4
 
 specifiers:
-  webextension-polyfill: ^0.9.0
+  webextension-polyfill: ^0.10.0
 
 dependencies:
-  webextension-polyfill: 0.9.0
+  webextension-polyfill: 0.10.0
 
 packages:
 
-  /webextension-polyfill/0.9.0:
-    resolution: {integrity: sha512-LTtHb0yR49xa9irkstDxba4GATDAcDw3ncnFH9RImoFwDlW47U95ME5sn5IiQX2ghfaECaf6xyXM8yvClIBkkw==}
+  /webextension-polyfill/0.10.0:
+    resolution: {integrity: sha512-c5s35LgVa5tFaHhrZDnr3FpQpjj1BB+RXhLTYUxGqBVN460HkbM8TBtEqdXWbpTKfzwCcjAZVF7zXCYSKtcp9g==}
     dev: false

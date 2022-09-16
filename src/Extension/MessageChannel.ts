@@ -61,7 +61,7 @@ export interface UnboundedRegistry<T> extends Omit<TargetBoundEventRegistry<T>, 
     sendByBroadcast(data: T): void
     sendToAll(data: T): void
     /** You may create a bound version that have a clear interface. */
-    bind(target: MessageTarget | Environment): TargetBoundEventRegistry<T>
+    bind(target: MessageTarget | Environment, signal?: AbortSignal): TargetBoundEventRegistry<T>
 }
 export interface WebExtensionMessageOptions {
     /** The "domain" of the message. Messages within different domain won't affect each other. */
@@ -312,7 +312,6 @@ function UnboundedRegistry<T>(
             target: { kind: 'target', target },
         })
     }
-    let binder: TargetBoundEventRegistry<T>
     function on(cb: (data: T) => void, options?: TargetBoundEventListenerOptions) {
         return eventListener.add(eventName, cb, options)
     }
@@ -341,11 +340,17 @@ function UnboundedRegistry<T>(
         sendToFocusedPage: send.bind(null, MessageTarget.FocusedPageOnly),
         sendByBroadcast: send.bind(null, MessageTarget.Broadcast),
         sendToAll: send.bind(null, MessageTarget.All),
-        bind(target) {
-            if (typeof binder === 'undefined') {
-                binder = { on, off, send: (data) => send(target, data), pause }
+        bind(target, signal) {
+            return {
+                on: (callback, options) => {
+                    const off = on(callback, options)
+                    signal?.addEventListener('abort', off, { once: true })
+                    return off
+                },
+                off,
+                send: (data) => send(target, data),
+                pause,
             }
-            return binder
         },
         on,
         off,

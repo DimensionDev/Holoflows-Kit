@@ -230,7 +230,7 @@ export interface TargetBoundEventRegistry<T> {
 
 // @public (undocumented)
 export interface UnboundedRegistry<T> extends Omit<TargetBoundEventRegistry<T>, 'send'>, AsyncIterable<T> {
-    bind(target: MessageTarget | Environment): TargetBoundEventRegistry<T>;
+    bind(target: MessageTarget | Environment, signal?: AbortSignal): TargetBoundEventRegistry<T>;
     // (undocumented)
     send(target: MessageTarget | Environment, data: T): void;
     // (undocumented)
@@ -289,7 +289,7 @@ export abstract class Watcher<T, Before extends Element, After extends Element, 
     omitWarningForRepeatedKeys(): this;
     // (undocumented)
     removeListener<K extends keyof WatcherEvents<T>>(type: K, callback: EventListener_2<WatcherEvents<T>, K>): this;
-    // Warning: (ae-forgotten-export) The symbol "requestIdleCallback" needs to be exported by the entry point index.d.ts
+    // Warning: (ae-forgotten-export) The symbol "requestIdleCallback_2" needs to be exported by the entry point index.d.ts
     protected readonly requestIdleCallback: typeof requestIdleCallback_2;
     protected scheduleWatcherCheck: () => void;
     setComparer(keyComparer?: (a: unknown, b: unknown) => boolean, valueComparer?: (a: T, b: T) => boolean): this;

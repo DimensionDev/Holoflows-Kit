@@ -5,8 +5,8 @@ export interface Deadline {
     timeRemaining(): number
 }
 /**
- * @param fn function to execute
- * @param timeout timeout
+ * @param fn - function to execute
+ * @param timeout - timeout
  */
 export function requestIdleCallback(fn: (t: Deadline) => void, timeout?: { timeout: number }) {
     if ('requestIdleCallback' in window) {
