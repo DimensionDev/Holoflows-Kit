@@ -70,6 +70,15 @@ export interface DOMProxy_Properties<ProxiedElement extends Node, Before extends
 }
 
 // @public
+export interface DOMProxyEvents<ProxiedElement extends Node> {
+    // (undocumented)
+    currentChanged: [{
+        new: ProxiedElement | null;
+        old: ProxiedElement | null;
+    }];
+}
+
+// @public
 export interface DOMProxyOptions<Before extends Element = HTMLSpanElement, After extends Element = HTMLSpanElement> {
     afterShadowRootInit: ShadowRootInit;
     beforeShadowRootInit: ShadowRootInit;

@@ -341,7 +341,8 @@ export interface DOMProxy_MutationObserver {
     set init(init: MutationObserverInit | undefined)
 }
 
-interface DOMProxyEvents<ProxiedElement extends Node> {
+/** Events that DOMProxy supported */
+export interface DOMProxyEvents<ProxiedElement extends Node> {
     currentChanged: [{ new: ProxiedElement | null; old: ProxiedElement | null }]
 }
 
