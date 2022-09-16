@@ -136,8 +136,7 @@ export function DOMProxy<
         for (const change of changes) {
             if (change.type === 'setPrototypeOf') Reflect.setPrototypeOf(current, change.op)
             else if (change.type === 'preventExtensions') Reflect.preventExtensions(current)
-            else if (change.type === 'defineProperty')
-                Reflect.defineProperty(current, change.op[0], change.op[1])
+            else if (change.type === 'defineProperty') Reflect.defineProperty(current, change.op[0], change.op[1])
             else if (change.type === 'set') Reflect.set(current, change.op[0], change.op[1], t)
             else if (change.type === 'delete') Reflect.deleteProperty(current, change.op)
             else if (change.type === 'callMethods') {
@@ -278,8 +277,12 @@ export interface DOMProxy<
     ProxiedElement extends Node = HTMLElement,
     Before extends Element = HTMLSpanElement,
     After extends Element = HTMLSpanElement,
-> extends Emitter<DOMProxyEvents<ProxiedElement>>,
-        DOMProxy_Properties<ProxiedElement, Before, After> {}
+> extends DOMProxy_Properties<ProxiedElement, Before, After> {
+    on(
+        type: 'currentChanged',
+        fn: (data: { new: ProxiedElement | null; old: ProxiedElement | null }) => void,
+    ): () => void
+}
 
 /**
  * {@inheritdoc (DOMProxy:function)}
@@ -338,14 +341,7 @@ export interface DOMProxy_MutationObserver {
     set init(init: MutationObserverInit | undefined)
 }
 
-/**
- * Events on the DOMProxy object
- */
-export interface DOMProxyEvents<ProxiedElement extends Node> {
-    /**
-     * Emit on current changed
-     * @eventProperty
-     */
+interface DOMProxyEvents<ProxiedElement extends Node> {
     currentChanged: [{ new: ProxiedElement | null; old: ProxiedElement | null }]
 }
 

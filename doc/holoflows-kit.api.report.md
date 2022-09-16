@@ -35,7 +35,12 @@ export namespace assertNotEnvironment {
 export function DOMProxy<ProxiedElement extends Node = HTMLElement, Before extends Element = HTMLSpanElement, After extends Element = HTMLSpanElement>(options?: Partial<DOMProxyOptions<Before, After>>): DOMProxy<ProxiedElement, Before, After>;
 
 // @public
-export interface DOMProxy<ProxiedElement extends Node = HTMLElement, Before extends Element = HTMLSpanElement, After extends Element = HTMLSpanElement> extends Emitter<DOMProxyEvents<ProxiedElement>>, DOMProxy_Properties<ProxiedElement, Before, After> {
+export interface DOMProxy<ProxiedElement extends Node = HTMLElement, Before extends Element = HTMLSpanElement, After extends Element = HTMLSpanElement> extends DOMProxy_Properties<ProxiedElement, Before, After> {
+    // (undocumented)
+    on(type: 'currentChanged', fn: (data: {
+        new: ProxiedElement | null;
+        old: ProxiedElement | null;
+    }) => void): () => void;
 }
 
 // @public
@@ -62,15 +67,6 @@ export interface DOMProxy_Properties<ProxiedElement extends Node, Before extends
     has(type: 'beforeShadow' | 'afterShadow'): ShadowRoot | null;
     readonly observer: DOMProxy_MutationObserver;
     realCurrent: ProxiedElement | null;
-}
-
-// @public
-export interface DOMProxyEvents<ProxiedElement extends Node> {
-    // @eventProperty
-    currentChanged: [{
-        new: ProxiedElement | null;
-        old: ProxiedElement | null;
-    }];
 }
 
 // @public

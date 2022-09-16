@@ -9,9 +9,9 @@ DOMProxy provide an interface that be stable even dom is changed.
 <b>Signature:</b>
 
 ```typescript
-export interface DOMProxy<ProxiedElement extends Node = HTMLElement, Before extends Element = HTMLSpanElement, After extends Element = HTMLSpanElement> extends Emitter<DOMProxyEvents<ProxiedElement>>, DOMProxy_Properties<ProxiedElement, Before, After> 
+export interface DOMProxy<ProxiedElement extends Node = HTMLElement, Before extends Element = HTMLSpanElement, After extends Element = HTMLSpanElement> extends DOMProxy_Properties<ProxiedElement, Before, After> 
 ```
-<b>Extends:</b> Emitter&lt;[DOMProxyEvents](./kit.domproxyevents.md)<!-- -->&lt;ProxiedElement&gt;&gt;, [DOMProxy\_Properties](./kit.domproxy_properties.md)<!-- -->&lt;ProxiedElement, Before, After&gt;
+<b>Extends:</b> [DOMProxy\_Properties](./kit.domproxy_properties.md)<!-- -->&lt;ProxiedElement, Before, After&gt;
 
 ## Remarks
 
@@ -28,4 +28,10 @@ Special Handlers:
 \*move\*: move effect to new `realCurrent`
 
 - style (forward, undo, move) - addEventListener (forward, undo, move) - appendChild (forward, undo, move)
+
+## Methods
+
+|  Method | Description |
+|  --- | --- |
+|  [on(type, fn)](./kit.domproxy.on.md) |  |
 
