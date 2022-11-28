@@ -7,7 +7,7 @@
 <b>Signature:</b>
 
 ```typescript
-export declare type ShouldAcceptExternalConnection = (sender: browser.runtime.MessageSender) => ShouldAcceptExternalConnectionResult;
+export type ShouldAcceptExternalConnection = (sender: browser.runtime.MessageSender) => ShouldAcceptExternalConnectionResult;
 ```
 <b>References:</b> [ShouldAcceptExternalConnectionResult](./kit.shouldacceptexternalconnectionresult.md)
 

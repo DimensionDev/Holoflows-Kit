@@ -7,7 +7,7 @@
 <b>Signature:</b>
 
 ```typescript
-export declare type ShouldAcceptExternalConnectionResult = boolean | {
+export type ShouldAcceptExternalConnectionResult = boolean | {
     acceptAs: Environment;
 };
 ```

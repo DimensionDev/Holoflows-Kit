@@ -3,6 +3,7 @@
   "compilerOptions": {
     "outDir": "./es/",
     "rootDir": "./src/",
+    "tsBuildInfoFile": "./tmp/.tsbuildinfo",
     "types": ["web-ext-types"]
   },
   "include": ["./src/"]

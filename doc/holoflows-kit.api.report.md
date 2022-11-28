@@ -254,18 +254,6 @@ export interface UnboundedRegistry<T> extends Omit<TargetBoundEventRegistry<T>, 
     sendToVisiblePages(data: T): void;
 }
 
-// @public @eventProperty
-export class ValueRef<T> {
-    constructor(_value: T, isEqual?: (a: T, b: T) => boolean);
-    addListener(fn: (newVal: T, oldVal: T) => void): () => void;
-    // (undocumented)
-    isEqual: (a: unknown, b: unknown) => boolean;
-    removeAllListener(): void;
-    removeListener(fn: (newVal: T, oldVal: T) => void): void;
-    get value(): T;
-    set value(newVal: T);
-}
-
 // Warning: (ae-forgotten-export) The symbol "ResultOf" needs to be exported by the entry point index.d.ts
 //
 // @public
