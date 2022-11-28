@@ -1,61 +1,9 @@
 {
+  "extends": "@masknet/config/tsconfig.json",
   "compilerOptions": {
-    "outDir": "./es/" /* Redirect output structure to the directory. */,
-    "rootDir": "./src/" /* Specify the root directory of input files. Use to control the output directory structure with --outDir. */,
-
-    // Classification follows https://www.typescriptlang.org/tsconfig
-
-    // Type Checking
-    "strict": true,
-    // exactOptionalPropertyTypes: false,
-    "noFallthroughCasesInSwitch": true,
-    "noImplicitAny": true,
-    "noImplicitOverride": true,
-    "noImplicitReturns": true,
-    "noImplicitThis": true,
-    // noPropertyAccessFromIndexSignature: false,
-    // noUncheckedIndexedAccess: false,
-    // noUnusedLocals: false,
-    // noUnusedParameters: false,
-    "useUnknownInCatchVariables": true,
-
-    // Modules
-    "module": "NodeNext",
-    "moduleResolution": "NodeNext",
-    "resolveJsonModule": true,
-    // Exclude everything by default. Include them in each project on-demand
-    "types": ["web-ext-types"],
-
-    // Emit
-    "declaration": true,
-    "declarationMap": true,
-    "importsNotUsedAsValues": "error",
-    "noEmitOnError": true,
-    // "preserveValueImports": true,
-    "sourceMap": true,
-    "stripInternal": true, // skip type emit for @internal types
-
-    // JavaScript Support
-    "allowJs": true,
-    "checkJs": false,
-
-    // Interop Constraints
-    "esModuleInterop": true,
-    "forceConsistentCasingInFileNames": true,
-    "isolatedModules": true,
-
-    // Language and Environment
-    "jsx": "react-jsx",
-    "lib": ["ES2018", "DOM", "DOM.Iterable"],
-    "target": "ES2018",
-    "useDefineForClassFields": true,
-
-    // Projects
-    // "composite": true,
-    "incremental": false,
-
-    // Completeness
-    "skipLibCheck": true // skip all type checks for .d.ts files
+    "outDir": "./es/",
+    "rootDir": "./src/",
+    "types": ["web-ext-types"]
   },
   "include": ["./src/"]
 }

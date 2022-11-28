@@ -9,11 +9,11 @@
  * - Interval watcher (based on time interval)
  * - Event watcher (based on addEventListener)
  */
-import { DOMProxy, DOMProxyOptions } from './Proxy.js'
+import { DOMProxy, type DOMProxyOptions } from './Proxy.js'
 import type { EventListener } from '@servie/events'
 import type { LiveSelector } from './LiveSelector.js'
 
-import { Deadline, requestIdleCallback } from '../util/requestIdleCallback.js'
+import { type Deadline, requestIdleCallback } from '../util/requestIdleCallback.js'
 import { isNil, uniqWith, intersectionWith, differenceWith } from 'lodash-es'
 import { timeout } from '../util/timeout.js'
 import { createEventTarget } from '../util/EventTarget.js'

@@ -1,4 +1,4 @@
-import { Emitter, EventListener, once, ValidEventArgs } from '@servie/events'
+import { Emitter, type EventListener, once, type ValidEventArgs } from '@servie/events'
 
 /** @internal */
 export function createEventTarget<T = any>() {
@@ -13,10 +13,10 @@ export function createEventTarget<T = any>() {
 
     return {
         has(key: keyof T) {
-            return (emitter.$[key]?.size || 0) > 0
+            return (emitter.$[key]?.size ?? 0) > 0
         },
         add<K extends keyof T>(event: K, callback: EventListener<T, K>, options?: AddEventListenerOptions) {
-            const off = options?.once ? once(emitter, event, callback) : emitter.on(event, callback)
+            const off = options?.once === true ? once(emitter, event, callback) : emitter.on(event, callback)
 
             getOff(event).set(callback, off)
             options?.signal?.addEventListener('abort', off, { once: true })
@@ -28,6 +28,6 @@ export function createEventTarget<T = any>() {
         emitter,
         emit<K extends keyof T>(type: K, ...args: ValidEventArgs<T, K>) {
             emitter.emit(type, ...args)
-        }
+        },
     }
 }
