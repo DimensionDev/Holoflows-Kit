@@ -6,7 +6,7 @@
 
 Just like React hooks. Provide callbacks for each node changes.
 
-<b>Signature:</b>
+**Signature:**
 
 ```typescript
 useForeach(forEach: (element: T, key: unknown, metadata: T extends Node ? DOMProxy<T, Before, After> : unknown) => useForeachReturns<T>): this;
@@ -18,7 +18,7 @@ useForeach(forEach: (element: T, key: unknown, metadata: T extends Node ? DOMPro
 |  --- | --- | --- |
 |  forEach | (element: T, key: unknown, metadata: T extends Node ? [DOMProxy](./kit.domproxy.md)<!-- -->&lt;T, Before, After&gt; : unknown) =&gt; useForeachReturns&lt;T&gt; |  |
 
-<b>Returns:</b>
+**Returns:**
 
 this
 

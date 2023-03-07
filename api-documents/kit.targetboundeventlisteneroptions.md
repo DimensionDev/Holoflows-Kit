@@ -4,7 +4,7 @@
 
 ## TargetBoundEventListenerOptions interface
 
-<b>Signature:</b>
+**Signature:**
 
 ```typescript
 export interface TargetBoundEventListenerOptions 
@@ -14,6 +14,6 @@ export interface TargetBoundEventListenerOptions
 
 |  Property | Modifiers | Type | Description |
 |  --- | --- | --- | --- |
-|  [once?](./kit.targetboundeventlisteneroptions.once.md) |  | boolean | <i>(Optional)</i> Run the listener only once. |
-|  [signal?](./kit.targetboundeventlisteneroptions.signal.md) |  | AbortSignal | <i>(Optional)</i> Cancel the listener by AbortSignal |
+|  [once?](./kit.targetboundeventlisteneroptions.once.md) |  | boolean | _(Optional)_ Run the listener only once. |
+|  [signal?](./kit.targetboundeventlisteneroptions.signal.md) |  | AbortSignal | _(Optional)_ Cancel the listener by AbortSignal |
 

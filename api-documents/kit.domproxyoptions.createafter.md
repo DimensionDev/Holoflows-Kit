@@ -6,12 +6,12 @@
 
 Create the `after` node of the DOMProxy
 
-<b>Signature:</b>
+**Signature:**
 
 ```typescript
 createAfter(): After;
 ```
-<b>Returns:</b>
+**Returns:**
 
 After
 

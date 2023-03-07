@@ -4,7 +4,7 @@
 
 ## WatcherEvents interface
 
-<b>Signature:</b>
+**Signature:**
 
 ```typescript
 export interface WatcherEvents<T> 

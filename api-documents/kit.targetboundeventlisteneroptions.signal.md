@@ -6,7 +6,7 @@
 
 Cancel the listener by AbortSignal
 
-<b>Signature:</b>
+**Signature:**
 
 ```typescript
 signal?: AbortSignal;

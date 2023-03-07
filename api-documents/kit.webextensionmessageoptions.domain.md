@@ -6,7 +6,7 @@
 
 The "domain" of the message. Messages within different domain won't affect each other.
 
-<b>Signature:</b>
+**Signature:**
 
 ```typescript
 readonly domain?: string;

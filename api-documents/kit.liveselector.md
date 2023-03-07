@@ -6,7 +6,7 @@
 
 Create a live selector that can continuously select the element you want.
 
-<b>Signature:</b>
+**Signature:**
 
 ```typescript
 export declare class LiveSelector<T, SingleMode extends boolean = false> 

@@ -2,6 +2,7 @@
 /* eslint-disable no-bitwise */
 import { Emitter } from '@servie/events'
 import { EventIterator } from 'event-iterator'
+import type { Runtime } from 'webextension-polyfill'
 import { createEventTarget } from '../util/EventTarget.js'
 import { Environment, getEnvironment, isEnvironment } from './Context.js'
 
@@ -78,17 +79,14 @@ export interface WebExtensionMessageOptions {
      */
     readonly externalExtensionID?: string
 }
-const throwSetter = () => {
-    throw new TypeError()
-}
 type BackgroundOnlyLivingPortsInfo = {
-    sender?: browser.runtime.MessageSender
+    sender?: Runtime.MessageSender
     environment?: Environment
     external?: boolean
 }
 
 // Only available in background page
-const backgroundOnlyLivingPorts = new Map<browser.runtime.Port, BackgroundOnlyLivingPortsInfo>()
+const backgroundOnlyLivingPorts = new Map<Runtime.Port, BackgroundOnlyLivingPortsInfo>()
 // Only be set in other pages
 let currentTabID = -1
 let externalMode = false
@@ -103,7 +101,7 @@ export type ShouldAcceptExternalConnectionResult =
           acceptAs: Environment
       }
 export type ShouldAcceptExternalConnection = (
-    sender: browser.runtime.MessageSender,
+    sender: Runtime.MessageSender,
 ) => ShouldAcceptExternalConnectionResult
 export class WebExtensionMessage<Message> {
     // Only execute once.
@@ -364,9 +362,9 @@ function UnboundedRegistry<T>(
 type BoundTarget =
     | { kind: 'tab'; id: number }
     | { kind: 'target'; target: MessageTarget | Environment }
-    | { kind: 'port'; port: browser.runtime.Port }
+    | { kind: 'port'; port: Runtime.Port }
 
-function backgroundPageMessageHandler(this: browser.runtime.Port | undefined, data: unknown) {
+function backgroundPageMessageHandler(this: Runtime.Port | undefined, data: unknown) {
     // receive payload from the other side
     if (!isInternalMessageType(data)) return
     if (data.target.kind === 'tab') {
@@ -395,7 +393,7 @@ function backgroundPageMessageHandler(this: browser.runtime.Port | undefined, da
     }
 }
 
-function otherEnvMessageHandler(this: browser.runtime.Port, payload: number | InternalMessageType) {
+function otherEnvMessageHandler(this: Runtime.Port, payload: number | InternalMessageType) {
     if (typeof payload !== 'object') return this.postMessage(payload)
 
     const bound = payload.target
@@ -410,7 +408,7 @@ function otherEnvMessageHandler(this: browser.runtime.Port, payload: number | In
     this.postMessage(payload)
 }
 /** The port need to be initialized before use. */
-function backgroundPortBoarding(port: browser.runtime.Port, sender: undefined | browser.runtime.MessageSender) {
+function backgroundPortBoarding(port: Runtime.Port, sender: undefined | Runtime.MessageSender) {
     // let the client know it's tab id
     // sender.tab might be undefined if it is a popup
     port.postMessage(sender?.tab?.id ?? -1)
@@ -424,7 +422,7 @@ function backgroundPortBoarding(port: browser.runtime.Port, sender: undefined | 
     port.onDisconnect.addListener(() => backgroundOnlyLivingPorts.delete(port))
 }
 
-function otherEnvPortBoarding(port: browser.runtime.Port, reconnect: () => void) {
+function otherEnvPortBoarding(port: Runtime.Port, reconnect: () => void) {
     // report self environment
     port.postMessage(getEnvironment())
     // server will send self tab ID on connected

@@ -6,7 +6,7 @@
 
 Run the listener only once.
 
-<b>Signature:</b>
+**Signature:**
 
 ```typescript
 once?: boolean;

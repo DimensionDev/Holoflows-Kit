@@ -6,7 +6,7 @@
 
 Print the Environment bit flag in a human-readable format
 
-<b>Signature:</b>
+**Signature:**
 
 ```typescript
 export declare function printEnvironment(e?: Environment): string;
@@ -16,9 +16,9 @@ export declare function printEnvironment(e?: Environment): string;
 
 |  Parameter | Type | Description |
 |  --- | --- | --- |
-|  e | [Environment](./kit.environment.md) | <i>(Optional)</i> Printing environment bit flag |
+|  e | [Environment](./kit.environment.md) | _(Optional)_ Printing environment bit flag |
 
-<b>Returns:</b>
+**Returns:**
 
 string
 

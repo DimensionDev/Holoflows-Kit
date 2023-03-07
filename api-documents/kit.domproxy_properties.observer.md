@@ -6,7 +6,7 @@
 
 Observer for the current node. You need to set callback and init to activate it.
 
-<b>Signature:</b>
+**Signature:**
 
 ```typescript
 readonly observer: DOMProxy_MutationObserver;

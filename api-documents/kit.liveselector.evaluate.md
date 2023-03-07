@@ -6,12 +6,12 @@
 
 Evaluate selector expression
 
-<b>Signature:</b>
+**Signature:**
 
 ```typescript
 evaluate(): SingleMode extends true ? T | undefined : T[];
 ```
-<b>Returns:</b>
+**Returns:**
 
 SingleMode extends true ? T \| undefined : T\[\]
 

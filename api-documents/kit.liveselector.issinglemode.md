@@ -6,7 +6,7 @@
 
 Is this LiveSelector run in the SingleMode
 
-<b>Signature:</b>
+**Signature:**
 
 ```typescript
 isSingleMode: boolean;

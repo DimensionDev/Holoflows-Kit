@@ -6,7 +6,7 @@
 
 Start an MutationObserverWatcher.
 
-<b>Signature:</b>
+**Signature:**
 
 ```typescript
 startWatch(options: MutationObserverInit, signal?: AbortSignal): this;
@@ -17,9 +17,9 @@ startWatch(options: MutationObserverInit, signal?: AbortSignal): this;
 |  Parameter | Type | Description |
 |  --- | --- | --- |
 |  options | MutationObserverInit |  |
-|  signal | AbortSignal | <i>(Optional)</i> |
+|  signal | AbortSignal | _(Optional)_ |
 
-<b>Returns:</b>
+**Returns:**
 
 this
 

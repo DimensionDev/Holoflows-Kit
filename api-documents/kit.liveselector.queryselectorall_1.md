@@ -4,7 +4,7 @@
 
 ## LiveSelector.querySelectorAll() method
 
-<b>Signature:</b>
+**Signature:**
 
 ```typescript
 querySelectorAll<K extends keyof SVGElementTagNameMap>(selector: K): LiveSelector<SVGElementTagNameMap[K], SingleMode>;
@@ -16,7 +16,7 @@ querySelectorAll<K extends keyof SVGElementTagNameMap>(selector: K): LiveSelecto
 |  --- | --- | --- |
 |  selector | K |  |
 
-<b>Returns:</b>
+**Returns:**
 
 [LiveSelector](./kit.liveselector.md)<!-- -->&lt;SVGElementTagNameMap\[K\], SingleMode&gt;
 

@@ -6,12 +6,12 @@
 
 Reverses the elements in an Array.
 
-<b>Signature:</b>
+**Signature:**
 
 ```typescript
 reverse(): LiveSelector<T, SingleMode>;
 ```
-<b>Returns:</b>
+**Returns:**
 
 [LiveSelector](./kit.liveselector.md)<!-- -->&lt;T, SingleMode&gt;
 

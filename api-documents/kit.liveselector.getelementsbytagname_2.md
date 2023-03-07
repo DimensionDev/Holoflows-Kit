@@ -4,7 +4,7 @@
 
 ## LiveSelector.getElementsByTagName() method
 
-<b>Signature:</b>
+**Signature:**
 
 ```typescript
 getElementsByTagName<E extends Element = Element>(tag: string): LiveSelector<E, SingleMode>;
@@ -16,7 +16,7 @@ getElementsByTagName<E extends Element = Element>(tag: string): LiveSelector<E, 
 |  --- | --- | --- |
 |  tag | string |  |
 
-<b>Returns:</b>
+**Returns:**
 
 [LiveSelector](./kit.liveselector.md)<!-- -->&lt;E, SingleMode&gt;
 

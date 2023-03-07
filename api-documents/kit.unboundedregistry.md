@@ -4,12 +4,12 @@
 
 ## UnboundedRegistry interface
 
-<b>Signature:</b>
+**Signature:**
 
 ```typescript
 export interface UnboundedRegistry<T> extends Omit<TargetBoundEventRegistry<T>, 'send'>, AsyncIterable<T> 
 ```
-<b>Extends:</b> Omit&lt;[TargetBoundEventRegistry](./kit.targetboundeventregistry.md)<!-- -->&lt;T&gt;, 'send'&gt;, AsyncIterable&lt;T&gt;
+**Extends:** Omit&lt;[TargetBoundEventRegistry](./kit.targetboundeventregistry.md)<!-- -->&lt;T&gt;, 'send'&gt;, AsyncIterable&lt;T&gt;
 
 ## Methods
 

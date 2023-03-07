@@ -6,7 +6,7 @@
 
 LiveSelector that this object holds
 
-<b>Signature:</b>
+**Signature:**
 
 ```typescript
 protected liveSelector: LiveSelector<T, SingleMode>;

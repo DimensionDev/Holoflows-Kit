@@ -6,7 +6,7 @@
 
 Get weak reference to `beforeShadow` or `afterShadow` node
 
-<b>Signature:</b>
+**Signature:**
 
 ```typescript
 has(type: 'beforeShadow' | 'afterShadow'): ShadowRoot | null;
@@ -18,7 +18,7 @@ has(type: 'beforeShadow' | 'afterShadow'): ShadowRoot | null;
 |  --- | --- | --- |
 |  type | 'beforeShadow' \| 'afterShadow' |  |
 
-<b>Returns:</b>
+**Returns:**
 
 ShadowRoot \| null
 

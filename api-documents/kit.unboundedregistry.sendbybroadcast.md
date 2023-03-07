@@ -4,7 +4,7 @@
 
 ## UnboundedRegistry.sendByBroadcast() method
 
-<b>Signature:</b>
+**Signature:**
 
 ```typescript
 sendByBroadcast(data: T): void;
@@ -16,7 +16,7 @@ sendByBroadcast(data: T): void;
 |  --- | --- | --- |
 |  data | T |  |
 
-<b>Returns:</b>
+**Returns:**
 
 void
 

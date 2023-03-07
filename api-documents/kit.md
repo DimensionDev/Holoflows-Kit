@@ -14,8 +14,13 @@ A toolkit for browser extension developing.
 |  [IntervalWatcher](./kit.intervalwatcher.md) | A watcher based on time interval. |
 |  [LiveSelector](./kit.liveselector.md) | Create a live selector that can continuously select the element you want. |
 |  [MutationObserverWatcher](./kit.mutationobserverwatcher.md) | A watcher based on MutationObserver |
-|  [Watcher](./kit.watcher.md) | Use LiveSelector to watch dom change |
 |  [WebExtensionMessage](./kit.webextensionmessage.md) |  |
+
+## Abstract Classes
+
+|  Abstract Class | Description |
+|  --- | --- |
+|  [Watcher](./kit.watcher.md) | Use LiveSelector to watch dom change |
 
 ## Enumerations
 

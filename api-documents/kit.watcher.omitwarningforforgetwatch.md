@@ -6,12 +6,12 @@
 
 If you're expecting Watcher may not be called, call this function, this will omit the warning.
 
-<b>Signature:</b>
+**Signature:**
 
 ```typescript
 omitWarningForForgetWatch(): this;
 ```
-<b>Returns:</b>
+**Returns:**
 
 this
 

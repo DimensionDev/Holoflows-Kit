@@ -4,7 +4,7 @@
 
 ## Watcher.removeListener() method
 
-<b>Signature:</b>
+**Signature:**
 
 ```typescript
 removeListener<K extends keyof WatcherEvents<T>>(type: K, callback: EventListener<WatcherEvents<T>, K>): this;
@@ -17,7 +17,7 @@ removeListener<K extends keyof WatcherEvents<T>>(type: K, callback: EventListene
 |  type | K |  |
 |  callback | EventListener&lt;[WatcherEvents](./kit.watcherevents.md)<!-- -->&lt;T&gt;, K&gt; |  |
 
-<b>Returns:</b>
+**Returns:**
 
 this
 

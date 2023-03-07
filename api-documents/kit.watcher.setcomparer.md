@@ -8,7 +8,7 @@ To help identify same nodes in different iteration, you need to implement a map 
 
 You probably don't need this.
 
-<b>Signature:</b>
+**Signature:**
 
 ```typescript
 setComparer(keyComparer?: (a: unknown, b: unknown) => boolean, valueComparer?: (a: T, b: T) => boolean): this;
@@ -18,10 +18,10 @@ setComparer(keyComparer?: (a: unknown, b: unknown) => boolean, valueComparer?: (
 
 |  Parameter | Type | Description |
 |  --- | --- | --- |
-|  keyComparer | (a: unknown, b: unknown) =&gt; boolean | <i>(Optional)</i> compare between two keys, defaults to <code>===</code> |
-|  valueComparer | (a: T, b: T) =&gt; boolean | <i>(Optional)</i> compare between two value, defaults to <code>===</code> |
+|  keyComparer | (a: unknown, b: unknown) =&gt; boolean | _(Optional)_ compare between two keys, defaults to <code>===</code> |
+|  valueComparer | (a: T, b: T) =&gt; boolean | _(Optional)_ compare between two value, defaults to <code>===</code> |
 
-<b>Returns:</b>
+**Returns:**
 
 this
 

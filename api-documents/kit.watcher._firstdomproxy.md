@@ -6,7 +6,7 @@
 
 The first DOMProxy
 
-<b>Signature:</b>
+**Signature:**
 
 ```typescript
 protected _firstDOMProxy: DOMProxy<Node, Before, After>;

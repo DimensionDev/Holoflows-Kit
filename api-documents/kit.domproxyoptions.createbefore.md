@@ -6,12 +6,12 @@
 
 Create the `before` node of the DOMProxy
 
-<b>Signature:</b>
+**Signature:**
 
 ```typescript
 createBefore(): Before;
 ```
-<b>Returns:</b>
+**Returns:**
 
 Before
 

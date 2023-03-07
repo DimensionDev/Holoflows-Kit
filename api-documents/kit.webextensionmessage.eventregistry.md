@@ -4,7 +4,7 @@
 
 ## WebExtensionMessage.eventRegistry property
 
-<b>Signature:</b>
+**Signature:**
 
 ```typescript
 protected get eventRegistry(): Emitter<Record<string, [unknown]>>;

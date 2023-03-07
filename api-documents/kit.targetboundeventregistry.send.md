@@ -4,7 +4,7 @@
 
 ## TargetBoundEventRegistry.send() method
 
-<b>Signature:</b>
+**Signature:**
 
 ```typescript
 send(data: T): void;
@@ -16,7 +16,7 @@ send(data: T): void;
 |  --- | --- | --- |
 |  data | T |  |
 
-<b>Returns:</b>
+**Returns:**
 
 void
 

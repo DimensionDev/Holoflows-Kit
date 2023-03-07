@@ -6,12 +6,12 @@
 
 Clone this LiveSelector and return a new LiveSelector.
 
-<b>Signature:</b>
+**Signature:**
 
 ```typescript
 clone(): LiveSelector<T, SingleMode>;
 ```
-<b>Returns:</b>
+**Returns:**
 
 [LiveSelector](./kit.liveselector.md)<!-- -->&lt;T, SingleMode&gt;
 

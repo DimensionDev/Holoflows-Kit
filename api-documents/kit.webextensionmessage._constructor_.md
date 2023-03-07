@@ -6,7 +6,7 @@
 
 Constructs a new instance of the `WebExtensionMessage` class
 
-<b>Signature:</b>
+**Signature:**
 
 ```typescript
 constructor(options?: WebExtensionMessageOptions);
@@ -16,5 +16,5 @@ constructor(options?: WebExtensionMessageOptions);
 
 |  Parameter | Type | Description |
 |  --- | --- | --- |
-|  options | [WebExtensionMessageOptions](./kit.webextensionmessageoptions.md) | <i>(Optional)</i> WebExtensionMessage options |
+|  options | [WebExtensionMessageOptions](./kit.webextensionmessageoptions.md) | _(Optional)_ WebExtensionMessage options |
 

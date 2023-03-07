@@ -6,7 +6,7 @@
 
 Same message name within different domain won't collide with each other.
 
-<b>Signature:</b>
+**Signature:**
 
 ```typescript
 get domain(): string;

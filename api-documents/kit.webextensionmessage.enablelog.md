@@ -4,7 +4,7 @@
 
 ## WebExtensionMessage.enableLog property
 
-<b>Signature:</b>
+**Signature:**
 
 ```typescript
 enableLog: boolean;

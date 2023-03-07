@@ -5,7 +5,7 @@
 ## WatcherEvents.onIteration property
 
 
-<b>Signature:</b>
+**Signature:**
 
 ```typescript
 onIteration: [

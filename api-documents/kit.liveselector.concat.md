@@ -6,7 +6,7 @@
 
 Combines two LiveSelector.
 
-<b>Signature:</b>
+**Signature:**
 
 ```typescript
 concat<NextType>(newEle: LiveSelector<NextType, SingleMode>): LiveSelector<T | NextType, SingleMode>;
@@ -18,7 +18,7 @@ concat<NextType>(newEle: LiveSelector<NextType, SingleMode>): LiveSelector<T | N
 |  --- | --- | --- |
 |  newEle | [LiveSelector](./kit.liveselector.md)<!-- -->&lt;NextType, SingleMode&gt; | Additional LiveSelector to combine. |
 
-<b>Returns:</b>
+**Returns:**
 
 [LiveSelector](./kit.liveselector.md)<!-- -->&lt;T \| NextType, SingleMode&gt;
 

@@ -6,12 +6,12 @@
 
 Enable single mode. Only 1 result will be emitted.
 
-<b>Signature:</b>
+**Signature:**
 
 ```typescript
 enableSingleMode(): LiveSelector<T, true>;
 ```
-<b>Returns:</b>
+**Returns:**
 
 [LiveSelector](./kit.liveselector.md)<!-- -->&lt;T, true&gt;
 

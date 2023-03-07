@@ -4,7 +4,7 @@
 
 ## DOMProxy\_Properties.destroyed property
 
-<b>Signature:</b>
+**Signature:**
 
 ```typescript
 readonly destroyed: boolean;

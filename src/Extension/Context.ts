@@ -2,6 +2,7 @@
 /* eslint-disable @typescript-eslint/strict-boolean-expressions */
 /** Current running environment of Web Extension */
 export enum Environment {
+    NONE = 0,
     /** has browser as a global variable */ HasBrowserAPI = 1 << 1,
     /** URL protocol ends with "-extension:" */ ExtensionProtocol = 1 << 2,
     /** Current running context is Content Script */ ContentScript = 1 << 3,
@@ -38,7 +39,7 @@ export function getEnvironment(): Environment {
             if (val !== undefined) return Number(val)
         }
     } catch {}
-    let flag: Environment = 0
+    let flag = Environment.NONE
     // Scheme test
     try {
         const scheme = location.protocol
@@ -64,13 +65,14 @@ export function getEnvironment(): Environment {
                 const manifest = browser.runtime.getManifest()
                 const current = location.pathname
 
-                const background =
-                    // @ts-expect-error Manifest V3
-                    manifest.background?.service_worker ||
-                    manifest.background?.page ||
-                    manifest.background_page ||
-                    '/_generated_background_page.html'
-                const options = manifest.options_ui?.page || manifest.options_page
+                const background = manifest.background
+                    ? 'service_worker' in manifest.background
+                        ? manifest.background.service_worker
+                        : 'page' in manifest.background
+                        ? manifest.background.page
+                        : '/_generated_background_page.html'
+                    : ''
+                const options = manifest.options_ui?.page
 
                 if (current === normalize(background)) flag |= Environment.ManifestBackground
                 // TODO: this property support i18n. What will I get when call browser.runtime.getManifest()?
@@ -81,6 +83,7 @@ export function getEnvironment(): Environment {
                 if (current === normalize(manifest.page_action?.default_popup)) flag |= Environment.ManifestPageAction
 
                 // TODO: this property support i18n.
+                // @ts-expect-error https://developer.mozilla.org/en-US/docs/Mozilla/Add-ons/WebExtensions/manifest.json/chrome_url_overrides
                 const { bookmarks, history, newtab } = manifest.chrome_url_overrides || {}
                 if (current === normalize(bookmarks)) flag |= Environment.ManifestOverridesBookmarks
                 if (current === normalize(history)) flag |= Environment.ManifestOverridesHistory

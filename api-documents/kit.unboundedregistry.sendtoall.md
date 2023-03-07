@@ -4,7 +4,7 @@
 
 ## UnboundedRegistry.sendToAll() method
 
-<b>Signature:</b>
+**Signature:**
 
 ```typescript
 sendToAll(data: T): void;
@@ -16,7 +16,7 @@ sendToAll(data: T): void;
 |  --- | --- | --- |
 |  data | T |  |
 
-<b>Returns:</b>
+**Returns:**
 
 void
 

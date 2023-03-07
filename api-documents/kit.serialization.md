@@ -6,7 +6,7 @@
 
 Define how to do serialization and deserialization of remote procedure call
 
-<b>Signature:</b>
+**Signature:**
 
 ```typescript
 export interface Serialization 

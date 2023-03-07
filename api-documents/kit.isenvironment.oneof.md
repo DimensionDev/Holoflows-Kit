@@ -4,7 +4,7 @@
 
 ## isEnvironment.oneOf variable
 
-<b>Signature:</b>
+**Signature:**
 
 ```typescript
 oneOf: (...args: Environment[]) => boolean

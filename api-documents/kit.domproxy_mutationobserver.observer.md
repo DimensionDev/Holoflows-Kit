@@ -6,7 +6,7 @@
 
 The proxied of MutationObserver of this DOMProxy
 
-<b>Signature:</b>
+**Signature:**
 
 ```typescript
 readonly observer: MutationObserver | null;

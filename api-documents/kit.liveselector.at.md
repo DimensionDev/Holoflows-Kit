@@ -6,7 +6,7 @@
 
 Select only nth element
 
-<b>Signature:</b>
+**Signature:**
 
 ```typescript
 at(n: SingleMode extends true ? 'LiveSelector.nth() is not available in SingleMode' : number): LiveSelector<T, SingleMode>;
@@ -18,7 +18,7 @@ at(n: SingleMode extends true ? 'LiveSelector.nth() is not available in SingleMo
 |  --- | --- | --- |
 |  n | SingleMode extends true ? 'LiveSelector.nth() is not available in SingleMode' : number | Select only nth element, allow negative number. |
 
-<b>Returns:</b>
+**Returns:**
 
 [LiveSelector](./kit.liveselector.md)<!-- -->&lt;T, SingleMode&gt;
 

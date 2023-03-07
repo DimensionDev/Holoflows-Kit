@@ -4,7 +4,7 @@
 
 ## DOMProxy.on() method
 
-<b>Signature:</b>
+**Signature:**
 
 ```typescript
 on(type: 'currentChanged', fn: (data: {
@@ -20,7 +20,7 @@ on(type: 'currentChanged', fn: (data: {
 |  type | 'currentChanged' |  |
 |  fn | (data: { new: ProxiedElement \| null; old: ProxiedElement \| null; }) =&gt; void |  |
 
-<b>Returns:</b>
+**Returns:**
 
 () =&gt; void
 

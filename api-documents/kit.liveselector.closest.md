@@ -6,7 +6,7 @@
 
 Select the nth parent
 
-<b>Signature:</b>
+**Signature:**
 
 ```typescript
 closest<T>(parentOfNth: number): LiveSelector<T, SingleMode>;
@@ -18,7 +18,7 @@ closest<T>(parentOfNth: number): LiveSelector<T, SingleMode>;
 |  --- | --- | --- |
 |  parentOfNth | number |  |
 
-<b>Returns:</b>
+**Returns:**
 
 [LiveSelector](./kit.liveselector.md)<!-- -->&lt;T, SingleMode&gt;
 

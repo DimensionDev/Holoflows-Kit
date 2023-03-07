@@ -4,7 +4,7 @@
 
 ## UnboundedRegistry.sendToBackgroundPage() method
 
-<b>Signature:</b>
+**Signature:**
 
 ```typescript
 sendToBackgroundPage(data: T): void;
@@ -16,7 +16,7 @@ sendToBackgroundPage(data: T): void;
 |  --- | --- | --- |
 |  data | T |  |
 
-<b>Returns:</b>
+**Returns:**
 
 void
 

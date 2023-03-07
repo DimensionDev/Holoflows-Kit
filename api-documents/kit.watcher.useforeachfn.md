@@ -6,7 +6,7 @@
 
 Saved useForeach
 
-<b>Signature:</b>
+**Signature:**
 
 ```typescript
 protected useForeachFn?: Parameters<Watcher<T, any, any, any>['useForeach']>[0];

@@ -6,7 +6,7 @@
 
 Saved DOMProxy of last watch
 
-<b>Signature:</b>
+**Signature:**
 
 ```typescript
 protected lastDOMProxyMap: Map<unknown, DOMProxy<any, Before, After>>;

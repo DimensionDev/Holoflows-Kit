@@ -6,7 +6,7 @@
 
 Callback for single mode
 
-<b>Signature:</b>
+**Signature:**
 
 ```typescript
 protected singleModeCallback?: useForeachReturns<T>;

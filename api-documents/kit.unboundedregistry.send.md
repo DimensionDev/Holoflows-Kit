@@ -4,7 +4,7 @@
 
 ## UnboundedRegistry.send() method
 
-<b>Signature:</b>
+**Signature:**
 
 ```typescript
 send(target: MessageTarget | Environment, data: T): void;
@@ -17,7 +17,7 @@ send(target: MessageTarget | Environment, data: T): void;
 |  target | [MessageTarget](./kit.messagetarget.md) \| [Environment](./kit.environment.md) |  |
 |  data | T |  |
 
-<b>Returns:</b>
+**Returns:**
 
 void
 

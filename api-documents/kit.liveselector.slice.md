@@ -6,7 +6,7 @@
 
 Returns a section of an array.
 
-<b>Signature:</b>
+**Signature:**
 
 ```typescript
 slice(start?: number, end?: number): LiveSelector<T, SingleMode>;
@@ -16,10 +16,10 @@ slice(start?: number, end?: number): LiveSelector<T, SingleMode>;
 
 |  Parameter | Type | Description |
 |  --- | --- | --- |
-|  start | number | <i>(Optional)</i> The beginning of the specified portion of the array. |
-|  end | number | <i>(Optional)</i> The end of the specified portion of the array. |
+|  start | number | _(Optional)_ The beginning of the specified portion of the array. |
+|  end | number | _(Optional)_ The end of the specified portion of the array. |
 
-<b>Returns:</b>
+**Returns:**
 
 [LiveSelector](./kit.liveselector.md)<!-- -->&lt;T, SingleMode&gt;
 

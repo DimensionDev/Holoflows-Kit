@@ -4,7 +4,7 @@
 
 ## EventWatcher.startWatch() method
 
-<b>Signature:</b>
+**Signature:**
 
 ```typescript
 startWatch(signal?: AbortSignal): this;
@@ -14,9 +14,9 @@ startWatch(signal?: AbortSignal): this;
 
 |  Parameter | Type | Description |
 |  --- | --- | --- |
-|  signal | AbortSignal | <i>(Optional)</i> |
+|  signal | AbortSignal | _(Optional)_ |
 
-<b>Returns:</b>
+**Returns:**
 
 this
 

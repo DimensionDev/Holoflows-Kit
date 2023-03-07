@@ -8,7 +8,7 @@ To help identify same nodes in different iteration, you need to implement a map 
 
 If the key is changed, the same node will call through `forEachRemove` then `forEach`
 
-<b>Signature:</b>
+**Signature:**
 
 ```typescript
 assignKeys<Q = unknown>(keyAssigner: (node: T, index: number, arr: readonly T[]) => Q): this;
@@ -20,7 +20,7 @@ assignKeys<Q = unknown>(keyAssigner: (node: T, index: number, arr: readonly T[])
 |  --- | --- | --- |
 |  keyAssigner | (node: T, index: number, arr: readonly T\[\]) =&gt; Q | map <code>node</code> to <code>key</code>, defaults to <code>node =&gt; node</code> |
 
-<b>Returns:</b>
+**Returns:**
 
 this
 

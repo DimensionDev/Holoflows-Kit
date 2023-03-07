@@ -6,7 +6,7 @@
 
 Set option for DOMProxy
 
-<b>Signature:</b>
+**Signature:**
 
 ```typescript
 setDOMProxyOption(option: Partial<DOMProxyOptions<Before, After>>): this;
@@ -18,7 +18,7 @@ setDOMProxyOption(option: Partial<DOMProxyOptions<Before, After>>): this;
 |  --- | --- | --- |
 |  option | Partial&lt;[DOMProxyOptions](./kit.domproxyoptions.md)<!-- -->&lt;Before, After&gt;&gt; | DOMProxy options |
 
-<b>Returns:</b>
+**Returns:**
 
 this
 

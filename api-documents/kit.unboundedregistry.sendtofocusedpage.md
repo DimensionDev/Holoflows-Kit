@@ -4,7 +4,7 @@
 
 ## UnboundedRegistry.sendToFocusedPage() method
 
-<b>Signature:</b>
+**Signature:**
 
 ```typescript
 sendToFocusedPage(data: T): void;
@@ -16,7 +16,7 @@ sendToFocusedPage(data: T): void;
 |  --- | --- | --- |
 |  data | T |  |
 
-<b>Returns:</b>
+**Returns:**
 
 void
 

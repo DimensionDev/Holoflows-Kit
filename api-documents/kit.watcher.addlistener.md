@@ -4,7 +4,7 @@
 
 ## Watcher.addListener() method
 
-<b>Signature:</b>
+**Signature:**
 
 ```typescript
 addListener<K extends keyof WatcherEvents<T>>(type: K, callback: EventListener<WatcherEvents<T>, K>, options?: AddEventListenerOptions): this;
@@ -16,9 +16,9 @@ addListener<K extends keyof WatcherEvents<T>>(type: K, callback: EventListener<W
 |  --- | --- | --- |
 |  type | K |  |
 |  callback | EventListener&lt;[WatcherEvents](./kit.watcherevents.md)<!-- -->&lt;T&gt;, K&gt; |  |
-|  options | AddEventListenerOptions | <i>(Optional)</i> |
+|  options | AddEventListenerOptions | _(Optional)_ |
 
-<b>Returns:</b>
+**Returns:**
 
 this
 

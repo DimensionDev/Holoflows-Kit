@@ -6,7 +6,7 @@
 
 ShadowRootInit for creating the shadow of `after`
 
-<b>Signature:</b>
+**Signature:**
 
 ```typescript
 afterShadowRootInit: ShadowRootInit;

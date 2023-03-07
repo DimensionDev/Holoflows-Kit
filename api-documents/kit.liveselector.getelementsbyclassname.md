@@ -6,7 +6,7 @@
 
 Select all element base on the current result.
 
-<b>Signature:</b>
+**Signature:**
 
 ```typescript
 getElementsByClassName<T extends Element = Element>(className: string): LiveSelector<T, SingleMode>;
@@ -18,7 +18,7 @@ getElementsByClassName<T extends Element = Element>(className: string): LiveSele
 |  --- | --- | --- |
 |  className | string | Class name |
 
-<b>Returns:</b>
+**Returns:**
 
 [LiveSelector](./kit.liveselector.md)<!-- -->&lt;T, SingleMode&gt;
 

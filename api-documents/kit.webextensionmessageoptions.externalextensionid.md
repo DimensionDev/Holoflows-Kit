@@ -12,7 +12,7 @@ ONLY use it in a normal webpage.
 
 PLEASE make sure to call acceptExternalConnect otherwise it will not work.
 
-<b>Signature:</b>
+**Signature:**
 
 ```typescript
 readonly externalExtensionID?: string;

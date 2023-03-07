@@ -4,7 +4,7 @@
 
 ## UnboundedRegistry.sendToContentScripts() method
 
-<b>Signature:</b>
+**Signature:**
 
 ```typescript
 sendToContentScripts(data: T): void;
@@ -16,7 +16,7 @@ sendToContentScripts(data: T): void;
 |  --- | --- | --- |
 |  data | T |  |
 
-<b>Returns:</b>
+**Returns:**
 
 void
 

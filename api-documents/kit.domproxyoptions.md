@@ -6,7 +6,7 @@
 
 Options for DOMProxy
 
-<b>Signature:</b>
+**Signature:**
 
 ```typescript
 export interface DOMProxyOptions<Before extends Element = HTMLSpanElement, After extends Element = HTMLSpanElement> 

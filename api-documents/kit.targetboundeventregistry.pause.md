@@ -6,12 +6,12 @@
 
 Pausing the dispatch of this event. Collect all new incoming events.
 
-<b>Signature:</b>
+**Signature:**
 
 ```typescript
 pause(): (reducer?: (data: T[]) => T[]) => Promise<void>;
 ```
-<b>Returns:</b>
+**Returns:**
 
 (reducer?: (data: T\[\]) =&gt; T\[\]) =&gt; Promise&lt;void&gt;
 

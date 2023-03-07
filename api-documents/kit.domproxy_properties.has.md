@@ -6,7 +6,7 @@
 
 Get weak reference to `before` node
 
-<b>Signature:</b>
+**Signature:**
 
 ```typescript
 has(type: 'before'): Before | null;
@@ -18,7 +18,7 @@ has(type: 'before'): Before | null;
 |  --- | --- | --- |
 |  type | 'before' |  |
 
-<b>Returns:</b>
+**Returns:**
 
 Before \| null
 

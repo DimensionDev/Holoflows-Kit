@@ -4,7 +4,7 @@
 
 ## WebExtensionMessage class
 
-<b>Signature:</b>
+**Signature:**
 
 ```typescript
 export declare class WebExtensionMessage<Message> 

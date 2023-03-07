@@ -6,7 +6,7 @@
 
 Is the watcher running
 
-<b>Signature:</b>
+**Signature:**
 
 ```typescript
 protected isWatching: boolean;

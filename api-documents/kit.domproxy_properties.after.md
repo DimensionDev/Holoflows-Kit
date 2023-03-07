@@ -6,7 +6,7 @@
 
 Returns the `after` element, if it doesn't exist, create it implicitly.
 
-<b>Signature:</b>
+**Signature:**
 
 ```typescript
 readonly after: After;

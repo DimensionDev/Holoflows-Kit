@@ -6,7 +6,7 @@
 
 Map `Node -> Key`<!-- -->, in case of you don't want the default behavior
 
-<b>Signature:</b>
+**Signature:**
 
 ```typescript
 protected mapNodeToKey: (node: T, index: number, arr: readonly T[]) => unknown;

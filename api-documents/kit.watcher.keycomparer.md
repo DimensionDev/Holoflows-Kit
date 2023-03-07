@@ -6,7 +6,7 @@
 
 Compare between `key` and `key`<!-- -->, in case of you don't want the default behavior
 
-<b>Signature:</b>
+**Signature:**
 
 ```typescript
 protected keyComparer: (a: unknown, b: unknown) => boolean;

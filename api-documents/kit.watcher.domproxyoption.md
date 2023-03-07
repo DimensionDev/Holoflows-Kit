@@ -6,7 +6,7 @@
 
 The dom proxy option used in DOMProxy()
 
-<b>Signature:</b>
+**Signature:**
 
 ```typescript
 protected domProxyOption: Partial<DOMProxyOptions<Before, After>>;

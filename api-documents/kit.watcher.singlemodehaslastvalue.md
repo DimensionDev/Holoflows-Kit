@@ -6,7 +6,7 @@
 
 Does it has a last iteration value in single mode?
 
-<b>Signature:</b>
+**Signature:**
 
 ```typescript
 protected singleModeHasLastValue: boolean;

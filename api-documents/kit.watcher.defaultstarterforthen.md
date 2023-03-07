@@ -4,12 +4,12 @@
 
 ## Watcher.defaultStarterForThen() method
 
-<b>Signature:</b>
+**Signature:**
 
 ```typescript
 protected defaultStarterForThen(): void;
 ```
-<b>Returns:</b>
+**Returns:**
 
 void
 

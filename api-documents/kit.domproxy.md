@@ -6,12 +6,12 @@
 
 DOMProxy provide an interface that be stable even dom is changed.
 
-<b>Signature:</b>
+**Signature:**
 
 ```typescript
 export interface DOMProxy<ProxiedElement extends Node = HTMLElement, Before extends Element = HTMLSpanElement, After extends Element = HTMLSpanElement> extends DOMProxy_Properties<ProxiedElement, Before, After> 
 ```
-<b>Extends:</b> [DOMProxy\_Properties](./kit.domproxy_properties.md)<!-- -->&lt;ProxiedElement, Before, After&gt;
+**Extends:** [DOMProxy\_Properties](./kit.domproxy_properties.md)<!-- -->&lt;ProxiedElement, Before, After&gt;
 
 ## Remarks
 

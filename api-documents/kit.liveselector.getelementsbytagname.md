@@ -6,7 +6,7 @@
 
 Select all element base on the current result.
 
-<b>Signature:</b>
+**Signature:**
 
 ```typescript
 getElementsByTagName<K extends keyof HTMLElementTagNameMap>(tag: K): LiveSelector<HTMLElementTagNameMap[K], SingleMode>;
@@ -18,7 +18,7 @@ getElementsByTagName<K extends keyof HTMLElementTagNameMap>(tag: K): LiveSelecto
 |  --- | --- | --- |
 |  tag | K | Tag name |
 
-<b>Returns:</b>
+**Returns:**
 
 [LiveSelector](./kit.liveselector.md)<!-- -->&lt;HTMLElementTagNameMap\[K\], SingleMode&gt;
 

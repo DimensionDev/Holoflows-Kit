@@ -6,12 +6,12 @@
 
 Get the current running environment
 
-<b>Signature:</b>
+**Signature:**
 
 ```typescript
 export declare function getEnvironment(): Environment;
 ```
-<b>Returns:</b>
+**Returns:**
 
 [Environment](./kit.environment.md)
 

@@ -4,7 +4,7 @@
 
 ## WebExtensionMessage.log property
 
-<b>Signature:</b>
+**Signature:**
 
 ```typescript
 log: (...args: unknown[]) => void;

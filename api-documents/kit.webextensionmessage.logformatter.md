@@ -4,7 +4,7 @@
 
 ## WebExtensionMessage.logFormatter property
 
-<b>Signature:</b>
+**Signature:**
 
 ```typescript
 logFormatter: (instance: this, key: string, data: unknown) => unknown[];

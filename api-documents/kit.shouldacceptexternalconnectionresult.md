@@ -4,12 +4,12 @@
 
 ## ShouldAcceptExternalConnectionResult type
 
-<b>Signature:</b>
+**Signature:**
 
 ```typescript
 export type ShouldAcceptExternalConnectionResult = boolean | {
     acceptAs: Environment;
 };
 ```
-<b>References:</b> [Environment](./kit.environment.md)
+**References:** [Environment](./kit.environment.md)
 

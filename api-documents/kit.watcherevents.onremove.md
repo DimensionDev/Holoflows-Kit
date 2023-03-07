@@ -5,7 +5,7 @@
 ## WatcherEvents.onRemove property
 
 
-<b>Signature:</b>
+**Signature:**
 
 ```typescript
 onRemove: [

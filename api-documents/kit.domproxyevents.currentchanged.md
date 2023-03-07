@@ -4,7 +4,7 @@
 
 ## DOMProxyEvents.currentChanged property
 
-<b>Signature:</b>
+**Signature:**
 
 ```typescript
 currentChanged: [{

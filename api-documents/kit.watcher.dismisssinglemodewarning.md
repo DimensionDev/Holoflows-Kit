@@ -6,12 +6,12 @@
 
 Dismiss the warning that let you enable single mode but the warning is false positive.
 
-<b>Signature:</b>
+**Signature:**
 
 ```typescript
 dismissSingleModeWarning(): this;
 ```
-<b>Returns:</b>
+**Returns:**
 
 this
 

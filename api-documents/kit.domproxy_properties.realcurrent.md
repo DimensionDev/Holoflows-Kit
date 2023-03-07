@@ -6,7 +6,7 @@
 
 The real current of the `current`
 
-<b>Signature:</b>
+**Signature:**
 
 ```typescript
 realCurrent: ProxiedElement | null;

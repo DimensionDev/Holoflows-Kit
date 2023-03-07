@@ -6,12 +6,12 @@
 
 A watcher based on time interval.
 
-<b>Signature:</b>
+**Signature:**
 
 ```typescript
 export declare class IntervalWatcher<T, Before extends Element = HTMLSpanElement, After extends Element = HTMLSpanElement, SingleMode extends boolean = false> extends Watcher<T, Before, After, SingleMode> 
 ```
-<b>Extends:</b> [Watcher](./kit.watcher.md)<!-- -->&lt;T, Before, After, SingleMode&gt;
+**Extends:** [Watcher](./kit.watcher.md)<!-- -->&lt;T, Before, After, SingleMode&gt;
 
 ## Example
 

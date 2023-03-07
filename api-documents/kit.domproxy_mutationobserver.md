@@ -6,7 +6,7 @@
 
 The proxied MutationObserver. You need to set callback and init to activate it.
 
-<b>Signature:</b>
+**Signature:**
 
 ```typescript
 export interface DOMProxy_MutationObserver 

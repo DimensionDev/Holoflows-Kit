@@ -6,12 +6,12 @@
 
 Flat T\[\]\[\] to T\[\]
 
-<b>Signature:</b>
+**Signature:**
 
 ```typescript
 flat(): LiveSelector<T extends ArrayLike<infer U> ? U : never, SingleMode>;
 ```
-<b>Returns:</b>
+**Returns:**
 
 [LiveSelector](./kit.liveselector.md)<!-- -->&lt;T extends ArrayLike&lt;infer U&gt; ? U : never, SingleMode&gt;
 

@@ -6,7 +6,7 @@
 
 Use this function as event listener to invoke watcher.
 
-<b>Signature:</b>
+**Signature:**
 
 ```typescript
 eventListener: () => void;

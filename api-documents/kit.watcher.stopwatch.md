@@ -6,7 +6,7 @@
 
 Stop the watcher
 
-<b>Signature:</b>
+**Signature:**
 
 ```typescript
 stopWatch(...args: any[]): void;
@@ -18,7 +18,7 @@ stopWatch(...args: any[]): void;
 |  --- | --- | --- |
 |  args | any\[\] |  |
 
-<b>Returns:</b>
+**Returns:**
 
 void
 

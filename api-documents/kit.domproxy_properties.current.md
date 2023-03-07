@@ -6,7 +6,7 @@
 
 A proxy that always point to `realCurrent`<!-- -->, and if `realCurrent` changes, all action will be forwarded to new `realCurrent`
 
-<b>Signature:</b>
+**Signature:**
 
 ```typescript
 readonly current: ProxiedElement;

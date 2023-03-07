@@ -6,7 +6,7 @@
 
 Found key list of last watch
 
-<b>Signature:</b>
+**Signature:**
 
 ```typescript
 protected lastKeyList: readonly unknown[];

@@ -4,10 +4,9 @@
 
 ```ts
 
-/// <reference types="web-ext-types" />
-
 import { Emitter } from '@servie/events';
 import type { EventListener as EventListener_2 } from '@servie/events';
+import type { Runtime } from 'webextension-polyfill';
 
 // @public
 export function assertEnvironment(env: Environment): void;
@@ -102,7 +101,9 @@ export enum Environment {
     ManifestOverridesNewTab = 4096,
     // @deprecated
     ManifestPageAction = 512,
-    ManifestSidebar = 2048
+    ManifestSidebar = 2048,
+    // (undocumented)
+    NONE = 0
 }
 
 // @public
@@ -209,7 +210,7 @@ export interface Serialization {
 }
 
 // @public (undocumented)
-export type ShouldAcceptExternalConnection = (sender: browser.runtime.MessageSender) => ShouldAcceptExternalConnectionResult;
+export type ShouldAcceptExternalConnection = (sender: Runtime.MessageSender) => ShouldAcceptExternalConnectionResult;
 
 // @public (undocumented)
 export type ShouldAcceptExternalConnectionResult = boolean | {

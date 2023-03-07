@@ -6,7 +6,7 @@
 
 window.requestIdleCallback, or polyfill.
 
-<b>Signature:</b>
+**Signature:**
 
 ```typescript
 protected readonly requestIdleCallback: typeof requestIdleCallback;

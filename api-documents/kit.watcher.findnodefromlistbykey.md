@@ -6,7 +6,7 @@
 
 Find node from the given list by key
 
-<b>Signature:</b>
+**Signature:**
 
 ```typescript
 protected findNodeFromListByKey: (list: readonly T[], keys: readonly unknown[]) => (key: unknown) => T | null;

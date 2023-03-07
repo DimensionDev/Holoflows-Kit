@@ -5,7 +5,7 @@
 ## WatcherEvents.onAdd property
 
 
-<b>Signature:</b>
+**Signature:**
 
 ```typescript
 onAdd: [

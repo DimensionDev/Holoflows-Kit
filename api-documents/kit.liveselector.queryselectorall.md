@@ -6,7 +6,7 @@
 
 Select all element descendants of node that match selectors.
 
-<b>Signature:</b>
+**Signature:**
 
 ```typescript
 querySelectorAll<K extends keyof HTMLElementTagNameMap>(selector: K): LiveSelector<HTMLElementTagNameMap[K], SingleMode>;
@@ -18,7 +18,7 @@ querySelectorAll<K extends keyof HTMLElementTagNameMap>(selector: K): LiveSelect
 |  --- | --- | --- |
 |  selector | K | Selector |
 
-<b>Returns:</b>
+**Returns:**
 
 [LiveSelector](./kit.liveselector.md)<!-- -->&lt;HTMLElementTagNameMap\[K\], SingleMode&gt;
 

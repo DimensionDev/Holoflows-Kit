@@ -6,12 +6,12 @@
 
 Stop the watcher
 
-<b>Signature:</b>
+**Signature:**
 
 ```typescript
 stopWatch(): void;
 ```
-<b>Returns:</b>
+**Returns:**
 
 void
 

@@ -6,7 +6,7 @@
 
 Calls a defined callback function on each element of a LiveSelector, and continues with the results.
 
-<b>Signature:</b>
+**Signature:**
 
 ```typescript
 map<NextType>(callbackfn: (element: T, index: number, array: T[]) => NextType): LiveSelector<NonNullable<NextType>, SingleMode>;
@@ -18,7 +18,7 @@ map<NextType>(callbackfn: (element: T, index: number, array: T[]) => NextType): 
 |  --- | --- | --- |
 |  callbackfn | (element: T, index: number, array: T\[\]) =&gt; NextType | Map function |
 
-<b>Returns:</b>
+**Returns:**
 
 [LiveSelector](./kit.liveselector.md)<!-- -->&lt;NonNullable&lt;NextType&gt;, SingleMode&gt;
 

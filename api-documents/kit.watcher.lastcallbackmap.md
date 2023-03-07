@@ -6,7 +6,7 @@
 
 Saved callback map of last watch
 
-<b>Signature:</b>
+**Signature:**
 
 ```typescript
 protected lastCallbackMap: Map<unknown, useForeachReturns<T>>;

@@ -4,7 +4,7 @@
 
 ## UnboundedRegistry.sendToVisiblePages() method
 
-<b>Signature:</b>
+**Signature:**
 
 ```typescript
 sendToVisiblePages(data: T): void;
@@ -16,7 +16,7 @@ sendToVisiblePages(data: T): void;
 |  --- | --- | --- |
 |  data | T |  |
 
-<b>Returns:</b>
+**Returns:**
 
 void
 

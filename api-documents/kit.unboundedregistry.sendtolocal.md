@@ -4,7 +4,7 @@
 
 ## UnboundedRegistry.sendToLocal() method
 
-<b>Signature:</b>
+**Signature:**
 
 ```typescript
 sendToLocal(data: T): void;
@@ -16,7 +16,7 @@ sendToLocal(data: T): void;
 |  --- | --- | --- |
 |  data | T |  |
 
-<b>Returns:</b>
+**Returns:**
 
 void
 

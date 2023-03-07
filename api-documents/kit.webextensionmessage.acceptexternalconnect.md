@@ -6,7 +6,7 @@
 
 If the connection is not accepted, it will be passed to the next handler until it is handled or no more handlers
 
-<b>Signature:</b>
+**Signature:**
 
 ```typescript
 static acceptExternalConnect(acceptExternalConnectFn: ShouldAcceptExternalConnection): void;
@@ -18,7 +18,7 @@ static acceptExternalConnect(acceptExternalConnectFn: ShouldAcceptExternalConnec
 |  --- | --- | --- |
 |  acceptExternalConnectFn | [ShouldAcceptExternalConnection](./kit.shouldacceptexternalconnection.md) |  |
 
-<b>Returns:</b>
+**Returns:**
 
 void
 

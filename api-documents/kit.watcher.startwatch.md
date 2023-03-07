@@ -6,7 +6,7 @@
 
 Let the watcher start to watching
 
-<b>Signature:</b>
+**Signature:**
 
 ```typescript
 startWatch(...args: any[]): this;
@@ -18,7 +18,7 @@ startWatch(...args: any[]): this;
 |  --- | --- | --- |
 |  args | any\[\] |  |
 
-<b>Returns:</b>
+**Returns:**
 
 this
 

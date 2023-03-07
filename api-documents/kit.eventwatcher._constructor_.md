@@ -6,7 +6,7 @@
 
 Constructs a new instance of the `EventWatcher` class
 
-<b>Signature:</b>
+**Signature:**
 
 ```typescript
 constructor(liveSelector: LiveSelector<T, SingleMode>);

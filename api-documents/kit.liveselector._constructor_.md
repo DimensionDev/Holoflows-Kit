@@ -6,7 +6,7 @@
 
 Create a new LiveSelector.
 
-<b>Signature:</b>
+**Signature:**
 
 ```typescript
 constructor(initialElements?: readonly T[]);
@@ -16,5 +16,5 @@ constructor(initialElements?: readonly T[]);
 
 |  Parameter | Type | Description |
 |  --- | --- | --- |
-|  initialElements | readonly T\[\] | <i>(Optional)</i> provides initial results, equals to <code>.replace(() =&gt; initialElements)</code> |
+|  initialElements | readonly T\[\] | _(Optional)_ provides initial results, equals to <code>.replace(() =&gt; initialElements)</code> |
 

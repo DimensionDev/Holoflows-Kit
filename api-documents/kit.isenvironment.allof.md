@@ -4,7 +4,7 @@
 
 ## isEnvironment.allOf variable
 
-<b>Signature:</b>
+**Signature:**
 
 ```typescript
 allOf: (...args: Environment[]) => boolean[]

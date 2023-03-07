@@ -6,7 +6,7 @@
 
 Schedule a watcher check
 
-<b>Signature:</b>
+**Signature:**
 
 ```typescript
 protected scheduleWatcherCheck: () => void;

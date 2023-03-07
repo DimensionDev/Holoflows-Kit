@@ -6,7 +6,7 @@
 
 Found Node list of last watch
 
-<b>Signature:</b>
+**Signature:**
 
 ```typescript
 protected lastNodeList: readonly T[];

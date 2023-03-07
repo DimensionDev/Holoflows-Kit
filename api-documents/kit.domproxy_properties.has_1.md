@@ -6,7 +6,7 @@
 
 Get weak reference to `after` node
 
-<b>Signature:</b>
+**Signature:**
 
 ```typescript
 has(type: 'after'): After | null;
@@ -18,7 +18,7 @@ has(type: 'after'): After | null;
 |  --- | --- | --- |
 |  type | 'after' |  |
 
-<b>Returns:</b>
+**Returns:**
 
 After \| null
 

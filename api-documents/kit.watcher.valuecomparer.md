@@ -6,7 +6,7 @@
 
 Compare between `value` and `value`<!-- -->, in case of you don't want the default behavior
 
-<b>Signature:</b>
+**Signature:**
 
 ```typescript
 protected valueComparer: (a: T, b: T) => boolean;

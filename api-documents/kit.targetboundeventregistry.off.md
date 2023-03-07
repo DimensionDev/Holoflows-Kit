@@ -4,7 +4,7 @@
 
 ## TargetBoundEventRegistry.off() method
 
-<b>Signature:</b>
+**Signature:**
 
 ```typescript
 off(callback: (data: T) => void): void;
@@ -16,7 +16,7 @@ off(callback: (data: T) => void): void;
 |  --- | --- | --- |
 |  callback | (data: T) =&gt; void |  |
 
-<b>Returns:</b>
+**Returns:**
 
 void
 

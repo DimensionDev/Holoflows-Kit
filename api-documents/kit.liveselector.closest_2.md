@@ -4,7 +4,7 @@
 
 ## LiveSelector.closest() method
 
-<b>Signature:</b>
+**Signature:**
 
 ```typescript
 closest<K extends keyof SVGElementTagNameMap>(selectors: K): LiveSelector<SVGElementTagNameMap[K], SingleMode>;
@@ -16,7 +16,7 @@ closest<K extends keyof SVGElementTagNameMap>(selectors: K): LiveSelector<SVGEle
 |  --- | --- | --- |
 |  selectors | K |  |
 
-<b>Returns:</b>
+**Returns:**
 
 [LiveSelector](./kit.liveselector.md)<!-- -->&lt;SVGElementTagNameMap\[K\], SingleMode&gt;
 

@@ -6,7 +6,7 @@
 
 Reversely select element in the parent
 
-<b>Signature:</b>
+**Signature:**
 
 ```typescript
 closest<K extends keyof HTMLElementTagNameMap>(selectors: K): LiveSelector<HTMLElementTagNameMap[K], SingleMode>;
@@ -18,7 +18,7 @@ closest<K extends keyof HTMLElementTagNameMap>(selectors: K): LiveSelector<HTMLE
 |  --- | --- | --- |
 |  selectors | K |  |
 
-<b>Returns:</b>
+**Returns:**
 
 [LiveSelector](./kit.liveselector.md)<!-- -->&lt;HTMLElementTagNameMap\[K\], SingleMode&gt;
 

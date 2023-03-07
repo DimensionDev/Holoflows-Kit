@@ -6,7 +6,7 @@
 
 Returns the `ShadowRoot` of the `after` element.
 
-<b>Signature:</b>
+**Signature:**
 
 ```typescript
 readonly afterShadow: ShadowRoot;

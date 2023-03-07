@@ -6,7 +6,7 @@
 
 Get DOMProxy by key. DOMProxy will be unavailable if it is deleted
 
-<b>Signature:</b>
+**Signature:**
 
 ```typescript
 getDOMProxyByKey(key: unknown): DOMProxy<any, Before, After> | null;
@@ -18,7 +18,7 @@ getDOMProxyByKey(key: unknown): DOMProxy<any, Before, After> | null;
 |  --- | --- | --- |
 |  key | unknown | Key used to find DOMProxy |
 
-<b>Returns:</b>
+**Returns:**
 
 [DOMProxy](./kit.domproxy.md)<!-- -->&lt;any, Before, After&gt; \| null
 

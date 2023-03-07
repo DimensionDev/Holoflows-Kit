@@ -6,7 +6,7 @@
 
 Replace the whole array.
 
-<b>Signature:</b>
+**Signature:**
 
 ```typescript
 replace<NextType>(f: (arr: T[]) => NextType[]): LiveSelector<NextType, SingleMode>;
@@ -18,7 +18,7 @@ replace<NextType>(f: (arr: T[]) => NextType[]): LiveSelector<NextType, SingleMod
 |  --- | --- | --- |
 |  f | (arr: T\[\]) =&gt; NextType\[\] | returns new array. |
 
-<b>Returns:</b>
+**Returns:**
 
 [LiveSelector](./kit.liveselector.md)<!-- -->&lt;NextType, SingleMode&gt;
 

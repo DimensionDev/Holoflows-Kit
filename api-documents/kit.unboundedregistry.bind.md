@@ -6,7 +6,7 @@
 
 You may create a bound version that have a clear interface.
 
-<b>Signature:</b>
+**Signature:**
 
 ```typescript
 bind(target: MessageTarget | Environment, signal?: AbortSignal): TargetBoundEventRegistry<T>;
@@ -17,9 +17,9 @@ bind(target: MessageTarget | Environment, signal?: AbortSignal): TargetBoundEven
 |  Parameter | Type | Description |
 |  --- | --- | --- |
 |  target | [MessageTarget](./kit.messagetarget.md) \| [Environment](./kit.environment.md) |  |
-|  signal | AbortSignal | <i>(Optional)</i> |
+|  signal | AbortSignal | _(Optional)_ |
 
-<b>Returns:</b>
+**Returns:**
 
 [TargetBoundEventRegistry](./kit.targetboundeventregistry.md)<!-- -->&lt;T&gt;
 

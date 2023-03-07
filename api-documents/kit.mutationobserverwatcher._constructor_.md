@@ -6,7 +6,7 @@
 
 Constructs a new instance of the `MutationObserverWatcher` class
 
-<b>Signature:</b>
+**Signature:**
 
 ```typescript
 constructor(
@@ -20,6 +20,6 @@ constructor(
 |  Parameter | Type | Description |
 |  --- | --- | --- |
 |  liveSelector | [LiveSelector](./kit.liveselector.md)<!-- -->&lt;T, SingleMode&gt; |  |
-|  consistentWatchRoot | Node | <i>(Optional)</i> |
-|  stopWatchOnDisconnected | boolean | <i>(Optional)</i> |
+|  consistentWatchRoot | Node | _(Optional)_ |
+|  stopWatchOnDisconnected | boolean | _(Optional)_ |
 

@@ -6,7 +6,7 @@
 
 Last iteration value for single mode
 
-<b>Signature:</b>
+**Signature:**
 
 ```typescript
 protected singleModeLastValue?: T;

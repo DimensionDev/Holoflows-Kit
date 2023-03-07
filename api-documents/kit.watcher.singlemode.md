@@ -6,7 +6,7 @@
 
 Is the single mode is on.
 
-<b>Signature:</b>
+**Signature:**
 
 ```typescript
 protected get singleMode(): boolean;

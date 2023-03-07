@@ -6,12 +6,12 @@
 
 If you're expecting repeating keys, call this function, this will omit the warning.
 
-<b>Signature:</b>
+**Signature:**
 
 ```typescript
 omitWarningForRepeatedKeys(): this;
 ```
-<b>Returns:</b>
+**Returns:**
 
 this
 

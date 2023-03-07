@@ -4,7 +4,7 @@
 
 ## LiveSelector.closest() method
 
-<b>Signature:</b>
+**Signature:**
 
 ```typescript
 closest<E extends Element = Element>(selectors: string): LiveSelector<E, SingleMode>;
@@ -16,7 +16,7 @@ closest<E extends Element = Element>(selectors: string): LiveSelector<E, SingleM
 |  --- | --- | --- |
 |  selectors | string |  |
 
-<b>Returns:</b>
+**Returns:**
 
 [LiveSelector](./kit.liveselector.md)<!-- -->&lt;E, SingleMode&gt;
 

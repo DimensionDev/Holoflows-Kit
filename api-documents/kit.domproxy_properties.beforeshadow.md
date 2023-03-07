@@ -6,7 +6,7 @@
 
 Returns the `ShadowRoot` of the `before` element.
 
-<b>Signature:</b>
+**Signature:**
 
 ```typescript
 readonly beforeShadow: ShadowRoot;

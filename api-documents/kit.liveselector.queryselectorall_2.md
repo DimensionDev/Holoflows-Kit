@@ -4,7 +4,7 @@
 
 ## LiveSelector.querySelectorAll() method
 
-<b>Signature:</b>
+**Signature:**
 
 ```typescript
 querySelectorAll<E extends Element = Element>(selector: string): LiveSelector<E, SingleMode>;
@@ -16,7 +16,7 @@ querySelectorAll<E extends Element = Element>(selector: string): LiveSelector<E,
 |  --- | --- | --- |
 |  selector | string |  |
 
-<b>Returns:</b>
+**Returns:**
 
 [LiveSelector](./kit.liveselector.md)<!-- -->&lt;E, SingleMode&gt;
 

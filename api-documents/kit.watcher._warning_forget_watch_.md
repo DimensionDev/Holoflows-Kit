@@ -6,7 +6,7 @@
 
 Warning to remember if developer forget to call the startWatch.
 
-<b>Signature:</b>
+**Signature:**
 
 ```typescript
 protected _warning_forget_watch_: {

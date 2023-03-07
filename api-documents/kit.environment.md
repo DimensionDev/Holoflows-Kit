@@ -6,7 +6,7 @@
 
 Current running environment of Web Extension
 
-<b>Signature:</b>
+**Signature:**
 
 ```typescript
 export declare enum Environment 
@@ -29,4 +29,5 @@ export declare enum Environment
 |  ManifestOverridesNewTab | <code>4096</code> | URL is listed in the manifest.chrome\_url\_overrides.newtab |
 |  ManifestPageAction | <code>512</code> | URL is listed in the manifest.page\_action |
 |  ManifestSidebar | <code>2048</code> | URL is listed in the manifest.sidebar\_action. Firefox Only |
+|  NONE | <code>0</code> |  |
 

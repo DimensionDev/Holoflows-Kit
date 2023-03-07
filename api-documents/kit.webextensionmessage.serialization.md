@@ -8,7 +8,7 @@ Watch new tabs created and get event listener register of that tab.
 
 This API only works in the BackgroundPage.
 
-<b>Signature:</b>
+**Signature:**
 
 ```typescript
 serialization: Serialization;

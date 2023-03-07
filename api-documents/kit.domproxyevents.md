@@ -6,7 +6,7 @@
 
 Events that DOMProxy supported
 
-<b>Signature:</b>
+**Signature:**
 
 ```typescript
 export interface DOMProxyEvents<ProxiedElement extends Node> 

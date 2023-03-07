@@ -6,12 +6,12 @@
 
 Use LiveSelector to watch dom change
 
-<b>Signature:</b>
+**Signature:**
 
 ```typescript
 export declare abstract class Watcher<T, Before extends Element, After extends Element, SingleMode extends boolean> implements PromiseLike<ResultOf<SingleMode, T>> 
 ```
-<b>Implements:</b> PromiseLike&lt;ResultOf&lt;SingleMode, T&gt;&gt;
+**Implements:** PromiseLike&lt;ResultOf&lt;SingleMode, T&gt;&gt;
 
 ## Constructors
 
@@ -39,10 +39,10 @@ export declare abstract class Watcher<T, Before extends Element, After extends E
 |  [requestIdleCallback](./kit.watcher.requestidlecallback.md) | <p><code>protected</code></p><p><code>readonly</code></p> | typeof requestIdleCallback | window.requestIdleCallback, or polyfill. |
 |  [scheduleWatcherCheck](./kit.watcher.schedulewatchercheck.md) | <code>protected</code> | () =&gt; void | Schedule a watcher check |
 |  [singleMode](./kit.watcher.singlemode.md) | <p><code>protected</code></p><p><code>readonly</code></p> | boolean | Is the single mode is on. |
-|  [singleModeCallback?](./kit.watcher.singlemodecallback.md) | <code>protected</code> | useForeachReturns&lt;T&gt; | <i>(Optional)</i> Callback for single mode |
+|  [singleModeCallback?](./kit.watcher.singlemodecallback.md) | <code>protected</code> | useForeachReturns&lt;T&gt; | _(Optional)_ Callback for single mode |
 |  [singleModeHasLastValue](./kit.watcher.singlemodehaslastvalue.md) | <code>protected</code> | boolean | Does it has a last iteration value in single mode? |
-|  [singleModeLastValue?](./kit.watcher.singlemodelastvalue.md) | <code>protected</code> | T | <i>(Optional)</i> Last iteration value for single mode |
-|  [useForeachFn?](./kit.watcher.useforeachfn.md) | <code>protected</code> | Parameters&lt;[Watcher](./kit.watcher.md)<!-- -->&lt;T, any, any, any&gt;\['useForeach'\]&gt;\[0\] | <i>(Optional)</i> Saved useForeach |
+|  [singleModeLastValue?](./kit.watcher.singlemodelastvalue.md) | <code>protected</code> | T | _(Optional)_ Last iteration value for single mode |
+|  [useForeachFn?](./kit.watcher.useforeachfn.md) | <code>protected</code> | Parameters&lt;[Watcher](./kit.watcher.md)<!-- -->&lt;T, any, any, any&gt;\['useForeach'\]&gt;\[0\] | _(Optional)_ Saved useForeach |
 |  [valueComparer](./kit.watcher.valuecomparer.md) | <code>protected</code> | (a: T, b: T) =&gt; boolean | Compare between <code>value</code> and <code>value</code>, in case of you don't want the default behavior |
 
 ## Methods
