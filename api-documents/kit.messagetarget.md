@@ -14,11 +14,12 @@ export declare enum MessageTarget
 
 |  Member | Value | Description |
 |  --- | --- | --- |
-|  All | <code>1048578</code> |  |
-|  Broadcast | <code>2</code> | Externals not included |
+|  All | <code>2</code> | Send to all environments (include local) |
+|  Broadcast | <code>33554434</code> | Send to all environments (exclude local). |
+|  ExcludeLocal | <code>33554432</code> | Unconditionally exclude local from receiving the message. |
 |  External | <code>16777216</code> | Send to external. |
 |  FocusedPageOnly | <code>8388608</code> | Page that has focus (devtools not included), 0 or 1 page. |
-|  IncludeLocal | <code>1048576</code> | Current execution context |
-|  LocalOnly | <code>2097152</code> |  |
+|  IncludeLocal | <code>1048576</code> | Unconditionally match local. (local might receive the message even without this flag if other condition met.) |
+|  LocalOnly | <code>2097152</code> | Do not send the message over channel. |
 |  VisiblePageOnly | <code>4194304</code> | Visible page, maybe have more than 1 page. |
 

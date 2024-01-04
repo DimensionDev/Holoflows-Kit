@@ -25,7 +25,6 @@ export enum Environment {
     /** URL is listed in the manifest.chrome_url_overrides.history */ ManifestOverridesHistory = 1 << 14,
     // DO NOT USE value that bigger than 1 << 20
 }
-declare const __holoflows_kit_get_environment_debug__: number
 let result: Environment
 /**
  * Get the current running environment
@@ -34,16 +33,18 @@ let result: Environment
 export function getEnvironment(): Environment {
     if (result !== undefined) return result
     try {
-        if (location.hostname === 'localhost' || location.hostname === '127.0.0.1') {
-            const val = __holoflows_kit_get_environment_debug__
+        if (typeof location === 'object' && (location.hostname === 'localhost' || location.hostname === '127.0.0.1')) {
+            const val = (self as any).__holoflows_kit_get_environment_debug__
             if (val !== undefined) return Number(val)
         }
     } catch {}
     let flag = Environment.NONE
     // Scheme test
     try {
-        const scheme = location.protocol
-        if (scheme.endsWith('-extension:')) flag |= Environment.ExtensionProtocol
+        if (typeof location === 'object') {
+            const scheme = location.protocol
+            if (scheme.endsWith('-extension:')) flag |= Environment.ExtensionProtocol
+        }
     } catch {}
     // @ts-ignore
     const chromeLike = isChromeLike()
@@ -107,22 +108,24 @@ export function getEnvironment(): Environment {
 declare const chrome: typeof browser
 function isChromeLike() {
     try {
+        if (typeof chrome !== 'object') return false
         return !!chrome.runtime.getURL
     } catch {}
     return false
 }
 function isBrowserLike() {
     try {
+        if (typeof browser !== 'object') return false
         return !!browser.runtime.getURL
     } catch {}
     return false
 }
 function getBrowserLikeNS() {
     try {
-        if (typeof browser.runtime.getURL === 'function') return browser
+        if (typeof browser === 'object' && typeof browser.runtime.getURL === 'function') return browser
     } catch {}
     try {
-        if (typeof chrome.runtime.getURL === 'function') return chrome
+        if (typeof chrome === 'object' && typeof chrome.runtime.getURL === 'function') return chrome
     } catch {}
     return undefined
 }

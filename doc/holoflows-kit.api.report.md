@@ -176,13 +176,12 @@ export class LiveSelector<T, SingleMode extends boolean = false> {
 
 // @public (undocumented)
 export enum MessageTarget {
-    // (undocumented)
-    All = 1048578,
-    Broadcast = 2,
+    All = 2,
+    Broadcast = 33554434,
+    ExcludeLocal = 33554432,
     External = 16777216,
     FocusedPageOnly = 8388608,
     IncludeLocal = 1048576,
-    // (undocumented)
     LocalOnly = 2097152,
     VisiblePageOnly = 4194304
 }

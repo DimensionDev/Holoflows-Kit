@@ -23,13 +23,15 @@ export interface Serialization {
 }
 
 export enum MessageTarget {
-    /** Current execution context */ IncludeLocal = 1 << 20,
-    LocalOnly = 1 << 21,
+    /** Unconditionally match local. (local might receive the message even without this flag if other condition met.) */ IncludeLocal = 1 <<
+        20,
+    /** Unconditionally exclude local from receiving the message. */ ExcludeLocal = 1 << 25,
+    /** Do not send the message over channel. */ LocalOnly = 1 << 21,
     /** Visible page, maybe have more than 1 page. */ VisiblePageOnly = 1 << 22,
     /** Page that has focus (devtools not included), 0 or 1 page. */ FocusedPageOnly = 1 << 23,
     /** Send to external. */ External = 1 << 24,
-    /** Externals not included */ Broadcast = Environment.HasBrowserAPI,
-    All = Broadcast | IncludeLocal,
+    /** Send to all environments (exclude local). */ Broadcast = Environment.HasBrowserAPI | ExcludeLocal,
+    /** Send to all environments (include local) */ All = Environment.HasBrowserAPI,
 }
 export interface TargetBoundEventListenerOptions {
     /** Run the listener only once. */
@@ -91,8 +93,8 @@ const backgroundOnlyLivingPorts = new Map<Runtime.Port, BackgroundOnlyLivingPort
 let currentTabID = -1
 let externalMode = false
 // Shared global
-let postMessage: undefined | ((message: number | InternalMessageType) => void) = undefined
-const domainRegistry = new Emitter<Record<string, [InternalMessageType]>>()
+let postMessage: undefined | ((this: void, message: number | InternalMessageType) => void) = undefined
+const domainRegistry = new Emitter<Record<string, [encoded: boolean, data: InternalMessageType]>>()
 const constant = '@holoflows/kit/WebExtensionMessage/setup'
 export type ShouldAcceptExternalConnectionResult =
     | boolean
@@ -100,9 +102,7 @@ export type ShouldAcceptExternalConnectionResult =
           /** Be careful, acceptAs will treat it as a internal connection, not an external one */
           acceptAs: Environment
       }
-export type ShouldAcceptExternalConnection = (
-    sender: Runtime.MessageSender,
-) => ShouldAcceptExternalConnectionResult
+export type ShouldAcceptExternalConnection = (sender: Runtime.MessageSender) => ShouldAcceptExternalConnectionResult
 export class WebExtensionMessage<Message> {
     // Only execute once.
     private static setup(id: string | undefined) {
@@ -180,12 +180,12 @@ export class WebExtensionMessage<Message> {
         }
         const domain = (this.#domain = options?.domain ?? '')
 
-        domainRegistry.on(domain, async (payload: InternalMessageType) => {
+        domainRegistry.on(domain, async (encoded, payload) => {
             if (!isInternalMessageType(payload)) return
             const { event, target } = payload
             let { data } = payload
             if (!shouldAcceptThisMessage(target)) return
-            data = await this.serialization.deserialization(data)
+            if (encoded) data = await this.serialization.deserialization(data)
             if (this.enableLog) {
                 this.log(...this.logFormatter(this, event, data))
             }
@@ -275,6 +275,7 @@ function shouldAcceptThisMessage(target: BoundTarget) {
     const flag = target.target
     if (flag & (MessageTarget.IncludeLocal | MessageTarget.LocalOnly)) return true
     const here = getEnvironment()
+    if (here & flag) return true
     if (flag & MessageTarget.FocusedPageOnly) return typeof document === 'object' && document?.hasFocus?.()
     if (flag & MessageTarget.VisiblePageOnly) {
         // background page has document.visibilityState === 'visible' for reason I don't know why
@@ -282,7 +283,7 @@ function shouldAcceptThisMessage(target: BoundTarget) {
         return typeof document === 'object' && document?.visibilityState === 'visible'
     }
     if (externalMode) return true // skip mode checking for external connection
-    return Boolean(here & flag)
+    return false
 }
 //#endregion
 
@@ -297,17 +298,37 @@ function UnboundedRegistry<T>(
     //#endregion
     async function send(target: MessageTarget | Environment, data: T) {
         if (typeof target !== 'number') throw new TypeError('target must be a bit flag of MessageTarget | Environment')
+        if (target & MessageTarget.ExcludeLocal && target & (MessageTarget.IncludeLocal | MessageTarget.LocalOnly)) {
+            throw new TypeError('[@holoflows/kit] Invalid flag: ExcludeLocal with (IncludeLocal | LocalOnly)')
+        }
         if (pausing) {
             const list = pausingMap.get(target) || []
             pausingMap.set(target, list)
             list.push(data)
             return
         }
-        postMessage!({
+        if (!postMessage) {
+            if (getEnvironment() & Environment.NONE)
+                throw new Error('[@holoflows/kit] MessageChannel is designed for WebExtension.')
+            throw new Error('[@holoflows/kit] MessageChannel is not setup properly.')
+        }
+        if (target & ~MessageTarget.ExcludeLocal) {
+            domainRegistry.emit(instance.domain, false, {
+                data,
+                domain: instance.domain,
+                event: eventName,
+                target: { kind: 'target', target },
+            })
+        }
+        if (target & MessageTarget.LocalOnly) return
+        postMessage({
             data: await instance.serialization.serialization(data),
             domain: instance.domain,
             event: eventName,
-            target: { kind: 'target', target },
+            target: {
+                kind: 'target',
+                target: target & ~(MessageTarget.IncludeLocal | MessageTarget.ExcludeLocal),
+            } as const,
         })
     }
     function on(cb: (data: T) => void, options?: TargetBoundEventListenerOptions) {
@@ -364,7 +385,7 @@ type BoundTarget =
     | { kind: 'target'; target: MessageTarget | Environment }
     | { kind: 'port'; port: Runtime.Port }
 
-function backgroundPageMessageHandler(this: Runtime.Port | undefined, data: unknown) {
+function backgroundPageMessageHandler(this: Runtime.Port | void, data: unknown) {
     // receive payload from the other side
     if (!isInternalMessageType(data)) return
     if (data.target.kind === 'tab') {
@@ -376,15 +397,16 @@ function backgroundPageMessageHandler(this: Runtime.Port | undefined, data: unkn
         data.target.port.postMessage(data)
     } else {
         const flag = data.target.target
-        // Also dispatch this message to background page itself. shouldAcceptThisMessage will help us to filter the message
-        domainRegistry.emit(data.domain, data)
-        if (flag & MessageTarget.LocalOnly) return
+        // if this is not a message sent from local (this !== undefined), send it to local as well.
+        // shouldAcceptThisMessage will check if this message should be emitted.
+        if (this) domainRegistry.emit(data.domain, true, data)
+        // broadcast this message to all pages that meet the condition
         for (const [port, { environment }] of backgroundOnlyLivingPorts) {
             if (port === this) continue // Not sending to the source.
             if (environment === undefined) continue
             try {
                 if (environment & flag) port.postMessage(data)
-                // they will handle this by thyself
+                // further handled by shouldAcceptThisMessage
                 else if (flag & (MessageTarget.FocusedPageOnly | MessageTarget.VisiblePageOnly)) port.postMessage(data)
             } catch (e) {
                 console.error(e)
@@ -399,12 +421,6 @@ function otherEnvMessageHandler(this: Runtime.Port, payload: number | InternalMe
     const bound = payload.target
     if (bound.kind === 'tab') return this.postMessage(payload)
     if (bound.kind === 'port') throw new Error('Unreachable case: bound type = port in non-background script')
-    const target = bound.target
-    if (target & (MessageTarget.IncludeLocal | MessageTarget.LocalOnly)) {
-        domainRegistry.emit(payload.domain, payload)
-        if (target & MessageTarget.LocalOnly) return
-        bound.target &= ~MessageTarget.IncludeLocal // unset IncludeLocal
-    }
     this.postMessage(payload)
 }
 /** The port need to be initialized before use. */
@@ -432,7 +448,7 @@ function otherEnvPortBoarding(port: Runtime.Port, reconnect: () => void) {
     })
     port.onMessage.addListener((data) => {
         if (!isInternalMessageType(data)) return
-        domainRegistry.emit(data.domain, data)
+        domainRegistry.emit(data.domain, true, data)
     })
     // ? Will it cause infinite loop?
     port.onDisconnect.addListener(reconnect)
