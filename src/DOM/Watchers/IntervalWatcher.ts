@@ -17,7 +17,7 @@ export class IntervalWatcher<
     After extends Element = HTMLSpanElement,
     SingleMode extends boolean = false,
 > extends Watcher<T, Before, After, SingleMode> {
-    private timer: NodeJS.Timer | undefined
+    private timer: ReturnType<typeof setTimeout> | undefined
     /** Start to watch the LiveSelector at a interval(ms). */
     override startWatch(interval: number, signal?: AbortSignal) {
         super.startWatch()

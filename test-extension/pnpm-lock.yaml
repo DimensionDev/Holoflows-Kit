@@ -1,13 +1,19 @@
-lockfileVersion: 5.4
+lockfileVersion: '6.0'
 
-specifiers:
-  webextension-polyfill: ^0.10.0
+settings:
+  autoInstallPeers: true
+  excludeLinksFromLockfile: false
 
 dependencies:
-  webextension-polyfill: 0.10.0
+  webextension-polyfill:
+    specifier: ^0.10.0
+    version: 0.10.0
 
 packages:
 
-  /webextension-polyfill/0.10.0:
+  /webextension-polyfill@0.10.0:
     resolution: {integrity: sha512-c5s35LgVa5tFaHhrZDnr3FpQpjj1BB+RXhLTYUxGqBVN460HkbM8TBtEqdXWbpTKfzwCcjAZVF7zXCYSKtcp9g==}
     dev: false
+
+time:
+  /webextension-polyfill@0.10.0: '2022-08-12T19:42:49.271Z'
