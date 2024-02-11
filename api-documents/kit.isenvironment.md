@@ -10,10 +10,10 @@
 export declare namespace isEnvironment 
 ```
 
-## Variables
+## Functions
 
-|  Variable | Description |
+|  Function | Description |
 |  --- | --- |
-|  [allOf](./kit.isenvironment.allof.md) |  |
-|  [oneOf](./kit.isenvironment.oneof.md) |  |
+|  [allOf(args)](./kit.isenvironment.allof.md) |  |
+|  [oneOf(args)](./kit.isenvironment.oneof.md) |  |
 

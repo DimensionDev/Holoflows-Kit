@@ -10,10 +10,10 @@
 export declare namespace assertNotEnvironment 
 ```
 
-## Variables
+## Functions
 
-|  Variable | Description |
+|  Function | Description |
 |  --- | --- |
-|  [allOf](./kit.assertnotenvironment.allof.md) |  |
-|  [oneOf](./kit.assertnotenvironment.oneof.md) |  |
+|  [allOf(args)](./kit.assertnotenvironment.allof.md) |  |
+|  [oneOf(args)](./kit.assertnotenvironment.oneof.md) |  |
 

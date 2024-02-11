@@ -2,10 +2,21 @@
 
 [Home](./index.md) &gt; [@holoflows/kit](./kit.md) &gt; [isEnvironment](./kit.isenvironment.md) &gt; [oneOf](./kit.isenvironment.oneof.md)
 
-## isEnvironment.oneOf variable
+## isEnvironment.oneOf() function
 
 **Signature:**
 
 ```typescript
 oneOf: (...args: Environment[]) => boolean
 ```
+
+## Parameters
+
+|  Parameter | Type | Description |
+|  --- | --- | --- |
+|  args | [Environment](./kit.environment.md)<!-- -->\[\] |  |
+
+**Returns:**
+
+boolean
+

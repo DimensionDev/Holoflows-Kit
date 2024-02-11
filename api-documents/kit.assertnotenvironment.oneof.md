@@ -2,10 +2,21 @@
 
 [Home](./index.md) &gt; [@holoflows/kit](./kit.md) &gt; [assertNotEnvironment](./kit.assertnotenvironment.md) &gt; [oneOf](./kit.assertnotenvironment.oneof.md)
 
-## assertNotEnvironment.oneOf variable
+## assertNotEnvironment.oneOf() function
 
 **Signature:**
 
 ```typescript
 oneOf: (...args: Environment[]) => void
 ```
+
+## Parameters
+
+|  Parameter | Type | Description |
+|  --- | --- | --- |
+|  args | [Environment](./kit.environment.md)<!-- -->\[\] |  |
+
+**Returns:**
+
+void
+

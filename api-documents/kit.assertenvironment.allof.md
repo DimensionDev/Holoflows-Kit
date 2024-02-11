@@ -2,10 +2,21 @@
 
 [Home](./index.md) &gt; [@holoflows/kit](./kit.md) &gt; [assertEnvironment](./kit.assertenvironment.md) &gt; [allOf](./kit.assertenvironment.allof.md)
 
-## assertEnvironment.allOf variable
+## assertEnvironment.allOf() function
 
 **Signature:**
 
 ```typescript
 allOf: (...args: Environment[]) => void[]
 ```
+
+## Parameters
+
+|  Parameter | Type | Description |
+|  --- | --- | --- |
+|  args | [Environment](./kit.environment.md)<!-- -->\[\] |  |
+
+**Returns:**
+
+void\[\]
+

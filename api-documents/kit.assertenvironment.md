@@ -10,10 +10,10 @@
 export declare namespace assertEnvironment 
 ```
 
-## Variables
+## Functions
 
-|  Variable | Description |
+|  Function | Description |
 |  --- | --- |
-|  [allOf](./kit.assertenvironment.allof.md) |  |
-|  [oneOf](./kit.assertenvironment.oneof.md) |  |
+|  [allOf(args)](./kit.assertenvironment.allof.md) |  |
+|  [oneOf(args)](./kit.assertenvironment.oneof.md) |  |
 

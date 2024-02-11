@@ -2,10 +2,21 @@
 
 [Home](./index.md) &gt; [@holoflows/kit](./kit.md) &gt; [isEnvironment](./kit.isenvironment.md) &gt; [allOf](./kit.isenvironment.allof.md)
 
-## isEnvironment.allOf variable
+## isEnvironment.allOf() function
 
 **Signature:**
 
 ```typescript
 allOf: (...args: Environment[]) => boolean[]
 ```
+
+## Parameters
+
+|  Parameter | Type | Description |
+|  --- | --- | --- |
+|  args | [Environment](./kit.environment.md)<!-- -->\[\] |  |
+
+**Returns:**
+
+boolean\[\]
+
