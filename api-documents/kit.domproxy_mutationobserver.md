@@ -14,7 +14,46 @@ export interface DOMProxy_MutationObserver
 
 ## Properties
 
-|  Property | Modifiers | Type | Description |
-|  --- | --- | --- | --- |
-|  [observer](./kit.domproxy_mutationobserver.observer.md) | <code>readonly</code> | MutationObserver \| null | The proxied of MutationObserver of this DOMProxy |
+<table><thead><tr><th>
 
+Property
+
+
+</th><th>
+
+Modifiers
+
+
+</th><th>
+
+Type
+
+
+</th><th>
+
+Description
+
+
+</th></tr></thead>
+<tbody><tr><td>
+
+[observer](./kit.domproxy_mutationobserver.observer.md)
+
+
+</td><td>
+
+`readonly`
+
+
+</td><td>
+
+MutationObserver \| null
+
+
+</td><td>
+
+The proxied of MutationObserver of this DOMProxy
+
+
+</td></tr>
+</tbody></table>

@@ -4,8 +4,6 @@
 
 ## WebExtensionMessage.domain property
 
-Same message name within different domain won't collide with each other.
-
 **Signature:**
 
 ```typescript

@@ -31,7 +31,24 @@ Special Handlers:
 
 ## Methods
 
-|  Method | Description |
-|  --- | --- |
-|  [on(type, fn)](./kit.domproxy.on.md) |  |
+<table><thead><tr><th>
 
+Method
+
+
+</th><th>
+
+Description
+
+
+</th></tr></thead>
+<tbody><tr><td>
+
+[on(type, fn)](./kit.domproxy.on.md)
+
+
+</td><td>
+
+
+</td></tr>
+</tbody></table>

@@ -10,6 +10,6 @@ Event listeners
 
 ```typescript
 get events(): {
-        readonly [K in keyof Message]: UnboundedRegistry<Message[K]>;
+        readonly [K in keyof Message]: WebExtensionEventTargetUnbound<Message[K]>;
     };
 ```

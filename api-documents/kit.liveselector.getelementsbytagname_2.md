@@ -12,10 +12,37 @@ getElementsByTagName<E extends Element = Element>(tag: string): LiveSelector<E, 
 
 ## Parameters
 
-|  Parameter | Type | Description |
-|  --- | --- | --- |
-|  tag | string |  |
+<table><thead><tr><th>
 
+Parameter
+
+
+</th><th>
+
+Type
+
+
+</th><th>
+
+Description
+
+
+</th></tr></thead>
+<tbody><tr><td>
+
+tag
+
+
+</td><td>
+
+string
+
+
+</td><td>
+
+
+</td></tr>
+</tbody></table>
 **Returns:**
 
 [LiveSelector](./kit.liveselector.md)<!-- -->&lt;E, SingleMode&gt;

@@ -14,15 +14,100 @@ export interface DOMProxyOptions<Before extends Element = HTMLSpanElement, After
 
 ## Properties
 
-|  Property | Modifiers | Type | Description |
-|  --- | --- | --- | --- |
-|  [afterShadowRootInit](./kit.domproxyoptions.aftershadowrootinit.md) |  | ShadowRootInit | ShadowRootInit for creating the shadow of <code>after</code> |
-|  [beforeShadowRootInit](./kit.domproxyoptions.beforeshadowrootinit.md) |  | ShadowRootInit | ShadowRootInit for creating the shadow of <code>before</code> |
+<table><thead><tr><th>
+
+Property
+
+
+</th><th>
+
+Modifiers
+
+
+</th><th>
+
+Type
+
+
+</th><th>
+
+Description
+
+
+</th></tr></thead>
+<tbody><tr><td>
+
+[afterShadowRootInit](./kit.domproxyoptions.aftershadowrootinit.md)
+
+
+</td><td>
+
+
+</td><td>
+
+ShadowRootInit
+
+
+</td><td>
+
+ShadowRootInit for creating the shadow of `after`
+
+
+</td></tr>
+<tr><td>
+
+[beforeShadowRootInit](./kit.domproxyoptions.beforeshadowrootinit.md)
+
+
+</td><td>
+
+
+</td><td>
+
+ShadowRootInit
+
+
+</td><td>
+
+ShadowRootInit for creating the shadow of `before`
+
+
+</td></tr>
+</tbody></table>
 
 ## Methods
 
-|  Method | Description |
-|  --- | --- |
-|  [createAfter()](./kit.domproxyoptions.createafter.md) | Create the <code>after</code> node of the DOMProxy |
-|  [createBefore()](./kit.domproxyoptions.createbefore.md) | Create the <code>before</code> node of the DOMProxy |
+<table><thead><tr><th>
 
+Method
+
+
+</th><th>
+
+Description
+
+
+</th></tr></thead>
+<tbody><tr><td>
+
+[createAfter()](./kit.domproxyoptions.createafter.md)
+
+
+</td><td>
+
+Create the `after` node of the DOMProxy
+
+
+</td></tr>
+<tr><td>
+
+[createBefore()](./kit.domproxyoptions.createbefore.md)
+
+
+</td><td>
+
+Create the `before` node of the DOMProxy
+
+
+</td></tr>
+</tbody></table>

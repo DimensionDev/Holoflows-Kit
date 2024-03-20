@@ -15,11 +15,51 @@ on(type: 'currentChanged', fn: (data: {
 
 ## Parameters
 
-|  Parameter | Type | Description |
-|  --- | --- | --- |
-|  type | 'currentChanged' |  |
-|  fn | (data: { new: ProxiedElement \| null; old: ProxiedElement \| null; }) =&gt; void |  |
+<table><thead><tr><th>
 
+Parameter
+
+
+</th><th>
+
+Type
+
+
+</th><th>
+
+Description
+
+
+</th></tr></thead>
+<tbody><tr><td>
+
+type
+
+
+</td><td>
+
+'currentChanged'
+
+
+</td><td>
+
+
+</td></tr>
+<tr><td>
+
+fn
+
+
+</td><td>
+
+(data: { new: ProxiedElement \| null; old: ProxiedElement \| null; }) =&gt; void
+
+
+</td><td>
+
+
+</td></tr>
+</tbody></table>
 **Returns:**
 
 () =&gt; void

@@ -16,10 +16,39 @@ assignKeys<Q = unknown>(keyAssigner: (node: T, index: number, arr: readonly T[])
 
 ## Parameters
 
-|  Parameter | Type | Description |
-|  --- | --- | --- |
-|  keyAssigner | (node: T, index: number, arr: readonly T\[\]) =&gt; Q | map <code>node</code> to <code>key</code>, defaults to <code>node =&gt; node</code> |
+<table><thead><tr><th>
 
+Parameter
+
+
+</th><th>
+
+Type
+
+
+</th><th>
+
+Description
+
+
+</th></tr></thead>
+<tbody><tr><td>
+
+keyAssigner
+
+
+</td><td>
+
+(node: T, index: number, arr: readonly T\[\]) =&gt; Q
+
+
+</td><td>
+
+map `node` to `key`<!-- -->, defaults to `node => node`
+
+
+</td></tr>
+</tbody></table>
 **Returns:**
 
 this

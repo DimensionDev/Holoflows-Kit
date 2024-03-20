@@ -6,7 +6,26 @@
 
 ## Packages
 
-|  Package | Description |
-|  --- | --- |
-|  [@holoflows/kit](./kit.md) | A toolkit for browser extension developing. |
+<table><thead><tr><th>
 
+Package
+
+
+</th><th>
+
+Description
+
+
+</th></tr></thead>
+<tbody><tr><td>
+
+[@holoflows/kit](./kit.md)
+
+
+</td><td>
+
+A toolkit for browser extension developing.
+
+
+</td></tr>
+</tbody></table>

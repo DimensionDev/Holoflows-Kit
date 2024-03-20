@@ -751,6 +751,7 @@ interface WarningOptions {
     /** default warn function */
     fn: (stack: string) => void
 }
+declare var process: any
 function warning(_: Partial<WarningOptions> = {}) {
     const { dev, once, fn } = { ...({ dev: false, once: true, fn: () => {} } as WarningOptions), ..._ }
     if (dev) if (process.env.NODE_ENV !== 'development') return { warn(f = fn) {}, ignored: true, stack: '' }

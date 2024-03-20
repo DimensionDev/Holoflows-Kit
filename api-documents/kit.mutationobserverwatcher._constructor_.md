@@ -17,9 +17,66 @@ constructor(
 
 ## Parameters
 
-|  Parameter | Type | Description |
-|  --- | --- | --- |
-|  liveSelector | [LiveSelector](./kit.liveselector.md)<!-- -->&lt;T, SingleMode&gt; |  |
-|  consistentWatchRoot | Node | _(Optional)_ |
-|  stopWatchOnDisconnected | boolean | _(Optional)_ |
+<table><thead><tr><th>
 
+Parameter
+
+
+</th><th>
+
+Type
+
+
+</th><th>
+
+Description
+
+
+</th></tr></thead>
+<tbody><tr><td>
+
+liveSelector
+
+
+</td><td>
+
+[LiveSelector](./kit.liveselector.md)<!-- -->&lt;T, SingleMode&gt;
+
+
+</td><td>
+
+
+</td></tr>
+<tr><td>
+
+consistentWatchRoot
+
+
+</td><td>
+
+Node
+
+
+</td><td>
+
+_(Optional)_
+
+
+</td></tr>
+<tr><td>
+
+stopWatchOnDisconnected
+
+
+</td><td>
+
+boolean
+
+
+</td><td>
+
+_(Optional)_
+
+
+</td></tr>
+</tbody></table>

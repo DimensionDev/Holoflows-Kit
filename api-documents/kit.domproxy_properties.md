@@ -30,23 +30,248 @@ Special Handlers:
 
 ## Properties
 
-|  Property | Modifiers | Type | Description |
-|  --- | --- | --- | --- |
-|  [after](./kit.domproxy_properties.after.md) | <code>readonly</code> | After | Returns the <code>after</code> element, if it doesn't exist, create it implicitly. |
-|  [afterShadow](./kit.domproxy_properties.aftershadow.md) | <code>readonly</code> | ShadowRoot | Returns the <code>ShadowRoot</code> of the <code>after</code> element. |
-|  [before](./kit.domproxy_properties.before.md) | <code>readonly</code> | Before | Returns the <code>before</code> element, if it doesn't exist, create it implicitly. |
-|  [beforeShadow](./kit.domproxy_properties.beforeshadow.md) | <code>readonly</code> | ShadowRoot | Returns the <code>ShadowRoot</code> of the <code>before</code> element. |
-|  [current](./kit.domproxy_properties.current.md) | <code>readonly</code> | ProxiedElement | A proxy that always point to <code>realCurrent</code>, and if <code>realCurrent</code> changes, all action will be forwarded to new <code>realCurrent</code> |
-|  [destroyed](./kit.domproxy_properties.destroyed.md) | <code>readonly</code> | boolean |  |
-|  [observer](./kit.domproxy_properties.observer.md) | <code>readonly</code> | [DOMProxy\_MutationObserver](./kit.domproxy_mutationobserver.md) | Observer for the current node. You need to set callback and init to activate it. |
-|  [realCurrent](./kit.domproxy_properties.realcurrent.md) |  | ProxiedElement \| null | The real current of the <code>current</code> |
+<table><thead><tr><th>
+
+Property
+
+
+</th><th>
+
+Modifiers
+
+
+</th><th>
+
+Type
+
+
+</th><th>
+
+Description
+
+
+</th></tr></thead>
+<tbody><tr><td>
+
+[after](./kit.domproxy_properties.after.md)
+
+
+</td><td>
+
+`readonly`
+
+
+</td><td>
+
+After
+
+
+</td><td>
+
+Returns the `after` element, if it doesn't exist, create it implicitly.
+
+
+</td></tr>
+<tr><td>
+
+[afterShadow](./kit.domproxy_properties.aftershadow.md)
+
+
+</td><td>
+
+`readonly`
+
+
+</td><td>
+
+ShadowRoot
+
+
+</td><td>
+
+Returns the `ShadowRoot` of the `after` element.
+
+
+</td></tr>
+<tr><td>
+
+[before](./kit.domproxy_properties.before.md)
+
+
+</td><td>
+
+`readonly`
+
+
+</td><td>
+
+Before
+
+
+</td><td>
+
+Returns the `before` element, if it doesn't exist, create it implicitly.
+
+
+</td></tr>
+<tr><td>
+
+[beforeShadow](./kit.domproxy_properties.beforeshadow.md)
+
+
+</td><td>
+
+`readonly`
+
+
+</td><td>
+
+ShadowRoot
+
+
+</td><td>
+
+Returns the `ShadowRoot` of the `before` element.
+
+
+</td></tr>
+<tr><td>
+
+[current](./kit.domproxy_properties.current.md)
+
+
+</td><td>
+
+`readonly`
+
+
+</td><td>
+
+ProxiedElement
+
+
+</td><td>
+
+A proxy that always point to `realCurrent`<!-- -->, and if `realCurrent` changes, all action will be forwarded to new `realCurrent`
+
+
+</td></tr>
+<tr><td>
+
+[destroyed](./kit.domproxy_properties.destroyed.md)
+
+
+</td><td>
+
+`readonly`
+
+
+</td><td>
+
+boolean
+
+
+</td><td>
+
+
+</td></tr>
+<tr><td>
+
+[observer](./kit.domproxy_properties.observer.md)
+
+
+</td><td>
+
+`readonly`
+
+
+</td><td>
+
+[DOMProxy\_MutationObserver](./kit.domproxy_mutationobserver.md)
+
+
+</td><td>
+
+Observer for the current node. You need to set callback and init to activate it.
+
+
+</td></tr>
+<tr><td>
+
+[realCurrent](./kit.domproxy_properties.realcurrent.md)
+
+
+</td><td>
+
+
+</td><td>
+
+ProxiedElement \| null
+
+
+</td><td>
+
+The real current of the `current`
+
+
+</td></tr>
+</tbody></table>
 
 ## Methods
 
-|  Method | Description |
-|  --- | --- |
-|  [destroy()](./kit.domproxy_properties.destroy.md) | Destroy the DOMProxy |
-|  [has(type)](./kit.domproxy_properties.has.md) | Get weak reference to <code>before</code> node |
-|  [has(type)](./kit.domproxy_properties.has_1.md) | Get weak reference to <code>after</code> node |
-|  [has(type)](./kit.domproxy_properties.has_2.md) | Get weak reference to <code>beforeShadow</code> or <code>afterShadow</code> node |
+<table><thead><tr><th>
 
+Method
+
+
+</th><th>
+
+Description
+
+
+</th></tr></thead>
+<tbody><tr><td>
+
+[destroy()](./kit.domproxy_properties.destroy.md)
+
+
+</td><td>
+
+Destroy the DOMProxy
+
+
+</td></tr>
+<tr><td>
+
+[has(type)](./kit.domproxy_properties.has.md)
+
+
+</td><td>
+
+Get weak reference to `before` node
+
+
+</td></tr>
+<tr><td>
+
+[has(type)](./kit.domproxy_properties.has_1.md)
+
+
+</td><td>
+
+Get weak reference to `after` node
+
+
+</td></tr>
+<tr><td>
+
+[has(type)](./kit.domproxy_properties.has_2.md)
+
+
+</td><td>
+
+Get weak reference to `beforeShadow` or `afterShadow` node
+
+
+</td></tr>
+</tbody></table>

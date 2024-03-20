@@ -12,14 +12,132 @@ export declare enum MessageTarget
 
 ## Enumeration Members
 
-|  Member | Value | Description |
-|  --- | --- | --- |
-|  All | <code>2</code> | Send to all environments (include local) |
-|  Broadcast | <code>33554434</code> | Send to all environments (exclude local). |
-|  ExcludeLocal | <code>33554432</code> | Unconditionally exclude local from receiving the message. |
-|  External | <code>16777216</code> | Send to external. |
-|  FocusedPageOnly | <code>8388608</code> | Page that has focus (devtools not included), 0 or 1 page. |
-|  IncludeLocal | <code>1048576</code> | Unconditionally match local. (local might receive the message even without this flag if other condition met.) |
-|  LocalOnly | <code>2097152</code> | Do not send the message over channel. |
-|  VisiblePageOnly | <code>4194304</code> | Visible page, maybe have more than 1 page. |
+<table><thead><tr><th>
 
+Member
+
+
+</th><th>
+
+Value
+
+
+</th><th>
+
+Description
+
+
+</th></tr></thead>
+<tbody><tr><td>
+
+All
+
+
+</td><td>
+
+`2`
+
+
+</td><td>
+
+Send to all environments (include local)
+
+
+</td></tr>
+<tr><td>
+
+Broadcast
+
+
+</td><td>
+
+`33554434`
+
+
+</td><td>
+
+Send to all environments (exclude local).
+
+
+</td></tr>
+<tr><td>
+
+ExcludeLocal
+
+
+</td><td>
+
+`33554432`
+
+
+</td><td>
+
+Unconditionally exclude local from receiving the message.
+
+
+</td></tr>
+<tr><td>
+
+FocusedPageOnly
+
+
+</td><td>
+
+`8388608`
+
+
+</td><td>
+
+Page that has focus (devtools not included), 0 or 1 page.
+
+
+</td></tr>
+<tr><td>
+
+IncludeLocal
+
+
+</td><td>
+
+`1048576`
+
+
+</td><td>
+
+Unconditionally match local. (local might receive the message even without this flag if other condition met.)
+
+
+</td></tr>
+<tr><td>
+
+LocalOnly
+
+
+</td><td>
+
+`2097152`
+
+
+</td><td>
+
+Do not send the message over channel.
+
+
+</td></tr>
+<tr><td>
+
+VisiblePageOnly
+
+
+</td><td>
+
+`4194304`
+
+
+</td><td>
+
+Visible page, maybe have more than 1 page.
+
+
+</td></tr>
+</tbody></table>

@@ -14,10 +14,37 @@ has(type: 'beforeShadow' | 'afterShadow'): ShadowRoot | null;
 
 ## Parameters
 
-|  Parameter | Type | Description |
-|  --- | --- | --- |
-|  type | 'beforeShadow' \| 'afterShadow' |  |
+<table><thead><tr><th>
 
+Parameter
+
+
+</th><th>
+
+Type
+
+
+</th><th>
+
+Description
+
+
+</th></tr></thead>
+<tbody><tr><td>
+
+type
+
+
+</td><td>
+
+'beforeShadow' \| 'afterShadow'
+
+
+</td><td>
+
+
+</td></tr>
+</tbody></table>
 **Returns:**
 
 ShadowRoot \| null

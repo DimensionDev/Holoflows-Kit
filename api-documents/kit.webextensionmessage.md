@@ -7,30 +7,226 @@
 **Signature:**
 
 ```typescript
-export declare class WebExtensionMessage<Message> 
+export declare class WebExtensionMessage<Message> extends EventTarget implements WebExtensionEventTarget<Message> 
 ```
+**Extends:** EventTarget
+
+**Implements:** [WebExtensionEventTarget](./kit.webextensioneventtarget.md)<!-- -->&lt;Message&gt;
 
 ## Constructors
 
-|  Constructor | Modifiers | Description |
-|  --- | --- | --- |
-|  [(constructor)(options)](./kit.webextensionmessage._constructor_.md) |  | Constructs a new instance of the <code>WebExtensionMessage</code> class |
+<table><thead><tr><th>
+
+Constructor
+
+
+</th><th>
+
+Modifiers
+
+
+</th><th>
+
+Description
+
+
+</th></tr></thead>
+<tbody><tr><td>
+
+[(constructor)(options)](./kit.webextensionmessage._constructor_.md)
+
+
+</td><td>
+
+
+</td><td>
+
+Constructs a new instance of the `WebExtensionMessage` class
+
+
+</td></tr>
+</tbody></table>
 
 ## Properties
 
-|  Property | Modifiers | Type | Description |
-|  --- | --- | --- | --- |
-|  [domain](./kit.webextensionmessage.domain.md) | <code>readonly</code> | string | Same message name within different domain won't collide with each other. |
-|  [enableLog](./kit.webextensionmessage.enablelog.md) |  | boolean |  |
-|  [eventRegistry](./kit.webextensionmessage.eventregistry.md) | <p><code>protected</code></p><p><code>readonly</code></p> | Emitter&lt;Record&lt;string, \[unknown\]&gt;&gt; |  |
-|  [events](./kit.webextensionmessage.events.md) | <code>readonly</code> | { readonly \[K in keyof Message\]: [UnboundedRegistry](./kit.unboundedregistry.md)<!-- -->&lt;Message\[K\]&gt;; } | Event listeners |
-|  [log](./kit.webextensionmessage.log.md) |  | (...args: unknown\[\]) =&gt; void |  |
-|  [logFormatter](./kit.webextensionmessage.logformatter.md) |  | (instance: this, key: string, data: unknown) =&gt; unknown\[\] |  |
-|  [serialization](./kit.webextensionmessage.serialization.md) |  | [Serialization](./kit.serialization.md) | <p>Watch new tabs created and get event listener register of that tab.</p><p>This API only works in the BackgroundPage.</p> |
+<table><thead><tr><th>
 
-## Methods
+Property
 
-|  Method | Modifiers | Description |
-|  --- | --- | --- |
-|  [acceptExternalConnect(acceptExternalConnectFn)](./kit.webextensionmessage.acceptexternalconnect.md) | <code>static</code> | If the connection is not accepted, it will be passed to the next handler until it is handled or no more handlers |
 
+</th><th>
+
+Modifiers
+
+
+</th><th>
+
+Type
+
+
+</th><th>
+
+Description
+
+
+</th></tr></thead>
+<tbody><tr><td>
+
+[addEventListener](./kit.webextensionmessage.addeventlistener.md)
+
+
+</td><td>
+
+
+</td><td>
+
+[WebExtensionEventTarget](./kit.webextensioneventtarget.md)<!-- -->&lt;Message&gt;\['addEventListener'\]
+
+
+</td><td>
+
+
+</td></tr>
+<tr><td>
+
+[dispatchEvent](./kit.webextensionmessage.dispatchevent.md)
+
+
+</td><td>
+
+
+</td><td>
+
+[WebExtensionEventTarget](./kit.webextensioneventtarget.md)<!-- -->&lt;Message&gt;\['dispatchEvent'\]
+
+
+</td><td>
+
+
+</td></tr>
+<tr><td>
+
+[domain](./kit.webextensionmessage.domain.md)
+
+
+</td><td>
+
+`readonly`
+
+
+</td><td>
+
+string
+
+
+</td><td>
+
+
+</td></tr>
+<tr><td>
+
+[enableLog](./kit.webextensionmessage.enablelog.md)
+
+
+</td><td>
+
+
+</td><td>
+
+boolean
+
+
+</td><td>
+
+
+</td></tr>
+<tr><td>
+
+[events](./kit.webextensionmessage.events.md)
+
+
+</td><td>
+
+`readonly`
+
+
+</td><td>
+
+{ readonly \[K in keyof Message\]: [WebExtensionEventTargetUnbound](./kit.webextensioneventtargetunbound.md)<!-- -->&lt;Message\[K\]&gt;; }
+
+
+</td><td>
+
+Event listeners
+
+
+</td></tr>
+<tr><td>
+
+[log](./kit.webextensionmessage.log.md)
+
+
+</td><td>
+
+
+</td><td>
+
+(...args: unknown\[\]) =&gt; void
+
+
+</td><td>
+
+
+</td></tr>
+<tr><td>
+
+[logFormatter](./kit.webextensionmessage.logformatter.md)
+
+
+</td><td>
+
+
+</td><td>
+
+(instance: this, key: string, data: unknown) =&gt; unknown\[\]
+
+
+</td><td>
+
+
+</td></tr>
+<tr><td>
+
+[removeEventListener](./kit.webextensionmessage.removeeventlistener.md)
+
+
+</td><td>
+
+
+</td><td>
+
+[WebExtensionEventTarget](./kit.webextensioneventtarget.md)<!-- -->&lt;Message&gt;\['addEventListener'\]
+
+
+</td><td>
+
+
+</td></tr>
+<tr><td>
+
+[serialization](./kit.webextensionmessage.serialization.md)
+
+
+</td><td>
+
+
+</td><td>
+
+[Encoder](./kit.encoder.md) \| undefined
+
+
+</td><td>
+
+
+</td></tr>
+</tbody></table>

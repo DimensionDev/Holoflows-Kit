@@ -14,7 +14,36 @@ constructor(initialElements?: readonly T[]);
 
 ## Parameters
 
-|  Parameter | Type | Description |
-|  --- | --- | --- |
-|  initialElements | readonly T\[\] | _(Optional)_ provides initial results, equals to <code>.replace(() =&gt; initialElements)</code> |
+<table><thead><tr><th>
 
+Parameter
+
+
+</th><th>
+
+Type
+
+
+</th><th>
+
+Description
+
+
+</th></tr></thead>
+<tbody><tr><td>
+
+initialElements
+
+
+</td><td>
+
+readonly T\[\]
+
+
+</td><td>
+
+_(Optional)_ provides initial results, equals to `.replace(() => initialElements)`
+
+
+</td></tr>
+</tbody></table>

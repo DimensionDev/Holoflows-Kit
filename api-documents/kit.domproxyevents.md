@@ -14,7 +14,42 @@ export interface DOMProxyEvents<ProxiedElement extends Node>
 
 ## Properties
 
-|  Property | Modifiers | Type | Description |
-|  --- | --- | --- | --- |
-|  [currentChanged](./kit.domproxyevents.currentchanged.md) |  | \[{ new: ProxiedElement \| null; old: ProxiedElement \| null; }\] |  |
+<table><thead><tr><th>
 
+Property
+
+
+</th><th>
+
+Modifiers
+
+
+</th><th>
+
+Type
+
+
+</th><th>
+
+Description
+
+
+</th></tr></thead>
+<tbody><tr><td>
+
+[currentChanged](./kit.domproxyevents.currentchanged.md)
+
+
+</td><td>
+
+
+</td><td>
+
+\[{ new: ProxiedElement \| null; old: ProxiedElement \| null; }\]
+
+
+</td><td>
+
+
+</td></tr>
+</tbody></table>

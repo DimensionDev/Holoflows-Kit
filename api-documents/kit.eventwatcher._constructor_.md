@@ -14,7 +14,34 @@ constructor(liveSelector: LiveSelector<T, SingleMode>);
 
 ## Parameters
 
-|  Parameter | Type | Description |
-|  --- | --- | --- |
-|  liveSelector | [LiveSelector](./kit.liveselector.md)<!-- -->&lt;T, SingleMode&gt; |  |
+<table><thead><tr><th>
 
+Parameter
+
+
+</th><th>
+
+Type
+
+
+</th><th>
+
+Description
+
+
+</th></tr></thead>
+<tbody><tr><td>
+
+liveSelector
+
+
+</td><td>
+
+[LiveSelector](./kit.liveselector.md)<!-- -->&lt;T, SingleMode&gt;
+
+
+</td><td>
+
+
+</td></tr>
+</tbody></table>

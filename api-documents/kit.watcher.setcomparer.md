@@ -16,11 +16,55 @@ setComparer(keyComparer?: (a: unknown, b: unknown) => boolean, valueComparer?: (
 
 ## Parameters
 
-|  Parameter | Type | Description |
-|  --- | --- | --- |
-|  keyComparer | (a: unknown, b: unknown) =&gt; boolean | _(Optional)_ compare between two keys, defaults to <code>===</code> |
-|  valueComparer | (a: T, b: T) =&gt; boolean | _(Optional)_ compare between two value, defaults to <code>===</code> |
+<table><thead><tr><th>
 
+Parameter
+
+
+</th><th>
+
+Type
+
+
+</th><th>
+
+Description
+
+
+</th></tr></thead>
+<tbody><tr><td>
+
+keyComparer
+
+
+</td><td>
+
+(a: unknown, b: unknown) =&gt; boolean
+
+
+</td><td>
+
+_(Optional)_ compare between two keys, defaults to `===`
+
+
+</td></tr>
+<tr><td>
+
+valueComparer
+
+
+</td><td>
+
+(a: T, b: T) =&gt; boolean
+
+
+</td><td>
+
+_(Optional)_ compare between two value, defaults to `===`
+
+
+</td></tr>
+</tbody></table>
 **Returns:**
 
 this

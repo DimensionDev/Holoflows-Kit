@@ -12,8 +12,33 @@ export declare namespace assertEnvironment
 
 ## Functions
 
-|  Function | Description |
-|  --- | --- |
-|  [allOf(args)](./kit.assertenvironment.allof.md) |  |
-|  [oneOf(args)](./kit.assertenvironment.oneof.md) |  |
+<table><thead><tr><th>
 
+Function
+
+
+</th><th>
+
+Description
+
+
+</th></tr></thead>
+<tbody><tr><td>
+
+[allOf(args)](./kit.assertenvironment.allof.md)
+
+
+</td><td>
+
+
+</td></tr>
+<tr><td>
+
+[oneOf(args)](./kit.assertenvironment.oneof.md)
+
+
+</td><td>
+
+
+</td></tr>
+</tbody></table>

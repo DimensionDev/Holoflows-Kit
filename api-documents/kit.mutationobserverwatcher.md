@@ -26,21 +26,142 @@ new MutationObserverWatcher(ls)
 
 ## Constructors
 
-|  Constructor | Modifiers | Description |
-|  --- | --- | --- |
-|  [(constructor)(liveSelector, consistentWatchRoot, stopWatchOnDisconnected)](./kit.mutationobserverwatcher._constructor_.md) |  | Constructs a new instance of the <code>MutationObserverWatcher</code> class |
+<table><thead><tr><th>
+
+Constructor
+
+
+</th><th>
+
+Modifiers
+
+
+</th><th>
+
+Description
+
+
+</th></tr></thead>
+<tbody><tr><td>
+
+[(constructor)(liveSelector, consistentWatchRoot, stopWatchOnDisconnected)](./kit.mutationobserverwatcher._constructor_.md)
+
+
+</td><td>
+
+
+</td><td>
+
+Constructs a new instance of the `MutationObserverWatcher` class
+
+
+</td></tr>
+</tbody></table>
 
 ## Properties
 
-|  Property | Modifiers | Type | Description |
-|  --- | --- | --- | --- |
-|  [liveSelector](./kit.mutationobserverwatcher.liveselector.md) | <code>protected</code> | [LiveSelector](./kit.liveselector.md)<!-- -->&lt;T, SingleMode&gt; | LiveSelector that this object holds |
+<table><thead><tr><th>
+
+Property
+
+
+</th><th>
+
+Modifiers
+
+
+</th><th>
+
+Type
+
+
+</th><th>
+
+Description
+
+
+</th></tr></thead>
+<tbody><tr><td>
+
+[liveSelector](./kit.mutationobserverwatcher.liveselector.md)
+
+
+</td><td>
+
+`protected`
+
+
+</td><td>
+
+[LiveSelector](./kit.liveselector.md)<!-- -->&lt;T, SingleMode&gt;
+
+
+</td><td>
+
+LiveSelector that this object holds
+
+
+</td></tr>
+</tbody></table>
 
 ## Methods
 
-|  Method | Modifiers | Description |
-|  --- | --- | --- |
-|  [defaultStarterForThen()](./kit.mutationobserverwatcher.defaultstarterforthen.md) | <code>protected</code> |  |
-|  [startWatch(options, signal)](./kit.mutationobserverwatcher.startwatch.md) |  | Start an MutationObserverWatcher. |
-|  [stopWatch()](./kit.mutationobserverwatcher.stopwatch.md) |  | Stop the watcher |
+<table><thead><tr><th>
 
+Method
+
+
+</th><th>
+
+Modifiers
+
+
+</th><th>
+
+Description
+
+
+</th></tr></thead>
+<tbody><tr><td>
+
+[defaultStarterForThen()](./kit.mutationobserverwatcher.defaultstarterforthen.md)
+
+
+</td><td>
+
+`protected`
+
+
+</td><td>
+
+
+</td></tr>
+<tr><td>
+
+[startWatch(options, signal)](./kit.mutationobserverwatcher.startwatch.md)
+
+
+</td><td>
+
+
+</td><td>
+
+Start an MutationObserverWatcher.
+
+
+</td></tr>
+<tr><td>
+
+[stopWatch()](./kit.mutationobserverwatcher.stopwatch.md)
+
+
+</td><td>
+
+
+</td><td>
+
+Stop the watcher
+
+
+</td></tr>
+</tbody></table>

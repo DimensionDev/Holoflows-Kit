@@ -4,12 +4,8 @@
 
 ## WebExtensionMessage.serialization property
 
-Watch new tabs created and get event listener register of that tab.
-
-This API only works in the BackgroundPage.
-
 **Signature:**
 
 ```typescript
-serialization: Serialization;
+serialization: Encoder | undefined;
 ```

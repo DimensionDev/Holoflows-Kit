@@ -12,8 +12,33 @@ export declare namespace isEnvironment
 
 ## Functions
 
-|  Function | Description |
-|  --- | --- |
-|  [allOf(args)](./kit.isenvironment.allof.md) |  |
-|  [oneOf(args)](./kit.isenvironment.oneof.md) |  |
+<table><thead><tr><th>
 
+Function
+
+
+</th><th>
+
+Description
+
+
+</th></tr></thead>
+<tbody><tr><td>
+
+[allOf(args)](./kit.isenvironment.allof.md)
+
+
+</td><td>
+
+
+</td></tr>
+<tr><td>
+
+[oneOf(args)](./kit.isenvironment.oneof.md)
+
+
+</td><td>
+
+
+</td></tr>
+</tbody></table>

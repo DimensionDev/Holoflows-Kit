@@ -14,10 +14,39 @@ export declare function printEnvironment(e?: Environment): string;
 
 ## Parameters
 
-|  Parameter | Type | Description |
-|  --- | --- | --- |
-|  e | [Environment](./kit.environment.md) | _(Optional)_ Printing environment bit flag |
+<table><thead><tr><th>
 
+Parameter
+
+
+</th><th>
+
+Type
+
+
+</th><th>
+
+Description
+
+
+</th></tr></thead>
+<tbody><tr><td>
+
+e
+
+
+</td><td>
+
+[Environment](./kit.environment.md)
+
+
+</td><td>
+
+_(Optional)_ Printing environment bit flag
+
+
+</td></tr>
+</tbody></table>
 **Returns:**
 
 string

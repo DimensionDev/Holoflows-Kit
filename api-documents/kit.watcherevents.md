@@ -12,10 +12,97 @@ export interface WatcherEvents<T>
 
 ## Events
 
-|  Property | Modifiers | Type | Description |
-|  --- | --- | --- | --- |
-|  [onAdd](./kit.watcherevents.onadd.md) |  | \[ { key: unknown; value: T; } \] |  |
-|  [onChange](./kit.watcherevents.onchange.md) |  | \[ { oldKey: unknown; newKey: unknown; oldValue?: T; newValue: T; } \] |  |
-|  [onIteration](./kit.watcherevents.oniteration.md) |  | \[ { new: Map&lt;unknown, T&gt;; removed: Map&lt;unknown, T&gt;; current: Map&lt;unknown, T&gt;; } \] |  |
-|  [onRemove](./kit.watcherevents.onremove.md) |  | \[ { key: unknown; value: T; } \] |  |
+<table><thead><tr><th>
 
+Property
+
+
+</th><th>
+
+Modifiers
+
+
+</th><th>
+
+Type
+
+
+</th><th>
+
+Description
+
+
+</th></tr></thead>
+<tbody><tr><td>
+
+[onAdd](./kit.watcherevents.onadd.md)
+
+
+</td><td>
+
+
+</td><td>
+
+\[ { key: unknown; value: T; } \]
+
+
+</td><td>
+
+
+
+</td></tr>
+<tr><td>
+
+[onChange](./kit.watcherevents.onchange.md)
+
+
+</td><td>
+
+
+</td><td>
+
+\[ { oldKey: unknown; newKey: unknown; oldValue?: T; newValue: T; } \]
+
+
+</td><td>
+
+
+
+</td></tr>
+<tr><td>
+
+[onIteration](./kit.watcherevents.oniteration.md)
+
+
+</td><td>
+
+
+</td><td>
+
+\[ { new: Map&lt;unknown, T&gt;; removed: Map&lt;unknown, T&gt;; current: Map&lt;unknown, T&gt;; } \]
+
+
+</td><td>
+
+
+
+</td></tr>
+<tr><td>
+
+[onRemove](./kit.watcherevents.onremove.md)
+
+
+</td><td>
+
+
+</td><td>
+
+\[ { key: unknown; value: T; } \]
+
+
+</td><td>
+
+
+
+</td></tr>
+</tbody></table>

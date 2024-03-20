@@ -4,9 +4,7 @@
 
 ```ts
 
-import { Emitter } from '@servie/events';
 import type { EventListener as EventListener_2 } from '@servie/events';
-import type { Runtime } from 'webextension-polyfill';
 
 // @public
 export function assertEnvironment(env: Environment): void;
@@ -83,6 +81,14 @@ export interface DOMProxyOptions<Before extends Element = HTMLSpanElement, After
     beforeShadowRootInit: ShadowRootInit;
     createAfter(): After;
     createBefore(): Before;
+}
+
+// @public
+export interface Encoder {
+    // (undocumented)
+    decode(encoded: unknown): unknown | PromiseLike<unknown>;
+    // (undocumented)
+    encode(data: unknown): unknown | PromiseLike<unknown>;
 }
 
 // @public
@@ -179,7 +185,6 @@ export enum MessageTarget {
     All = 2,
     Broadcast = 33554434,
     ExcludeLocal = 33554432,
-    External = 16777216,
     FocusedPageOnly = 8388608,
     IncludeLocal = 1048576,
     LocalOnly = 2097152,
@@ -202,57 +207,8 @@ export class MutationObserverWatcher<T, Before extends Element = HTMLSpanElement
 // @public
 export function printEnvironment(e?: Environment): string;
 
-// @public
-export interface Serialization {
-    deserialization(serialized: unknown): unknown | PromiseLike<unknown>;
-    serialization(from: any): unknown | PromiseLike<unknown>;
-}
-
 // @public (undocumented)
-export type ShouldAcceptExternalConnection = (sender: Runtime.MessageSender) => ShouldAcceptExternalConnectionResult;
-
-// @public (undocumented)
-export type ShouldAcceptExternalConnectionResult = boolean | {
-    acceptAs: Environment;
-};
-
-// @public (undocumented)
-export interface TargetBoundEventListenerOptions {
-    once?: boolean;
-    signal?: AbortSignal;
-}
-
-// @public (undocumented)
-export interface TargetBoundEventRegistry<T> {
-    // (undocumented)
-    off(callback: (data: T) => void): void;
-    // (undocumented)
-    on(callback: (data: T) => void, options?: TargetBoundEventListenerOptions): () => void;
-    pause(): (reducer?: (data: T[]) => T[]) => Promise<void>;
-    // (undocumented)
-    send(data: T): void;
-}
-
-// @public (undocumented)
-export interface UnboundedRegistry<T> extends Omit<TargetBoundEventRegistry<T>, 'send'>, AsyncIterable<T> {
-    bind(target: MessageTarget | Environment, signal?: AbortSignal): TargetBoundEventRegistry<T>;
-    // (undocumented)
-    send(target: MessageTarget | Environment, data: T): void;
-    // (undocumented)
-    sendByBroadcast(data: T): void;
-    // (undocumented)
-    sendToAll(data: T): void;
-    // (undocumented)
-    sendToBackgroundPage(data: T): void;
-    // (undocumented)
-    sendToContentScripts(data: T): void;
-    // (undocumented)
-    sendToFocusedPage(data: T): void;
-    // (undocumented)
-    sendToLocal(data: T): void;
-    // (undocumented)
-    sendToVisiblePages(data: T): void;
-}
+export function waitUntil(promise: Promise<any>): Promise<void>;
 
 // Warning: (ae-forgotten-export) The symbol "ResultOf" needs to be exported by the entry point index.d.ts
 //
@@ -344,28 +300,78 @@ export interface WatcherEvents<T> {
 }
 
 // @public (undocumented)
-export class WebExtensionMessage<Message> {
+export interface WebExtensionEventTarget<EventMap> extends EventTarget {
+    // (undocumented)
+    addEventListener<K extends keyof EventMap>(type: K, listener: (ev: MessageEvent<EventMap[K]>) => any, options?: boolean | AddEventListenerOptions): void;
+    // (undocumented)
+    addEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | AddEventListenerOptions): void;
+    // (undocumented)
+    dispatchEvent(event: MessageEvent<EventMap[keyof EventMap]>): boolean;
+    // (undocumented)
+    removeEventListener<K extends keyof EventMap>(type: K, listener: (ev: MessageEvent<EventMap[K]>) => any, options?: boolean | EventListenerOptions): void;
+    // (undocumented)
+    removeEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | EventListenerOptions): void;
+}
+
+// @public (undocumented)
+export interface WebExtensionEventTargetUnbound<T> extends Omit<WebExtensionTargetBoundEventTarget<T>, 'send'> {
+    bind(target: MessageTarget | Environment, signal?: AbortSignal): WebExtensionTargetBoundEventTarget<T>;
+    // (undocumented)
+    send(target: MessageTarget | Environment, data: T): void;
+    // (undocumented)
+    sendByBroadcast(data: T): void;
+    // (undocumented)
+    sendToAll(data: T): void;
+    // (undocumented)
+    sendToBackgroundPage(data: T): void;
+    // (undocumented)
+    sendToContentScripts(data: T): void;
+    // (undocumented)
+    sendToFocusedPage(data: T): void;
+    // (undocumented)
+    sendToLocal(data: T): void;
+    // (undocumented)
+    sendToVisiblePages(data: T): void;
+}
+
+// @public (undocumented)
+export class WebExtensionMessage<Message> extends EventTarget implements WebExtensionEventTarget<Message> {
     constructor(options?: WebExtensionMessageOptions);
-    static acceptExternalConnect(acceptExternalConnectFn: ShouldAcceptExternalConnection): void;
+    // (undocumented)
+    addEventListener: WebExtensionEventTarget<Message>['addEventListener'];
+    // (undocumented)
+    dispatchEvent: WebExtensionEventTarget<Message>['dispatchEvent'];
+    // (undocumented)
     get domain(): string;
     // (undocumented)
     enableLog: boolean;
-    // (undocumented)
-    protected get eventRegistry(): Emitter<Record<string, [unknown]>>;
     get events(): {
-        readonly [K in keyof Message]: UnboundedRegistry<Message[K]>;
+        readonly [K in keyof Message]: WebExtensionEventTargetUnbound<Message[K]>;
     };
     // (undocumented)
     log: (...args: unknown[]) => void;
     // (undocumented)
     logFormatter: (instance: this, key: string, data: unknown) => unknown[];
-    serialization: Serialization;
+    // (undocumented)
+    removeEventListener: WebExtensionEventTarget<Message>['addEventListener'];
+    // (undocumented)
+    serialization: Encoder | undefined;
 }
 
 // @public (undocumented)
 export interface WebExtensionMessageOptions {
     readonly domain?: string;
-    readonly externalExtensionID?: string;
+}
+
+// @public (undocumented)
+export interface WebExtensionTargetBoundEventTarget<T> {
+    // (undocumented)
+    off(callback: (data: T, senderUUID: string) => void): void;
+    // (undocumented)
+    on(callback: (data: T, senderUUID: string) => void, options?: AddEventListenerOptions): () => void;
+    pause(): (reducer?: (data: T[]) => T[]) => Promise<void>;
+    // (undocumented)
+    send(data: T): void;
 }
 
 ```

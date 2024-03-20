@@ -12,12 +12,67 @@ addListener<K extends keyof WatcherEvents<T>>(type: K, callback: EventListener<W
 
 ## Parameters
 
-|  Parameter | Type | Description |
-|  --- | --- | --- |
-|  type | K |  |
-|  callback | EventListener&lt;[WatcherEvents](./kit.watcherevents.md)<!-- -->&lt;T&gt;, K&gt; |  |
-|  options | AddEventListenerOptions | _(Optional)_ |
+<table><thead><tr><th>
 
+Parameter
+
+
+</th><th>
+
+Type
+
+
+</th><th>
+
+Description
+
+
+</th></tr></thead>
+<tbody><tr><td>
+
+type
+
+
+</td><td>
+
+K
+
+
+</td><td>
+
+
+</td></tr>
+<tr><td>
+
+callback
+
+
+</td><td>
+
+EventListener&lt;[WatcherEvents](./kit.watcherevents.md)<!-- -->&lt;T&gt;, K&gt;
+
+
+</td><td>
+
+
+</td></tr>
+<tr><td>
+
+options
+
+
+</td><td>
+
+AddEventListenerOptions
+
+
+</td><td>
+
+_(Optional)_
+
+
+</td></tr>
+</tbody></table>
 **Returns:**
 
 this

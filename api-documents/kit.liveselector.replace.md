@@ -14,10 +14,39 @@ replace<NextType>(f: (arr: T[]) => NextType[]): LiveSelector<NextType, SingleMod
 
 ## Parameters
 
-|  Parameter | Type | Description |
-|  --- | --- | --- |
-|  f | (arr: T\[\]) =&gt; NextType\[\] | returns new array. |
+<table><thead><tr><th>
 
+Parameter
+
+
+</th><th>
+
+Type
+
+
+</th><th>
+
+Description
+
+
+</th></tr></thead>
+<tbody><tr><td>
+
+f
+
+
+</td><td>
+
+(arr: T\[\]) =&gt; NextType\[\]
+
+
+</td><td>
+
+returns new array.
+
+
+</td></tr>
+</tbody></table>
 **Returns:**
 
 [LiveSelector](./kit.liveselector.md)<!-- -->&lt;NextType, SingleMode&gt;

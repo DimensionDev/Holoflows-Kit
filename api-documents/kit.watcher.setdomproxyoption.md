@@ -14,10 +14,39 @@ setDOMProxyOption(option: Partial<DOMProxyOptions<Before, After>>): this;
 
 ## Parameters
 
-|  Parameter | Type | Description |
-|  --- | --- | --- |
-|  option | Partial&lt;[DOMProxyOptions](./kit.domproxyoptions.md)<!-- -->&lt;Before, After&gt;&gt; | DOMProxy options |
+<table><thead><tr><th>
 
+Parameter
+
+
+</th><th>
+
+Type
+
+
+</th><th>
+
+Description
+
+
+</th></tr></thead>
+<tbody><tr><td>
+
+option
+
+
+</td><td>
+
+Partial&lt;[DOMProxyOptions](./kit.domproxyoptions.md)<!-- -->&lt;Before, After&gt;&gt;
+
+
+</td><td>
+
+DOMProxy options
+
+
+</td></tr>
+</tbody></table>
 **Returns:**
 
 this

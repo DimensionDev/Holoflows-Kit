@@ -14,10 +14,39 @@ at(n: SingleMode extends true ? 'LiveSelector.nth() is not available in SingleMo
 
 ## Parameters
 
-|  Parameter | Type | Description |
-|  --- | --- | --- |
-|  n | SingleMode extends true ? 'LiveSelector.nth() is not available in SingleMode' : number | Select only nth element, allow negative number. |
+<table><thead><tr><th>
 
+Parameter
+
+
+</th><th>
+
+Type
+
+
+</th><th>
+
+Description
+
+
+</th></tr></thead>
+<tbody><tr><td>
+
+n
+
+
+</td><td>
+
+SingleMode extends true ? 'LiveSelector.nth() is not available in SingleMode' : number
+
+
+</td><td>
+
+Select only nth element, allow negative number.
+
+
+</td></tr>
+</tbody></table>
 **Returns:**
 
 [LiveSelector](./kit.liveselector.md)<!-- -->&lt;T, SingleMode&gt;

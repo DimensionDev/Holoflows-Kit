@@ -14,10 +14,37 @@ has(type: 'after'): After | null;
 
 ## Parameters
 
-|  Parameter | Type | Description |
-|  --- | --- | --- |
-|  type | 'after' |  |
+<table><thead><tr><th>
 
+Parameter
+
+
+</th><th>
+
+Type
+
+
+</th><th>
+
+Description
+
+
+</th></tr></thead>
+<tbody><tr><td>
+
+type
+
+
+</td><td>
+
+'after'
+
+
+</td><td>
+
+
+</td></tr>
+</tbody></table>
 **Returns:**
 
 After \| null

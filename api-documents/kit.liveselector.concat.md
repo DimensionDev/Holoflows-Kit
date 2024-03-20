@@ -14,10 +14,39 @@ concat<NextType>(newEle: LiveSelector<NextType, SingleMode>): LiveSelector<T | N
 
 ## Parameters
 
-|  Parameter | Type | Description |
-|  --- | --- | --- |
-|  newEle | [LiveSelector](./kit.liveselector.md)<!-- -->&lt;NextType, SingleMode&gt; | Additional LiveSelector to combine. |
+<table><thead><tr><th>
 
+Parameter
+
+
+</th><th>
+
+Type
+
+
+</th><th>
+
+Description
+
+
+</th></tr></thead>
+<tbody><tr><td>
+
+newEle
+
+
+</td><td>
+
+[LiveSelector](./kit.liveselector.md)<!-- -->&lt;NextType, SingleMode&gt;
+
+
+</td><td>
+
+Additional LiveSelector to combine.
+
+
+</td></tr>
+</tbody></table>
 **Returns:**
 
 [LiveSelector](./kit.liveselector.md)<!-- -->&lt;T \| NextType, SingleMode&gt;

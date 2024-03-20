@@ -14,10 +14,39 @@ getElementsByClassName<T extends Element = Element>(className: string): LiveSele
 
 ## Parameters
 
-|  Parameter | Type | Description |
-|  --- | --- | --- |
-|  className | string | Class name |
+<table><thead><tr><th>
 
+Parameter
+
+
+</th><th>
+
+Type
+
+
+</th><th>
+
+Description
+
+
+</th></tr></thead>
+<tbody><tr><td>
+
+className
+
+
+</td><td>
+
+string
+
+
+</td><td>
+
+Class name
+
+
+</td></tr>
+</tbody></table>
 **Returns:**
 
 [LiveSelector](./kit.liveselector.md)<!-- -->&lt;T, SingleMode&gt;

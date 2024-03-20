@@ -14,10 +14,39 @@ getDOMProxyByKey(key: unknown): DOMProxy<any, Before, After> | null;
 
 ## Parameters
 
-|  Parameter | Type | Description |
-|  --- | --- | --- |
-|  key | unknown | Key used to find DOMProxy |
+<table><thead><tr><th>
 
+Parameter
+
+
+</th><th>
+
+Type
+
+
+</th><th>
+
+Description
+
+
+</th></tr></thead>
+<tbody><tr><td>
+
+key
+
+
+</td><td>
+
+unknown
+
+
+</td><td>
+
+Key used to find DOMProxy
+
+
+</td></tr>
+</tbody></table>
 **Returns:**
 
 [DOMProxy](./kit.domproxy.md)<!-- -->&lt;any, Before, After&gt; \| null

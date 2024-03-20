@@ -12,8 +12,46 @@ export interface WebExtensionMessageOptions
 
 ## Properties
 
-|  Property | Modifiers | Type | Description |
-|  --- | --- | --- | --- |
-|  [domain?](./kit.webextensionmessageoptions.domain.md) | <code>readonly</code> | string | _(Optional)_ The "domain" of the message. Messages within different domain won't affect each other. |
-|  [externalExtensionID?](./kit.webextensionmessageoptions.externalextensionid.md) | <code>readonly</code> | string | <p>_(Optional)_ Use this when connect from a normal web page. You must configure externally\_connectable to make it work.</p><p>DO NOT use it to connect between two extensions!</p><p>ONLY use it in a normal webpage.</p><p>PLEASE make sure to call acceptExternalConnect otherwise it will not work.</p> |
+<table><thead><tr><th>
 
+Property
+
+
+</th><th>
+
+Modifiers
+
+
+</th><th>
+
+Type
+
+
+</th><th>
+
+Description
+
+
+</th></tr></thead>
+<tbody><tr><td>
+
+[domain?](./kit.webextensionmessageoptions.domain.md)
+
+
+</td><td>
+
+`readonly`
+
+
+</td><td>
+
+string
+
+
+</td><td>
+
+_(Optional)_ The "domain" of the message. Messages within different domain won't affect each other.
+
+
+</td></tr>
+</tbody></table>

@@ -14,10 +14,39 @@ getElementsByTagName<K extends keyof HTMLElementTagNameMap>(tag: K): LiveSelecto
 
 ## Parameters
 
-|  Parameter | Type | Description |
-|  --- | --- | --- |
-|  tag | K | Tag name |
+<table><thead><tr><th>
 
+Parameter
+
+
+</th><th>
+
+Type
+
+
+</th><th>
+
+Description
+
+
+</th></tr></thead>
+<tbody><tr><td>
+
+tag
+
+
+</td><td>
+
+K
+
+
+</td><td>
+
+Tag name
+
+
+</td></tr>
+</tbody></table>
 **Returns:**
 
 [LiveSelector](./kit.liveselector.md)<!-- -->&lt;HTMLElementTagNameMap\[K\], SingleMode&gt;

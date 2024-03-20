@@ -14,20 +14,242 @@ export declare enum Environment
 
 ## Enumeration Members
 
-|  Member | Value | Description |
-|  --- | --- | --- |
-|  ContentScript | <code>8</code> | Current running context is Content Script |
-|  ExtensionProtocol | <code>4</code> | URL protocol ends with "-extension:" |
-|  HasBrowserAPI | <code>2</code> | has browser as a global variable |
-|  ManifestAction | <code>256</code> | URL is listed in the manifest.action |
-|  ManifestBackground | <code>64</code> | URL of the manifest.background, generated background page, or manifest v3 service worker |
-|  ManifestBrowserAction | <code>256</code> | URL is listed in the manifest.browser\_action |
-|  ManifestDevTools | <code>1024</code> | URL is listed in the manifest.devtools\_page |
-|  ManifestOptions | <code>128</code> | URL is listed in the manifest.options\_ui |
-|  ManifestOverridesBookmarks | <code>8192</code> | URL is listed in the manifest.chrome\_url\_overrides.bookmarks |
-|  ManifestOverridesHistory | <code>16384</code> | URL is listed in the manifest.chrome\_url\_overrides.history |
-|  ManifestOverridesNewTab | <code>4096</code> | URL is listed in the manifest.chrome\_url\_overrides.newtab |
-|  ManifestPageAction | <code>512</code> | URL is listed in the manifest.page\_action |
-|  ManifestSidebar | <code>2048</code> | URL is listed in the manifest.sidebar\_action. Firefox Only |
-|  NONE | <code>0</code> |  |
+<table><thead><tr><th>
 
+Member
+
+
+</th><th>
+
+Value
+
+
+</th><th>
+
+Description
+
+
+</th></tr></thead>
+<tbody><tr><td>
+
+ContentScript
+
+
+</td><td>
+
+`8`
+
+
+</td><td>
+
+Current running context is Content Script
+
+
+</td></tr>
+<tr><td>
+
+ExtensionProtocol
+
+
+</td><td>
+
+`4`
+
+
+</td><td>
+
+URL protocol ends with "-extension:"
+
+
+</td></tr>
+<tr><td>
+
+HasBrowserAPI
+
+
+</td><td>
+
+`2`
+
+
+</td><td>
+
+has browser as a global variable
+
+
+</td></tr>
+<tr><td>
+
+ManifestAction
+
+
+</td><td>
+
+`256`
+
+
+</td><td>
+
+URL is listed in the manifest.action
+
+
+</td></tr>
+<tr><td>
+
+ManifestBackground
+
+
+</td><td>
+
+`64`
+
+
+</td><td>
+
+URL of the manifest.background, generated background page, or manifest v3 service worker
+
+
+</td></tr>
+<tr><td>
+
+ManifestBrowserAction
+
+
+</td><td>
+
+`256`
+
+
+</td><td>
+
+URL is listed in the manifest.browser\_action
+
+
+</td></tr>
+<tr><td>
+
+ManifestDevTools
+
+
+</td><td>
+
+`1024`
+
+
+</td><td>
+
+URL is listed in the manifest.devtools\_page
+
+
+</td></tr>
+<tr><td>
+
+ManifestOptions
+
+
+</td><td>
+
+`128`
+
+
+</td><td>
+
+URL is listed in the manifest.options\_ui
+
+
+</td></tr>
+<tr><td>
+
+ManifestOverridesBookmarks
+
+
+</td><td>
+
+`8192`
+
+
+</td><td>
+
+URL is listed in the manifest.chrome\_url\_overrides.bookmarks
+
+
+</td></tr>
+<tr><td>
+
+ManifestOverridesHistory
+
+
+</td><td>
+
+`16384`
+
+
+</td><td>
+
+URL is listed in the manifest.chrome\_url\_overrides.history
+
+
+</td></tr>
+<tr><td>
+
+ManifestOverridesNewTab
+
+
+</td><td>
+
+`4096`
+
+
+</td><td>
+
+URL is listed in the manifest.chrome\_url\_overrides.newtab
+
+
+</td></tr>
+<tr><td>
+
+ManifestPageAction
+
+
+</td><td>
+
+`512`
+
+
+</td><td>
+
+URL is listed in the manifest.page\_action
+
+
+</td></tr>
+<tr><td>
+
+ManifestSidebar
+
+
+</td><td>
+
+`2048`
+
+
+</td><td>
+
+URL is listed in the manifest.sidebar\_action. Firefox Only
+
+
+</td></tr>
+<tr><td>
+
+NONE
+
+
+</td><td>
+
+`0`
+
+
+</td><td>
+
+
+</td></tr>
+</tbody></table>

@@ -15,52 +15,722 @@ export declare abstract class Watcher<T, Before extends Element, After extends E
 
 ## Constructors
 
-|  Constructor | Modifiers | Description |
-|  --- | --- | --- |
-|  [(constructor)(liveSelector)](./kit.watcher._constructor_.md) |  | Constructs a new instance of the <code>Watcher</code> class |
+<table><thead><tr><th>
+
+Constructor
+
+
+</th><th>
+
+Modifiers
+
+
+</th><th>
+
+Description
+
+
+</th></tr></thead>
+<tbody><tr><td>
+
+[(constructor)(liveSelector)](./kit.watcher._constructor_.md)
+
+
+</td><td>
+
+
+</td><td>
+
+Constructs a new instance of the `Watcher` class
+
+
+</td></tr>
+</tbody></table>
 
 ## Properties
 
-|  Property | Modifiers | Type | Description |
-|  --- | --- | --- | --- |
-|  [\_firstDOMProxy](./kit.watcher._firstdomproxy.md) | <code>protected</code> | [DOMProxy](./kit.domproxy.md)<!-- -->&lt;Node, Before, After&gt; | The first DOMProxy |
-|  [\_warning\_forget\_watch\_](./kit.watcher._warning_forget_watch_.md) | <code>protected</code> | { warn(f?: (stack: string) =&gt; void): void; ignored: boolean; stack: string; } | Warning to remember if developer forget to call the startWatch. |
-|  [domProxyOption](./kit.watcher.domproxyoption.md) | <code>protected</code> | Partial&lt;[DOMProxyOptions](./kit.domproxyoptions.md)<!-- -->&lt;Before, After&gt;&gt; | The dom proxy option used in DOMProxy() |
-|  [findNodeFromListByKey](./kit.watcher.findnodefromlistbykey.md) | <code>protected</code> | (list: readonly T\[\], keys: readonly unknown\[\]) =&gt; (key: unknown) =&gt; T \| null | Find node from the given list by key |
-|  [firstDOMProxy](./kit.watcher.firstdomproxy.md) | <code>readonly</code> | T extends Node ? [DOMProxy](./kit.domproxy.md)<!-- -->&lt;T, Before, After&gt; : never | This DOMProxy always point to the first node in the LiveSelector |
-|  [isWatching](./kit.watcher.iswatching.md) | <code>protected</code> | boolean | Is the watcher running |
-|  [keyComparer](./kit.watcher.keycomparer.md) | <code>protected</code> | (a: unknown, b: unknown) =&gt; boolean | Compare between <code>key</code> and <code>key</code>, in case of you don't want the default behavior |
-|  [lastCallbackMap](./kit.watcher.lastcallbackmap.md) | <code>protected</code> | Map&lt;unknown, useForeachReturns&lt;T&gt;&gt; | Saved callback map of last watch |
-|  [lastDOMProxyMap](./kit.watcher.lastdomproxymap.md) | <code>protected</code> | Map&lt;unknown, [DOMProxy](./kit.domproxy.md)<!-- -->&lt;any, Before, After&gt;&gt; | Saved DOMProxy of last watch |
-|  [lastKeyList](./kit.watcher.lastkeylist.md) | <code>protected</code> | readonly unknown\[\] | Found key list of last watch |
-|  [lastNodeList](./kit.watcher.lastnodelist.md) | <code>protected</code> | readonly T\[\] | Found Node list of last watch |
-|  [liveSelector](./kit.watcher.liveselector.md) | <p><code>protected</code></p><p><code>readonly</code></p> | [LiveSelector](./kit.liveselector.md)<!-- -->&lt;T, SingleMode&gt; | The liveSelector that this object holds. |
-|  [mapNodeToKey](./kit.watcher.mapnodetokey.md) | <code>protected</code> | (node: T, index: number, arr: readonly T\[\]) =&gt; unknown | Map <code>Node -&gt; Key</code>, in case of you don't want the default behavior |
-|  [requestIdleCallback](./kit.watcher.requestidlecallback.md) | <p><code>protected</code></p><p><code>readonly</code></p> | typeof requestIdleCallback | window.requestIdleCallback, or polyfill. |
-|  [scheduleWatcherCheck](./kit.watcher.schedulewatchercheck.md) | <code>protected</code> | () =&gt; void | Schedule a watcher check |
-|  [singleMode](./kit.watcher.singlemode.md) | <p><code>protected</code></p><p><code>readonly</code></p> | boolean | Is the single mode is on. |
-|  [singleModeCallback?](./kit.watcher.singlemodecallback.md) | <code>protected</code> | useForeachReturns&lt;T&gt; | _(Optional)_ Callback for single mode |
-|  [singleModeHasLastValue](./kit.watcher.singlemodehaslastvalue.md) | <code>protected</code> | boolean | Does it has a last iteration value in single mode? |
-|  [singleModeLastValue?](./kit.watcher.singlemodelastvalue.md) | <code>protected</code> | T | _(Optional)_ Last iteration value for single mode |
-|  [useForeachFn?](./kit.watcher.useforeachfn.md) | <code>protected</code> | Parameters&lt;[Watcher](./kit.watcher.md)<!-- -->&lt;T, any, any, any&gt;\['useForeach'\]&gt;\[0\] | _(Optional)_ Saved useForeach |
-|  [valueComparer](./kit.watcher.valuecomparer.md) | <code>protected</code> | (a: T, b: T) =&gt; boolean | Compare between <code>value</code> and <code>value</code>, in case of you don't want the default behavior |
+<table><thead><tr><th>
+
+Property
+
+
+</th><th>
+
+Modifiers
+
+
+</th><th>
+
+Type
+
+
+</th><th>
+
+Description
+
+
+</th></tr></thead>
+<tbody><tr><td>
+
+[\_firstDOMProxy](./kit.watcher._firstdomproxy.md)
+
+
+</td><td>
+
+`protected`
+
+
+</td><td>
+
+[DOMProxy](./kit.domproxy.md)<!-- -->&lt;Node, Before, After&gt;
+
+
+</td><td>
+
+The first DOMProxy
+
+
+</td></tr>
+<tr><td>
+
+[\_warning\_forget\_watch\_](./kit.watcher._warning_forget_watch_.md)
+
+
+</td><td>
+
+`protected`
+
+
+</td><td>
+
+{ warn(f?: (stack: string) =&gt; void): void; ignored: boolean; stack: string; }
+
+
+</td><td>
+
+Warning to remember if developer forget to call the startWatch.
+
+
+</td></tr>
+<tr><td>
+
+[domProxyOption](./kit.watcher.domproxyoption.md)
+
+
+</td><td>
+
+`protected`
+
+
+</td><td>
+
+Partial&lt;[DOMProxyOptions](./kit.domproxyoptions.md)<!-- -->&lt;Before, After&gt;&gt;
+
+
+</td><td>
+
+The dom proxy option used in DOMProxy()
+
+
+</td></tr>
+<tr><td>
+
+[findNodeFromListByKey](./kit.watcher.findnodefromlistbykey.md)
+
+
+</td><td>
+
+`protected`
+
+
+</td><td>
+
+(list: readonly T\[\], keys: readonly unknown\[\]) =&gt; (key: unknown) =&gt; T \| null
+
+
+</td><td>
+
+Find node from the given list by key
+
+
+</td></tr>
+<tr><td>
+
+[firstDOMProxy](./kit.watcher.firstdomproxy.md)
+
+
+</td><td>
+
+`readonly`
+
+
+</td><td>
+
+T extends Node ? [DOMProxy](./kit.domproxy.md)<!-- -->&lt;T, Before, After&gt; : never
+
+
+</td><td>
+
+This DOMProxy always point to the first node in the LiveSelector
+
+
+</td></tr>
+<tr><td>
+
+[isWatching](./kit.watcher.iswatching.md)
+
+
+</td><td>
+
+`protected`
+
+
+</td><td>
+
+boolean
+
+
+</td><td>
+
+Is the watcher running
+
+
+</td></tr>
+<tr><td>
+
+[keyComparer](./kit.watcher.keycomparer.md)
+
+
+</td><td>
+
+`protected`
+
+
+</td><td>
+
+(a: unknown, b: unknown) =&gt; boolean
+
+
+</td><td>
+
+Compare between `key` and `key`<!-- -->, in case of you don't want the default behavior
+
+
+</td></tr>
+<tr><td>
+
+[lastCallbackMap](./kit.watcher.lastcallbackmap.md)
+
+
+</td><td>
+
+`protected`
+
+
+</td><td>
+
+Map&lt;unknown, useForeachReturns&lt;T&gt;&gt;
+
+
+</td><td>
+
+Saved callback map of last watch
+
+
+</td></tr>
+<tr><td>
+
+[lastDOMProxyMap](./kit.watcher.lastdomproxymap.md)
+
+
+</td><td>
+
+`protected`
+
+
+</td><td>
+
+Map&lt;unknown, [DOMProxy](./kit.domproxy.md)<!-- -->&lt;any, Before, After&gt;&gt;
+
+
+</td><td>
+
+Saved DOMProxy of last watch
+
+
+</td></tr>
+<tr><td>
+
+[lastKeyList](./kit.watcher.lastkeylist.md)
+
+
+</td><td>
+
+`protected`
+
+
+</td><td>
+
+readonly unknown\[\]
+
+
+</td><td>
+
+Found key list of last watch
+
+
+</td></tr>
+<tr><td>
+
+[lastNodeList](./kit.watcher.lastnodelist.md)
+
+
+</td><td>
+
+`protected`
+
+
+</td><td>
+
+readonly T\[\]
+
+
+</td><td>
+
+Found Node list of last watch
+
+
+</td></tr>
+<tr><td>
+
+[liveSelector](./kit.watcher.liveselector.md)
+
+
+</td><td>
+
+`protected`
+
+`readonly`
+
+
+</td><td>
+
+[LiveSelector](./kit.liveselector.md)<!-- -->&lt;T, SingleMode&gt;
+
+
+</td><td>
+
+The liveSelector that this object holds.
+
+
+</td></tr>
+<tr><td>
+
+[mapNodeToKey](./kit.watcher.mapnodetokey.md)
+
+
+</td><td>
+
+`protected`
+
+
+</td><td>
+
+(node: T, index: number, arr: readonly T\[\]) =&gt; unknown
+
+
+</td><td>
+
+Map `Node -> Key`<!-- -->, in case of you don't want the default behavior
+
+
+</td></tr>
+<tr><td>
+
+[requestIdleCallback](./kit.watcher.requestidlecallback.md)
+
+
+</td><td>
+
+`protected`
+
+`readonly`
+
+
+</td><td>
+
+typeof requestIdleCallback
+
+
+</td><td>
+
+window.requestIdleCallback, or polyfill.
+
+
+</td></tr>
+<tr><td>
+
+[scheduleWatcherCheck](./kit.watcher.schedulewatchercheck.md)
+
+
+</td><td>
+
+`protected`
+
+
+</td><td>
+
+() =&gt; void
+
+
+</td><td>
+
+Schedule a watcher check
+
+
+</td></tr>
+<tr><td>
+
+[singleMode](./kit.watcher.singlemode.md)
+
+
+</td><td>
+
+`protected`
+
+`readonly`
+
+
+</td><td>
+
+boolean
+
+
+</td><td>
+
+Is the single mode is on.
+
+
+</td></tr>
+<tr><td>
+
+[singleModeCallback?](./kit.watcher.singlemodecallback.md)
+
+
+</td><td>
+
+`protected`
+
+
+</td><td>
+
+useForeachReturns&lt;T&gt;
+
+
+</td><td>
+
+_(Optional)_ Callback for single mode
+
+
+</td></tr>
+<tr><td>
+
+[singleModeHasLastValue](./kit.watcher.singlemodehaslastvalue.md)
+
+
+</td><td>
+
+`protected`
+
+
+</td><td>
+
+boolean
+
+
+</td><td>
+
+Does it has a last iteration value in single mode?
+
+
+</td></tr>
+<tr><td>
+
+[singleModeLastValue?](./kit.watcher.singlemodelastvalue.md)
+
+
+</td><td>
+
+`protected`
+
+
+</td><td>
+
+T
+
+
+</td><td>
+
+_(Optional)_ Last iteration value for single mode
+
+
+</td></tr>
+<tr><td>
+
+[useForeachFn?](./kit.watcher.useforeachfn.md)
+
+
+</td><td>
+
+`protected`
+
+
+</td><td>
+
+Parameters&lt;[Watcher](./kit.watcher.md)<!-- -->&lt;T, any, any, any&gt;\['useForeach'\]&gt;\[0\]
+
+
+</td><td>
+
+_(Optional)_ Saved useForeach
+
+
+</td></tr>
+<tr><td>
+
+[valueComparer](./kit.watcher.valuecomparer.md)
+
+
+</td><td>
+
+`protected`
+
+
+</td><td>
+
+(a: T, b: T) =&gt; boolean
+
+
+</td><td>
+
+Compare between `value` and `value`<!-- -->, in case of you don't want the default behavior
+
+
+</td></tr>
+</tbody></table>
 
 ## Methods
 
-|  Method | Modifiers | Description |
-|  --- | --- | --- |
-|  [addListener(type, callback, options)](./kit.watcher.addlistener.md) |  |  |
-|  [assignKeys(keyAssigner)](./kit.watcher.assignkeys.md) |  | <p>To help identify same nodes in different iteration, you need to implement a map function that map <code>node</code> to <code>key</code></p><p>If the key is changed, the same node will call through <code>forEachRemove</code> then <code>forEach</code></p> |
-|  [defaultStarterForThen()](./kit.watcher.defaultstarterforthen.md) | <code>protected</code> |  |
-|  [dismissSingleModeWarning()](./kit.watcher.dismisssinglemodewarning.md) |  | Dismiss the warning that let you enable single mode but the warning is false positive. |
-|  [getDOMProxyByKey(key)](./kit.watcher.getdomproxybykey.md) |  | Get DOMProxy by key. DOMProxy will be unavailable if it is deleted |
-|  [omitWarningForForgetWatch()](./kit.watcher.omitwarningforforgetwatch.md) |  | If you're expecting Watcher may not be called, call this function, this will omit the warning. |
-|  [omitWarningForRepeatedKeys()](./kit.watcher.omitwarningforrepeatedkeys.md) |  | If you're expecting repeating keys, call this function, this will omit the warning. |
-|  [removeListener(type, callback)](./kit.watcher.removelistener.md) |  |  |
-|  [setComparer(keyComparer, valueComparer)](./kit.watcher.setcomparer.md) |  | <p>To help identify same nodes in different iteration, you need to implement a map function to compare <code>node</code> and <code>key</code></p><p>You probably don't need this.</p> |
-|  [setDOMProxyOption(option)](./kit.watcher.setdomproxyoption.md) |  | Set option for DOMProxy |
-|  [startWatch(args)](./kit.watcher.startwatch.md) |  | Let the watcher start to watching |
-|  [stopWatch(args)](./kit.watcher.stopwatch.md) |  | Stop the watcher |
-|  [then(onfulfilled, onrejected, options)](./kit.watcher.then.md) |  | Start the watcher, once it emitted data, stop watching. |
-|  [useForeach(forEach)](./kit.watcher.useforeach.md) |  | Just like React hooks. Provide callbacks for each node changes. |
+<table><thead><tr><th>
 
+Method
+
+
+</th><th>
+
+Modifiers
+
+
+</th><th>
+
+Description
+
+
+</th></tr></thead>
+<tbody><tr><td>
+
+[addListener(type, callback, options)](./kit.watcher.addlistener.md)
+
+
+</td><td>
+
+
+</td><td>
+
+
+</td></tr>
+<tr><td>
+
+[assignKeys(keyAssigner)](./kit.watcher.assignkeys.md)
+
+
+</td><td>
+
+
+</td><td>
+
+To help identify same nodes in different iteration, you need to implement a map function that map `node` to `key`
+
+If the key is changed, the same node will call through `forEachRemove` then `forEach`
+
+
+</td></tr>
+<tr><td>
+
+[defaultStarterForThen()](./kit.watcher.defaultstarterforthen.md)
+
+
+</td><td>
+
+`protected`
+
+
+</td><td>
+
+
+</td></tr>
+<tr><td>
+
+[dismissSingleModeWarning()](./kit.watcher.dismisssinglemodewarning.md)
+
+
+</td><td>
+
+
+</td><td>
+
+Dismiss the warning that let you enable single mode but the warning is false positive.
+
+
+</td></tr>
+<tr><td>
+
+[getDOMProxyByKey(key)](./kit.watcher.getdomproxybykey.md)
+
+
+</td><td>
+
+
+</td><td>
+
+Get DOMProxy by key. DOMProxy will be unavailable if it is deleted
+
+
+</td></tr>
+<tr><td>
+
+[omitWarningForForgetWatch()](./kit.watcher.omitwarningforforgetwatch.md)
+
+
+</td><td>
+
+
+</td><td>
+
+If you're expecting Watcher may not be called, call this function, this will omit the warning.
+
+
+</td></tr>
+<tr><td>
+
+[omitWarningForRepeatedKeys()](./kit.watcher.omitwarningforrepeatedkeys.md)
+
+
+</td><td>
+
+
+</td><td>
+
+If you're expecting repeating keys, call this function, this will omit the warning.
+
+
+</td></tr>
+<tr><td>
+
+[removeListener(type, callback)](./kit.watcher.removelistener.md)
+
+
+</td><td>
+
+
+</td><td>
+
+
+</td></tr>
+<tr><td>
+
+[setComparer(keyComparer, valueComparer)](./kit.watcher.setcomparer.md)
+
+
+</td><td>
+
+
+</td><td>
+
+To help identify same nodes in different iteration, you need to implement a map function to compare `node` and `key`
+
+You probably don't need this.
+
+
+</td></tr>
+<tr><td>
+
+[setDOMProxyOption(option)](./kit.watcher.setdomproxyoption.md)
+
+
+</td><td>
+
+
+</td><td>
+
+Set option for DOMProxy
+
+
+</td></tr>
+<tr><td>
+
+[startWatch(args)](./kit.watcher.startwatch.md)
+
+
+</td><td>
+
+
+</td><td>
+
+Let the watcher start to watching
+
+
+</td></tr>
+<tr><td>
+
+[stopWatch(args)](./kit.watcher.stopwatch.md)
+
+
+</td><td>
+
+
+</td><td>
+
+Stop the watcher
+
+
+</td></tr>
+<tr><td>
+
+[then(onfulfilled, onrejected, options)](./kit.watcher.then.md)
+
+
+</td><td>
+
+
+</td><td>
+
+Start the watcher, once it emitted data, stop watching.
+
+
+</td></tr>
+<tr><td>
+
+[useForeach(forEach)](./kit.watcher.useforeach.md)
+
+
+</td><td>
+
+
+</td><td>
+
+Just like React hooks. Provide callbacks for each node changes.
+
+
+</td></tr>
+</tbody></table>

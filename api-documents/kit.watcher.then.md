@@ -17,12 +17,71 @@ then<TResult1 = ResultOf<SingleMode, T>, TResult2 = never>(onfulfilled?: ((value
 
 ## Parameters
 
-|  Parameter | Type | Description |
-|  --- | --- | --- |
-|  onfulfilled | ((value: ResultOf&lt;SingleMode, T&gt;) =&gt; TResult1 \| PromiseLike&lt;TResult1&gt;) \| null | _(Optional)_ |
-|  onrejected | ((reason: any) =&gt; TResult2 \| PromiseLike&lt;TResult2&gt;) \| null | _(Optional)_ |
-|  options | { minimalResultsRequired?: number; timeout?: number; } | _(Optional)_ Options for watcher |
+<table><thead><tr><th>
 
+Parameter
+
+
+</th><th>
+
+Type
+
+
+</th><th>
+
+Description
+
+
+</th></tr></thead>
+<tbody><tr><td>
+
+onfulfilled
+
+
+</td><td>
+
+((value: ResultOf&lt;SingleMode, T&gt;) =&gt; TResult1 \| PromiseLike&lt;TResult1&gt;) \| null
+
+
+</td><td>
+
+_(Optional)_
+
+
+</td></tr>
+<tr><td>
+
+onrejected
+
+
+</td><td>
+
+((reason: any) =&gt; TResult2 \| PromiseLike&lt;TResult2&gt;) \| null
+
+
+</td><td>
+
+_(Optional)_
+
+
+</td></tr>
+<tr><td>
+
+options
+
+
+</td><td>
+
+{ minimalResultsRequired?: number; timeout?: number; }
+
+
+</td><td>
+
+_(Optional)_ Options for watcher
+
+
+</td></tr>
+</tbody></table>
 **Returns:**
 
 Promise&lt;TResult1 \| TResult2&gt;

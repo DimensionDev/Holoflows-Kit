@@ -14,11 +14,55 @@ slice(start?: number, end?: number): LiveSelector<T, SingleMode>;
 
 ## Parameters
 
-|  Parameter | Type | Description |
-|  --- | --- | --- |
-|  start | number | _(Optional)_ The beginning of the specified portion of the array. |
-|  end | number | _(Optional)_ The end of the specified portion of the array. |
+<table><thead><tr><th>
 
+Parameter
+
+
+</th><th>
+
+Type
+
+
+</th><th>
+
+Description
+
+
+</th></tr></thead>
+<tbody><tr><td>
+
+start
+
+
+</td><td>
+
+number
+
+
+</td><td>
+
+_(Optional)_ The beginning of the specified portion of the array.
+
+
+</td></tr>
+<tr><td>
+
+end
+
+
+</td><td>
+
+number
+
+
+</td><td>
+
+_(Optional)_ The end of the specified portion of the array.
+
+
+</td></tr>
+</tbody></table>
 **Returns:**
 
 [LiveSelector](./kit.liveselector.md)<!-- -->&lt;T, SingleMode&gt;

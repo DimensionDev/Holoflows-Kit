@@ -14,10 +14,37 @@ useForeach(forEach: (element: T, key: unknown, metadata: T extends Node ? DOMPro
 
 ## Parameters
 
-|  Parameter | Type | Description |
-|  --- | --- | --- |
-|  forEach | (element: T, key: unknown, metadata: T extends Node ? [DOMProxy](./kit.domproxy.md)<!-- -->&lt;T, Before, After&gt; : unknown) =&gt; useForeachReturns&lt;T&gt; |  |
+<table><thead><tr><th>
 
+Parameter
+
+
+</th><th>
+
+Type
+
+
+</th><th>
+
+Description
+
+
+</th></tr></thead>
+<tbody><tr><td>
+
+forEach
+
+
+</td><td>
+
+(element: T, key: unknown, metadata: T extends Node ? [DOMProxy](./kit.domproxy.md)<!-- -->&lt;T, Before, After&gt; : unknown) =&gt; useForeachReturns&lt;T&gt;
+
+
+</td><td>
+
+
+</td></tr>
+</tbody></table>
 **Returns:**
 
 this

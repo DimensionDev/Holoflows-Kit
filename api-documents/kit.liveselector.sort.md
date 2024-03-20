@@ -14,10 +14,39 @@ sort(compareFn?: (a: T, b: T) => number): LiveSelector<T, SingleMode>;
 
 ## Parameters
 
-|  Parameter | Type | Description |
-|  --- | --- | --- |
-|  compareFn | (a: T, b: T) =&gt; number | _(Optional)_ The name of the function used to determine the order of the elements. If omitted, the elements are sorted in ascending, ASCII character order. |
+<table><thead><tr><th>
 
+Parameter
+
+
+</th><th>
+
+Type
+
+
+</th><th>
+
+Description
+
+
+</th></tr></thead>
+<tbody><tr><td>
+
+compareFn
+
+
+</td><td>
+
+(a: T, b: T) =&gt; number
+
+
+</td><td>
+
+_(Optional)_ The name of the function used to determine the order of the elements. If omitted, the elements are sorted in ascending, ASCII character order.
+
+
+</td></tr>
+</tbody></table>
 **Returns:**
 
 [LiveSelector](./kit.liveselector.md)<!-- -->&lt;T, SingleMode&gt;

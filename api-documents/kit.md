@@ -8,66 +8,387 @@ A toolkit for browser extension developing.
 
 ## Classes
 
-|  Class | Description |
-|  --- | --- |
-|  [EventWatcher](./kit.eventwatcher.md) | A Watcher based on event handlers. |
-|  [IntervalWatcher](./kit.intervalwatcher.md) | A watcher based on time interval. |
-|  [LiveSelector](./kit.liveselector.md) | Create a live selector that can continuously select the element you want. |
-|  [MutationObserverWatcher](./kit.mutationobserverwatcher.md) | A watcher based on MutationObserver |
-|  [WebExtensionMessage](./kit.webextensionmessage.md) |  |
+<table><thead><tr><th>
+
+Class
+
+
+</th><th>
+
+Description
+
+
+</th></tr></thead>
+<tbody><tr><td>
+
+[EventWatcher](./kit.eventwatcher.md)
+
+
+</td><td>
+
+A Watcher based on event handlers.
+
+
+</td></tr>
+<tr><td>
+
+[IntervalWatcher](./kit.intervalwatcher.md)
+
+
+</td><td>
+
+A watcher based on time interval.
+
+
+</td></tr>
+<tr><td>
+
+[LiveSelector](./kit.liveselector.md)
+
+
+</td><td>
+
+Create a live selector that can continuously select the element you want.
+
+
+</td></tr>
+<tr><td>
+
+[MutationObserverWatcher](./kit.mutationobserverwatcher.md)
+
+
+</td><td>
+
+A watcher based on MutationObserver
+
+
+</td></tr>
+<tr><td>
+
+[WebExtensionMessage](./kit.webextensionmessage.md)
+
+
+</td><td>
+
+
+</td></tr>
+</tbody></table>
 
 ## Abstract Classes
 
-|  Abstract Class | Description |
-|  --- | --- |
-|  [Watcher](./kit.watcher.md) | Use LiveSelector to watch dom change |
+<table><thead><tr><th>
+
+Abstract Class
+
+
+</th><th>
+
+Description
+
+
+</th></tr></thead>
+<tbody><tr><td>
+
+[Watcher](./kit.watcher.md)
+
+
+</td><td>
+
+Use LiveSelector to watch dom change
+
+
+</td></tr>
+</tbody></table>
 
 ## Enumerations
 
-|  Enumeration | Description |
-|  --- | --- |
-|  [Environment](./kit.environment.md) | Current running environment of Web Extension |
-|  [MessageTarget](./kit.messagetarget.md) |  |
+<table><thead><tr><th>
+
+Enumeration
+
+
+</th><th>
+
+Description
+
+
+</th></tr></thead>
+<tbody><tr><td>
+
+[Environment](./kit.environment.md)
+
+
+</td><td>
+
+Current running environment of Web Extension
+
+
+</td></tr>
+<tr><td>
+
+[MessageTarget](./kit.messagetarget.md)
+
+
+</td><td>
+
+
+</td></tr>
+</tbody></table>
 
 ## Functions
 
-|  Function | Description |
-|  --- | --- |
-|  [assertEnvironment(env)](./kit.assertenvironment.md) | Assert the current environment satisfy the expectation |
-|  [assertNotEnvironment(env)](./kit.assertnotenvironment.md) | Assert the current environment NOT satisfy the rejected flags |
-|  [DOMProxy(options)](./kit.domproxy.md) | DOMProxy provide an interface that be stable even dom is changed. |
-|  [getEnvironment()](./kit.getenvironment.md) | Get the current running environment |
-|  [isEnvironment(env)](./kit.isenvironment.md) | Check if the current environment satisfy the expectation |
-|  [printEnvironment(e)](./kit.printenvironment.md) | Print the Environment bit flag in a human-readable format |
+<table><thead><tr><th>
+
+Function
+
+
+</th><th>
+
+Description
+
+
+</th></tr></thead>
+<tbody><tr><td>
+
+[assertEnvironment(env)](./kit.assertenvironment.md)
+
+
+</td><td>
+
+Assert the current environment satisfy the expectation
+
+
+</td></tr>
+<tr><td>
+
+[assertNotEnvironment(env)](./kit.assertnotenvironment.md)
+
+
+</td><td>
+
+Assert the current environment NOT satisfy the rejected flags
+
+
+</td></tr>
+<tr><td>
+
+[DOMProxy(options)](./kit.domproxy.md)
+
+
+</td><td>
+
+DOMProxy provide an interface that be stable even dom is changed.
+
+
+</td></tr>
+<tr><td>
+
+[getEnvironment()](./kit.getenvironment.md)
+
+
+</td><td>
+
+Get the current running environment
+
+
+</td></tr>
+<tr><td>
+
+[isEnvironment(env)](./kit.isenvironment.md)
+
+
+</td><td>
+
+Check if the current environment satisfy the expectation
+
+
+</td></tr>
+<tr><td>
+
+[printEnvironment(e)](./kit.printenvironment.md)
+
+
+</td><td>
+
+Print the Environment bit flag in a human-readable format
+
+
+</td></tr>
+<tr><td>
+
+[waitUntil(promise)](./kit.waituntil.md)
+
+
+</td><td>
+
+
+</td></tr>
+</tbody></table>
 
 ## Interfaces
 
-|  Interface | Description |
-|  --- | --- |
-|  [DOMProxy\_MutationObserver](./kit.domproxy_mutationobserver.md) | The proxied MutationObserver. You need to set callback and init to activate it. |
-|  [DOMProxy\_Properties](./kit.domproxy_properties.md) | DOMProxy provide an interface that be stable even dom is changed. |
-|  [DOMProxy](./kit.domproxy.md) | DOMProxy provide an interface that be stable even dom is changed. |
-|  [DOMProxyEvents](./kit.domproxyevents.md) | Events that DOMProxy supported |
-|  [DOMProxyOptions](./kit.domproxyoptions.md) | Options for DOMProxy |
-|  [Serialization](./kit.serialization.md) | Define how to do serialization and deserialization of remote procedure call |
-|  [TargetBoundEventListenerOptions](./kit.targetboundeventlisteneroptions.md) |  |
-|  [TargetBoundEventRegistry](./kit.targetboundeventregistry.md) |  |
-|  [UnboundedRegistry](./kit.unboundedregistry.md) |  |
-|  [WatcherEvents](./kit.watcherevents.md) |  |
-|  [WebExtensionMessageOptions](./kit.webextensionmessageoptions.md) |  |
+<table><thead><tr><th>
+
+Interface
+
+
+</th><th>
+
+Description
+
+
+</th></tr></thead>
+<tbody><tr><td>
+
+[DOMProxy\_MutationObserver](./kit.domproxy_mutationobserver.md)
+
+
+</td><td>
+
+The proxied MutationObserver. You need to set callback and init to activate it.
+
+
+</td></tr>
+<tr><td>
+
+[DOMProxy\_Properties](./kit.domproxy_properties.md)
+
+
+</td><td>
+
+DOMProxy provide an interface that be stable even dom is changed.
+
+
+</td></tr>
+<tr><td>
+
+[DOMProxy](./kit.domproxy.md)
+
+
+</td><td>
+
+DOMProxy provide an interface that be stable even dom is changed.
+
+
+</td></tr>
+<tr><td>
+
+[DOMProxyEvents](./kit.domproxyevents.md)
+
+
+</td><td>
+
+Events that DOMProxy supported
+
+
+</td></tr>
+<tr><td>
+
+[DOMProxyOptions](./kit.domproxyoptions.md)
+
+
+</td><td>
+
+Options for DOMProxy
+
+
+</td></tr>
+<tr><td>
+
+[Encoder](./kit.encoder.md)
+
+
+</td><td>
+
+Define the encoding of messages
+
+
+</td></tr>
+<tr><td>
+
+[WatcherEvents](./kit.watcherevents.md)
+
+
+</td><td>
+
+
+</td></tr>
+<tr><td>
+
+[WebExtensionEventTarget](./kit.webextensioneventtarget.md)
+
+
+</td><td>
+
+
+</td></tr>
+<tr><td>
+
+[WebExtensionEventTargetUnbound](./kit.webextensioneventtargetunbound.md)
+
+
+</td><td>
+
+
+</td></tr>
+<tr><td>
+
+[WebExtensionMessageOptions](./kit.webextensionmessageoptions.md)
+
+
+</td><td>
+
+
+</td></tr>
+<tr><td>
+
+[WebExtensionTargetBoundEventTarget](./kit.webextensiontargetboundeventtarget.md)
+
+
+</td><td>
+
+
+</td></tr>
+</tbody></table>
 
 ## Namespaces
 
-|  Namespace | Description |
-|  --- | --- |
-|  [assertEnvironment](./kit.assertenvironment.md) |  |
-|  [assertNotEnvironment](./kit.assertnotenvironment.md) |  |
-|  [isEnvironment](./kit.isenvironment.md) |  |
+<table><thead><tr><th>
 
-## Type Aliases
+Namespace
 
-|  Type Alias | Description |
-|  --- | --- |
-|  [ShouldAcceptExternalConnection](./kit.shouldacceptexternalconnection.md) |  |
-|  [ShouldAcceptExternalConnectionResult](./kit.shouldacceptexternalconnectionresult.md) |  |
 
+</th><th>
+
+Description
+
+
+</th></tr></thead>
+<tbody><tr><td>
+
+[assertEnvironment](./kit.assertenvironment.md)
+
+
+</td><td>
+
+
+</td></tr>
+<tr><td>
+
+[assertNotEnvironment](./kit.assertnotenvironment.md)
+
+
+</td><td>
+
+
+</td></tr>
+<tr><td>
+
+[isEnvironment](./kit.isenvironment.md)
+
+
+</td><td>
+
+
+</td></tr>
+</tbody></table>
