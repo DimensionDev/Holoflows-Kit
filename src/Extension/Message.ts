@@ -107,7 +107,7 @@ export class WebExtensionMessage<Message> extends EventTarget implements WebExte
             const { e: event, t: target, o: origin } = payload
             if (!shouldAcceptThisMessage(target)) return
             let { d: data } = payload
-            if (encoded && this.serialization) data = await this.serialization.decode(data)
+            if (encoded && this.encoder) data = await this.encoder.decode(data)
             if (this.enableLog) {
                 this.log(...this.logFormatter(this, event, data))
             }
@@ -154,7 +154,7 @@ export class WebExtensionMessage<Message> extends EventTarget implements WebExte
         return this.#EventTarget
     }
 
-    public serialization: Encoder | undefined
+    public encoder: Encoder | undefined
     public logFormatter: (instance: this, key: string, data: unknown) => unknown[] = (instance, key, data) => {
         return [
             `%cReceive%c %c${String(key)}`,
@@ -218,7 +218,7 @@ export class WebExtensionMessage<Message> extends EventTarget implements WebExte
             }
             if (target & MessageTarget.LocalOnly) return
             postMessage({
-                d: this.serialization ? await this.serialization.encode(data) : data,
+                d: this.encoder ? await this.encoder.encode(data) : data,
                 s: this.#domain,
                 e: eventName,
                 t: {
@@ -472,6 +472,7 @@ function pageOnBoarding(connect: () => Runtime.Port) {
         postMessage = postMessageInner.bind(null, pageLocal)
         self.addEventListener('unload', () => {
             postMessage(FARWELL)
+            pageLocal.broadcastChannel?.removeEventListener('message', pageMessageListener)
             pageLocal.broadcastChannel?.close()
         })
     }
@@ -500,6 +501,7 @@ function pageOnBoarding(connect: () => Runtime.Port) {
             pageLocal.uuid ??= uuid
             if (getEnvironment() & Environment.ExtensionProtocol) {
                 pageLocal.broadcastChannel ??= new BroadcastChannel(uuid)
+                pageLocal.broadcastChannel.addEventListener('message', pageMessageListener)
             }
             resolve(port)
         })
